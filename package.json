@@ -1,0 +1,56 @@
+{
+    "name": "ebuild-rollup",
+    "version": "0.0.1",
+    "description": "ebuild-demo",
+    "repository": "git@github.com:theajack/ebuild-template-rollup.git",
+    "author": "tackchen <theajack@qq.com>",
+    "main": "ebuild-demo.min.js",
+    "unpkg": "ebuild-demo.min.js",
+    "jsdelivr": "ebuild-demo.min.js",
+    "typings": "ebuild-demo.min.d.ts",
+    "scripts": {
+        "lint": "eslint src --ext ts",
+        "dev": "node scripts/dev/dev.js",
+        "build": "node scripts/build/build.js",
+        "dev:docs": "node scripts/docs/dev.js",
+        "build:docs": "node scripts/docs/build.js",
+        "purge": "node scripts/purge-cdn.js",
+        "release": "node scripts/push-release.js"
+    },
+    "keywords": [],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/theajack/ebuild-template-rollup/issues"
+    },
+    "homepage": "https://shiyix.cn/jsbox/?github=theajack.ebuild-template-rollup",
+    "devDependencies": {
+        "@babel/core": "^7.18.5",
+        "@babel/preset-env": "^7.18.2",
+        "@babel/preset-typescript": "^7.17.12",
+        "@rollup/plugin-babel": "^5.3.1",
+        "@rollup/plugin-commonjs": "^22.0.1",
+        "@rollup/plugin-node-resolve": "^13.3.0",
+        "@rollup/plugin-replace": "^4.0.0",
+        "@rollup/plugin-yaml": "^3.1.0",
+        "@types/node": "^18.0.1",
+        "@typescript-eslint/eslint-plugin": "^5.29.0",
+        "@typescript-eslint/parser": "^5.29.0",
+        "esbuild": "^0.14.47",
+        "esbuild-plugin-d.ts": "^1.1.0",
+        "esbuild-plugin-yaml": "^0.0.1",
+        "eslint": "^8.18.0",
+        "execa": "4.0.2",
+        "lerna": "^5.1.5",
+        "npm-run-all": "^4.1.5",
+        "rollup": "^2.75.7",
+        "rollup-plugin-dts": "^4.2.2",
+        "rollup-plugin-typescript2": "^0.32.1",
+        "rollup-plugin-uglify": "^6.0.4",
+        "serve": "^13.0.2",
+        "single-line-log": "^1.1.2",
+        "typescript": "^4.7.4"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org"
+    }
+}
