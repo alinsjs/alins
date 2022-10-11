@@ -4,37 +4,37 @@
  * @Description: Coding something
  */
 
-import {IElement} from '../element/base';
+import {IComponentElement, IElement} from '../element/base';
 
 export interface IComponent {
     (options?: {
         props: any;
         event?: any;
         slot?: any;
-    }): IElement;
+    }): IComponentElement | IElement;
 }
 
 export type TCompArg = string; // props event slot
 export interface ICompBuilder {
-    (comp: IComponent, ...args: TCompArg[]): IElement;
+    (comp: IComponentElement, ...args: TCompArg[]): IComponentElement;
     // todo controller
 }
 
-const CompMap: Map<Function, IElement> = new Map(); // 或者可以使用 func.toString md5
+const CompMap: Map<Function, IComponentElement> = new Map(); // 或者可以使用 func.toString md5
 
 export const comp: ICompBuilder = (...data) => {
-  const el = data[0];
+
+    const el = data[0];
   
-  if (typeof el !== 'function') throw new Error('');
+    if (typeof el !== 'function') throw new Error('');
 
-  const mapValue = CompMap.get(el);
-  if (mapValue) return mapValue;
+    const mapValue = CompMap.get(el);
+    if (mapValue) return mapValue;
 
-  const comp: IElement = { // todo
-    tag: el.name,
-  };
+    const comp: IComponentElement = { // todo
+    };
 
-  CompMap.set(el, comp);
+    CompMap.set(el, comp);
 
-  return comp;
+    return comp;
 };

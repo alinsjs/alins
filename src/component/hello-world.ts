@@ -129,3 +129,19 @@ export function Parent () {
     comp(ForDemo),
   ]);
 }
+
+// return `
+// div.flex-4-num1@click{onClick}
+//     @on:hover{onHover}
+//     span.flex-4-img
+//         Hello {ref.msg}{props.value}
+//         img.item-img[alt=xxx;lazy=loaded;src=https://shiyix.cn/wx-pay.png]
+//     {slot}
+//     div.flex-4-num1-des
+//         div$for{list}.for-item
+//             span$if{$item.name}.name@click{onclick}
+//                 i:textdsa
+//         div.flex-4-num1-operation
+//             div.flex-4-num1-play:click
+//         input$bind{data.a}.input
+// `

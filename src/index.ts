@@ -3,11 +3,12 @@
  * @Date: 2022-08-03 20:33:13
  * @Description: Coding something
  */
-import version from './version';
+import {mount} from './core';
+import {div} from './core/builder';
+import {parseDomInfo} from './core/parser/info-parser';
 
-console.log('Hello world!');
+mount('body', div('.aaa#id[a=1]:Hello World', [
+  div('.aaa:sds')
+]));
 
-export default {
-  content: 'Hello Ebuild!',
-  version,
-};
+(window as any).parseDomInfo = parseDomInfo;
