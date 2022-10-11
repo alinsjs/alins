@@ -7,8 +7,13 @@ import {mount} from './core';
 import {div} from './core/builder';
 import {parseDomInfo} from './core/parser/info-parser';
 
-mount('body', div('.aaa#id[a=1]:Hello World', [
-  div('.aaa:sds')
-]));
-
+mount('body',
+    div('.aaa#id[a=1]:Hello World', [
+        div('.aaa:sds', [
+            div('.aaa:sdfa'),
+            div('.aaa:sdfa')
+        ])
+    ])
+);
+ 
 (window as any).parseDomInfo = parseDomInfo;

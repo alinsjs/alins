@@ -15,14 +15,14 @@ export interface IComponent {
 }
 
 export type TCompArg = string; // props event slot
-export interface ICompBuilder {
+export interface IComponentBuilder {
     (comp: IComponentElement, ...args: TCompArg[]): IComponentElement;
     // todo controller
 }
 
 const CompMap: Map<Function, IComponentElement> = new Map(); // 或者可以使用 func.toString md5
 
-export const comp: ICompBuilder = (...data) => {
+export const comp: IComponentBuilder = (...data) => {
 
     const el = data[0];
   

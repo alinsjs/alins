@@ -12,6 +12,7 @@ export interface IElement {
     id: string;
     textContent: string;
     attributes: IJson<string>;
+    children?: IElementBuilder[];
 }
 
 export interface IElementBuilder {
@@ -33,12 +34,19 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         }
     }
     if (el.id) dom.id = el.id;
+
+    if (el.children) {
+        for (const item of el.children) {
+            dom.appendChild(transformBuilderToDom(item));
+        }
+    }
+
     return dom;
 }
 
 export type IElementOptions = Partial<Pick<
     IElement,
-    'tag' | 'className' | 'id' | 'textContent' | 'attributes'
+    'tag' | 'className' | 'id' | 'textContent' | 'attributes' | 'children'
 >>
 
 
@@ -48,6 +56,7 @@ export function createElement ({
     id = '',
     textContent = '',
     attributes = {},
+    children,
 }: IElementOptions): IElement {
     return {
         tag,
@@ -55,5 +64,6 @@ export function createElement ({
         id,
         textContent,
         attributes,
+        children,
     };
 }

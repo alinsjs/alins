@@ -7,7 +7,7 @@
 import {createElement, IElementBuilder, IElementOptions} from '../element/base';
 import {parseDomInfo} from '../parser/info-parser';
 
-export type TBuilderArg = string | any[];
+export type TBuilderArg = string | IElementBuilder[];
 
 export interface IBuilder {
     (...args: TBuilderArg[]): IElementBuilder;
@@ -23,7 +23,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
             Object.assign(elementOptions, parseDomInfo(item));
         } else if (item instanceof Array) {
             // append children
-
+            elementOptions.children = item;
         }
     }
     return createElement(elementOptions);
