@@ -4,19 +4,19 @@
  * @Description: Coding something
  */
 
-import {IComponentElement, IElement} from '../element/base';
+import {IComponentElement, IElementBuilder} from '../element/transform';
 
 export interface IComponent {
     (options?: {
         props: any;
         event?: any;
         slot?: any;
-    }): IComponentElement | IElement;
+    }): IElementBuilder;
 }
 
 export type TCompArg = string; // props event slot
 export interface IComponentBuilder {
-    (comp: IComponentElement, ...args: TCompArg[]): IComponentElement;
+    (comp: IComponent, ...args: TCompArg[]): IComponentElement;
     // todo controller
 }
 
@@ -25,6 +25,8 @@ const CompMap: Map<Function, IComponentElement> = new Map(); // 或者可以使�
 export const comp: IComponentBuilder = (...data) => {
 
     const el = data[0];
+
+    // todo extract props event slot
   
     if (typeof el !== 'function') throw new Error('');
 

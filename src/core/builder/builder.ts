@@ -4,10 +4,12 @@
  * @Description: Coding something
  */
 
-import {createElement, IElementBuilder, IElementOptions} from '../element/base';
+import {IBuilderParameter} from '../core';
+import {createElement, IElementBuilder, IElementOptions} from '../element/transform';
 import {parseDomInfo} from '../parser/info-parser';
+import {IReactBuilder} from '../reactive/react';
 
-export type TBuilderArg = string | IElementBuilder[];
+export type TBuilderArg = string | IBuilderParameter | IElementBuilder[];
 
 export interface IBuilder {
     (...args: TBuilderArg[]): IElementBuilder;
@@ -24,6 +26,12 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         } else if (item instanceof Array) {
             // append children
             elementOptions.children = item;
+        } else if (typeof item === 'object') {
+            switch (item.type) {
+                case 'react': elementOptions.reaction = (item as IReactBuilder).exe({
+                    type: 'dom-info',
+                }); break;
+            }
         }
     }
     return createElement(elementOptions);

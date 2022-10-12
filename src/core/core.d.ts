@@ -5,18 +5,18 @@
  */
 
 
-interface IElement {
+export interface IBuilderParameter {
     type: 'css' | 'event' | 'props' |
         'text' | 'selector' | 'children' |
-        'comp';
+        'comp' | 'react';
 }
 
-interface IEvent extends IElement {
+interface IEvent extends IBuilderParameter {
     type: 'event';
 }
 type IEventBuilder = ()=> IEvent;
 
-interface ICss extends IElement {
+interface ICss extends IBuilderParameter {
     type: 'css';
 }
 type ICssBuilder = ()=> ICss;

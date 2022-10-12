@@ -4,4 +4,4 @@
  * @Description: Coding something
  */
 
-import '../../src/index';
+import '../../src/main';

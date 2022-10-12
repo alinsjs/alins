@@ -4,10 +4,4 @@
  * @Description: Coding something
  */
 
-import main from '../../src/index';
-
-const win = (window as any);
-
-win.main = main;
-
-console.log(main.content);
+import '../../src/main';
