@@ -4,16 +4,73 @@
  * @Description: Coding something
  */
 
+import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
 
-export interface IReactItem {
-    set(v: any): void;
-    get(): any;
-    onchange(fn: (v:any, old:any) => void): void;
+export const subscribe = Symbol('subscribe_react');
+
+type TBaseTypes = number | boolean | string | null | undefined;
+type TReactTypes = TBaseTypes | IJson<TReactTypes> | TReactTypes[];
+
+export interface IReactItem<T = TBaseTypes> {
+    set(v: T): void;
+    get(): T extends object ? IReactObject<T> : T;
+    [subscribe](fn: (v:T, old:T) => void):  T;
 }
 
-export interface IReactData extends IReactItem {
+interface IReactJson<T, K = string> {
+    set(key: K, value: T): T;
+    get(key: K): T;
+    del(key: K): T;
+    toString(): string;
 }
+
+interface IReactArray<T> extends IReactJson<number> {
+    length: number;
+
+    pop(): T | undefined; // ! mod
+    push(...items: T[]): number; // ! mod
+    reverse(): T[]; // ! mod
+    shift(): T | undefined; // ! mod
+    unshift(...items: T[]): number; // ! mod
+    sort(compareFn?: (a: T, b: T) => number): this; // ! mod
+
+    concat(...items: ConcatArray<T>[]): T[];
+    concat(...items: (T | ConcatArray<T>)[]): T[];
+
+    join(separator?: string): string;
+
+    
+    slice(start?: number, end?: number): T[];
+
+    splice(start: number, end: number): number;
+    splice(start: number, deleteCount: number, ...items: T[]): T[];
+
+
+    indexOf(searchElement: T, fromIndex?: number): number;
+    lastIndexOf(searchElement: T, fromIndex?: number): number;
+    every<S extends T>(predicate: (value: T, index: number, array: T[]) => value is S, thisArg?: any): this is S[];
+    every(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): boolean;
+    
+    some(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): boolean;
+    forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void;
+    map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[];
+    filter<S extends T>(predicate: (value: T, index: number, array: T[]) => value is S, thisArg?: any): S[];
+    filter(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): T[];
+    reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T;
+    reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T;
+    reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
+    reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T;
+    reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T;
+    reduceRight<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
+}
+
+export type IReactObject<T> = {
+    [prop in (keyof T)]: IReactWrap<T[prop]>;
+} & IReactItem<T> &
+    T extends Array<any> ? IReactArray<T[keyof T]> : IReactJson<T[keyof T]>
+
+export type IReactWrap<T=TReactTypes> = T extends object ? IReactObject<T> : IReactItem<T>;
 
 export interface IReactBindingTemplate {
     template: string[], // TemplateStringsArray
@@ -29,8 +86,8 @@ export interface IReactBinding extends IReactBindingTemplate {
     context: IReactContext; // todo
 }
 export interface IReactBuilder extends IBuilderParameter {
-    exe(context: IReactContext): IReactBinding;
     type: 'react';
+    exe(context: IReactContext): IReactBinding;
 }
 
 function bindReactive ({
@@ -45,38 +102,115 @@ function bindReactive ({
         type: 'react'
     };
 }
+Array;
+export declare interface Ref<T = any> {
+    value: T;
+}
 
-function createReactive (data: any): IReactData {
+declare type UnwrapRefSimple<T> = T extends Function | Ref ? T : T extends Array<any> ? {
+    [K in keyof T]: UnwrapRefSimple<T[K]>;
+} : T extends object & {
+    ShallowReactiveMarker?: never;
+} ? {
+    [P in keyof T]: P extends symbol ? T[P] : UnwrapRef<T[P]>;
+} : T;
+export declare type UnwrapRef<T> = T extends Ref<infer V> ? V : T extends Ref<infer V> ? UnwrapRefSimple<V> : UnwrapRefSimple<T>;
+
+export declare function ref<T extends object>(value: T): [T] extends [Ref] ? T : Ref<UnwrapRef<T>>;
+
+export declare function ref<T>(value: T): Ref<UnwrapRef<T>>;
+
+export declare function ref<T = any>(): Ref<T | undefined>;
+
+function createReactive<T> (data: T): IReact
+
+function createReactive<T> (data: T): IReactWrap<T> {
     const type = typeof data;
-    if (type === 'number' || type === 'string' || type === 'boolean') {
+    if (type !== 'object' || data === null) {
         // 值类型
         const changeList: Function[] = [];
         return {
             get () {return data;},
             set (v: any) {
+                if (v === data) return;
+                data = v;
                 changeList.forEach(fn => {fn(v, data);});
             },
-            onchange (fn) {
+            [subscribe] (fn) {
                 changeList.push(fn);
+                return this.get();
             }
-        };
+        } as IReactWrap<T>;
     }
-    return data as IReactData; // todo
+    return createReactiveObject<T>(data); // todo
 }
+
+
 // 生成响应数据绑定
 export function react(ts: TemplateStringsArray, ...reactions: IReactItem[]): IReactBuilder;
 // 初始化响应数据
-export function react(data: any): IReactData;
+export function react<T>(data: T): IReactWrap<T>;
 
-export function react (data: TemplateStringsArray | any, ...reactions: IReactItem[]): IReactBuilder | IReactData {
-
+export function react<T> (data: TemplateStringsArray | T, ...reactions: IReactItem[]): IReactBuilder | IReactWrap<T> {
     // todo check is TemplateStringsArray
     if (data instanceof Array && (data as any).raw instanceof Array) {
         return bindReactive({
-            template: data,
+            template: data as unknown as string[],
             reactions,
         });
     } else {
-        return createReactive(data);
+        return createReactive<T>(data as T);
     }
 }
+
+function createReactiveObject<T> (data: T): IReactWrap<T> {
+    // use proxy
+
+    return data as IReactWrap<T>;
+}
+
+// function createProxy<T extends object> (data: T) {
+
+//     if (typeof data === 'object') {
+//         for (const key in data) {
+//             const value = data[key];
+//             if (typeof value === 'object' && value !== null) {
+//                 data[key] = createProxy(value);
+//             }
+//         }
+//     }
+    
+//     return new Proxy(data, {
+//         get (target, property, receiver) {
+//             if (!(Array.isArray(target) && (property === 'length' || typeof (target as any)[property] === 'function'))) {
+//                 console.log('Proxy.get', target, property, receiver);
+//             }
+//             return Reflect.get(target, property, receiver);
+//         },
+//         set (target, property, value, receiver) {
+//             if (typeof value === 'object') value = createProxy(value);
+//             const type = typeof (target as any)[property] === 'undefined' ? 'create' : 'modify';
+
+//             if (!(Array.isArray(target) && property === 'length')) {
+//                 console.log('Proxy.set', type, target, property, value);
+//             }
+//             return Reflect.set(target, property, value, receiver);
+//         },
+//         deleteProperty (target, property) {
+//             console.log('delete', {target, property});
+//             return Reflect.deleteProperty(target, property);
+//         }
+//     });
+    
+// }
+
+
+// const p = createProxy({
+//     a: 1,
+//     b: {b: 1},
+//     c: [1, 2],
+//     d: {d: [1, 2, 3]},
+//     e: [{e: 1}],
+// });
+// (window as any).createProxy = createProxy;
+// (window as any).p = p;

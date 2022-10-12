@@ -6,7 +6,6 @@
 
 import {IBuilderParameter} from '../core';
 import {createElement, IElementBuilder, IElementOptions} from '../element/transform';
-import {parseDomInfo} from '../parser/info-parser';
 import {IReactBuilder} from '../reactive/react';
 
 export type TBuilderArg = string | IBuilderParameter | IElementBuilder[];
@@ -22,13 +21,13 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         const item = data[i];
         if (typeof item === 'string') {
             // dom info
-            Object.assign(elementOptions, parseDomInfo(item));
+            elementOptions.domInfo = item;
         } else if (item instanceof Array) {
             // append children
             elementOptions.children = item;
         } else if (typeof item === 'object') {
             switch (item.type) {
-                case 'react': elementOptions.reaction = (item as IReactBuilder).exe({
+                case 'react': elementOptions.binding = (item as IReactBuilder).exe({
                     type: 'dom-info',
                 }); break;
             }

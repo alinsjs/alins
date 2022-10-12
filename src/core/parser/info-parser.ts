@@ -15,19 +15,21 @@ import {split} from '../utils';
  *  content: 'dsd'
  * }
  */
-interface InfoData {
-    className?: string;
+export interface IDomInfoData {
+    className?: string[];
     attributes?: IJson<string>;
     id?: string;
     textContent?: string;
 }
 
-type TInfoType = keyof InfoData;
+export type TInfoType = keyof IDomInfoData;
+
+export const InfoKeys = ['className', 'attributes', 'id', 'textContent'] as const;
 
 
-export function parseDomInfo (info: string): InfoData {
+export function parseDomInfo (info: string): IDomInfoData {
 
-    const result: InfoData = {};
+    const result: IDomInfoData = {};
 
     let scope: TInfoType | '' = '';
     let lastIndex = 0;
@@ -44,7 +46,8 @@ export function parseDomInfo (info: string): InfoData {
         const value = info.substring(lastIndex + 1, index);
         switch (scope) {
             case 'className': {
-                result.className = result.className ? `${result.className} ${value}` : value;
+                if (!result.className) result.className = [];
+                result.className.push(value);
             }; break;
             case 'id': result.id = value; break;
             case 'attributes': {

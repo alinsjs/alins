@@ -1,0 +1,220 @@
+{
+  "todotree": {
+    "tree": [
+      {
+        "key": 1665494147335,
+        "children": [],
+        "todo": {
+          "content": "总体设计",
+          "id": 1665494147335,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494041685,
+        "children": [],
+        "todo": {
+          "content": "emment风格解析",
+          "id": 1665494041685,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494115567,
+        "children": [],
+        "todo": {
+          "content": "单个元素渲染",
+          "id": 1665494115567,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494121067,
+        "children": [],
+        "todo": {
+          "content": "子元素渲染",
+          "id": 1665494121067,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494195217,
+        "children": [
+          {
+            "key": 1665564936729,
+            "children": [],
+            "todo": {
+              "content": "object 响应式",
+              "id": 1665564936729,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1665564946759,
+            "children": [],
+            "todo": {
+              "content": "数组响应式",
+              "id": 1665564946759,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1665564427802,
+            "children": [],
+            "todo": {
+              "content": "多个响应式数据源",
+              "id": 1665564427802,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1665564467963,
+            "children": [],
+            "todo": {
+              "content": "css 中支持响应式",
+              "id": 1665564467963,
+              "level": "warning",
+              "done": false
+            }
+          },
+          {
+            "key": 1665564502063,
+            "children": [],
+            "todo": {
+              "content": "控制器响应式支持",
+              "id": 1665564502063,
+              "level": "warning",
+              "done": false
+            }
+          }
+        ],
+        "todo": {
+          "content": "响应式数据",
+          "id": 1665494195217,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
+        "key": 1665494213348,
+        "children": [
+          {
+            "key": 1665564553848,
+            "children": [],
+            "todo": {
+              "content": "输入组件数据双向绑定 依赖控制器 bind",
+              "id": 1665564553848,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1665564619053,
+            "children": [],
+            "todo": {
+              "content": "for 循环控制器",
+              "id": 1665564619053,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1665564627795,
+            "children": [],
+            "todo": {
+              "content": "if 渲染绑定器",
+              "id": 1665564627795,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1665564636211,
+            "children": [],
+            "todo": {
+              "content": "show 显示控制器",
+              "id": 1665564636211,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1665564656160,
+            "children": [],
+            "todo": {
+              "content": "自定义控制器",
+              "id": 1665564656160,
+              "level": "warning",
+              "done": false
+            }
+          }
+        ],
+        "todo": {
+          "content": "控制器",
+          "id": 1665494213348,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
+        "key": 1665494169984,
+        "children": [],
+        "todo": {
+          "content": "组件",
+          "id": 1665494169984,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
+        "key": 1665494260180,
+        "children": [],
+        "todo": {
+          "content": "css in js",
+          "id": 1665494260180,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
+        "key": 1665564673720,
+        "children": [],
+        "todo": {
+          "content": "ts 声明全支持",
+          "id": 1665564673720,
+          "level": "warning",
+          "done": false
+        }
+      },
+      {
+        "key": 1665494269048,
+        "children": [],
+        "todo": {
+          "content": "路由",
+          "id": 1665494269048,
+          "level": "default",
+          "done": false
+        }
+      }
+    ],
+    "expandKeys": [
+      1665494041685,
+      1665494213348,
+      1665494269048,
+      1665494195217,
+      1665564936729
+    ],
+    "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
+    "add_mode": "bottom",
+    "virtual": false,
+    "showLine": false,
+    "playFontSize": 24
+  }
+}
