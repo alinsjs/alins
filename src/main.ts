@@ -7,17 +7,17 @@ import {mount} from './core/mount';
 import {div} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
 import {react} from './core/reactive/react';
- 
+
 const win = (window as any);
 
-const data = react('World');
-const datab = react('bb');
+const data = react('World') as any;
+const datab = react('bb') as any;
 
-// const object = react({
-//     a: 'xxx',
-// });
+const object = react({
+    a: 'xxx',
+});
 
-// win.object = object;
+win.object = object;
 
 mount('body',
     div('.aaa', react`#aa-${data}-aa.class-${data}[${data}=${datab}][a=${data}]:Hello ${data} ${datab}`, [
@@ -36,27 +36,59 @@ win.data = data;
 win.datab = datab;
 
 
-// function test<T=object> (data: T): IReactWrap<T> {
-
-//     return {} as IReactWrap<T>;
+// function test<T> (data: T): IReactWrap<T> {
+//     return data as IReactWrap<T>;
 // }
 
+// const a = test('str');
+// const b = test(11);
+// const c = test(true);
 // const d = test({
 //     x: {
-//         y: 1
+//         y: 1,
+//         z: 'z'
 //     }
 // });
 
-// const v1 = d.x.y;
+// d.get();
+// d.x.set({
+//     y: 2,
+//     z: 'z'
+// });
 
-// const ddd = test('1');
+// const e = test([{a: 12}, {a: 11}]);
 
-// const v = ddd.get();
+// const dd = d.x.get();
 
-// const num = d.x.y.get();
+// const value1 = e[0].get();
+// const v11 = value1.a;
+// const value2 = e[1].a.get(); // number;
 
-// const f = test([{a: 12}, {a: 11}, {a: 12}]);
-// const value1 = f[0].get();
-// const value2 = f[1].a.set();
+// const e1 = e[1];
 
-// f[1].a;
+// d.x.del();
+
+// const e11 = e1.a.get();
+
+// // fg.get(1);
+
+// const info: {
+//     num: number[],
+//     str: string[],
+//     bool: boolean[],
+// } = {
+//     num: [
+//         b.get(),
+//         d.x.y.get(),
+//     ],
+//     str: [
+//         a.get(),
+//     ],
+//     bool: [
+//         c.get(),
+//     ]
+// };
+
+// console.log(info);
+
+
