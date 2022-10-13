@@ -18,54 +18,64 @@ export interface IReactItem<T = any> {
     [subscribe](fn: (v:T, old:T) => void):  T;
 }
 
-export interface IReactObjectItem<T = any> extends IReactItem<T>{
-    del(): void;
+export interface IReactObjectItem<T = any, K = string>{
+    del(key: K): void;
+    get(key: K): T[keyof T];
+    set(key: K, value: T[keyof T]): void;
+    set(v: T): void;
+    get(): T;
+    // get(key: K): any;
+    // set(key: K, value: any): void;
+    // set(v: object): void;
+    // get(): object;
+    [subscribe](fn: (v:T, old:T) => void): T;
 }
 
-// interface IReactArray<T> extends IReactJson<number> {
-//     length: number;
+interface IReactArray<T> extends IReactObjectItem<T, number> {
 
-//     pop(): T | undefined; // ! mod
-//     push(...items: T[]): number; // ! mod
-//     reverse(): T[]; // ! mod
-//     shift(): T | undefined; // ! mod
-//     unshift(...items: T[]): number; // ! mod
-//     sort(compareFn?: (a: T, b: T) => number): this; // ! mod
+    length: number;
 
-//     concat(...items: ConcatArray<T>[]): T[];
-//     concat(...items: (T | ConcatArray<T>)[]): T[];
+    pop(): T | undefined; // ! mod
+    push(...items: T[]): number; // ! mod
+    reverse(): T[]; // ! mod
+    shift(): T | undefined; // ! mod
+    unshift(...items: T[]): number; // ! mod
+    sort(compareFn?: (a: T, b: T) => number): this; // ! mod
 
-//     join(separator?: string): string;
+    concat(...items: ConcatArray<T>[]): T[];
+    concat(...items: (T | ConcatArray<T>)[]): T[];
+
+    join(separator?: string): string;
 
     
-//     slice(start?: number, end?: number): T[];
+    slice(start?: number, end?: number): T[];
 
-//     splice(start: number, end: number): number;
-//     splice(start: number, deleteCount: number, ...items: T[]): T[];
+    splice(start: number, end: number): number;
+    splice(start: number, deleteCount: number, ...items: T[]): T[];
 
-
-//     indexOf(searchElement: T, fromIndex?: number): number;
-//     lastIndexOf(searchElement: T, fromIndex?: number): number;
-//     every<S extends T>(predicate: (value: T, index: number, array: T[]) => value is S, thisArg?: any): this is S[];
-//     every(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): boolean;
+    indexOf(searchElement: T, fromIndex?: number): number;
+    lastIndexOf(searchElement: T, fromIndex?: number): number;
+    every<S extends T>(predicate: (value: T, index: number, array: T[]) => value is S, thisArg?: any): this is S[];
+    every(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): boolean;
     
-//     some(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): boolean;
-//     forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void;
-//     map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[];
-//     filter<S extends T>(predicate: (value: T, index: number, array: T[]) => value is S, thisArg?: any): S[];
-//     filter(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): T[];
-//     reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T;
-//     reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T;
-//     reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
-//     reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T;
-//     reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T;
-//     reduceRight<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
-// }
-
+    some(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): boolean;
+    forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void;
+    map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[];
+    filter<S extends T>(predicate: (value: T, index: number, array: T[]) => value is S, thisArg?: any): S[];
+    filter(predicate: (value: T, index: number, array: T[]) => unknown, thisArg?: any): T[];
+    reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T;
+    reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T;
+    reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
+    reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T;
+    reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T;
+    reduceRight<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
+}
 
 export type IReactWrap<T> = T extends object ? ({
-    [prop in (keyof T)]: IReactWrap<T[prop]> & IReactObjectItem<T>;
-} & IReactItem<T>): IReactItem<T>;
+    [prop in (keyof T)]: IReactWrap<T[prop]>;
+} & (
+    T extends Array<any> ? IReactArray<T>: IReactObjectItem<T>
+)): IReactItem<T>;
 
 export interface IReactBindingTemplate {
     template: string[], // TemplateStringsArray
@@ -97,8 +107,9 @@ function bindReactive ({
         type: 'react'
     };
 }
-
-function createReactive<T> (data: T): IReactWrap<T> {
+// function createReactive<T extends object> (data: T): IReactWrap<T>;
+// function createReactive<T extends TBaseTypes> (data: T): IReactItem<T>;
+function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
     const type = typeof data;
     if (type !== 'object' || data === null) {
         // 值类型
@@ -114,16 +125,51 @@ function createReactive<T> (data: T): IReactWrap<T> {
                 changeList.push(fn);
                 return this.get();
             }
-        } as IReactWrap<T>;
+        } as IReactItem<T>;
     }
-    return createReactiveObject<T>(data); // todo
-}
+    for (const key in data) {
+        const value = data[key];
+        (data as any)[key] = createReactive(value);
+    }
 
-function createReactiveObject<T> (data: T): IReactWrap<T> {
-    // use proxy
-
+    reactiveObject(data);
+    
     return data as IReactWrap<T>;
 }
+
+function reactiveObject<T> (data: T) {
+    const changeList: Function[] = [];
+    const target = data as any;
+    Object.assign(target, {
+        get (k?: number|string) {
+            if (typeof k === 'undefined') return target;
+            return target[k];
+        },
+        set (v: any, value?: T) {
+            if (typeof value === 'undefined') {
+                if (v === data) return;
+                target = v;
+                changeList.forEach(fn => {fn(v, data);});
+            } else {
+                data[k];
+            }
+        },
+        del () {
+
+        },
+        [subscribe] (fn) {
+            changeList.push(fn);
+            return this.get();
+        }
+    } as IReactObjectItem<T>);
+}
+
+// function createReactiveObject<T> (data: T): IReactWrap<T> {
+//     // use proxy
+
+    
+//     return data as IReactWrap<T>;
+// }
 
 
 // 生成响应数据绑定
@@ -142,49 +188,3 @@ export function react<T> (data: TemplateStringsArray | T, ...reactions: IReactIt
         return createReactive<T>(data as T);
     }
 }
-
-// function createProxy<T extends object> (data: T) {
-
-//     if (typeof data === 'object') {
-//         for (const key in data) {
-//             const value = data[key];
-//             if (typeof value === 'object' && value !== null) {
-//                 data[key] = createProxy(value);
-//             }
-//         }
-//     }
-    
-//     return new Proxy(data, {
-//         get (target, property, receiver) {
-//             if (!(Array.isArray(target) && (property === 'length' || typeof (target as any)[property] === 'function'))) {
-//                 console.log('Proxy.get', target, property, receiver);
-//             }
-//             return Reflect.get(target, property, receiver);
-//         },
-//         set (target, property, value, receiver) {
-//             if (typeof value === 'object') value = createProxy(value);
-//             const type = typeof (target as any)[property] === 'undefined' ? 'create' : 'modify';
-
-//             if (!(Array.isArray(target) && property === 'length')) {
-//                 console.log('Proxy.set', type, target, property, value);
-//             }
-//             return Reflect.set(target, property, value, receiver);
-//         },
-//         deleteProperty (target, property) {
-//             console.log('delete', {target, property});
-//             return Reflect.deleteProperty(target, property);
-//         }
-//     });
-    
-// }
-
-
-// const p = createProxy({
-//     a: 1,
-//     b: {b: 1},
-//     c: [1, 2],
-//     d: {d: [1, 2, 3]},
-//     e: [{e: 1}],
-// });
-// (window as any).createProxy = createProxy;
-// (window as any).p = p;

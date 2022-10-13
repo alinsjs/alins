@@ -10,14 +10,34 @@ import {react} from './core/reactive/react';
 
 const win = (window as any);
 
-const data = react('World') as any;
-const datab = react('bb') as any;
+const data = react('World');
+const datab = react('bb');
 
 const object = react({
     a: 'xxx',
 });
+const object2 = react({
+    a: {
+        b: 'bbb'
+    },
+});
 
+object.a.get();
+object2.a.b.get();
+
+object2.set('a', <any>11);
+object.set(<any>{b: 'xx'});
+
+
+const array = react([1, 2, 3]);
+const array2 = react([{a: 1}, {a: 2}, {a: 3}]);
 win.object = object;
+win.object2 = object2;
+win.array = array;
+win.array2 = array2;
+
+array2[0].a;
+array2[4].a;
 
 mount('body',
     div('.aaa', react`#aa-${data}-aa.class-${data}[${data}=${datab}][a=${data}]:Hello ${data} ${datab}`, [
