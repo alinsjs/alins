@@ -27,7 +27,6 @@ export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
 function elementBuilder (tag: string, data: TBuilderArg[]) {
     const elementOptions: IElementOptions = {tag};
     for (let i = 0; i < data.length; i++) {
-        // console.log(i, data);
         const item = data[i];
         if (typeof item === 'string') {
             // dom info

@@ -17,11 +17,5 @@ export interface IForCallback<T=any> {
 }
 
 export const forController: IForController = function (this: IElementBuilder, list) {
-    // return (fn) => list.map((item, index) => this.call(null, ...fn(item, index)));
-    return (fn) => {
-        return list.map((item, index) => {
-            // this is domBuilder
-            return this.apply(null, fn(item, index));
-        });
-    };
+    return (fn) => list.map((item, index) => this.call(null, ...fn(item, index)));
 };

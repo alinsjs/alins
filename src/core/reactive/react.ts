@@ -78,14 +78,17 @@ export type IReactWrap<T> = T extends object ? ({
     T extends Array<any> ? IReactArray<T>: IReactObjectItem<T>
 )): IReactItem<T>;
 
+export interface IReactBindingTemplate {
+    template: string[], // TemplateStringsArray
+    reactions: IReactItem[],
+}
+
 // react上下文环境
 export interface IReactContext {
     type: 'dom-info',
 }; // todo
 
-export interface IReactBinding {
-    template: string[], // TemplateStringsArray
-    reactions: IReactItem[],
+export interface IReactBinding extends IReactBindingTemplate {
     context: IReactContext; // todo
 }
 export interface IReactBuilder extends IBuilderParameter {
@@ -93,6 +96,18 @@ export interface IReactBuilder extends IBuilderParameter {
     exe(context: IReactContext): IReactBinding;
 }
 
+function bindReactive ({
+    template,
+    reactions,
+}: IReactBindingTemplate): IReactBuilder {
+    return {
+        // todo 从div构建处传入上下文环境
+        exe (context: IReactContext) {
+            return {template, reactions, context}; // todo
+        },
+        type: 'react'
+    };
+}
 // function createReactive<T extends object> (data: T): IReactWrap<T>;
 // function createReactive<T extends TBaseTypes> (data: T): IReactItem<T>;
 function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
@@ -164,14 +179,10 @@ export function react<T> (
 ): IReactBuilder | IReactWrap<T> | IReactItem<T> {
     // todo check is TemplateStringsArray
     if (data instanceof Array && (data as any).raw instanceof Array) {
-        return {
-            // todo 从div构建处传入上下文环境
-            exe (context: IReactContext) {
-                const template = data as unknown as string[];
-                return {template, reactions, context};
-            },
-            type: 'react',
-        };
+        return bindReactive({
+            template: data as unknown as string[],
+            reactions,
+        });
     } else {
         return createReactive<T>(data as T);
     }
