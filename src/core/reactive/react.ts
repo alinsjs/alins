@@ -28,6 +28,7 @@ export interface IReactObjectItem<T = any, K = string>{
     // set(key: K, value: any): void;
     // set(v: object): void;
     // get(): object;
+    // destroy(): void todo 优化 destroy 旧对象的引用
     [subscribe](fn: (v:T, old:T) => void): T;
 }
 
@@ -77,17 +78,14 @@ export type IReactWrap<T> = T extends object ? ({
     T extends Array<any> ? IReactArray<T>: IReactObjectItem<T>
 )): IReactItem<T>;
 
-export interface IReactBindingTemplate {
-    template: string[], // TemplateStringsArray
-    reactions: IReactItem[],
-}
-
 // react上下文环境
 export interface IReactContext {
     type: 'dom-info',
 }; // todo
 
-export interface IReactBinding extends IReactBindingTemplate {
+export interface IReactBinding {
+    template: string[], // TemplateStringsArray
+    reactions: IReactItem[],
     context: IReactContext; // todo
 }
 export interface IReactBuilder extends IBuilderParameter {
@@ -95,18 +93,6 @@ export interface IReactBuilder extends IBuilderParameter {
     exe(context: IReactContext): IReactBinding;
 }
 
-function bindReactive ({
-    template,
-    reactions,
-}: IReactBindingTemplate): IReactBuilder {
-    return {
-        // todo 从div构建处传入上下文环境
-        exe (context: IReactContext) {
-            return {template, reactions, context}; // todo
-        },
-        type: 'react'
-    };
-}
 // function createReactive<T extends object> (data: T): IReactWrap<T>;
 // function createReactive<T extends TBaseTypes> (data: T): IReactItem<T>;
 function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
@@ -117,6 +103,7 @@ function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
         return {
             get () {return data;},
             set (v: any) {
+                if (v instanceof Array) v = v.join('\n');
                 if (v === data) return;
                 data = v;
                 changeList.forEach(fn => {fn(v, data);});
@@ -134,12 +121,12 @@ function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
 
     reactiveObject(data);
     
-    return data as IReactWrap<T>;
+    return data as any as IReactWrap<T>;
 }
 
 function reactiveObject<T> (data: T) {
     const changeList: Function[] = [];
-    const target = data as any;
+    let target = data as any;
     Object.assign(target, {
         get (k?: number|string) {
             if (typeof k === 'undefined') return target;
@@ -148,14 +135,16 @@ function reactiveObject<T> (data: T) {
         set (v: any, value?: T) {
             if (typeof value === 'undefined') {
                 if (v === data) return;
-                target = v;
+                // todo 优化 destory 旧对象的引用
+                target = createReactive(v);
+                // ! 连接新旧对象
                 changeList.forEach(fn => {fn(v, data);});
             } else {
-                data[k];
+                target[v].set(value);
             }
         },
-        del () {
-
+        del (k: number|string) {
+            delete target[k];
         },
         [subscribe] (fn) {
             changeList.push(fn);
@@ -164,26 +153,25 @@ function reactiveObject<T> (data: T) {
     } as IReactObjectItem<T>);
 }
 
-// function createReactiveObject<T> (data: T): IReactWrap<T> {
-//     // use proxy
-
-    
-//     return data as IReactWrap<T>;
-// }
-
-
 // 生成响应数据绑定
 export function react(ts: TemplateStringsArray, ...reactions: IReactItem[]): IReactBuilder;
 // 初始化响应数据
 export function react<T>(data: T): IReactWrap<T>;
 
-export function react<T> (data: TemplateStringsArray | T, ...reactions: IReactItem[]): IReactBuilder | IReactWrap<T> {
+export function react<T> (
+    data: TemplateStringsArray | T,
+    ...reactions: IReactItem[]
+): IReactBuilder | IReactWrap<T> | IReactItem<T> {
     // todo check is TemplateStringsArray
     if (data instanceof Array && (data as any).raw instanceof Array) {
-        return bindReactive({
-            template: data as unknown as string[],
-            reactions,
-        });
+        return {
+            // todo 从div构建处传入上下文环境
+            exe (context: IReactContext) {
+                const template = data as unknown as string[];
+                return {template, reactions, context};
+            },
+            type: 'react',
+        };
     } else {
         return createReactive<T>(data as T);
     }

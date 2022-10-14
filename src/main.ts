@@ -13,41 +13,106 @@ const win = (window as any);
 const data = react('World');
 const datab = react('bb');
 
-const object = react({
-    a: 'xxx',
+// const bool = react(true);
+
+// const object = react({
+//     a: 'xxx',
+// });
+// // const array = react([1, 2, 3]);
+// const array2 = react([{
+//     a: 'xxx',
+// }]);
+
+const array = [];
+for (let i = 0; i < 3; i++) {
+    array.push({
+        a: Math.random().toString()
+    });
+}
+const array3 = react(array);
+// const object2 = react({
+//     a: {
+//         b: 'bbb'
+//     },
+// });
+
+// object.a.get();
+// object2.a.b.get();
+
+// object2.set('a', <any>11);
+// object.set(<any>{b: 'xx'});
+
+
+// const array = react([1, 2, 3]);
+// const array2 = react([{a: 1}, {a: 2}, {a: 3}]);
+// win.object = object;
+// win.object2 = object2;
+// win.array = array;
+// win.array2 = array2;
+
+// array2[0].a;
+// array2[4].a;
+window.addEventListener('click', () => {
+    console.log(11);
+}),
+console.time('mounted');
+console.log('time start');
+
+const btn1 = document.createElement('button');
+btn1.innerText = 'update';
+btn1.onclick = () => {
+    console.time('updated');
+    array3.forEach(item => item.a.set(item.a.get() + 'xxx'));
+    console.timeEnd('updated');
+};
+document.body.appendChild(btn1);
+const btn2 = document.createElement('button');
+btn2.innerText = 'clear';
+btn2.onclick = () => {
+    document.body.innerHTML = '';
+};
+document.body.appendChild(btn2);
+window.addEventListener('click', () => {
+    console.log('click');
 });
-const object2 = react({
-    a: {
-        b: 'bbb'
-    },
+
+setTimeout(() => {
+    console.log('setTimeout');
+    console.timeLog('mounted');
+}, 0);
+window.addEventListener('load', () => {
+    console.log('load');
+    console.timeLog('mounted');
 });
-
-object.a.get();
-object2.a.b.get();
-
-object2.set('a', <any>11);
-object.set(<any>{b: 'xx'});
-
-
-const array = react([1, 2, 3]);
-const array2 = react([{a: 1}, {a: 2}, {a: 3}]);
-win.object = object;
-win.object2 = object2;
-win.array = array;
-win.array2 = array2;
-
-array2[0].a;
-array2[4].a;
-
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded');
+    console.timeLog('mounted');
+});
 mount('body',
-    div('.aaa', react`#aa-${data}-aa.class-${data}[${data}=${datab}][a=${data}]:Hello ${data} ${datab}`, [
-        div('.aaa:sds', [
-            div(react`.aaa:sa${data}dsa-`),
-            div('.aaa:sdfa')
-        ])
+    div('#app', [
+        div.for(array3)((item) => [react`:${item.a}`]),
     ])
 );
-
+// mount('body',
+//     div('.aaa', react`#a${object.a}-${data}-aa.class-${data}[${data}=${datab}][a=${data}]:Hello ${data} ${datab}`, [
+//         div('.aaa', react`:${array[0]}-${array2[0].a}`, [
+//             div(react`.aaa:sa${data}dsa-`),
+//             div('.aaa:sdfa')
+//         ]),
+//         div.for(array3)((item, index) => ['.aaa', react`:${item}-index`]),
+//         // div.if(bool)(`:data`)
+//     ])
+// );
+console.log(win.app.childElementCount);
+console.log(win.app.childNodes[win.app.childElementCount - 1]);
+console.log(win.app.childNodes[win.app.childElementCount - 1].innerText);
+console.log('mounted done');
+console.timeLog('mounted');
+win.update = () => {
+    console.time('updated');
+    array3.forEach(item => item.a.set(item.a.get() + 'xxx'));
+    console.timeEnd('updated');
+};
 // data.set('');
 
 // data.value;

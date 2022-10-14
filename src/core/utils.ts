@@ -16,3 +16,11 @@ export function join (array: string[], fn: string[] | ((index: number)=>string))
     }
     return str + array[array.length - 1];
 }
+
+export function delay (time = 0) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, time);
+    });
+}
