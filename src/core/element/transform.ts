@@ -46,6 +46,7 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     const config = builder();
     const dom = document.createElement(config.tag);
+    console.log('transformBuilderToDom', config);
     // if (!dom) dom = div.cloneNode() as HTMLElement;
 
     if (config.binding) { // todo 支持多个binding

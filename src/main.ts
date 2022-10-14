@@ -24,7 +24,7 @@ const datab = react('bb');
 // }]);
 
 const array = [];
-for (let i = 0; i < 30000; i++) {
+for (let i = 0; i < 3; i++) {
     array.push({
         a: Math.random().toString()
     });
