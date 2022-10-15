@@ -4,10 +4,11 @@
  * @Description: Coding something
  */
 import {mount} from './core/mount';
-import {div} from './core/builder/builder';
+import {div, TBuilderArg} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
 import {react} from './core/reactive/react';
-import {$for} from './core/controller/controller';
+import {$case, $for, $if, $switch, $while} from './core/controller/controller';
+import {IElementBuilder} from './core/element/transform';
 
 const win = (window as any);
 
@@ -97,18 +98,66 @@ window.addEventListener('DOMContentLoaded', () => {
     console.log('DOMContentLoaded');
     console.timeLog('mounted');
 });
+const fr = div.for(1 as any)(() => [react`.aa`]);
+
+const a: TBuilderArg[] = [
+    div(':aa'),
+    fr,
+];
+
 mount('body',
-    div('#app', [
-        div.for(array3)((item) => [[
-            div.for(item.a)((str) => [react`.aa:${str}`])
-        ]]),
-    ])
+    div('#app',
+        // ! 前置使缓存for变得简单
+        div.for(array3)((item, index) => [
+            '#aa',
+            div(':aa'),
+            div.for(item.a)((str, i) => [react`.aa:${str}-${index}-${i}`])
+        ]),
+        // div.for(array3)((item, index) => a),
+        // div.if()
+        //     .else(),
+        // div.switch(item)
+        //     .case(1)()
+        //     .case(2)()
+    )
 );
-div('#app', [
-    $for(array3, item => div([
-        
-    ]))
-]);
+
+
+console.log(a);
+
+div.for(array3)(a);
+// mount('body',
+//     div('#app', [
+//         $for(array3, (item, index) => div([
+//             $for(item.a, (str, i) => div(react`.aa:${str}-${index}-${i}`) )
+//         ])),
+//     ])
+// );
+
+
+// $for(array3, (item, index) => {
+//     return index.get() > 0 ? div([
+//         $for(item.a, (str, i) => div(react`.aa:${str}-${index}-${i}`) )
+//     ]) : div();
+// });
+
+
+// div('#app', [
+//     (() => {
+//         return 1 as any;
+//     })()
+// ]);
+
+// div('#app', [
+//     $if(array3.length === 1, div())
+//         .$elif()
+//         .else(),
+//     $switch(array3.length, {
+//         11: () => div(),
+//         [$case(11)]: () => div(),
+//         aa: () => div()
+//     })
+// ]);
 // const x: any = {};
 // div('#app', [
 //     $for(array3, item => div([

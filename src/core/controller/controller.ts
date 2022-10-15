@@ -18,3 +18,8 @@ export const controllers = {
 };
 
 export const $for = forController;
+export const $if = (() => 1) as any;
+export const $switch = (() => 1) as any;
+export const $while = (() => 1) as any;
+
+export const $case = (() => 1) as any;

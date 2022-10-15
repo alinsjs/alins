@@ -6,20 +6,61 @@
 
 import {TBuilderArg} from '../builder/builder';
 import {IElementBuilder} from '../element/transform';
-import {IReactWrap} from '../reactive/react';
+import {createReactive, IReactItem, IReactWrap} from '../reactive/react';
+
+// export interface IForController {
+//     <T>(
+//         list: IReactWrap<T>[],
+//         callback: (item: IReactWrap<T>, index: IReactItem<number>) => IElementBuilder
+//     ): IElementBuilder[];
+// }
+
+// export interface IForCallback<T=any> {
+//     (item: IReactWrap<T>, index?: number): TBuilderArg[];
+// }
+
+// export const forController: IForController = (list, callback) => {
+//     // todo reactive index
+//     console.log('forController', list);
+//     const builders: IElementBuilder[] = [];
+//     for (let i = 0; i < list.length; i++) {
+//         console.log('forController', i, list[i]);
+//         const indexReactive = createReactive(i);
+//         list[i].$index = indexReactive;
+//         const builder = callback(list[i], indexReactive);
+//         builders.push(builder);
+//     }
+
+//     return builders;
+// };
+
 
 export interface IForController {
-    <T>(list: IReactWrap<T>[]): ((fn: IForCallback<T>) => IElementBuilder[]);
+    <T>(list: IReactWrap<T>[]):
+        ((fn: IForCallback<T>) => IElementBuilder[]);
 }
 
 export interface IForCallback<T=any> {
-    (item: IReactWrap<T>, index?: number): TBuilderArg[];
+    (item: IReactWrap<T>, index: IReactItem<number>): TBuilderArg[];
 }
 
 export const forController: IForController = function (this: IElementBuilder, list) {
-    return (fn) => {
-        return list.map((item, index) => {
-            return this.call(null, ...fn(item, index));
-        });
+    // return (fn) => list.map((item, index) => this.call(null, ...fn(item, index)));
+    return (callback) => {
+        const builders: IElementBuilder[] = [];
+        for (let i = 0; i < list.length; i++) {
+            console.log('forController', i, list[i]);
+            const indexReactive = createReactive(i);
+            list[i].$index = indexReactive;
+            const builder = callback(list[i], indexReactive);
+            builders.push(this.apply(null, builder));
+        }
+
+        return builders;
+
+        // return list.map((item, index) => {
+        //     // this is domBuilder
+        //     return this.apply(null, fn(item, index));
+        // });
     };
 };

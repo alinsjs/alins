@@ -5,6 +5,7 @@
  */
 
 import {IJson} from '../common';
+import {IBuilderParameter} from '../core';
 import {createFuncProcessMemo, Memo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
 import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
@@ -23,8 +24,9 @@ export interface IElement {
     domInfo?: string;
 }
 
-export interface IElementBuilder {
-  (): IElement;
+export interface IElementBuilder extends IBuilderParameter {
+    type: 'builder'; // todo comp
+    exe(): IElement;
 }
 
 export interface IComponentElement {
@@ -51,8 +53,9 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 // const div = document.createElement('div');
 
 export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
-    console.log('transformBuilderToDom');
-    const config = builder();
+    const config = builder.exe(); // ! 关键代码 执行builder
+    console.log('transformBuilderToDom', config);
+
     // Memo.funcProcInstance?.add((builder: IElementBuilder) => builder());
 
     // Memo.funcProcInstance?.add();
@@ -68,12 +71,12 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
                 const domInfo = applyDomInfoReaction(dom, config.binding);
                 mergeDomInfo(config, domInfo);
                 // ! binding 执行
-                Memo.funcProcInstance?.map.push((builder: IElementBuilder) => {
-                    const {binding} = builder();
-                    const newDom = Memo.funcProcInstance?.scope[0];
-                    applyDomInfoReaction(newDom, binding as IReactBinding);
-                    return newDom;
-                });
+                // Memo.funcProcInstance?.map.push((builder: IElementBuilder) => {
+                //     const {binding} = builder();
+                //     const newDom = Memo.funcProcInstance?.scope[0];
+                //     applyDomInfoReaction(newDom, binding as IReactBinding);
+                //     return newDom;
+                // });
             }; break;
             // todo other binding types
         }
@@ -96,10 +99,11 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
             if (item instanceof Array) {
                 // const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
                 const frag = document.createDocumentFragment();
-                for (const deepItem of item) {
-                    frag.appendChild(transformBuilderToDom(deepItem));
-                    // const memoDom = memo.exe(deepItem);
-                    // frag.appendChild(memoDom || transformBuilderToDom(deepItem));
+                for (const child of item) {
+                    // ! 关键代码 根据build解析dom 渲染到父元素
+                    frag.appendChild(transformBuilderToDom(child));
+                    // const memoDom = memo.exe(child);
+                    // frag.appendChild(memoDom || transformBuilderToDom(child));
                 }
                 // memo.destory();
                 dom.appendChild(frag);

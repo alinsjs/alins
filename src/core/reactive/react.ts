@@ -13,12 +13,14 @@ export const subscribe = Symbol('subscribe_react');
 // type TReactTypes = TBaseTypes | IJson<TReactTypes> | TReactTypes[];
 
 export interface IReactItem<T = any> {
+    $index?: IReactItem<number>;
     set(v: T): void;
     get(): T;
     [subscribe](fn: (v:T, old:T) => void):  T;
 }
 
 export interface IReactObjectItem<T = any, K = string>{
+    $index?: IReactItem<number>;
     del(key: K): void;
     get(key: K): T[keyof T];
     set(key: K, value: T[keyof T]): void;
@@ -100,6 +102,7 @@ function bindReactive ({
     template,
     reactions,
 }: IReactBindingTemplate): IReactBuilder {
+    console.log('bindReactive', template, reactions);
     return {
         // todo 从div构建处传入上下文环境
         exe (context: IReactContext) {
@@ -110,7 +113,7 @@ function bindReactive ({
 }
 // function createReactive<T extends object> (data: T): IReactWrap<T>;
 // function createReactive<T extends TBaseTypes> (data: T): IReactItem<T>;
-function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
+export function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
     const type = typeof data;
     if (type !== 'object' || data === null) {
         // 值类型
