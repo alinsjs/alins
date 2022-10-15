@@ -29,7 +29,7 @@ export function createFuncProcessMemo<
         add (fn: Function) {
             map.push(fn);
         },
-
+ 
         exe (...args: Parameters<F>): ReturnType<F> {
             console.log(args);
             let result = args as any;

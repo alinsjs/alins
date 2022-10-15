@@ -47,7 +47,7 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
     if (domInfo.id) config.id = domInfo.id;
     if (domInfo.textContent) config.textContent += domInfo.textContent;
 }
-
+ 
 // const div = document.createElement('div');
 
 export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
