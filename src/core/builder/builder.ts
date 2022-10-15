@@ -32,7 +32,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
             elementOptions.domInfo = item;
         } else if (item instanceof Array) {
             // append children
-            elementOptions.children.push(...item);
+            elementOptions.children.push(item);
         } else if (typeof item === 'object') {
             switch (item.type) {
                 case 'react': elementOptions.binding = item.exe({

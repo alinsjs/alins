@@ -98,20 +98,16 @@ window.addEventListener('DOMContentLoaded', () => {
     console.log('DOMContentLoaded');
     console.timeLog('mounted');
 });
-const fr = div.for(1 as any)(() => [react`.aa`]);
-
-const a: TBuilderArg[] = [
-    div(':aa'),
-    fr,
-];
 
 mount('body',
-    div('#app',
+    div('.x0#app',
         // ! 前置使缓存for变得简单
         div.for(array3)((item, index) => [
-            '#aa',
-            div(':aa'),
-            div.for(item.a)((str, i) => [react`.aa:${str}-${index}-${i}`])
+            '.x1',
+            div('.x2'),
+            div.for(item.a)((str, i) => [
+                react`.x3:${str}-${index}-${i}`
+            ])
         ]),
         // div.for(array3)((item, index) => a),
         // div.if()
@@ -121,11 +117,6 @@ mount('body',
         //     .case(2)()
     )
 );
-
-
-console.log(a);
-
-div.for(array3)(a);
 // mount('body',
 //     div('#app', [
 //         $for(array3, (item, index) => div([

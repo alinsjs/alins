@@ -6,7 +6,7 @@
 
 import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
-import {createFuncProcessMemo, Memo} from '../memorize/memorize';
+import {createFuncProcessMemo, TFPMemo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
 import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
 import {createReplacement, extractReplacement, parseReplacementToNumber, reactiveTemplate, ReplaceExp} from '../reactive/binding';
@@ -51,10 +51,10 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 }
  
 // const div = document.createElement('div');
-
-export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
+const i = 0;
+export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo): HTMLElement {
     const config = builder.exe(); // ! 关键代码 执行builder
-    console.log('transformBuilderToDom', config);
+    console.log('transformBuilderToDom', config, config.domInfo);
 
     // Memo.funcProcInstance?.add((builder: IElementBuilder) => builder());
 
@@ -71,12 +71,12 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
                 const domInfo = applyDomInfoReaction(dom, config.binding);
                 mergeDomInfo(config, domInfo);
                 // ! binding 执行
-                // Memo.funcProcInstance?.map.push((builder: IElementBuilder) => {
-                //     const {binding} = builder();
-                //     const newDom = Memo.funcProcInstance?.scope[0];
-                //     applyDomInfoReaction(newDom, binding as IReactBinding);
-                //     return newDom;
-                // });
+                memo?.map.push((builder: IElementBuilder) => {
+                    const {binding} = builder.exe();
+                    const newDom = memo?.last;
+                    applyDomInfoReaction(newDom, binding as IReactBinding);
+                    return newDom;
+                });
             }; break;
             // todo other binding types
         }
@@ -94,31 +94,62 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.id) dom.id = config.id;
 
 
-    if (config.children) {
+    if (config.children && config.children.length > 0) {
         for (const item of config.children) {
             if (item instanceof Array) {
-                // const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
+                const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
+                // (memo as any).name = i++;
+                // debugger;
                 const frag = document.createDocumentFragment();
                 for (const child of item) {
                     // ! 关键代码 根据build解析dom 渲染到父元素
-                    frag.appendChild(transformBuilderToDom(child));
-                    // const memoDom = memo.exe(child);
-                    // frag.appendChild(memoDom || transformBuilderToDom(child));
+                    // frag.appendChild(transformBuilderToDom(child));
+                    const memoDom = memo.exe(child);
+                    frag.appendChild(memoDom || transformBuilderToDom(child, memo));
                 }
-                // memo.destory();
+                memo.destory();
                 dom.appendChild(frag);
                 // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
             } else {
                 dom.appendChild(transformBuilderToDom(item));
             }
         }
+
+        memo?.map.push((builder: IElementBuilder) => {
+            // todo 优化此部分逻辑
+            // ? 是否可以根据div标记来缓存
+            const dom = memo?.last;
+            const {children} = builder.exe();
+            for (const item of (children as (IElementBuilder | IElementBuilder[])[])) {
+                if (item instanceof Array) {
+                    const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
+                    // (memo as any).name = i++;
+                    // debugger;
+                    const frag = document.createDocumentFragment();
+                    for (const child of item) {
+                    // ! 关键代码 根据build解析dom 渲染到父元素
+                    // frag.appendChild(transformBuilderToDom(child));
+                        const memoDom = memo.exe(child);
+                        frag.appendChild(memoDom || transformBuilderToDom(child, memo));
+                    }
+                    memo.destory();
+                    dom.appendChild(frag);
+                // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
+                } else {
+                    dom.appendChild(transformBuilderToDom(item));
+                }
+            }
+            return dom;
+        });
     }
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
-    // Memo.funcProcInstance?.map.unshift(() => {
-    //     console.log('cloneNoe');
-    //     return dom.cloneNode();
-    // });
+    // console.log((Memo.funcProcInstance as any).name);
+    // debugger;
+    memo?.map.unshift(() => {
+        console.log('cloneNoe');
+        return dom.cloneNode();
+    });
     return dom;
 }
 
