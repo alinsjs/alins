@@ -7,6 +7,7 @@ import {mount} from './core/mount';
 import {div} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
 import {react} from './core/reactive/react';
+import {$for} from './core/controller/controller';
 
 const win = (window as any);
 
@@ -24,12 +25,16 @@ const datab = react('bb');
 // }]);
 
 const array = [];
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 2; i++) {
     array.push({
-        a: Math.random().toString()
+        a: [
+            'a' + Math.random().toString(),
+            'a' + Math.random().toString(),
+        ]
     });
 }
 const array3 = react(array);
+
 // const object2 = react({
 //     a: {
 //         b: 'bbb'
@@ -62,7 +67,11 @@ const btn1 = document.createElement('button');
 btn1.innerText = 'update';
 btn1.onclick = () => {
     console.time('updated');
-    array3.forEach(item => item.a.set(item.a.get() + 'xxx'));
+    array3.forEach(item => {
+        item.a.forEach(i2 => {
+            i2.set(i2.get() + 'xxx');
+        });
+    });
     console.timeEnd('updated');
 };
 document.body.appendChild(btn1);
@@ -90,9 +99,25 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 mount('body',
     div('#app', [
-        div.for(array3)((item) => [react`.aa:${item.a}`]),
+        div.for(array3)((item) => [[
+            div.for(item.a)((str) => [react`.aa:${str}`])
+        ]]),
     ])
 );
+div('#app', [
+    $for(array3, item => div([
+        
+    ]))
+]);
+// const x: any = {};
+// div('#app', [
+//     $for(array3, item => div([
+//         $if(item.a, div(react`.aa:${str}`)
+//             .$elif()
+//             .else(),
+        
+//     ]))
+// ]);
 // mount('body',
 //     div('.aaa', react`#a${object.a}-${data}-aa.class-${data}[${data}=${datab}][a=${data}]:Hello ${data} ${datab}`, [
 //         div('.aaa', react`:${array[0]}-${array2[0].a}`, [
@@ -108,11 +133,6 @@ console.log(win.app.childNodes[win.app.childElementCount - 1]);
 console.log(win.app.childNodes[win.app.childElementCount - 1].innerText);
 console.log('mounted done');
 console.timeLog('mounted');
-win.update = () => {
-    console.time('updated');
-    array3.forEach(item => item.a.set(item.a.get() + 'xxx'));
-    console.timeEnd('updated');
-};
 // data.set('');
 
 // data.value;

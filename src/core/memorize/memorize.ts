@@ -25,23 +25,22 @@ export function createFuncProcessMemo<
     
     let map: Function[] = [];
 
-    const instance = {
-        add (fn: Function) {
-            map.push(fn);
-        },
- 
-        exe (...args: Parameters<F>): ReturnType<F> {
-            console.log(args);
-            let result = args as any;
-            for (let i = 0; i < map.length; i++) {
-                result = map[i](...args) as any;
-            }
-            return result as ReturnType<F>;
-        },
+    let scope: any[] = [];
 
+    const instance = {
+        map,
+        scope,
+        exe (args: any): ReturnType<F> | null {
+            scope.length = 0;
+            for (let i = 0; i < map.length; i++) {
+                scope[i] = map[i](args) as any;
+            }
+            return scope[scope.length - 1] as ReturnType<F>;
+        },
         destory () {
             (map as any) = null;
             Memo.funcProcInstance = null;
+            (scope as any) = null;
         }
     };
     Memo.funcProcInstance = instance;

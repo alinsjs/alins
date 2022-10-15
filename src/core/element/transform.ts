@@ -51,6 +51,7 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 // const div = document.createElement('div');
 
 export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
+    console.log('transformBuilderToDom');
     const config = builder();
     // Memo.funcProcInstance?.add((builder: IElementBuilder) => builder());
 
@@ -66,6 +67,13 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
                 // 提取表达式中没有binding的属性 merge到config中
                 const domInfo = applyDomInfoReaction(dom, config.binding);
                 mergeDomInfo(config, domInfo);
+                // ! binding 执行
+                Memo.funcProcInstance?.map.push((builder: IElementBuilder) => {
+                    const {binding} = builder();
+                    const newDom = Memo.funcProcInstance?.scope[0];
+                    applyDomInfoReaction(newDom, binding as IReactBinding);
+                    return newDom;
+                });
             }; break;
             // todo other binding types
         }
@@ -89,8 +97,9 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
                 // const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
                 const frag = document.createDocumentFragment();
                 for (const deepItem of item) {
-                    // frag.appendChild(memo?.exe(deepItem) || transformBuilderToDom(deepItem));
                     frag.appendChild(transformBuilderToDom(deepItem));
+                    // const memoDom = memo.exe(deepItem);
+                    // frag.appendChild(memoDom || transformBuilderToDom(deepItem));
                 }
                 // memo.destory();
                 dom.appendChild(frag);
@@ -100,7 +109,12 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
             }
         }
     }
-    // console.log('dom done', dom.children.length);
+    // // console.log('dom done', dom.children.length);
+    // // ! 缓存节点 直接clone使用 可以提升性能
+    // Memo.funcProcInstance?.map.unshift(() => {
+    //     console.log('cloneNoe');
+    //     return dom.cloneNode();
+    // });
     return dom;
 }
 

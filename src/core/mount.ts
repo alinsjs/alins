@@ -10,6 +10,7 @@ export function mount (container: string, builder: IElementBuilder) {
     // const dom = document.createElement('div');
     // document.querySelector(container)?.appendChild(dom);
     // transformBuilderToDom(builder, dom);
+    // debugger;
     document.querySelector(container)?.appendChild(
         transformBuilderToDom(builder),
     );

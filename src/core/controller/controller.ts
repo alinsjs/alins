@@ -16,3 +16,5 @@ export interface IControllerBuilder {
 export const controllers = {
     for: forController
 };
+
+export const $for = forController;
