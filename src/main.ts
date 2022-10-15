@@ -26,11 +26,14 @@ const datab = react('bb');
 // }]);
 
 const array = [];
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 3; i++) {
     array.push({
         a: [
-            'a' + Math.random().toString(),
-            'a' + Math.random().toString(),
+            ['a1' + Math.random().toString(), 'a2' + Math.random().toString()],
+            ['b1' + Math.random().toString(), 'b2' + Math.random().toString()],
+            ['c1' + Math.random().toString(), 'c2' + Math.random().toString()],
+            // 'b' + Math.random().toString(),
+            // 'c' + Math.random().toString(),
         ]
     });
 }
@@ -70,7 +73,9 @@ btn1.onclick = () => {
     console.time('updated');
     array3.forEach(item => {
         item.a.forEach(i2 => {
-            i2.set(i2.get() + 'xxx');
+            i2.forEach(i3 => {
+                i3.set(i3.get() + 'xxx');
+            });
         });
     });
     console.timeEnd('updated');
@@ -106,7 +111,9 @@ mount('body',
             '.x1',
             div('.x2'),
             div.for(item.a)((str, i) => [
-                react`.x3:${str}-${index}-${i}`
+                div.for(str)((a, ii) => [
+                    react`.x3:${a}-${index}-${i}-${ii}`
+                ])
             ])
         ]),
         // div.for(array3)((item, index) => a),

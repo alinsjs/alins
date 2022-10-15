@@ -51,7 +51,6 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 }
  
 // const div = document.createElement('div');
-const i = 0;
 export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo): HTMLElement {
     const config = builder.exe(); // ! 关键代码 执行builder
     console.log('transformBuilderToDom', config, config.domInfo);
@@ -147,7 +146,7 @@ export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo)
     // console.log((Memo.funcProcInstance as any).name);
     // debugger;
     memo?.map.unshift(() => {
-        console.log('cloneNoe');
+        console.log('cloneNoe', dom.className);
         return dom.cloneNode();
     });
     return dom;
