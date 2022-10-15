@@ -90,7 +90,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 mount('body',
     div('#app', [
-        div.for(array3)((item) => [react`:${item.a}`]),
+        div.for(array3)((item) => [react`.aa:${item.a}`]),
     ])
 );
 // mount('body',

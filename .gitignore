@@ -6,3 +6,4 @@ node_modules
 bundle.js
 bundle.js.map
 /docs
+.DS_Store

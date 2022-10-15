@@ -5,6 +5,7 @@
  */
 
 import {IJson} from '../common';
+import {createFuncProcessMemo, Memo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
 import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
 import {createReplacement, extractReplacement, parseReplacementToNumber, reactiveTemplate, ReplaceExp} from '../reactive/binding';
@@ -31,24 +32,33 @@ export interface IComponentElement {
 }
 
 function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
-    // merge instead of assign
-    InfoKeys.forEach(key => {
-        if (!domInfo[key]) return;
-        if (typeof config[key] === 'string') (config[key] as string) += domInfo[key];
-        else if (config[key] instanceof Array)
-            (config[key] as string[]).push(...(domInfo[key] as string[]));
-        else if (typeof config[key] === 'object') Object.assign(config[key], domInfo[key]);
-    });
+    // // merge instead of assign
+    // InfoKeys.forEach(key => {
+    //     if (!domInfo[key]) return;
+    //     if (typeof domInfo[key] === 'string') (config[key] as string) += domInfo[key];
+    //     else if (domInfo[key] instanceof Array)
+    //         (config[key] as string[]).push(...(domInfo[key] as string[]));
+    //     else if (typeof domInfo[key] === 'object') Object.assign(config[key], domInfo[key]);
+    // });
+
+    // 优化性能
+    if (domInfo.className) config.className.push(...domInfo.className);
+    if (domInfo.attributes) Object.assign(config.attributes, domInfo.attributes);
+    if (domInfo.id) config.id = domInfo.id;
+    if (domInfo.textContent) config.textContent += domInfo.textContent;
 }
 
 // const div = document.createElement('div');
 
 export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     const config = builder();
-    const dom = document.createElement(config.tag);
-    console.log('transformBuilderToDom', config);
-    // if (!dom) dom = div.cloneNode() as HTMLElement;
+    // Memo.funcProcInstance?.add((builder: IElementBuilder) => builder());
 
+    // Memo.funcProcInstance?.add();
+    const dom = document.createElement(config.tag);
+    // console.log('transformBuilderToDom', config);
+    // if (!dom) dom = div.cloneNode() as HTMLElement;
+    // debugger;
     if (config.binding) { // todo 支持多个binding
         const {context} = config.binding;
         switch (context.type) {
@@ -76,10 +86,13 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.children) {
         for (const item of config.children) {
             if (item instanceof Array) {
+                // const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
                 const frag = document.createDocumentFragment();
                 for (const deepItem of item) {
+                    // frag.appendChild(memo?.exe(deepItem) || transformBuilderToDom(deepItem));
                     frag.appendChild(transformBuilderToDom(deepItem));
                 }
+                // memo.destory();
                 dom.appendChild(frag);
                 // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
             } else {
