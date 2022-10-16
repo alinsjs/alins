@@ -27,8 +27,9 @@ export type TInfoType = keyof IDomInfoData;
 export const InfoKeys = ['className', 'attributes', 'id', 'textContent'] as const;
 
 
+window.parseCount = 0;
 export function parseDomInfo (info: string): IDomInfoData {
-
+    window.parseCount++;
     const result: IDomInfoData = {};
 
     let scope: TInfoType | '' = '';

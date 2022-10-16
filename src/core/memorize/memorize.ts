@@ -18,8 +18,10 @@ export function createFuncProcessMemo<
     let scope: any[] = [];
 
     let instance = {
-        map,
-        scope,
+        add (fn: Function) {
+            map.push(fn);
+        },
+        scope (i: number) {return scope[i];},
         last: null as any,
         exe (args: any): ReturnType<F> | null {
             if (map.length === 0) return null;

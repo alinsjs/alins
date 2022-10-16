@@ -49,17 +49,35 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
     if (domInfo.id) config.id = domInfo.id;
     if (domInfo.textContent) config.textContent += domInfo.textContent;
 }
+
+const map: Map<string, TFPMemo> = new Map();
+let cloneNodeCount = 0;
+let cloneNodeCountNo = 0;
  
 // const div = document.createElement('div');
-export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo): HTMLElement {
+export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     const config = builder.exe(); // ! 关键代码 执行builder
-    console.count('transformBuilderToDomCount');
-    console.log('transformBuilderToDom', config, config.domInfo);
+    // console.count('transformBuilderToDomCount');
 
-    // Memo.funcProcInstance?.add((builder: IElementBuilder) => builder());
+    const str = JSON.stringify(config);
+    let memo = map.get(str);
+    if (memo) {
+        cloneNodeCount++;
+        // console.count('cloneNode');
+        const dom = memo.exe(config);
+        return dom;
+    }
+    cloneNodeCountNo++;
 
-    // Memo.funcProcInstance?.add();
+    memo = createFuncProcessMemo<typeof transformBuilderToDom>();
+    map.set(str, memo);
+
+    // console.log('transformBuilderToDom', builder, config, config.domInfo);
+    // console.warn('transformBuilderToDom', JSON.stringify(config));
+
     const dom = document.createElement(config.tag);
+
+    memo.add(() => dom.cloneNode());
     // console.log('transformBuilderToDom', config);
     // if (!dom) dom = div.cloneNode() as HTMLElement;
     // debugger;
@@ -68,15 +86,10 @@ export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo)
         switch (context.type) {
             case 'dom-info': {
                 // 提取表达式中没有binding的属性 merge到config中
-                const domInfo = applyDomInfoReaction(dom, config.binding);
+                const domInfo = applyDomInfoReaction(dom, config.binding, memo);
                 mergeDomInfo(config, domInfo);
                 // ! binding 执行
-                memo?.map.push((builder: IElementBuilder) => {
-                    const {binding} = builder.exe();
-                    const newDom = memo?.last;
-                    applyDomInfoReaction(newDom, binding as IReactBinding);
-                    return newDom;
-                });
+                
             }; break;
             // todo other binding types
         }
@@ -84,7 +97,14 @@ export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo)
     
     if (config.domInfo) mergeDomInfo(config, parseDomInfo(config.domInfo));
 
-    if (config.textContent) dom.innerText = config.textContent;
+    if (config.textContent) {
+        dom.innerText = config.textContent;
+        memo.add(() => {
+            const dom = (memo?.last);
+            dom.innerText = config.textContent;
+            return dom;
+        });
+    }
     if (config.className.length > 0) dom.className = config.className.join(' ');
     if (config.attributes) {
         for (const k in config.attributes) {
@@ -97,11 +117,11 @@ export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo)
     if (config.children && config.children.length > 0) {
         mountChildrenDoms(dom, config.children);
 
-        memo?.map.push((builder: IElementBuilder) => {
+        memo.add((config: IElement) => {
             // todo 优化此部分逻辑
             // ? 是否可以根据div标记来缓存 可以最大化缓存数量
             const dom = memo?.last;
-            mountChildrenDoms(dom, builder.exe().children || []);
+            mountChildrenDoms(dom, config.children || []);
             return dom;
         });
     }
@@ -109,44 +129,29 @@ export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo)
     // // ! 缓存节点 直接clone使用 可以提升性能
     // console.log((Memo.funcProcInstance as any).name);
     // debugger;
-    memo?.map.unshift(() => {
-        console.log('cloneNode', dom.className, ++cloneNodeCount);
-        return dom.cloneNode();
-    });
     return dom;
 }
-let cloneNodeCount = 0;
 
 function mountChildrenDoms (dom: HTMLElement, children: (IElementBuilder | IElementBuilder[])[]) {
     for (const item of children) {
         if (item instanceof Array) {
-            const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
             // (memo as any).name = i++;
             // debugger;
             const frag = document.createDocumentFragment();
             for (const child of item) {
-            // ! 关键代码 根据build解析dom 渲染到父元素
-            // frag.appendChild(transformBuilderToDom(child));
-                const memoDom = memo.exe(child);
-                if (memoDom) {
-                    console.count('use_memo_success');
-                    frag.appendChild(memoDom);
-                } else {
-                    console.count('use_memo_fail');
-                    frag.appendChild(transformBuilderToDom(child, memo));
-                }
+                // ! 关键代码 根据build解析dom 渲染到父元素
+                frag.appendChild(transformBuilderToDom(child));
             }
-            memo.destory();
             dom.appendChild(frag);
         // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
         } else {
-            console.count('use_memo_no');
+            // console.count('use_memo_no');
             dom.appendChild(transformBuilderToDom(item));
         }
     }
 }
 
-function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomInfoData {
+function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: TFPMemo): IDomInfoData {
     const {template, reactions} = binding;
     const replacement = join(template, createReplacement);
     // const
@@ -170,6 +175,17 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
                     reaction[subscribe]((v) => {node.textContent = v;})
                 );
                 dom.appendChild(node);
+                memo.add((config: IElement) => {
+                    const {reactions} = config.binding as any;
+                    const newDom = memo?.last;
+                    const reaction = reactions[index];
+                    // ! 关键代码
+                    const node = document.createTextNode(
+                        reaction[subscribe]((v: any) => {node.textContent = v;})
+                    );
+                    newDom.appendChild(node);
+                    return newDom;
+                });
             });
         } else {
             data.textContent = textContent;

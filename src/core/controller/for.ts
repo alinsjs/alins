@@ -46,23 +46,25 @@ export interface IForCallback<T=any> {
 
 export const forController: IForController = function (this: IBuilderConstructor, list) {
     // return (fn) => list.map((item, index) => this.call(null, ...fn(item, index)));
-    console.count('forController');
-    console.log('forController', list);
+    // console.count('forController');
+    // console.log('forController', list);
     return (callback) => {
         const builders: IElementBuilder[] = [];
-        for (let i = 0; i < list.length; i++) {
+        // ! 性能优化 检测到没有index引用就不创建 indexReactive
+        const makeBuilder = (callback.length === 2) ? (i: number) => {
             const indexReactive = createReactive(i);
             list[i].$index = indexReactive;
-            const builder = callback(list[i], indexReactive);
-            // builder.unshift();
+            return callback(list[i], indexReactive);
+        } : (i: number) => {
+            return callback(list[i], undefined as any);
+        };
+        // console.log('callback_tostring', callback.toString());
+        for (let i = 0; i < list.length; i++) {
+            const builder = makeBuilder(i);
+            // builder.unshift(num);
+            // console.log('forController_builder', i, builder);
             builders.push(this.apply(null, builder));
         }
-
         return builders;
-
-        // return list.map((item, index) => {
-        //     // this is domBuilder
-        //     return this.apply(null, fn(item, index));
-        // });
     };
 };

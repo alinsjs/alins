@@ -24,3 +24,8 @@ export function delay (time = 0) {
         }, time);
     });
 }
+
+const FuncArgExp = /\(.*?\)/;
+export function getFuncArgs (fn: Function) {
+    return fn.toString().match(FuncArgExp)?.[0] || '';
+}

@@ -26,7 +26,7 @@ const datab = react('bb');
 // }]);
 
 const array = [];
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 10000; i++) {
     array.push({
         a: [
             ['a1' + Math.random().toString(), 'a2' + Math.random().toString()],
@@ -104,6 +104,8 @@ window.addEventListener('DOMContentLoaded', () => {
     console.timeLog('mounted');
 });
 
+// 3*3*3的数据
+
 // 旧版本根据for 传递 memo方案
 // 17个元素使用了缓存 13个未使用 3个不是for 1个根元素
 
@@ -113,15 +115,35 @@ window.addEventListener('DOMContentLoaded', () => {
 mount('body',
     div('.x0#app',
         // ! 前置使缓存for变得简单
-        div.for(array3)((item, index) => [ '.x1',
-            div('.x2', react`:x2-${index}`),
+        // div('.x2'),
+        // div('.x3'),
+        // div.for(array3)((item, index) => [ '.x1',
+        //     // div('.x2', react`:x2-${index}`),
+        //     div(react`:${index}`),
+        //     div(react`:${index}`),
+        // ]),
+        div.for(array3)((item, index) => [
+            div(':xxx'),
             div.for(item.a)((str, i) => [
-                '.x3', react`:x3-${index}-${i}`,
+                '.x3', react`.x3-${index}-${i}`,
                 div.for(str)((a, ii) => [
-                    react`.x4:${a}-${index}-${i}-${ii}`
+                    react`:${a}-${index}-${i}-${ii}`
                 ])
             ])
         ]),
+        // div.for(array3)((item, index) => [ '.x1',
+        //     // div('.x2', react`:x2-${index}`),
+        //     div.for(item.a)((str, i) => [ '.x2',
+        //         // '.x3', react`:x3-${index}-${i}`,
+        //         div.for(str)((a, ii) => [ '.x3',
+        //             react`:${a}-${index}-${i}-${ii}`
+        //         ])
+        //     ])
+        // ]),
+        // div.for(array3)((item, index) => [ '.x1',
+        //     // div('.x2', react`:x2-${index}`),
+        //     div.for(item.a)((str, i) => i.get() === 0 ? [] : [])
+        // ]),
         // div.for(array3)((item, index) => a),
         // div.if()
         //     .else(),

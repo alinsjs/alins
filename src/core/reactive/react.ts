@@ -102,7 +102,7 @@ function bindReactive ({
     template,
     reactions,
 }: IReactBindingTemplate): IReactBuilder {
-    console.log('bindReactive', template, reactions);
+    // console.log('bindReactive', template, reactions);
     return {
         // todo 从div构建处传入上下文环境
         exe (context: IReactContext) {

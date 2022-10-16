@@ -10,7 +10,7 @@ import {IBuilderParameter} from '../core';
 import {createElement, IElement, IElementBuilder, IElementOptions} from '../element/transform';
 import {IReactBuilder} from '../reactive/react';
 
-export type TBuilderArg = string | IReactBuilder | IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
+export type TBuilderArg = number | string | IReactBuilder | IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
 
 
 export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
@@ -23,6 +23,7 @@ export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
  * 然后通过 transform 方法转正真实dom节点
  */
 function elementBuilder (tag: string, data: TBuilderArg[]) {
+    // console.log('elementBuilder', tag, data, JSON.stringify(data));
     const elementOptions: IElementOptions = {tag};
     elementOptions.children = [];
     for (let i = 0; i < data.length; i++) {
@@ -42,7 +43,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
             }
         }
     }
-    console.count('createElement');
+    // console.count('createElement');
     return createElement(elementOptions);
 };
 
@@ -53,7 +54,6 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
 //     };
 // })();
 
-const datas :any[] = [];
 
 export interface IBuilderConstructor extends IControllerBuilder {
     (...args: TBuilderArg[]): IElementBuilder;
@@ -62,7 +62,6 @@ export interface IBuilderConstructor extends IControllerBuilder {
 export const div = ((...data) => {
     // todo exe add context
     return createBaseBuilder(() => {
-        datas.push(data); // debug
         return elementBuilder('div', data);
     });
 }) as IBuilderConstructor;
