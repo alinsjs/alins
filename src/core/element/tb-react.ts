@@ -166,11 +166,6 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
             const texts = textContent.split(ReplaceExp);
             texts.forEach((text, i) => {
                 if (text) dom.appendChild(document.createTextNode(text));
-                memo.add(() => {
-                    const newDom = memo?.last;
-                    newDom.appendChild(document.createTextNode(text));
-                    return newDom;
-                });
                 if (!results[i]) return;
                 const index = parseReplacementToNumber(results[i]);
                 const reaction = reactions[index];
@@ -202,9 +197,9 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
             if (!data.className) data.className = [];
             data.className.push(
                 reactiveTemplate(memo, dom, name, reactions, (dom, content, oldContent) => {
-                    // debugger;
+                    debugger;
                     dom.classList.replace(oldContent, content);
-                }, true, 'class')
+                }, true)
             );
         });
     }

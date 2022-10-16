@@ -45,39 +45,39 @@ export function reactiveTemplate (
     ) => void,
     needOldContent = false,
 ) {
-    const results = extractReplacement(template); // 占位符
-    // ["$$0$$", "$$1$$"]
+    const results = extractReplacement(template);
     if (results) {
-        const texts = template.split(ReplaceExp); // 静态文本
-        // 填充进静态文本之间的填充物
-
-        const createFiller = (reactions: IReactItem[], dom: HTMLElement) => {
-            return results.map((item, i) => {
-                // 提取占位符中的index 表示实际以来的reactions下标
-                const index = parseReplacementToNumber(item);
-                return reactions[index][subscribe]((value) => {
-                    const oldContent = needOldContent ? join(texts, filler) : '';
-                    filler[i] = value;
-                    const newContent = join(texts, filler);
+        const texts = template.split(ReplaceExp);
+        const filler: string[] = results.map((item, i) => {
+            const index = parseReplacementToNumber(item);
+            memo.add((config: IElement) => {
+                const reactions = (config.binding as any).reactions as IReactItem[];
+                const dom = memo?.last;
+                const _filler = filler.slice();
+                reactions[index][subscribe]((value: any) => {
+                    const oldContent = needOldContent ? join(texts, _filler) : '';
+                    _filler[i] = value;
+                    const newContent = join(texts, _filler);
                     callback(dom, newContent, oldContent);
                     // const oldClass = join(texts, filler);
                     // filler[i] = value;
                     // dom.classList.replace(oldClass, join(texts, filler));
                 });
+                reactions[index][forceUpdata]();
+                return dom;
             });
-        };
+            return reactions[index][subscribe]((value) => {
+                const oldContent = needOldContent ? join(texts, filler) : '';
+                filler[i] = value;
+                const newContent = join(texts, filler);
+                callback(dom, newContent, oldContent);
+                // const oldClass = join(texts, filler);
+                // filler[i] = value;
+                // dom.classList.replace(oldClass, join(texts, filler));
+            });
 
-        const filler: string[] = createFiller(reactions, dom);
-
-        const defaultContent = join(texts, filler);
-        memo.add((config: IElement) => {
-            const reactions = (config.binding as any).reactions as IReactItem[];
-            const dom = memo?.last;
-            const filler = createFiller(reactions, dom);
-            callback(dom, join(texts, filler), defaultContent); // 初始化class
-            return dom;
         });
-        return defaultContent;
+        return join(texts, filler);
     }
     return template;
 }

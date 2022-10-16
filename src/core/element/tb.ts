@@ -51,33 +51,33 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 }
 
 const map: Map<string, TFPMemo> = new Map();
-let cloneNodeCount = 0;
-let cloneNodeCountNo = 0;
+const cloneNodeCount = 0;
+const cloneNodeCountNo = 0;
  
 // const div = document.createElement('div');
 export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     const config = builder.exe(); // ! 关键代码 执行builder
     // console.count('transformBuilderToDomCount');
 
-    const str = JSON.stringify(config);
-    let memo = map.get(str);
-    if (memo) {
-        cloneNodeCount++;
-        // console.count('cloneNode');
-        const dom = memo.exe(config);
-        return dom;
-    }
-    cloneNodeCountNo++;
+    // const str = JSON.stringify(config);
+    // let memo = map.get(str);
+    // if (memo) {
+    //     cloneNodeCount++;
+    //     // console.count('cloneNode');
+    //     const dom = memo.exe(config);
+    //     return dom;
+    // }
+    // cloneNodeCountNo++;
 
-    memo = createFuncProcessMemo<typeof transformBuilderToDom>();
-    map.set(str, memo);
+    // memo = createFuncProcessMemo<typeof transformBuilderToDom>();
+    // map.set(str, memo);
 
     // console.log('transformBuilderToDom', builder, config, config.domInfo);
     // console.warn('transformBuilderToDom', JSON.stringify(config));
 
     const dom = document.createElement(config.tag);
 
-    memo.add(() => dom.cloneNode());
+    // memo.add(() => dom.cloneNode());
     // console.log('transformBuilderToDom', config);
     // if (!dom) dom = div.cloneNode() as HTMLElement;
     // debugger;
@@ -86,7 +86,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         switch (context.type) {
             case 'dom-info': {
                 // 提取表达式中没有binding的属性 merge到config中
-                const domInfo = applyDomInfoReaction(dom, config.binding, memo);
+                const domInfo = applyDomInfoReaction(dom, config.binding);
                 mergeDomInfo(config, domInfo);
                 // ! binding 执行
                 
@@ -99,11 +99,11 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
 
     if (config.textContent) {
         dom.innerText = config.textContent;
-        memo.add(() => {
-            const dom = (memo?.last);
-            dom.innerText = config.textContent;
-            return dom;
-        });
+        // memo.add(() => {
+        //     const dom = (memo?.last);
+        //     dom.innerText = config.textContent;
+        //     return dom;
+        // });
     }
     if (config.className.length > 0) dom.className = config.className.join(' ');
     if (config.attributes) {
@@ -117,13 +117,13 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.children && config.children.length > 0) {
         mountChildrenDoms(dom, config.children);
 
-        memo.add((config: IElement) => {
-            // todo 优化此部分逻辑
-            // ? 是否可以根据div标记来缓存 可以最大化缓存数量
-            const dom = memo?.last;
-            mountChildrenDoms(dom, config.children || []);
-            return dom;
-        });
+        // memo.add((config: IElement) => {
+        //     // todo 优化此部分逻辑
+        //     // ? 是否可以根据div标记来缓存 可以最大化缓存数量
+        //     const dom = memo?.last;
+        //     mountChildrenDoms(dom, config.children || []);
+        //     return dom;
+        // });
     }
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
@@ -166,11 +166,6 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
             const texts = textContent.split(ReplaceExp);
             texts.forEach((text, i) => {
                 if (text) dom.appendChild(document.createTextNode(text));
-                memo.add(() => {
-                    const newDom = memo?.last;
-                    newDom.appendChild(document.createTextNode(text));
-                    return newDom;
-                });
                 if (!results[i]) return;
                 const index = parseReplacementToNumber(results[i]);
                 const reaction = reactions[index];
@@ -180,17 +175,17 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
                     reaction[subscribe]((v) => {node.textContent = v;})
                 );
                 dom.appendChild(node);
-                memo.add((config: IElement) => {
-                    const {reactions} = config.binding as any;
-                    const newDom = memo?.last;
-                    const reaction = reactions[index];
-                    // ! 关键代码
-                    const node = document.createTextNode(
-                        reaction[subscribe]((v: any) => {node.textContent = v;})
-                    );
-                    newDom.appendChild(node);
-                    return newDom;
-                });
+                // memo.add((config: IElement) => {
+                //     const {reactions} = config.binding as any;
+                //     const newDom = memo?.last;
+                //     const reaction = reactions[index];
+                //     // ! 关键代码
+                //     const node = document.createTextNode(
+                //         reaction[subscribe]((v: any) => {node.textContent = v;})
+                //     );
+                //     newDom.appendChild(node);
+                //     return newDom;
+                // });
             });
         } else {
             data.textContent = textContent;
@@ -201,10 +196,9 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
         info.className.forEach(name => {
             if (!data.className) data.className = [];
             data.className.push(
-                reactiveTemplate(memo, dom, name, reactions, (dom, content, oldContent) => {
-                    // debugger;
+                reactiveTemplate(name, reactions, (content, oldContent) => {
                     dom.classList.replace(oldContent, content);
-                }, true, 'class')
+                }, true)
             );
         });
     }
@@ -217,12 +211,12 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
     if (info.attributes) {
         for (const k in info.attributes) {
             let value = '';
-            let key = reactiveTemplate(memo, dom, k, reactions, (dom, content, oldContent) => {
+            let key = reactiveTemplate(k, reactions, (content, oldContent) => {
                 dom.removeAttribute(oldContent);
                 dom.setAttribute(content, value);
                 key = content;
             }, true);
-            value = reactiveTemplate(memo, dom, info.attributes[k], reactions, (dom, content) => {
+            value = reactiveTemplate(info.attributes[k], reactions, (content) => {
                 dom.setAttribute(key, content);
                 value = content;
             });
@@ -232,7 +226,7 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
     }
 
     if (info.id) {
-        const id = reactiveTemplate(memo, dom, info.id, reactions, (dom, content) => {
+        const id = reactiveTemplate(info.id, reactions, (content) => {
             dom.id = content;
         });
         dom.id = id;

@@ -26,7 +26,7 @@ const datab = react('bb');
 // }]);
 
 const array = [];
-for (let i = 0; i < 20000; i++) {
+for (let i = 0; i < 20; i++) {
     array.push({
         a: [
             ['a1' + Math.random().toString(), 'a2' + Math.random().toString()],
@@ -125,9 +125,11 @@ mount('body',
         div.for(array3)((item, index) => [
             div(':xxx'),
             div.for(item.a)((str, i) => [
-                '.x3', react`.x3-${index}-${i}`,
+                '.x3', react`.a.x3-${index}-${i}`,
                 div.for(str)((a, ii) => [
-                    react`:${a}-${index}-${i}-${ii}`
+                    // ':11',
+                
+                    react`[a=${index}-${i}-${ii}]:${a}-${index}-${i}-${ii}`
                 ])
             ])
         ]),
