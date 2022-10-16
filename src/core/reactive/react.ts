@@ -8,6 +8,7 @@
 import {IBuilderParameter} from '../core';
 
 export const subscribe = Symbol('subscribe_react');
+export const forceUpdata = Symbol('force_update_react');
 
 // type TBaseTypes = number | boolean | string | null | undefined;
 // type TReactTypes = TBaseTypes | IJson<TReactTypes> | TReactTypes[];
@@ -16,6 +17,7 @@ export interface IReactItem<T = any> {
     $index?: IReactItem<number>;
     set(v: T): void;
     get(): T;
+    [forceUpdata](): void;
     [subscribe](fn: (v:T, old:T) => void):  T;
 }
 
@@ -129,6 +131,9 @@ export function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
             [subscribe] (fn) {
                 changeList.push(fn);
                 return this.get();
+            },
+            [forceUpdata] () {
+                changeList.forEach(fn => {fn(data, data);});
             }
         } as IReactItem<T>;
     }
