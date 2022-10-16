@@ -53,6 +53,7 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 // const div = document.createElement('div');
 export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo): HTMLElement {
     const config = builder.exe(); // ! 关键代码 执行builder
+    console.count('transformBuilderToDomCount');
     console.log('transformBuilderToDom', config, config.domInfo);
 
     // Memo.funcProcInstance?.add((builder: IElementBuilder) => builder());
@@ -94,50 +95,13 @@ export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo)
 
 
     if (config.children && config.children.length > 0) {
-        for (const item of config.children) {
-            if (item instanceof Array) {
-                const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
-                // (memo as any).name = i++;
-                // debugger;
-                const frag = document.createDocumentFragment();
-                for (const child of item) {
-                    // ! 关键代码 根据build解析dom 渲染到父元素
-                    // frag.appendChild(transformBuilderToDom(child));
-                    const memoDom = memo.exe(child);
-                    frag.appendChild(memoDom || transformBuilderToDom(child, memo));
-                }
-                memo.destory();
-                dom.appendChild(frag);
-                // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
-            } else {
-                dom.appendChild(transformBuilderToDom(item));
-            }
-        }
+        mountChildrenDoms(dom, config.children);
 
         memo?.map.push((builder: IElementBuilder) => {
             // todo 优化此部分逻辑
-            // ? 是否可以根据div标记来缓存
+            // ? 是否可以根据div标记来缓存 可以最大化缓存数量
             const dom = memo?.last;
-            const {children} = builder.exe();
-            for (const item of (children as (IElementBuilder | IElementBuilder[])[])) {
-                if (item instanceof Array) {
-                    const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
-                    // (memo as any).name = i++;
-                    // debugger;
-                    const frag = document.createDocumentFragment();
-                    for (const child of item) {
-                    // ! 关键代码 根据build解析dom 渲染到父元素
-                    // frag.appendChild(transformBuilderToDom(child));
-                        const memoDom = memo.exe(child);
-                        frag.appendChild(memoDom || transformBuilderToDom(child, memo));
-                    }
-                    memo.destory();
-                    dom.appendChild(frag);
-                // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
-                } else {
-                    dom.appendChild(transformBuilderToDom(item));
-                }
-            }
+            mountChildrenDoms(dom, builder.exe().children || []);
             return dom;
         });
     }
@@ -146,10 +110,40 @@ export function transformBuilderToDom (builder: IElementBuilder, memo?: TFPMemo)
     // console.log((Memo.funcProcInstance as any).name);
     // debugger;
     memo?.map.unshift(() => {
-        console.log('cloneNoe', dom.className);
+        console.log('cloneNode', dom.className, ++cloneNodeCount);
         return dom.cloneNode();
     });
     return dom;
+}
+let cloneNodeCount = 0;
+
+function mountChildrenDoms (dom: HTMLElement, children: (IElementBuilder | IElementBuilder[])[]) {
+    for (const item of children) {
+        if (item instanceof Array) {
+            const memo = createFuncProcessMemo<typeof transformBuilderToDom>();
+            // (memo as any).name = i++;
+            // debugger;
+            const frag = document.createDocumentFragment();
+            for (const child of item) {
+            // ! 关键代码 根据build解析dom 渲染到父元素
+            // frag.appendChild(transformBuilderToDom(child));
+                const memoDom = memo.exe(child);
+                if (memoDom) {
+                    console.count('use_memo_success');
+                    frag.appendChild(memoDom);
+                } else {
+                    console.count('use_memo_fail');
+                    frag.appendChild(transformBuilderToDom(child, memo));
+                }
+            }
+            memo.destory();
+            dom.appendChild(frag);
+        // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
+        } else {
+            console.count('use_memo_no');
+            dom.appendChild(transformBuilderToDom(item));
+        }
+    }
 }
 
 function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomInfoData {

@@ -104,15 +104,21 @@ window.addEventListener('DOMContentLoaded', () => {
     console.timeLog('mounted');
 });
 
+// 旧版本根据for 传递 memo方案
+// 17个元素使用了缓存 13个未使用 3个不是for 1个根元素
+
+// todo 理论上最佳方案
+// 不可缓存元素 1个根元素 x1. x2 .x3 .x4, 可缓存元素 29的
+
 mount('body',
     div('.x0#app',
         // ! 前置使缓存for变得简单
-        div.for(array3)((item, index) => [
-            '.x1',
+        div.for(array3)((item, index) => [ '.x1',
             div('.x2'),
             div.for(item.a)((str, i) => [
+                '.x3',
                 div.for(str)((a, ii) => [
-                    react`.x3:${a}-${index}-${i}-${ii}`
+                    react`.x4:${a}-${index}-${i}-${ii}`
                 ])
             ])
         ]),
