@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {TBuilderArg} from '../builder/builder';
+import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IElementBuilder} from '../element/transform';
 import {createReactive, IReactItem, IReactWrap} from '../reactive/react';
 
@@ -44,15 +44,17 @@ export interface IForCallback<T=any> {
     (item: IReactWrap<T>, index: IReactItem<number>): TBuilderArg[];
 }
 
-export const forController: IForController = function (this: IElementBuilder, list) {
+export const forController: IForController = function (this: IBuilderConstructor, list) {
     // return (fn) => list.map((item, index) => this.call(null, ...fn(item, index)));
+    console.count('forController');
+    console.log('forController', list);
     return (callback) => {
         const builders: IElementBuilder[] = [];
         for (let i = 0; i < list.length; i++) {
-            console.log('forController', i, list[i]);
             const indexReactive = createReactive(i);
             list[i].$index = indexReactive;
             const builder = callback(list[i], indexReactive);
+            // builder.unshift();
             builders.push(this.apply(null, builder));
         }
 

@@ -42,6 +42,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
             }
         }
     }
+    console.count('createElement');
     return createElement(elementOptions);
 };
 

@@ -26,12 +26,12 @@ const datab = react('bb');
 // }]);
 
 const array = [];
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 2; i++) {
     array.push({
         a: [
             ['a1' + Math.random().toString(), 'a2' + Math.random().toString()],
             ['b1' + Math.random().toString(), 'b2' + Math.random().toString()],
-            ['c1' + Math.random().toString(), 'c2' + Math.random().toString()],
+            // ['c1' + Math.random().toString(), 'c2' + Math.random().toString()],
             // 'b' + Math.random().toString(),
             // 'c' + Math.random().toString(),
         ]
@@ -114,9 +114,9 @@ mount('body',
     div('.x0#app',
         // ! 前置使缓存for变得简单
         div.for(array3)((item, index) => [ '.x1',
-            div('.x2'),
+            div('.x2', react`:x2-${index}`),
             div.for(item.a)((str, i) => [
-                '.x3',
+                '.x3', react`:x3-${index}-${i}`,
                 div.for(str)((a, ii) => [
                     react`.x4:${a}-${index}-${i}-${ii}`
                 ])
