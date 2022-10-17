@@ -51,7 +51,7 @@
               "content": "object 响应式",
               "id": 1665564936729,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -61,7 +61,7 @@
               "content": "数组响应式",
               "id": 1665564946759,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -71,7 +71,7 @@
               "content": "多个响应式数据源",
               "id": 1665564427802,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -101,6 +101,16 @@
               "content": "computed",
               "id": 1665835219036,
               "level": "warning",
+              "done": true
+            }
+          },
+          {
+            "key": 1665982636261,
+            "children": [],
+            "todo": {
+              "content": "computed set",
+              "id": 1665982636261,
+              "level": "warning",
               "done": false
             }
           }
@@ -113,13 +123,23 @@
         }
       },
       {
+        "key": 1665982682369,
+        "children": [],
+        "todo": {
+          "content": "事件",
+          "id": 1665982682369,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
         "key": 1665494213348,
         "children": [
           {
             "key": 1665564553848,
             "children": [],
             "todo": {
-              "content": "输入组件数据双向绑定 依赖控制器 bind",
+              "content": "bind: 输入组件数据双向绑定 依赖控制器",
               "id": 1665564553848,
               "level": "danger",
               "done": false
@@ -132,7 +152,7 @@
               "content": "for 循环控制器",
               "id": 1665564619053,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -142,7 +162,7 @@
               "content": "if 渲染绑定器",
               "id": 1665564627795,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -249,9 +269,7 @@
       1665494041685,
       1665494269048,
       1665564936729,
-      1665494260180,
-      1665494195217,
-      1665494213348
+      1665494260180
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",

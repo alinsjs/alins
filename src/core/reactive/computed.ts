@@ -8,25 +8,38 @@ import {createReactive, IReactItem, subscribe} from './react';
 
 export type TWatchFunc<T = any> = (...args: any[]) => T;
 
+interface TWatchObject {
+    set?: null | ((v: any, old: any) => void);
+    get(): any;
+}
+
 export const Compute: {
     add: ((item: IReactItem)=>void) | null;
 } = {
     add: null,
 };
 
-export function computed<T> (fn: TWatchFunc<T> ) {
+export function computed<T> (target: TWatchFunc<T> | TWatchObject ) {
+    const isFunc = typeof target === 'function';
+    const get = isFunc ? target : target.get;
+    const set = isFunc ? null : target.set;
 
     const reacts: IReactItem[] = [];
     Compute.add = (item: IReactItem) => {
         reacts.push(item);
     };
-    const value = fn();
+    let value = get();
     Compute.add = null;
     const react = createReactive(value) as IReactItem;
-
+    const originSet = react.set;
     reacts.forEach(item => item[subscribe](() => {
-        react.set(fn());
+        value = get();
+        originSet(value);
     }));
-
+    react.set = set ? (v: any) => {
+        set(v, value);
+    } : () => {
+        console.warn('对只读computed设置值无效');
+    };
     return react;
 }

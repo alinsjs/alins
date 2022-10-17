@@ -119,9 +119,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const bool = react(true);
 const num = react(3);
-const num2 = computed(() => {
-    return num.value + 3;
+const num1 = react(3);
+const num2 = computed({
+    get () {
+        return num.value + num1.value + 3;
+    },
+    set (v, old) {
+        console.log(v, old);
+        num1.value = v;
+    }
 });
+
 mount('body',
     div('.x0#app',
         // ! 前置使缓存for变得简单
