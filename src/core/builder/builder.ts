@@ -5,6 +5,7 @@
  */
 
 import {IJson} from '../common';
+import {IBindBuilder} from '../controller/bind';
 import {controllers, IControllerBuilder} from '../controller/controller';
 import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
@@ -12,8 +13,9 @@ import {IBuilderParameter} from '../core';
 import {createElement, IElement, IElementBuilder, IElementOptions} from '../element/transform';
 import {IReactBuilder} from '../reactive/react';
 
-export type TBuilderArg = number | string | IReactBuilder
- | IIfBuilder | IShowBuilder | IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
+export type TBuilderArg = number | string | IReactBuilder|
+    IIfBuilder | IShowBuilder | IBindBuilder |
+    IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
 
 
 export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
@@ -45,6 +47,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'builder':
                 case 'if':
                 case 'show':
+                case 'bind':
                     elementOptions.children.push(item); break;
             }
         }
@@ -64,15 +67,21 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
 export interface IBuilderConstructor extends IControllerBuilder {
     (...args: TBuilderArg[]): IElementBuilder;
 }
- 
-export const div = ((...data) => {
-    // todo exe add context
-    return createBaseBuilder(() => {
-        return elementBuilder('div', data);
-    });
-}) as IBuilderConstructor;
 
-Object.assign(div, controllers);
+export function buildFactory (tag: string): IBuilderConstructor {
+    return Object.assign(((...data: TBuilderArg[]) => {
+        // todo exe add context
+        return createBaseBuilder(() => {
+            return elementBuilder(tag, data);
+        });
+    }), controllers);
+}
+ 
+export const div = buildFactory('div');
+
+export const span = buildFactory('span');
+
+export const input = buildFactory('input');
 
 function createBaseBuilder (exe: ()=> IElement): IElementBuilder {
     return {

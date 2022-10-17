@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import {mount} from './core/mount';
-import {div, TBuilderArg} from './core/builder/builder';
+import {div, input, span, TBuilderArg} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
 import {react} from './core/reactive/react';
 import {$case, $for, $if, $switch, $while} from './core/controller/controller';
@@ -152,10 +152,12 @@ mount('body',
         div(react`:computed-${() => num.value + 1}`),
         div(react`:computed-${() => num.value + 2}`),
         div(react`:computed-${num2}`),
-        div.if(() => num.value > 1)(react`:if-${num}`)
+        span.if(() => num.value > 1)(react`:if-${num}`)
             .elif(() => num.value < 0)(react`:elif-${num}`)
             .else(react`:else`),
-        div.show(() => num.value > 1)(react`:show-${num2}`),
+        span.show(() => num.value > 1)(react`:show-${num2}`),
+        input.bind(num, true)(), // react`:show-${num2}`
+        div.bind(num, true)('[contenteditable=true]'), // react`:show-${num2}`
         // .elif(() => num.value < 0)(react`${num.value - 1}`)
         // .else()
         // div.if(() => num.value > 1)(react`:${bool}`),

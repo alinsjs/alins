@@ -37,11 +37,12 @@ export interface IShowController {
 export const showController: IShowController = function (this: IBuilderConstructor, bool) {
     
     const react = transformToReaction(bool);
+    const constructor = this;
 
     return (...args) => {
-        const builder = this.apply(this, args);
         return {
             exe () {
+                const builder = constructor.apply(null, args);
                 const dom = transformBuilderToDom(builder);
                 react[subscribe](v => {
                     dom.style.display = v ? '' : 'none';

@@ -5,6 +5,7 @@
  */
 
 import {IJson} from '../common';
+import {IBindBuilder} from '../controller/bind';
 import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
 import {IBuilderParameter} from '../core';
@@ -13,11 +14,11 @@ import {createFuncProcessMemo, TFPMemo} from '../memorize/memorize';
 import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
 import {createReplacement, extractReplacement, parseReplacementToNumber, reactiveTemplate, ReplaceExp} from '../reactive/binding';
 import {computed} from '../reactive/computed';
-import {IReactBinding, subscribe, TReactionItem} from '../reactive/react';
+import {IReactBinding, subscribe, transformToReaction, TReactionItem} from '../reactive/react';
 import {join} from '../utils';
 
 export type TChild = IElementBuilder | IElementBuilder[] |
-    IIfBuilder | IShowBuilder;
+    IIfBuilder | IShowBuilder | IBindBuilder;
 
 export interface IElement {
     tag: string;
@@ -106,7 +107,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.domInfo) mergeDomInfo(config, parseDomInfo(config.domInfo));
 
     if (config.textContent) {
-        dom.innerText = config.textContent;
+        setNodeText(dom, config.textContent);
         // memo.add(() => {
         //     const dom = (memo?.last);
         //     dom.innerText = config.textContent;
@@ -155,16 +156,24 @@ function mountChildrenDoms (
             }
             dom.appendChild(frag);
         // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
-        } else if (item.type === 'builder') {
-            // console.count('use_memo_no');
-            dom.appendChild(transformBuilderToDom(item));
-        } else if (item.type === 'if') {
-            dom.appendChild(item.exe(dom));
-        } else if (item.type === 'show') {
-            dom.appendChild(item.exe());
+        } else {
+            switch (item.type) {
+                case 'builder': dom.appendChild(transformBuilderToDom(item)); break;
+                case 'if': dom.appendChild(item.exe(dom)); break;
+                case 'show':
+                case 'bind':
+                    dom.appendChild(item.exe()); break;
+            }
         }
     }
 }
+
+function setNodeText (node: HTMLElement | Text, v: string) {
+    if (isInputNode(node)) (node as any).value = v;
+    else node.textContent = v;
+}
+
+function isInputNode (node: HTMLElement | Text) {return typeof (node as any).value !== 'undefined';}
 
 function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: TFPMemo): IDomInfoData {
     const {template, reactions} = binding;
@@ -178,31 +187,37 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
         const textContent = info.textContent;
         const results = extractReplacement(textContent);
         if (results) {
-            const texts = textContent.split(ReplaceExp);
-            texts.forEach((text, i) => {
-                if (text) dom.appendChild(document.createTextNode(text));
-                if (!results[i]) return;
-                const index = parseReplacementToNumber(results[i]);
-                const reactionItem = reactions[index];
-                if (!reactionItem) return;
-                const reaction = typeof reactionItem === 'function' ? computed(reactionItem) : reactionItem;
-                // ! 关键代码
-                const node = document.createTextNode(
-                    reaction[subscribe]((v) => {node.textContent = v;})
-                );
-                dom.appendChild(node);
-                // memo.add((config: IElement) => {
-                //     const {reactions} = config.binding as any;
-                //     const newDom = memo?.last;
-                //     const reaction = reactions[index];
-                //     // ! 关键代码
-                //     const node = document.createTextNode(
-                //         reaction[subscribe]((v: any) => {node.textContent = v;})
-                //     );
-                //     newDom.appendChild(node);
-                //     return newDom;
-                // });
-            });
+            if (isInputNode(dom)) {
+                (dom as any).value = reactiveTemplate(textContent, reactions, (content) => {
+                    (dom as any).value = content;
+                }, false);
+            } else {
+                const texts = textContent.split(ReplaceExp);
+                texts.forEach((text, i) => {
+                    if (text) dom.appendChild(document.createTextNode(text));
+                    if (!results[i]) return;
+                    const index = parseReplacementToNumber(results[i]);
+                    const reactionItem = reactions[index];
+                    if (!reactionItem) return;
+                    const reaction = transformToReaction(reactionItem);
+                    // ! 关键代码
+                    const node = document.createTextNode(
+                        reaction[subscribe]((v) => {node.textContent = v;})
+                    );
+                    dom.appendChild(node);
+                    // memo.add((config: IElement) => {
+                    //     const {reactions} = config.binding as any;
+                    //     const newDom = memo?.last;
+                    //     const reaction = reactions[index];
+                    //     // ! 关键代码
+                    //     const node = document.createTextNode(
+                    //         reaction[subscribe]((v: any) => {node.textContent = v;})
+                    //     );
+                    //     newDom.appendChild(node);
+                    //     return newDom;
+                    // });
+                });
+            }
         } else {
             data.textContent = textContent;
         }

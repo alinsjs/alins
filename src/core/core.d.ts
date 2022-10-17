@@ -9,7 +9,8 @@ export interface IBuilderParameter {
     exe: Function;
     type: 'css' | 'event' | 'props' |
         'text' | 'selector' | 'children' |
-        'comp' | 'react' | 'builder' | 'if' | 'show';
+        'comp' | 'react' | 'builder' |
+        'if' | 'show' | 'bind';
 }
 
 interface IEvent extends IBuilderParameter {

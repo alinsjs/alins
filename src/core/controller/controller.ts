@@ -4,6 +4,7 @@
  * @Description: Coding something
  */
 
+import {bindController, IBindController} from './bind';
 import {forController, IForController} from './for';
 import {ifController, IIfController} from './if';
 import {IShowController, showController} from './show';
@@ -15,12 +16,14 @@ export interface IControllerBuilder {
     for: IForController;
     if: IIfController;
     show: IShowController;
+    bind: IBindController;
 }
 
 export const controllers = {
     for: forController,
     if: ifController,
     show: showController,
+    bind: bindController,
 };
 
 export const $for = forController;
