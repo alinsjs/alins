@@ -8,7 +8,9 @@ import {IJson} from '../common';
 import {IBindBuilder} from '../controller/bind';
 import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
+import {ISwitchBuilder} from '../controller/switch';
 import {IBuilderParameter} from '../core';
+import {IEventBuilder} from '../event/event';
 import {createFuncProcessMemo, TFPMemo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
 import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
@@ -18,7 +20,7 @@ import {IReactBinding, subscribe, transformToReaction, TReactionItem} from '../r
 import {join} from '../utils';
 
 export type TChild = IElementBuilder | IElementBuilder[] |
-    IIfBuilder | IShowBuilder | IBindBuilder;
+    IIfBuilder | IShowBuilder | IBindBuilder | ISwitchBuilder<any>;
 
 export interface IElement {
     tag: string;
@@ -31,6 +33,7 @@ export interface IElement {
     domInfo?: string;
     _if?: IIfBuilder;
     show?: TReactionItem;
+    events: IEventBuilder[];
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -159,7 +162,9 @@ function mountChildrenDoms (
         } else {
             switch (item.type) {
                 case 'builder': dom.appendChild(transformBuilderToDom(item)); break;
-                case 'if': dom.appendChild(item.exe(dom)); break;
+                case 'if':
+                case 'switch':
+                    dom.appendChild(item.exe(dom)); break;
                 case 'show':
                 case 'bind':
                     dom.appendChild(item.exe()); break;
@@ -278,6 +283,7 @@ export function createElement ({
     children,
     binding,
     domInfo = '',
+    events = {},
     _if
 }: IElementOptions): IElement {
     return {
@@ -289,6 +295,7 @@ export function createElement ({
         children,
         binding,
         domInfo,
+        events,
         _if
     };
 }

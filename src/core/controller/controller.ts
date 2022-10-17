@@ -8,6 +8,7 @@ import {bindController, IBindController} from './bind';
 import {forController, IForController} from './for';
 import {ifController, IIfController} from './if';
 import {IShowController, showController} from './show';
+import {ISwitchController, switchController} from './switch';
 
 export interface IController {
     
@@ -17,6 +18,7 @@ export interface IControllerBuilder {
     if: IIfController;
     show: IShowController;
     bind: IBindController;
+    switch: ISwitchController;
 }
 
 export const controllers = {
@@ -24,6 +26,7 @@ export const controllers = {
     if: ifController,
     show: showController,
     bind: bindController,
+    switch: switchController,
 };
 
 export const $for = forController;

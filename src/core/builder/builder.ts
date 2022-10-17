@@ -9,14 +9,13 @@ import {IBindBuilder} from '../controller/bind';
 import {controllers, IControllerBuilder} from '../controller/controller';
 import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
+import {ISwitchBuilder} from '../controller/switch';
 import {IBuilderParameter} from '../core';
-import {createElement, IElement, IElementBuilder, IElementOptions} from '../element/transform';
+import {IEventBuilder} from '../event/event';
+import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
 import {IReactBuilder} from '../reactive/react';
 
-export type TBuilderArg = number | string | IReactBuilder|
-    IIfBuilder | IShowBuilder | IBindBuilder |
-    IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
-
+export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild; // (IElementBuilder|IElementBuilder[])[];
 
 export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
     // todo controller
@@ -31,6 +30,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
     // console.log('elementBuilder', tag, data, JSON.stringify(data));
     const elementOptions: IElementOptions = {tag};
     elementOptions.children = [];
+    elementOptions.events = {};
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
         if (typeof item === 'string') {
@@ -48,7 +48,10 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'if':
                 case 'show':
                 case 'bind':
+                case 'switch':
                     elementOptions.children.push(item); break;
+                case 'event':
+                    elementOptions.events[item.name];
             }
         }
     }

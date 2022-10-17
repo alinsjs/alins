@@ -163,9 +163,10 @@ mount('body',
         // div.if(() => num.value > 1)(react`:${bool}`),
 
         // .else(react`:!!${bool}`),
-        // div.switch(item)
-        //     .case(1)()
-        //     .case(2)()
+        div.switch(num)
+            .case(1)(react`:case1-${num}`)
+            .case(2)(react`:case2-${num}`)
+        div(on('click', ''))
         // div.for(array3)((item, index) => [ '.x1',
         //     // div('.x2', react`:x2-${index}`),
         //     div.for(item.a)((str, i) => [ '.x2',

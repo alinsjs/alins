@@ -10,13 +10,8 @@ export interface IBuilderParameter {
     type: 'css' | 'event' | 'props' |
         'text' | 'selector' | 'children' |
         'comp' | 'react' | 'builder' |
-        'if' | 'show' | 'bind';
+        'if' | 'show' | 'bind' | 'switch' | 'event';
 }
-
-interface IEvent extends IBuilderParameter {
-    type: 'event';
-}
-type IEventBuilder = ()=> IEvent;
 
 interface ICss extends IBuilderParameter {
     type: 'css';
