@@ -4,12 +4,13 @@
  * @Description: Coding something
  */
 import {mount} from './core/mount';
-import {div, input, span, TBuilderArg} from './core/builder/builder';
+import {button, div, input, span, TBuilderArg} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
 import {react} from './core/reactive/react';
 import {$case, $for, $if, $switch, $while} from './core/controller/controller';
 import {IElementBuilder} from './core/element/transform';
 import {computed} from './core/reactive/computed';
+import {click, on} from './core/event/event';
 
 const win = (window as any);
 
@@ -118,7 +119,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // 不可缓存元素 1个根元素 x1. x2 .x3 .x4, 可缓存元素 29的
 
 const bool = react(true);
-const num = react(3);
+const num = react(1);
 const num1 = react(3);
 const num2 = computed({
     get () {
@@ -129,6 +130,8 @@ const num2 = computed({
         num1.value = v;
     }
 });
+
+const add = () => {num.value++;};
 
 mount('body',
     div('.x0#app',
@@ -165,8 +168,8 @@ mount('body',
         // .else(react`:!!${bool}`),
         div.switch(num)
             .case(1)(react`:case1-${num}`)
-            .case(2)(react`:case2-${num}`)
-        div(on('click', ''))
+            .case(2)(react`:case2-${num}`),
+        button(click(add), ':add')
         // div.for(array3)((item, index) => [ '.x1',
         //     // div('.x2', react`:x2-${index}`),
         //     div.for(item.a)((str, i) => [ '.x2',

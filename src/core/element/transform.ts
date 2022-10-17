@@ -137,6 +137,10 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         // });
     }
 
+    config.events.forEach((item) => {
+        item.exe(dom);
+    });
+
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
     // console.log((Memo.funcProcInstance as any).name);
@@ -178,7 +182,9 @@ function setNodeText (node: HTMLElement | Text, v: string) {
     else node.textContent = v;
 }
 
-function isInputNode (node: HTMLElement | Text) {return typeof (node as any).value !== 'undefined';}
+function isInputNode (node: HTMLElement | Text) {
+    return typeof (node as any).value !== 'undefined' && (node as HTMLElement).tagName !== 'BUTTON';
+}
 
 function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: TFPMemo): IDomInfoData {
     const {template, reactions} = binding;
@@ -283,7 +289,7 @@ export function createElement ({
     children,
     binding,
     domInfo = '',
-    events = {},
+    events = [],
     _if
 }: IElementOptions): IElement {
     return {

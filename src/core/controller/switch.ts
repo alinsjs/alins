@@ -40,7 +40,7 @@ export interface ISwitchController {
 // div.if(num.value > 1)(react`:${bool}`),
 // div.if(bool)(react`:${num.value}`),
 
-export const switchController: ISwitchController = function (this: IBuilderConstructor, value) {
+export const switchController: ISwitchController = function <T> (this: IBuilderConstructor, value: TSwitchArg<T>) {
     const defaultValue = Symbol('def');
     const node = document.createComment('');
 
@@ -73,6 +73,7 @@ export const switchController: ISwitchController = function (this: IBuilderConst
 
             react[subscribe](v => {
                 const dom = getDom(v);
+                if (dom === node) return;
                 parent.insertBefore(dom, node);
                 parent.removeChild(node);
                 node = dom;
@@ -90,5 +91,5 @@ export const switchController: ISwitchController = function (this: IBuilderConst
             return this;
         },
         type: 'switch'
-    } as ISwitchBuilder;
+    } as ISwitchBuilder<T>;
 };

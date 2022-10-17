@@ -30,7 +30,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
     // console.log('elementBuilder', tag, data, JSON.stringify(data));
     const elementOptions: IElementOptions = {tag};
     elementOptions.children = [];
-    elementOptions.events = {};
+    elementOptions.events = [];
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
         if (typeof item === 'string') {
@@ -51,7 +51,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'switch':
                     elementOptions.children.push(item); break;
                 case 'event':
-                    elementOptions.events[item.name];
+                    elementOptions.events?.push(item); break;
             }
         }
     }
@@ -79,12 +79,14 @@ export function buildFactory (tag: string): IBuilderConstructor {
         });
     }), controllers);
 }
+
+export const dom = buildFactory;
  
 export const div = buildFactory('div');
-
 export const span = buildFactory('span');
-
 export const input = buildFactory('input');
+export const button = buildFactory('button');
+// todo add element
 
 function createBaseBuilder (exe: ()=> IElement): IElementBuilder {
     return {

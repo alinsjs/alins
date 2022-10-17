@@ -109,6 +109,7 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
             exe (parent: HTMLElement) {
                 let node = exe();
                 changeList.push((d: Node) => {
+                    if (d === node) return;
                     parent.insertBefore(d, node);
                     parent.removeChild(node);
                     node = d;

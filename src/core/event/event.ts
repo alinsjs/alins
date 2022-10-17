@@ -13,7 +13,7 @@ export interface IEventBuilder extends IBuilderParameter {
     name: string;
 }
 
-export function on (name: string, listener: ()=> void): IEventBuilder {
+export function on (name: string, listener: (...args: any[])=> void): IEventBuilder {
     return {
         exe (dom: HTMLElement) {
             dom.addEventListener(name, listener);
@@ -22,3 +22,19 @@ export function on (name: string, listener: ()=> void): IEventBuilder {
         name,
     };
 }
+
+// todo add
+export const [
+    click,
+    mousedown,
+    mouseup,
+    mousemove,
+] = [
+    'click',
+    'mousedown',
+    'mouseup',
+    'mousemove',
+].map(name => {
+    // todo add event args
+    return (listener: (...args: any[])=> void) => on(name, listener);
+});
