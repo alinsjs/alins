@@ -5,7 +5,7 @@
  */
 import {IJson} from '../common';
 import {join} from '../utils';
-import {IReactItem, subscribe} from './react';
+import {IReactItem, subscribe, transformToReaction, TReactionItem} from './react';
 
 export const ReplaceExp = /\$\$\d+\$\$/;
 export const ReplaceExpG = /\$\$\d+\$\$/g;
@@ -33,7 +33,7 @@ export function extractReplacement (str: string): null | string[] {
 
 export function reactiveTemplate (
     template: string,
-    reactions: IReactItem[],
+    reactions: TReactionItem[],
     callback: (
         content: string,
         oldContent: string,
@@ -45,7 +45,8 @@ export function reactiveTemplate (
         const texts = template.split(ReplaceExp);
         const filler: string[] = results.map((item, i) => {
             const index = parseReplacementToNumber(item);
-            return reactions[index][subscribe]((value) => {
+            const reaction = transformToReaction(reactions[index]);
+            return reaction[subscribe]((value) => {
                 const oldContent = needOldContent ? join(texts, filler) : '';
                 filler[i] = value;
                 const newContent = join(texts, filler);

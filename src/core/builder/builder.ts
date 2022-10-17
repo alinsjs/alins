@@ -7,12 +7,13 @@
 import {IJson} from '../common';
 import {controllers, IControllerBuilder} from '../controller/controller';
 import {IIfBuilder} from '../controller/if';
+import {IShowBuilder} from '../controller/show';
 import {IBuilderParameter} from '../core';
 import {createElement, IElement, IElementBuilder, IElementOptions} from '../element/transform';
 import {IReactBuilder} from '../reactive/react';
 
 export type TBuilderArg = number | string | IReactBuilder
- | IIfBuilder | IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
+ | IIfBuilder | IShowBuilder | IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
 
 
 export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
@@ -43,6 +44,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 }); break;
                 case 'builder':
                 case 'if':
+                case 'show':
                     elementOptions.children.push(item); break;
             }
         }

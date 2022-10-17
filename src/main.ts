@@ -154,7 +154,8 @@ mount('body',
         div(react`:computed-${num2}`),
         div.if(() => num.value > 1)(react`:if-${num}`)
             .elif(() => num.value < 0)(react`:elif-${num}`)
-            // .else(react`:else`),
+            .else(react`:else`),
+        div.show(() => num.value > 1)(react`:show-${num2}`),
         // .elif(() => num.value < 0)(react`${num.value - 1}`)
         // .else()
         // div.if(() => num.value > 1)(react`:${bool}`),

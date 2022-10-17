@@ -6,14 +6,18 @@
 
 import {IJson} from '../common';
 import {IIfBuilder} from '../controller/if';
+import {IShowBuilder} from '../controller/show';
 import {IBuilderParameter} from '../core';
 import {createFuncProcessMemo, TFPMemo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
 import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
 import {createReplacement, extractReplacement, parseReplacementToNumber, reactiveTemplate, ReplaceExp} from '../reactive/binding';
 import {computed} from '../reactive/computed';
-import {IReactBinding, subscribe} from '../reactive/react';
+import {IReactBinding, subscribe, TReactionItem} from '../reactive/react';
 import {join} from '../utils';
+
+export type TChild = IElementBuilder | IElementBuilder[] |
+    IIfBuilder | IShowBuilder;
 
 export interface IElement {
     tag: string;
@@ -21,10 +25,11 @@ export interface IElement {
     id: string;
     textContent: string;
     attributes: IJson<string>;
-    children?: (IElementBuilder | IIfBuilder | IElementBuilder[])[];
+    children?: TChild[];
     binding?: IReactBinding;
     domInfo?: string;
     _if?: IIfBuilder;
+    show?: TReactionItem;
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -135,7 +140,10 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     return dom;
 }
 
-function mountChildrenDoms (dom: HTMLElement, children: (IElementBuilder | IIfBuildArg | IElementBuilder[])[]) {
+function mountChildrenDoms (
+    dom: HTMLElement,
+    children: TChild[]
+) {
     for (const item of children) {
         if (item instanceof Array) {
             // (memo as any).name = i++;
@@ -151,22 +159,11 @@ function mountChildrenDoms (dom: HTMLElement, children: (IElementBuilder | IIfBu
             // console.count('use_memo_no');
             dom.appendChild(transformBuilderToDom(item));
         } else if (item.type === 'if') {
-            dom.appendChild(transformIfToDom(dom, item));
+            dom.appendChild(item.exe(dom));
+        } else if (item.type === 'show') {
+            dom.appendChild(item.exe());
         }
     }
-}
-
-function transformIfToDom (dom: HTMLElement, config: IIfBuilder) {
-
-    let node = config.exe();
-
-    config.onUpdate(d => {
-        dom.insertBefore(d, node);
-        dom.removeChild(node);
-        node = d;
-    });
-
-    return node;
 }
 
 function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: TFPMemo): IDomInfoData {

@@ -6,6 +6,7 @@
 
 import {forController, IForController} from './for';
 import {ifController, IIfController} from './if';
+import {IShowController, showController} from './show';
 
 export interface IController {
     
@@ -13,11 +14,13 @@ export interface IController {
 export interface IControllerBuilder {
     for: IForController;
     if: IIfController;
+    show: IShowController;
 }
 
 export const controllers = {
     for: forController,
     if: ifController,
+    show: showController,
 };
 
 export const $for = forController;

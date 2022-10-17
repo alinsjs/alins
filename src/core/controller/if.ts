@@ -12,16 +12,14 @@
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IBuilderParameter} from '../core';
 import {IElementBuilder, transformBuilderToDom} from '../element/transform';
-import {computed} from '../reactive/computed';
-import {IReactItem, IReactWrap, subscribe} from '../reactive/react';
+import {IReactItem, IReactWrap, subscribe, transformToReaction} from '../reactive/react';
 
-type TIfArg = IReactItem<boolean> | (()=>boolean);
+export type TIfArg = IReactItem<boolean> | (()=>boolean);
 
 export interface IIfBuilder extends IBuilderParameter{
     elif: IElseIf;
     else: IElse;
-    onUpdate(fn: (dom: Node|HTMLElement)=>void): void;
-    exe(): Node|HTMLElement;
+    exe(parent: HTMLElement): Node|HTMLElement;
     type: 'if';
 }
 
@@ -58,26 +56,37 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
 
     let activeIndex = 0;
 
+    const doms: (Node|HTMLElement) [] = []; // ! 缓存doms节点
+
+    const getDom = (builder?: IElementBuilder) => {
+        if (!builder) return node;
+        let dom = doms[activeIndex];
+        if (dom) return dom;
+        dom = transformBuilderToDom(builder);
+        doms[activeIndex] = dom;
+        return dom;
+    };
+
     const exe = (start = 0) => {
         for (let i = start; i < reactList.length; i++) {
             if (reactList[i].get() === true) {
                 activeIndex = i;
-                return transformBuilderToDom(builders[i]);
+                return getDom(builders[i]);
             }
         }
         if (elseBuilder) {
             activeIndex = reactList.length;
-            return transformBuilderToDom(elseBuilder);
+            return getDom(elseBuilder);
         }
         activeIndex = -1;
-        return node;
+        return getDom();
     };
 
     const reactList: IReactItem<boolean>[] = [];
 
     const pushReact = (bool: TIfArg) => {
         const i = reactList.length;
-        const react = (typeof bool === 'function') ? computed(bool) : bool;
+        const react = transformToReaction(bool);
         react[subscribe](v => {
             let dom: HTMLElement | Node | null = null;
             if (v) {
@@ -97,8 +106,14 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
     return (...args: TBuilderArg[]) => {
         pushBuilder(args);
         return {
-            exe () {
-                return exe();
+            exe (parent: HTMLElement) {
+                let node = exe();
+                changeList.push((d: Node) => {
+                    parent.insertBefore(d, node);
+                    parent.removeChild(node);
+                    node = d;
+                });
+                return node;
             },
             elif (bool) {
                 pushReact(bool);
@@ -110,9 +125,6 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
             else (...args) {
                 pushBuilder(args, true);
                 return this;
-            },
-            onUpdate (fn) {
-                changeList.push(fn);
             },
             type: 'if'
         } as IIfBuilder;
