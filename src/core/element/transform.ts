@@ -5,6 +5,7 @@
  */
 
 import {IJson} from '../common';
+import {IIfBuilder} from '../controller/if';
 import {IBuilderParameter} from '../core';
 import {createFuncProcessMemo, TFPMemo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
@@ -19,9 +20,10 @@ export interface IElement {
     id: string;
     textContent: string;
     attributes: IJson<string>;
-    children?: (IElementBuilder|IElementBuilder[])[];
+    children?: (IElementBuilder | IIfBuilder | IElementBuilder[])[];
     binding?: IReactBinding;
     domInfo?: string;
+    _if?: IIfBuilder;
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -113,7 +115,6 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     }
     if (config.id) dom.id = config.id;
 
-
     if (config.children && config.children.length > 0) {
         mountChildrenDoms(dom, config.children);
 
@@ -125,6 +126,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         //     return dom;
         // });
     }
+
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
     // console.log((Memo.funcProcInstance as any).name);
@@ -132,7 +134,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     return dom;
 }
 
-function mountChildrenDoms (dom: HTMLElement, children: (IElementBuilder | IElementBuilder[])[]) {
+function mountChildrenDoms (dom: HTMLElement, children: (IElementBuilder | IIfBuildArg | IElementBuilder[])[]) {
     for (const item of children) {
         if (item instanceof Array) {
             // (memo as any).name = i++;
@@ -144,11 +146,26 @@ function mountChildrenDoms (dom: HTMLElement, children: (IElementBuilder | IElem
             }
             dom.appendChild(frag);
         // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
-        } else {
+        } else if (item.type === 'builder') {
             // console.count('use_memo_no');
             dom.appendChild(transformBuilderToDom(item));
+        } else if (item.type === 'if') {
+            dom.appendChild(transformIfToDom(dom, item));
         }
     }
+}
+
+function transformIfToDom (dom: HTMLElement, config: IIfBuilder) {
+
+    let node = config.exe();
+
+    config.onUpdate(d => {
+        dom.insertBefore(d, node);
+        dom.removeChild(node);
+        node = d;
+    });
+
+    return node;
 }
 
 function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: TFPMemo): IDomInfoData {
@@ -231,6 +248,7 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
         });
         dom.id = id;
     }
+
     return data;
     // console.log(info, dom, binding, replacement, reactions);
 }
@@ -245,7 +263,8 @@ export function createElement ({
     attributes = {},
     children,
     binding,
-    domInfo = ''
+    domInfo = '',
+    _if
 }: IElementOptions): IElement {
     return {
         tag,
@@ -256,5 +275,6 @@ export function createElement ({
         children,
         binding,
         domInfo,
+        _if
     };
 }

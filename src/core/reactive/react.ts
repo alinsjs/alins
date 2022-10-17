@@ -9,9 +9,9 @@ import {IBuilderParameter} from '../core';
 import {Compute} from './computed';
 
 export const subscribe = Symbol('subscribe_react');
-export const forceUpdata = Symbol('force_update_react');
+export const forceUpdate = Symbol('force_update_react');
 
-// type TBaseTypes = number | boolean | string | null | undefined;
+export type TBaseTypes = number | boolean | string | null | undefined;
 // type TReactTypes = TBaseTypes | IJson<TReactTypes> | TReactTypes[];
 
 export interface IReactItem<T = any> {
@@ -19,7 +19,7 @@ export interface IReactItem<T = any> {
     get(): T;
     set(v: T): void;
     value: T;
-    [forceUpdata](): void;
+    [forceUpdate](): void;
     [subscribe](fn: (v:T, old:T) => void):  T;
 }
 
@@ -116,8 +116,8 @@ function bindReactive ({
         type: 'react'
     };
 }
-// function createReactive<T extends object> (data: T): IReactWrap<T>;
-// function createReactive<T extends TBaseTypes> (data: T): IReactItem<T>;
+// export function createReactive<T extends object> (data: T): IReactWrap<T>;
+// export function createReactive<T extends TBaseTypes> (data: T): IReactItem<T>;
 export function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
     const type = typeof data;
     if (type !== 'object' || data === null) {
@@ -144,7 +144,7 @@ export function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
                 changeList.push(fn);
                 return this.get();
             },
-            [forceUpdata] () {
+            [forceUpdate] () {
                 changeList.forEach(fn => {fn(data, data);});
             }
         } as IReactItem<T>;

@@ -6,11 +6,13 @@
 
 import {IJson} from '../common';
 import {controllers, IControllerBuilder} from '../controller/controller';
+import {IIfBuilder} from '../controller/if';
 import {IBuilderParameter} from '../core';
 import {createElement, IElement, IElementBuilder, IElementOptions} from '../element/transform';
 import {IReactBuilder} from '../reactive/react';
 
-export type TBuilderArg = number | string | IReactBuilder | IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
+export type TBuilderArg = number | string | IReactBuilder
+ | IIfBuilder | IElementBuilder | IElementBuilder[]; // (IElementBuilder|IElementBuilder[])[];
 
 
 export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
@@ -39,7 +41,9 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'react': elementOptions.binding = item.exe({
                     type: 'dom-info',
                 }); break;
-                case 'builder': elementOptions.children.push(item); break;
+                case 'builder':
+                case 'if':
+                    elementOptions.children.push(item); break;
             }
         }
     }

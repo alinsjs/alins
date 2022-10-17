@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {createReactive, IReactItem, subscribe} from './react';
+import {createReactive, IReactItem, subscribe, TBaseTypes} from './react';
 
 const ComputeWatcher = {
     add (item: IReactItem<any>) {
@@ -16,10 +16,10 @@ const ComputeWatcher = {
 
 export const Compute: {
     instance: typeof ComputeWatcher | null;
-    watch(fn: Function): void
+    watch(fn: Function): any
 } = {
     instance: null,
-    watch (fn: Function): void {
+    watch (fn: Function): any {
         this.instance = {
             add (item: IReactItem<any>) {
                 item[subscribe]((v) => {
@@ -33,9 +33,20 @@ export const Compute: {
     }
 };
 
-export function computed (fn: ()=> any) {
+export function computed<T> (fn: ()=> T) {
 
-    const value = Compute.watch(fn);
+    const reacts: IReactItem[] = [];
+    Compute.instance = {
+        add (item: IReactItem<TBaseTypes>) {
+            reacts.push(item);
+        }
+    };
+    const react = createReactive(fn()) as IReactItem;
+    Compute.instance = null;
 
-    return createReactive(value);
+    reacts.forEach(item => item[subscribe](() => {
+        react.set(fn());
+    }));
+
+    return react;
 }

@@ -39,7 +39,7 @@ for (let i = 0; i < 2; i++) {
 }
 const array3 = react(array);
 
-array3.$set(1, {});
+// array3.$set(1, {});
 
 
 // const object2 = react({
@@ -117,7 +117,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // 不可缓存元素 1个根元素 x1. x2 .x3 .x4, 可缓存元素 29的
 
 const bool = react(true);
-const num = react(1);
+const num = react(3);
 
 const computed: Function = () => {};
 
@@ -140,7 +140,11 @@ mount('body',
         //         ])
         //     ])
         // ]),
-        div.if(() => num.value > 1)(react`:${bool}`),
+        div.if(() => num.value > 1)(react`:if-${num}`)
+            .elif(() => num.value < 0)(react`:elif-${num}`)
+            // .else(react`:else`),
+        // .elif(() => num.value < 0)(react`${num.value - 1}`)
+        // .else()
         // div.if(() => num.value > 1)(react`:${bool}`),
 
         // .else(react`:!!${bool}`),
