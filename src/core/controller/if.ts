@@ -3,30 +3,38 @@
  * @Date: 2022-10-15 19:53:12
  * @Description: Coding something
  */
-// /*
-//  * @Author: tackchen
-//  * @Date: 2022-10-11 08:31:28
-//  * @Description: Coding something
-//  */
+/*
+ * @Author: tackchen
+ * @Date: 2022-10-11 08:31:28
+ * @Description: Coding something
+ */
 
-// import {TBuilderArg} from '../builder/builder';
-// import {IElementBuilder} from '../element/transform';
-// import {IReactWrap} from '../reactive/react';
+import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
+import {IElementBuilder} from '../element/transform';
+import {computed} from '../reactive/computed';
+import {IReactItem, IReactWrap, subscribe} from '../reactive/react';
 
-// export interface IIfController {
-//     <T>(
-//         list: IReactWrap<T>[],
-//         callback: (item: IReactWrap<T>, index: number) => IElementBuilder
-//     ): IElementBuilder[];
-// }
+export interface IIfController {
+    <T>(
+        this: IBuilderConstructor,
+        bool: IReactItem<T> | (()=>boolean),
+    ): ((...args: TBuilderArg[]) => IElementBuilder);
+}
 
-// export interface IForCallback<T=any> {
-//     (item: IReactWrap<T>, index?: number): TBuilderArg[];
-// }
+// div.if(num.value > 1)(react`:${bool}`),
+// div.if(bool)(react`:${num.value}`),
+export const ifController: IIfController = function (this: IBuilderConstructor, bool) {
+    const comment = document.createComment('<!---->');
+    
+    if (typeof bool === 'function') {
+        const v = computed(bool);
+    }
+    
+    bool[subscribe](v => {
+        
+    });
 
-// export const ifController: IForController = function (list, callback) {
-//     // todo reactive index
-//     return list.map((item, index) => {
-//         return callback(item, index);
-//     });
-// };
+    return (...args) => {
+        return this.apply(null, args);
+    };
+};

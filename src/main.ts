@@ -26,7 +26,7 @@ const datab = react('bb');
 // }]);
 
 const array = [];
-for (let i = 0; i < 20000; i++) {
+for (let i = 0; i < 2; i++) {
     array.push({
         a: [
             ['a1' + Math.random().toString(), 'a2' + Math.random().toString()],
@@ -38,6 +38,9 @@ for (let i = 0; i < 20000; i++) {
     });
 }
 const array3 = react(array);
+
+array3.$set(1, {});
+
 
 // const object2 = react({
 //     a: {
@@ -74,7 +77,8 @@ btn1.onclick = () => {
     array3.forEach(item => {
         item.a.forEach(i2 => {
             i2.forEach(i3 => {
-                i3.set(i3.get() + 'xxx');
+                i3.value += 'xxx';
+                // i3.set(i3.get() + 'xxx');
             });
         });
     });
@@ -112,6 +116,11 @@ window.addEventListener('DOMContentLoaded', () => {
 // todo 理论上最佳方案
 // 不可缓存元素 1个根元素 x1. x2 .x3 .x4, 可缓存元素 29的
 
+const bool = react(true);
+const num = react(1);
+
+const computed: Function = () => {};
+
 mount('body',
     div('.x0#app',
         // ! 前置使缓存for变得简单
@@ -122,15 +131,22 @@ mount('body',
         //     div(react`:${index}`),
         //     div(react`:${index}`),
         // ]),
-        div.for(array3)((item, index) => [
-            div(':xxx'),
-            div.for(item.a)((str, i) => [
-                '.x3', react`.x3-${index}-${i}`,
-                div.for(str)((a, ii) => [
-                    react`:${a}-${index}-${i}-${ii}`
-                ])
-            ])
-        ]),
+        // div.for(array3)((item, index) => [
+        //     div(':xxx'),
+        //     div.for(item.a)((str, i) => [
+        //         '.x3', react`.x3-${index}-${i}`,
+        //         div.for(str)((a, ii) => [
+        //             react`:${a}-${index}-${i}-${ii}`
+        //         ])
+        //     ])
+        // ]),
+        div.if(() => num.value > 1)(react`:${bool}`),
+        // div.if(() => num.value > 1)(react`:${bool}`),
+
+        // .else(react`:!!${bool}`),
+        // div.switch(item)
+        //     .case(1)()
+        //     .case(2)()
         // div.for(array3)((item, index) => [ '.x1',
         //     // div('.x2', react`:x2-${index}`),
         //     div.for(item.a)((str, i) => [ '.x2',
@@ -145,13 +161,32 @@ mount('body',
         //     div.for(item.a)((str, i) => i.get() === 0 ? [] : [])
         // ]),
         // div.for(array3)((item, index) => a),
-        // div.if()
-        //     .else(),
-        // div.switch(item)
-        //     .case(1)()
-        //     .case(2)()
+        
     )
 );
+
+const funcA = (d) => {
+    console.log('funcA');
+    console.log(d);
+    console.log('funcA2');
+};
+const funcB = (d) => {
+    console.log('funcB');
+    console.log(d);
+    console.log('funcB2');
+};
+
+const funcC = () => {
+    console.log('funcC');
+    return 'c';
+};
+
+const test = [
+    funcA(funcC()),
+    funcB(funcC() + 1)
+];
+
+
 // mount('body',
 //     div('#app', [
 //         $for(array3, (item, index) => div([

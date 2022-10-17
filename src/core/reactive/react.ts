@@ -6,6 +6,7 @@
 
 // import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
+import {Compute} from './computed';
 
 export const subscribe = Symbol('subscribe_react');
 export const forceUpdata = Symbol('force_update_react');
@@ -15,19 +16,21 @@ export const forceUpdata = Symbol('force_update_react');
 
 export interface IReactItem<T = any> {
     $index?: IReactItem<number>;
-    set(v: T): void;
     get(): T;
+    set(v: T): void;
+    value: T;
     [forceUpdata](): void;
     [subscribe](fn: (v:T, old:T) => void):  T;
 }
 
 export interface IReactObjectItem<T = any, K = string>{
     $index?: IReactItem<number>;
-    del(key: K): void;
-    get(key: K): T[keyof T];
-    set(key: K, value: T[keyof T]): void;
-    set(v: T): void;
-    get(): T;
+    $del(key: K): void;
+    $get(): T;
+    $get(key: K): T[keyof T];
+    $set(key: K, value: T[keyof T]): void;
+    $set(v: T): void;
+    $value: T;
     // get(key: K): any;
     // set(key: K, value: any): void;
     // set(v: object): void;
@@ -121,7 +124,16 @@ export function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
         // 值类型
         const changeList: Function[] = [];
         return {
-            get () {return data;},
+            get () {
+                Compute.instance?.add(this);
+                return data;
+            },
+            get value () {
+                return this.get();
+            },
+            set value (v: any) {
+                this.set(v);
+            },
             set (v: any) {
                 if (v instanceof Array) v = v.join('\n');
                 if (v === data) return;
@@ -151,11 +163,17 @@ function reactiveObject<T> (data: T) {
     const changeList: Function[] = [];
     let target = data as any;
     Object.assign(target, {
-        get (k?: number|string) {
+        $get (k?: number|string) {
             if (typeof k === 'undefined') return target;
             return target[k];
         },
-        set (v: any, value?: T) {
+        get $value () {
+            return this.$get();
+        },
+        set $value (v: any) {
+            this.$set(v);
+        },
+        $set (v: any, value?: T) {
             if (typeof value === 'undefined') {
                 if (v === data) return;
                 // todo 优化 destory 旧对象的引用
@@ -166,12 +184,12 @@ function reactiveObject<T> (data: T) {
                 target[v].set(value);
             }
         },
-        del (k: number|string) {
+        $del (k: number|string) {
             delete target[k];
         },
         [subscribe] (fn) {
             changeList.push(fn);
-            return this.get();
+            return this.$get();
         }
     } as IReactObjectItem<T>);
 }

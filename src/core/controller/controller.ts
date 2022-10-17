@@ -5,16 +5,19 @@
  */
 
 import {forController, IForController} from './for';
+import {ifController, IIfController} from './if';
 
 export interface IController {
     
 }
 export interface IControllerBuilder {
     for: IForController;
+    if: IIfController;
 }
 
 export const controllers = {
-    for: forController
+    for: forController,
+    if: ifController,
 };
 
 export const $for = forController;
