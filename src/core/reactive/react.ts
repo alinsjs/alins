@@ -6,7 +6,7 @@
 
 // import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
-import {Compute} from './computed';
+import {Compute, TWatchFunc} from './computed';
 
 export const subscribe = Symbol('subscribe_react');
 export const forceUpdate = Symbol('force_update_react');
@@ -87,7 +87,7 @@ export type IReactWrap<T> = T extends object ? ({
 
 export interface IReactBindingTemplate {
     template: string[], // TemplateStringsArray
-    reactions: IReactItem[],
+    reactions: TReactionItem[],
 }
 
 // react上下文环境
@@ -125,7 +125,7 @@ export function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
         const changeList: Function[] = [];
         return {
             get () {
-                Compute.instance?.add(this);
+                Compute.add?.(this);
                 return data;
             },
             get value () {
@@ -194,14 +194,16 @@ function reactiveObject<T> (data: T) {
     } as IReactObjectItem<T>);
 }
 
+type TReactionItem = IReactItem | TWatchFunc;
+
 // 生成响应数据绑定
-export function react(ts: TemplateStringsArray, ...reactions: IReactItem[]): IReactBuilder;
+export function react(ts: TemplateStringsArray, ...reactions: TReactionItem[]): IReactBuilder;
 // 初始化响应数据
 export function react<T>(data: T): IReactWrap<T>;
 
 export function react<T> (
     data: TemplateStringsArray | T,
-    ...reactions: IReactItem[]
+    ...reactions: TReactionItem[]
 ): IReactBuilder | IReactWrap<T> | IReactItem<T> {
     // todo check is TemplateStringsArray
     if (data instanceof Array && (data as any).raw instanceof Array) {

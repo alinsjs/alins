@@ -9,6 +9,7 @@ import {parseDomInfo} from './core/parser/info-parser';
 import {react} from './core/reactive/react';
 import {$case, $for, $if, $switch, $while} from './core/controller/controller';
 import {IElementBuilder} from './core/element/transform';
+import {computed} from './core/reactive/computed';
 
 const win = (window as any);
 
@@ -118,9 +119,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const bool = react(true);
 const num = react(3);
-
-const computed: Function = () => {};
-
+const num2 = computed(() => {
+    return num.value + 3;
+});
 mount('body',
     div('.x0#app',
         // ! 前置使缓存for变得简单
@@ -140,6 +141,9 @@ mount('body',
         //         ])
         //     ])
         // ]),
+        div(react`:computed-${() => num.value + 1}`),
+        div(react`:computed-${() => num.value + 2}`),
+        div(react`:computed-${num2}`),
         div.if(() => num.value > 1)(react`:if-${num}`)
             .elif(() => num.value < 0)(react`:elif-${num}`)
             // .else(react`:else`),

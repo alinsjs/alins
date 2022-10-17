@@ -11,6 +11,7 @@ import {createFuncProcessMemo, TFPMemo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
 import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
 import {createReplacement, extractReplacement, parseReplacementToNumber, reactiveTemplate, ReplaceExp} from '../reactive/binding';
+import {computed} from '../reactive/computed';
 import {IReactBinding, subscribe} from '../reactive/react';
 import {join} from '../utils';
 
@@ -185,8 +186,9 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: T
                 if (text) dom.appendChild(document.createTextNode(text));
                 if (!results[i]) return;
                 const index = parseReplacementToNumber(results[i]);
-                const reaction = reactions[index];
-                if (!reaction) return;
+                const reactionItem = reactions[index];
+                if (!reactionItem) return;
+                const reaction = typeof reactionItem === 'function' ? computed(reactionItem) : reactionItem;
                 // ! 关键代码
                 const node = document.createTextNode(
                     reaction[subscribe]((v) => {node.textContent = v;})

@@ -4,45 +4,25 @@
  * @Description: Coding something
  */
 
-import {createReactive, IReactItem, subscribe, TBaseTypes} from './react';
+import {createReactive, IReactItem, subscribe} from './react';
 
-const ComputeWatcher = {
-    add (item: IReactItem<any>) {
-        item[subscribe]((v) => {
-            
-        });
-    }
-};
+export type TWatchFunc<T = any> = (...args: any[]) => T;
 
 export const Compute: {
-    instance: typeof ComputeWatcher | null;
-    watch(fn: Function): any
+    add: ((item: IReactItem)=>void) | null;
 } = {
-    instance: null,
-    watch (fn: Function): any {
-        this.instance = {
-            add (item: IReactItem<any>) {
-                item[subscribe]((v) => {
-                    
-                });
-            }
-        };
-        const value = fn();
-        this.instance = null;
-        return value;
-    }
+    add: null,
 };
 
-export function computed<T> (fn: ()=> T) {
+export function computed<T> (fn: TWatchFunc<T> ) {
 
     const reacts: IReactItem[] = [];
-    Compute.instance = {
-        add (item: IReactItem<TBaseTypes>) {
-            reacts.push(item);
-        }
+    Compute.add = (item: IReactItem) => {
+        reacts.push(item);
     };
-    const react = createReactive(fn()) as IReactItem;
-    Compute.instance = null;
+    const value = fn();
+    Compute.add = null;
+    const react = createReactive(value) as IReactItem;
 
     reacts.forEach(item => item[subscribe](() => {
         react.set(fn());
