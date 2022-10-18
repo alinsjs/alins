@@ -1,10 +1,9 @@
 /*
  * @Author: tackchen
  * @Date: 2022-10-11 21:35:20
- * @Description: Coding something
+ * @Description: react data
  */
 
-// import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
 import {join} from '../utils';
 import {Compute, computed, TComputedFunc, IComputedItem} from './computed';
@@ -129,12 +128,8 @@ export function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
                 Compute.add?.(this);
                 return data;
             },
-            get value () {
-                return this.get();
-            },
-            set value (v: any) {
-                this.set(v);
-            },
+            get value () { return this.get(); },
+            set value (v: any) { this.set(v); },
             set (v: any) {
                 if (v instanceof Array) v = v.join('\n');
                 if (v === data) return;
@@ -168,12 +163,8 @@ function reactiveObject<T> (data: T) {
             if (typeof k === 'undefined') return target;
             return target[k];
         },
-        get $value () {
-            return this.$get();
-        },
-        set $value (v: any) {
-            this.$set(v);
-        },
+        get $value () { return this.$get(); },
+        set $value (v: any) { this.$set(v); },
         $set (v: any, value?: T) {
             if (typeof value === 'undefined') {
                 if (v === data) return;
@@ -182,7 +173,11 @@ function reactiveObject<T> (data: T) {
                 // ! 连接新旧对象
                 changeList.forEach(fn => {fn(v, data);});
             } else {
-                target[v].set(value);
+                if (typeof target[v] === 'undefined') {
+                    target[v] = createReactive(value);
+                } else {
+                    (target[v].$set || target[v].set)(value);
+                }
             }
         },
         $del (k: number|string) {

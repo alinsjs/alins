@@ -137,43 +137,63 @@ const num2 = computed({
 });
 
 const add = () => {num.value++;};
-watch(num, (v, old) => {
-    console.log(v, old);
+// watch(num, (v, old) => {
+//     console.log(v, old);
+// });
+
+const oo = react({
+    a: {
+        b: 1,
+    }
 });
 
-mount('body',
-    div('.x0#app',
-        react`/span:aa${num}aa`,
-        ':111.xxx#aa',
-        div(':11'),
-        span.if(() => num.value > 1)(react`:if-${num}`)
-            .elif(() => num.value < 0)(react`/div:elif-${() => num.value + 1}`)
-            .else(react`/div:else`, click(add)),
-        input.model(num)(),
-        
-        // span.if(() => num.value > 1)(react`/div:if-${num}`)
-        //     .elif(() => num.value < 0)(react`/div:elif-${num}`)
-        //     .else(react`:else`),
-        // // .else(react`:!!${bool}`),
-        // div.switch(num)
-        //     .case(1)(react`:case1-${num}`)
-        //     .case(2)(react`:case2-${num}`),
-        comp(hello,
-            prop({num}),
-            // emit({add})
-            slot(div(react`:a-child-${num}`))
-        ),
-        // comp.if(() => num.value > 1)(hello)
-        //     .else('/div:111'),
-        // comp.show(() => num.value > 1),
-        // comp.switch(num)
-        //     .case(1)(hello)
-        //     .case(2)(hello),
-        
-        // comp.for(array3)(hello),
+// mount('body',
+//     div('.x0#app',
+//         react`:value=${oo.a.b}, ${oo.a.c}`,
+//     ),
+// );
 
-    ),
+const count = react(0);
+const increment = () => {
+    count.value++;
+};
+mount(
+    button(click(increment), react`:Count is ${count}`)
 );
+
+// mount('body',
+//     div('.x0#app',
+//         react`/span:aa${num}aa`,
+//         ':111.xxx#aa',
+//         div(':11'),
+//         span.if(() => num.value > 1)(react`:if-${num}`)
+//             .elif(() => num.value < 0)(react`/div:elif-${() => num.value + 1}`)
+//             .else(react`/div:else`, click(add)),
+//         input.model(num)(),
+        
+//         // span.if(() => num.value > 1)(react`/div:if-${num}`)
+//         //     .elif(() => num.value < 0)(react`/div:elif-${num}`)
+//         //     .else(react`:else`),
+//         // // .else(react`:!!${bool}`),
+//         // div.switch(num)
+//         //     .case(1)(react`:case1-${num}`)
+//         //     .case(2)(react`:case2-${num}`),
+//         comp(hello,
+//             prop({num}),
+//             // emit({add})
+//             slot(div(react`:a-child-${num}`))
+//         ),
+//         // comp.if(() => num.value > 1)(hello)
+//         //     .else('/div:111'),
+//         // comp.show(() => num.value > 1),
+//         // comp.switch(num)
+//         //     .case(1)(hello)
+//         //     .case(2)(hello),
+        
+//         // comp.for(array3)(hello),
+
+//     ),
+// );
 
 // mount('body',
 //     div('.x0#app',

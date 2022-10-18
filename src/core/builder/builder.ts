@@ -61,7 +61,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'switch':
                 case 'comp':
                     elementOptions.children.push(item); break;
-                case 'event':
+                case 'on':
                     elementOptions.events?.push(item); break;
             }
         }

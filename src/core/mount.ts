@@ -3,22 +3,34 @@
  * @Date: 2022-10-11 16:16:59
  * @Description: Coding something
  */
-import {transformBuilderToDom, IElementBuilder} from './element/transform';
+import {transformBuilderToDom, TChild} from './element/transform';
 // import {delay} from './utils';
 
-export function mount (container: string, builder: IElementBuilder) {
-    // const dom = document.createElement('div');
-    // document.querySelector(container)?.appendChild(dom);
-    // transformBuilderToDom(builder, dom);
-    // debugger;
-    document.querySelector(container)?.appendChild(
-        transformBuilderToDom(builder),
-    );
-    // console.timeLog('mounted');
-    // debugger;
-    
-    // document.querySelector(container)?.appendChild(dom);
-    // console.timeLog('mounted');
+export function mount (...builders: (string | TChild)[]) {
+    let selector = 'body';
+    if (typeof builders[0] === 'string') {
+        selector = builders.shift() as string;
+    }
+    const parent = document.querySelector(selector);
+    if (!parent) throw new Error('Parent is not defined');
+
+    for (let i = 0; i < builders.length; i++) {
+        mountSingleChild(parent as HTMLElement, builders[i] as TChild);
+    }
+}
+
+function mountSingleChild (parent: HTMLElement, child: TChild) {
+    if (child instanceof Array) {
+        for (let i = 0; i < child.length; i++) {
+            mountSingleChild(parent, child[i]);
+        }
+    } else {
+        if (child.type === 'builder' || child.type === 'comp') {
+            parent.appendChild(transformBuilderToDom(child));
+        } else {
+            parent.appendChild(child.exe(parent));
+        }
+    }
 }
 
 // export async function batchMountDom (dom: HTMLElement, doms: HTMLElement[]) {
