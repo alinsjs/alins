@@ -4,6 +4,7 @@
  * @Description: react data
  */
 
+import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
 import {join} from '../utils';
 import {Compute, computed, TComputedFunc, IComputedItem} from './computed';
@@ -12,7 +13,7 @@ import {createProxy} from './proxy';
 export const subscribe = Symbol('subscribe_react');
 export const forceUpdate = Symbol('force_update_react');
 export const index = Symbol('index_react');
-
+export const reactValue = Symbol('react_value');
 export type TBaseTypes = number | boolean | string | null | undefined;
 // type TReactTypes = TBaseTypes | IJson<TReactTypes> | TReactTypes[];
 
@@ -23,17 +24,18 @@ export interface IReactBase<T = any> {
 }
 export interface IReactItem<T = any> extends IReactBase<T>{
     value: T;
+    [reactValue]: boolean;
 }
 
 export type IReactWrap<T> = T extends object ? ({
     [prop in (keyof T)]: IReactWrap<T[prop]>;
-} & (
+} & IJson & (
     IReactBase<T>
 )): IReactItem<T>;
 
 export interface IReactBindingTemplate {
     template: string[], // TemplateStringsArray
-    reactions: TReactionItem[],
+    reactions: TReactionItem[] | any[],
 }
 
 // react上下文环境
@@ -54,9 +56,11 @@ function bindReactive ({
     reactions,
 }: IReactBindingTemplate): IReactBuilder {
     // console.log('bindReactive', template, reactions);
+    debugger;
     return {
         // todo 从div构建处传入上下文环境
         exe (context: IReactContext) {
+            debugger;
             return {template, reactions, context}; // todo
         },
         type: 'react'
@@ -92,6 +96,7 @@ export function reactiveValue<T> (value: T): IReactItem<T> {
             value = v;
             changeList.forEach(fn => {fn(v, old);});
         },
+        [reactValue]: true,
         [subscribe] (fn) {
             changeList.push(fn);
             return this.value;
