@@ -274,7 +274,7 @@
               "content": "组件基础逻辑",
               "id": 1666052684603,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -284,7 +284,7 @@
               "content": "组件props",
               "id": 1666052694770,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -294,7 +294,7 @@
               "content": "组件event",
               "id": 1666052703036,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -304,7 +304,7 @@
               "content": "组件slot",
               "id": 1666052708485,
               "level": "danger",
-              "done": false
+              "done": true
             }
           }
         ],
@@ -312,7 +312,7 @@
           "content": "组件",
           "id": 1665494169984,
           "level": "danger",
-          "done": false
+          "done": true
         }
       },
       {
@@ -382,10 +382,9 @@
       1665494269048,
       1665564936729,
       1665494260180,
-      1665494195217,
       1665494213348,
-      1665494169984,
-      1665835013054
+      1665835013054,
+      1665494195217
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",

@@ -138,8 +138,8 @@ export function createReactive<T> (data: T): IReactWrap<T> | IReactItem<T> {
             set (v: any) {
                 if (v instanceof Array) v = v.join('\n');
                 if (v === data) return;
-                data = v;
                 changeList.forEach(fn => {fn(v, data);});
+                data = v;
             },
             [subscribe] (fn) {
                 changeList.push(fn);

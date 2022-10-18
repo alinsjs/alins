@@ -25,8 +25,9 @@ export const prop: IPropConstructor = (props) => {
         exe () {
             const data: IJson<IComputedItem> = {};
             for (const k in props) {
-                const prop = props[k];
-                const computeTarget = typeof prop === 'function' ? prop : () => prop.value;
+                const item = props[k];
+                (window as any).item = item;
+                const computeTarget = typeof item === 'function' ? item : (() => item.get());
                 data[k] = computed(computeTarget);
             }
             return data;

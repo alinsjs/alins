@@ -15,6 +15,7 @@ import {comp} from './core/comp/comp';
 import {hello} from './hello';
 import {prop} from './core/comp/prop';
 import {slot} from './core/comp/slot';
+import {watch} from './core/reactive/watch';
 
 const win = (window as any);
 
@@ -136,7 +137,9 @@ const num2 = computed({
 });
 
 const add = () => {num.value++;};
-
+watch(num, (v, old) => {
+    console.log(v, old);
+});
 
 mount('body',
     div('.x0#app',

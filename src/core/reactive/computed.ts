@@ -8,11 +8,11 @@ import {createReactive, forceUpdate, IReactItem, subscribe} from './react';
 
 export type TComputedFunc<T = any> = (...args: any[]) => T;
 
-interface TComputedObject<T> {
+export interface TComputedObject<T> {
     get(): T;
 }
 
-interface TComputedObjectSet<T> extends TComputedObject<T>{
+export interface TComputedObjectSet<T> extends TComputedObject<T>{
     set: ((v: T, old: T) => void);
 }
 
@@ -30,6 +30,8 @@ export interface IComputedItem<T = any> {
     [subscribe](fn: (v:T, old:T) => void):  T;
 }
 
+export type TComputedBuilder<T> = TComputedObjectSet<T> | TComputedFunc<T> | TComputedObject<T>
+
 export interface IComputed {
     <T>(target: TComputedObjectSet<T> ): IReactItem<T>;
     <T>(target: TComputedFunc<T> | TComputedObject<T> ): IComputedItem<T>;
@@ -40,17 +42,17 @@ export const computed: IComputed = (target) => {
     const get = isFunc ? target : target.get;
     const set = isFunc ? null : (target as TComputedObjectSet<any>).set;
 
+    // ! 依赖收集
     const reacts: IReactItem[] = [];
-    Compute.add = (item: IReactItem) => {
-        reacts.push(item);
-    };
+    Compute.add = (item: IReactItem) => { reacts.push(item); };
     let value = get();
     Compute.add = null;
+
     const react = createReactive(value) as IReactItem;
     const originSet = react.set;
-    reacts.forEach(item => item[subscribe](() => {
-        value = get();
-        originSet(value);
+    reacts.forEach(item => item[subscribe]((nv: any, old) => {
+        originSet(nv);
+        value = old;
     }));
     react.set = set ? (v: any) => {
         set(v, value);
