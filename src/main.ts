@@ -146,11 +146,11 @@ const oo = react({
     }
 });
 
-// mount('body',
-//     div('.x0#app',
-//         react`:value=${oo.a.b}, ${oo.a.c}`,
-//     ),
-// );
+mount('body',
+    div('.x0#app',
+        react`:value=${oo.a.b}`,
+    ),
+);
 
 mount(
     comp(count)
@@ -327,7 +327,7 @@ const test = [
 //     ])
 // );
 console.log(win.app?.childElementCount);
-console.log(win.app?.childNodes[win.app?.childElementCount - 1]);
+// console.log(win.app?.childNodes[win.app?.childElementCount - 1]);
 // console.log(win.app?.childNodes[win.app?.childElementCount - 1].innerText);
 console.log('mounted done');
 console.timeLog('mounted');

@@ -78,7 +78,7 @@ export function createReactive<T> (data: T): IReactWrap<T> {
     throw new Error('createReactive error');
 }
 
-function reactiveValue<T> (value: T): IReactItem<T> {
+export function reactiveValue<T> (value: T): IReactItem<T> {
     const changeList: Function[] = [];
     return {
         get value () {

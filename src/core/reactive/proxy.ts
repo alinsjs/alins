@@ -5,7 +5,7 @@
  */
 
 import {IJson} from '../common';
-import {forceUpdate, subscribe, IReactBase} from './react';
+import {forceUpdate, subscribe, IReactBase, reactiveValue} from './react';
 
 
 export function createProxy<T extends IJson> (
@@ -15,9 +15,9 @@ export function createProxy<T extends IJson> (
     if (typeof data === 'object') {
         for (const key in data) {
             const value = data[key];
-            if (typeof value === 'object' && value !== null) {
-                (data as any)[key] = createProxy(value);
-            }
+            (data as any)[key] = (typeof value === 'object' && value !== null) ?
+                createProxy(value) :
+                reactiveValue(value);
         }
     }
 
@@ -26,7 +26,6 @@ export function createProxy<T extends IJson> (
             changeList[i](value, oldValue);
         }
     };
-
     const p = new Proxy(data, {
         get (target: IJson, property, receiver) {
             if (!(Array.isArray(target) && (property === 'length' || typeof (target as any)[property] === 'function'))) {
