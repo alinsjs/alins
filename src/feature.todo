@@ -190,7 +190,7 @@
             "key": 1665564553848,
             "children": [],
             "todo": {
-              "content": "bind: 输入组件数据双向绑定 依赖控制器",
+              "content": "model: 输入组件数据双向绑定 依赖控制器",
               "id": 1665564553848,
               "level": "danger",
               "done": true
@@ -200,7 +200,7 @@
             "key": 1666052820071,
             "children": [],
             "todo": {
-              "content": "bind修饰符",
+              "content": "model 修饰符",
               "id": 1666052820071,
               "level": "danger",
               "done": true

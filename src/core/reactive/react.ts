@@ -217,7 +217,7 @@ export function react<T> (
     }
 }
 
-export function transformToReaction (item: TReactionItem) {
+export function transformToReaction<T> (item: TReactionItem<T>): IReactItem<T> | IComputedItem<T> {
     return (typeof item === 'function') ? computed(item) : item;
 }
 export function countReaction (item: TReactionItem) {

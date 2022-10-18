@@ -6,7 +6,7 @@
 
 import {IJson} from '../common';
 import {IComponentBuilder} from '../comp/comp';
-import {IBindBuilder} from '../controller/bind';
+import {IModelBuilder} from '../controller/model';
 import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
 import {ISwitchBuilder} from '../controller/switch';
@@ -23,7 +23,7 @@ import {join} from '../utils';
 export type TElementChild = IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
 export type TChild = TElementChild |
-    IIfBuilder | IShowBuilder | IBindBuilder | ISwitchBuilder<any>;
+    IIfBuilder | IShowBuilder | IModelBuilder | ISwitchBuilder<any>;
 
 export interface IElement {
     tag: string;
@@ -173,7 +173,7 @@ function mountChildrenDoms (
                 case 'switch':
                     dom.appendChild(item.exe(dom)); break;
                 case 'show':
-                case 'bind':
+                case 'model':
                     dom.appendChild(item.exe()); break;
             }
         }

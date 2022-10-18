@@ -1,46 +1,31 @@
 /*
  * @Author: tackchen
- * @Date: 2022-10-15 19:53:12
- * @Description: Coding something
- */
-/*
- * @Author: tackchen
  * @Date: 2022-10-11 08:31:28
- * @Description: Coding something
+ * @Description: model controller
  */
 
-import {type} from 'os';
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IBuilderParameter} from '../core';
-import {IElementBuilder, transformBuilderToDom} from '../element/transform';
-import {computed} from '../reactive/computed';
+import {transformBuilderToDom} from '../element/transform';
 import {IReactItem, subscribe, transformToReaction} from '../reactive/react';
-import {TIfArg} from './if';
 
-export type TBindArg = IReactItem<any> | (()=>any);
+export type TModelArg<T> = IReactItem<T> | (()=>T);
 
-export interface IBindBuilder extends IBuilderParameter {
+export interface IModelBuilder extends IBuilderParameter {
     exe(): HTMLElement;
-    type: 'bind';
+    type: 'model';
 }
 
-type TBindDecorator = 'number' | 'camel';
-export interface IBindController {
-    (
+type TModelDecorator = 'number' | 'camel';
+export interface IModelController {
+    <T>(
         this: IBuilderConstructor,
-        value: TBindArg,
-        ...decorators: TBindDecorator[]
-    ): ((...args: TBuilderArg[]) => IBindBuilder);
+        value: TModelArg<T>,
+        ...decorators: TModelDecorator[]
+    ): ((...args: TBuilderArg[]) => IModelBuilder);
 }
-// camel
-// prop
-//
 
-
-// div.if(num.value > 1)(react`:${bool}`),
-// div.if(bool)(react`:${num.value}`),
-
-export const bindController: IBindController = function (this: IBuilderConstructor, value, ...decorators) {
+export const modelController: IModelController = function (this: IBuilderConstructor, value, ...decorators) {
     const react = transformToReaction(value);
     const constructor = this;
     return (...args) => {
@@ -53,19 +38,17 @@ export const bindController: IBindController = function (this: IBuilderConstruct
                 const isCEDom = (dom.contentEditable === 'true');
 
                 const getValue = isCEDom ? () => dom.textContent || '' : () => dom.value || '';
-                const setValue = isCEDom ? (v: string) => {dom.textContent = v;} : (v: string) => {dom.value = v;};
+                const setValue = isCEDom ? (v: any) => {dom.textContent = v;} : (v: string) => {dom.value = v;};
 
-                setValue(react[subscribe](v => {
+                setValue(react[subscribe]((v) => {
                     if (isInput) {
                         isInput = false;
                         return;
                     }
                     setValue(v);
                 }));
-                dom.addEventListener('input', () => {
+                const triggerChange = (v: any) => {
                     isInput = true;
-                    let v = getValue() as any;
-
                     if (decorators.length !== 0) {
                         if (decorators.includes('number')) {
                             v = parseFloat(v);
@@ -73,11 +56,23 @@ export const bindController: IBindController = function (this: IBuilderConstruct
                             v = v.toLowerCase();
                         }
                     }
-                    react.set(v);
-                }, false);
+                    (react as IReactItem).set(v);
+                };
+                let isComposite = false;
+                dom.addEventListener('compositionstart', () => {
+                    isComposite = true;
+                });
+                dom.addEventListener('compositionend', () => {
+                    isComposite = false;
+                    triggerChange(getValue());
+                });
+                dom.addEventListener('input', () => {
+                    if (!isComposite)
+                        triggerChange(getValue());
+                });
                 return dom;
             },
-            type: 'bind'
+            type: 'model'
         };
     };
 };

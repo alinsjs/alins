@@ -57,7 +57,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'builder':
                 case 'if':
                 case 'show':
-                case 'bind':
+                case 'model':
                 case 'switch':
                 case 'comp':
                     elementOptions.children.push(item); break;

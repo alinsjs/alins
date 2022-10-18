@@ -149,7 +149,7 @@ mount('body',
         span.if(() => num.value > 1)(react`:if-${num}`)
             .elif(() => num.value < 0)(react`/div:elif-${() => num.value + 1}`)
             .else(react`/div:else`, click(add)),
-        input.bind(num, 'number')(),
+        input.model(num)(),
         
         // span.if(() => num.value > 1)(react`/div:if-${num}`)
         //     .elif(() => num.value < 0)(react`/div:elif-${num}`)
