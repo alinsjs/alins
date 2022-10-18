@@ -153,13 +153,17 @@ const oo = react({
 //     ),
 // );
 
-const count = react(0);
-const increment = () => {
-    count.value++;
-};
 mount(
-    button(click(increment), react`:Count is ${count}`)
+    comp(count)
 );
+
+function count () {
+    const count = react(0);
+    return button(
+        click(() => {count.value++;}),
+        react`:Count is ${count}`
+    );
+}
 
 // mount('body',
 //     div('.x0#app',

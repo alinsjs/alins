@@ -12,11 +12,9 @@ import {IShowBuilder} from '../controller/show';
 import {ISwitchBuilder} from '../controller/switch';
 import {IBuilderParameter} from '../core';
 import {IEventBuilder} from '../event/on';
-import {createFuncProcessMemo, TFPMemo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
-import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
+import {IDomInfoData, parseDomInfo} from '../parser/info-parser';
 import {createReplacement, extractReplacement, parseReplacementToNumber, reactiveTemplate, ReplaceExp} from '../reactive/binding';
-import {computed} from '../reactive/computed';
 import {IReactBinding, subscribe, transformToReaction, TReactionItem} from '../reactive/react';
 import {join} from '../utils';
 
@@ -62,9 +60,9 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
     if (domInfo.textContent) config.textContent += domInfo.textContent;
 }
 
-const map: Map<string, TFPMemo> = new Map();
-const cloneNodeCount = 0;
-const cloneNodeCountNo = 0;
+// const map: Map<string, TFPMemo> = new Map();
+// const cloneNodeCount = 0;
+// const cloneNodeCountNo = 0;
  
 // const div = document.createElement('div');
 export function transformBuilderToDom (builder: IElementBuilder | IComponentBuilder): HTMLElement {
