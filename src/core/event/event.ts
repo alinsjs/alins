@@ -9,7 +9,7 @@ import {IBuilderParameter} from '../core';
 
 export interface IEventBuilder extends IBuilderParameter {
     exe(dom: HTMLElement): void;
-    type: 'event';
+    type: 'on';
     name: string;
 }
 
@@ -45,7 +45,7 @@ export function on (
 
             }
         },
-        type: 'event',
+        type: 'on',
         name,
     };
 }

@@ -5,6 +5,7 @@
  */
 
 import {IJson} from '../common';
+import {IComponentBuilder} from '../comp/comp';
 import {IBindBuilder} from '../controller/bind';
 import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
@@ -19,7 +20,9 @@ import {computed} from '../reactive/computed';
 import {IReactBinding, subscribe, transformToReaction, TReactionItem} from '../reactive/react';
 import {join} from '../utils';
 
-export type TChild = IElementBuilder | IElementBuilder[] |
+export type TElementChild = IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
+
+export type TChild = TElementChild |
     IIfBuilder | IShowBuilder | IBindBuilder | ISwitchBuilder<any>;
 
 export interface IElement {

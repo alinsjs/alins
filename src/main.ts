@@ -152,7 +152,20 @@ mount('body',
         // div.switch(num)
         //     .case(1)(react`:case1-${num}`)
         //     .case(2)(react`:case2-${num}`),
-        // comp(hello).if(() => num.value > 1),
+        comp(hello,
+            prop({num}),
+            emit({add})
+            slot(div(':a'))
+        ),
+        comp.if(() => num.value > 1)(hello)
+            .else('/div:111'),
+        comp.show(() => num.value > 1),
+        comp.switch(num)
+            .case(1)(hello)
+            .case(2)(hello),
+        
+        comp.for(array3)(hello),
+
     ),
 );
 

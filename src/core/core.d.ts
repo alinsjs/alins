@@ -7,29 +7,12 @@
 
 export interface IBuilderParameter {
     exe: Function;
-    type: 'css' | 'event' | 'props' |
+    type: 'style' |
         'text' | 'selector' | 'children' |
         'comp' | 'react' | 'builder' |
-        'if' | 'show' | 'bind' | 'switch' | 'event';
-}
-
-interface ICss extends IBuilderParameter {
-    type: 'css';
-}
-type ICssBuilder = ()=> ICss;
-
-
-interface IController {
-    type: 'for' | 'if' | 'bind';
-}
-
-interface IXDomConstructor {
-    (data: string): IXDom;
-    (template: TemplateStringsArray): IXDom;
-}
-
-
-interface IXDom extends IXDomConstructor {
-    css: ICss;
-    props(): IXDom;
+        // 控制器 没有for
+        'if' | 'show' | 'bind' | 'switch' |
+        'on' |
+        // 组件
+        'event' | 'prop' | 'slot';
 }

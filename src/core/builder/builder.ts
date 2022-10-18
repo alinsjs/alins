@@ -7,8 +7,7 @@
 import {controllers, IControllerBuilder} from '../controller/controller';
 import {IEventBuilder} from '../event/event';
 import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
-import {countBindingValue, countReaction, IReactBuilder} from '../reactive/react';
-import {join} from '../utils';
+import {countBindingValue, IReactBuilder} from '../reactive/react';
 
 export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild; // (IElementBuilder|IElementBuilder[])[];
 

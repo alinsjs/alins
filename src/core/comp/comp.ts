@@ -4,39 +4,45 @@
  * @Description: Coding something
  */
 
-import {IComponentElement, IElementBuilder} from '../element/transform';
+import {IControllerBuilder} from '../controller/controller';
+import {IBuilderParameter} from '../core';
+import {IComponentElement, IElement, IElementBuilder} from '../element/transform';
+
+export type TCompBuilderArg = '';
 
 export interface IComponent {
     (options?: {
         props: any;
         event?: any;
         slot?: any;
-    }): IElementBuilder;
+    }): IElement;
 }
 
 export type TCompArg = string; // props event slot
-export interface IComponentBuilder {
-    (comp: IComponent, ...args: TCompArg[]): IComponentElement;
-    // todo controller
+export interface IComponentBuilder extends IBuilderParameter {
+    exe(): IElement;
+    type: 'comp';
+}
+export interface ICompConstructor extends IControllerBuilder {
+    (comp: IComponent, ...args: TCompBuilderArg[]): IComponentBuilder;
 }
 
 // const CompMap: Map<Function, IComponentElement> = new Map(); // 或者可以使用 func.toString md5
 
-export const comp: IComponentBuilder = (...data) => {
+export const comp: ICompConstructor = (component, ...args) => {
 
-    const el = data[0];
-
-    // todo extract props event slot
-  
-    if (typeof el !== 'function') throw new Error('');
+    if (typeof component !== 'function') throw new Error('component must be a function');
 
     // const mapValue = CompMap.get(el);
     // if (mapValue) return mapValue;
 
-    const comp: IComponentElement = { // todo
-    };
 
     // CompMap.set(el, comp);
 
-    return comp;
+    return {
+        exe () {
+            return component();
+        },
+        type: 'comp',
+    };
 };

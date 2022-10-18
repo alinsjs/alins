@@ -113,6 +113,16 @@
               "level": "warning",
               "done": true
             }
+          },
+          {
+            "key": 1666052659088,
+            "children": [],
+            "todo": {
+              "content": "watch 实现",
+              "id": 1666052659088,
+              "level": "danger",
+              "done": false
+            }
           }
         ],
         "todo": {
@@ -124,12 +134,33 @@
       },
       {
         "key": 1665982682369,
-        "children": [],
+        "children": [
+          {
+            "key": 1666052746085,
+            "children": [],
+            "todo": {
+              "content": "事件修饰符",
+              "id": 1666052746085,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666052837600,
+            "children": [],
+            "todo": {
+              "content": "事件类型定义",
+              "id": 1666052837600,
+              "level": "warning",
+              "done": false
+            }
+          }
+        ],
         "todo": {
           "content": "事件",
           "id": 1665982682369,
           "level": "danger",
-          "done": false
+          "done": true
         }
       },
       {
@@ -141,6 +172,16 @@
             "todo": {
               "content": "bind: 输入组件数据双向绑定 依赖控制器",
               "id": 1665564553848,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666052820071,
+            "children": [],
+            "todo": {
+              "content": "bind修饰符",
+              "id": 1666052820071,
               "level": "danger",
               "done": true
             }
@@ -205,7 +246,48 @@
       },
       {
         "key": 1665494169984,
-        "children": [],
+        "children": [
+          {
+            "key": 1666052684603,
+            "children": [],
+            "todo": {
+              "content": "组件基础逻辑",
+              "id": 1666052684603,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1666052694770,
+            "children": [],
+            "todo": {
+              "content": "组件props",
+              "id": 1666052694770,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1666052703036,
+            "children": [],
+            "todo": {
+              "content": "组件event",
+              "id": 1666052703036,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1666052708485,
+            "children": [],
+            "todo": {
+              "content": "组件slot",
+              "id": 1666052708485,
+              "level": "danger",
+              "done": false
+            }
+          }
+        ],
         "todo": {
           "content": "组件",
           "id": 1665494169984,
@@ -263,13 +345,24 @@
           "level": "default",
           "done": false
         }
+      },
+      {
+        "key": 1666052811305,
+        "children": [],
+        "todo": {
+          "content": "自定义渲染",
+          "id": 1666052811305,
+          "level": "default",
+          "done": false
+        }
       }
     ],
     "expandKeys": [
       1665494041685,
       1665494269048,
       1665564936729,
-      1665494260180
+      1665494260180,
+      1665494195217
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",
