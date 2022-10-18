@@ -6,6 +6,7 @@
 
 // import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
+import {join} from '../utils';
 import {Compute, computed, TWatchFunc} from './computed';
 
 export const subscribe = Symbol('subscribe_react');
@@ -218,4 +219,10 @@ export function react<T> (
 
 export function transformToReaction (item: TReactionItem) {
     return (typeof item === 'function') ? computed(item) : item;
+}
+export function countReaction (item: TReactionItem) {
+    return (typeof item === 'function') ? item() : item.get();
+}
+export function countBindingValue (binding: IReactBinding) {
+    return join(binding.template, binding.reactions.map(r => countReaction(r)));
 }

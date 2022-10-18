@@ -4,21 +4,24 @@
  * @Description: Coding something
  */
 
-import {IJson} from '../common';
-import {IBindBuilder} from '../controller/bind';
 import {controllers, IControllerBuilder} from '../controller/controller';
-import {IIfBuilder} from '../controller/if';
-import {IShowBuilder} from '../controller/show';
-import {ISwitchBuilder} from '../controller/switch';
-import {IBuilderParameter} from '../core';
 import {IEventBuilder} from '../event/event';
 import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
-import {IReactBuilder} from '../reactive/react';
+import {countBindingValue, countReaction, IReactBuilder} from '../reactive/react';
+import {join} from '../utils';
 
 export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild; // (IElementBuilder|IElementBuilder[])[];
 
 export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
     // todo controller
+}
+
+function getTagNameFromDomInfo (domInfo: string) {
+    if (domInfo[0] !== '/') return '';
+    for (let i = 1; i < domInfo.length; i++) {
+        if ('.#[:'.includes(domInfo[i])) return domInfo.substring(1, i);
+    }
+    return domInfo.substring(1);
 }
 
 /**
@@ -31,19 +34,27 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
     const elementOptions: IElementOptions = {tag};
     elementOptions.children = [];
     elementOptions.events = [];
+    elementOptions.binding = [];
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
         if (typeof item === 'string') {
             // dom info
-            elementOptions.domInfo = item;
+            const tagName = getTagNameFromDomInfo(item);
+            if (tagName) elementOptions.tag = tagName;
+            elementOptions.domInfo += item;
         } else if (item instanceof Array) {
             // append children
             elementOptions.children.push(item);
         } else if (typeof item === 'object') {
             switch (item.type) {
-                case 'react': elementOptions.binding = item.exe({
-                    type: 'dom-info',
-                }); break;
+                case 'react':
+                    const binding = item.exe({type: 'dom-info'});
+                    if (binding.template[0][0] === '/') {
+                        const domInfo = countBindingValue(binding);
+                        elementOptions.tag = getTagNameFromDomInfo(domInfo);
+                    }
+                    elementOptions.binding.push(binding); // todo maybe other binding
+                    break;
                 case 'builder':
                 case 'if':
                 case 'show':

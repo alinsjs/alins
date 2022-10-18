@@ -11,6 +11,8 @@ import {$case, $for, $if, $switch, $while} from './core/controller/controller';
 import {IElementBuilder} from './core/element/transform';
 import {computed} from './core/reactive/computed';
 import {click, on} from './core/event/event';
+import {comp} from './core/comp/comp';
+import {hello} from './hello';
 
 const win = (window as any);
 
@@ -133,60 +135,81 @@ const num2 = computed({
 
 const add = () => {num.value++;};
 
+
 mount('body',
     div('.x0#app',
-        // ! 前置使缓存for变得简单
-        // div('.x2'),
-        // div('.x3'),
-        // div.for(array3)((item, index) => [ '.x1',
-        //     // div('.x2', react`:x2-${index}`),
-        //     div(react`:${index}`),
-        //     div(react`:${index}`),
-        // ]),
-        // div.for(array3)((item, index) => [
-        //     div(':xxx'),
-        //     div.for(item.a)((str, i) => [
-        //         '.x3', react`.x3-${index}-${i}`,
-        //         div.for(str)((a, ii) => [
-        //             react`:${a}-${index}-${i}-${ii}`
-        //         ])
-        //     ])
-        // ]),
-        div(react`:computed-${() => num.value + 1}`),
-        div(react`:computed-${() => num.value + 2}`),
-        div(react`:computed-${num2}`),
+        react`/span:aa${num}aa`,
+        ':111.xxx#aa',
         span.if(() => num.value > 1)(react`:if-${num}`)
-            .elif(() => num.value < 0)(react`:elif-${num}`)
-            .else(react`:else`),
-        span.show(() => num.value > 1)(react`:show-${num2}`),
-        input.bind(num, true)(), // react`:show-${num2}`
-        div.bind(num, true)('[contenteditable=true]'), // react`:show-${num2}`
-        // .elif(() => num.value < 0)(react`${num.value - 1}`)
-        // .else()
-        // div.if(() => num.value > 1)(react`:${bool}`),
-
-        // .else(react`:!!${bool}`),
-        div.switch(num)
-            .case(1)(react`:case1-${num}`)
-            .case(2)(react`:case2-${num}`),
-        button(click(add), ':add')
-        // div.for(array3)((item, index) => [ '.x1',
-        //     // div('.x2', react`:x2-${index}`),
-        //     div.for(item.a)((str, i) => [ '.x2',
-        //         // '.x3', react`:x3-${index}-${i}`,
-        //         div.for(str)((a, ii) => [ '.x3',
-        //             react`:${a}-${index}-${i}-${ii}`
-        //         ])
-        //     ])
-        // ]),
-        // div.for(array3)((item, index) => [ '.x1',
-        //     // div('.x2', react`:x2-${index}`),
-        //     div.for(item.a)((str, i) => i.get() === 0 ? [] : [])
-        // ]),
-        // div.for(array3)((item, index) => a),
+            .elif(() => num.value < 0)(react`/div:elif-${() => num.value + 1}`)
+            .else(react`/div:else`, click(add)),
+        input.bind(num, 'number')(),
         
-    )
+        // span.if(() => num.value > 1)(react`/div:if-${num}`)
+        //     .elif(() => num.value < 0)(react`/div:elif-${num}`)
+        //     .else(react`:else`),
+        // // .else(react`:!!${bool}`),
+        // div.switch(num)
+        //     .case(1)(react`:case1-${num}`)
+        //     .case(2)(react`:case2-${num}`),
+        // comp(hello).if(() => num.value > 1),
+    ),
 );
+
+// mount('body',
+//     div('.x0#app',
+//         // ! 前置使缓存for变得简单
+//         // div('.x2'),
+//         // div('.x3'),
+//         // div.for(array3)((item, index) => [ '.x1',
+//         //     // div('.x2', react`:x2-${index}`),
+//         //     div(react`:${index}`),
+//         //     div(react`:${index}`),
+//         // ]),
+//         // div.for(array3)((item, index) => [
+//         //     div(':xxx'),
+//         //     div.for(item.a)((str, i) => [
+//         //         '.x3', react`.x3-${index}-${i}`,
+//         //         div.for(str)((a, ii) => [
+//         //             react`:${a}-${index}-${i}-${ii}`
+//         //         ])
+//         //     ])
+//         // ]),
+//         div(react`:computed-${() => num.value + 1}`),
+//         div(react`:computed-${() => num.value + 2}`),
+//         div(react`:computed-${num2}`),
+//         span.if(() => num.value > 1)(react`:if-${num}`)
+//             .elif(() => num.value < 0)(react`:elif-${num}`)
+//             .else(react`:else`),
+//         span.show(() => num.value > 1)(react`:show-${num2}`),
+//         input.bind(num, true)('[style=color:#f44]'), // react`:show-${num2}`
+//         div.bind(num, true)('[contenteditable=true]'), // react`:show-${num2}`
+//         // .elif(() => num.value < 0)(react`${num.value - 1}`)
+//         // .else()
+//         // div.if(() => num.value > 1)(react`:${bool}`),
+
+//         // .else(react`:!!${bool}`),
+//         div.switch(num)
+//             .case(1)(react`:case1-${num}`)
+//             .case(2)(react`:case2-${num}`),
+//         button(click(add), ':add')
+//         // div.for(array3)((item, index) => [ '.x1',
+//         //     // div('.x2', react`:x2-${index}`),
+//         //     div.for(item.a)((str, i) => [ '.x2',
+//         //         // '.x3', react`:x3-${index}-${i}`,
+//         //         div.for(str)((a, ii) => [ '.x3',
+//         //             react`:${a}-${index}-${i}-${ii}`
+//         //         ])
+//         //     ])
+//         // ]),
+//         // div.for(array3)((item, index) => [ '.x1',
+//         //     // div('.x2', react`:x2-${index}`),
+//         //     div.for(item.a)((str, i) => i.get() === 0 ? [] : [])
+//         // ]),
+//         // div.for(array3)((item, index) => a),
+        
+//     )
+// );
 
 const funcA = (d) => {
     console.log('funcA');
@@ -261,9 +284,9 @@ const test = [
 //         // div.if(bool)(`:data`)
 //     ])
 // );
-console.log(win.app.childElementCount);
-console.log(win.app.childNodes[win.app.childElementCount - 1]);
-console.log(win.app.childNodes[win.app.childElementCount - 1].innerText);
+console.log(win.app?.childElementCount);
+console.log(win.app?.childNodes[win.app?.childElementCount - 1]);
+// console.log(win.app?.childNodes[win.app?.childElementCount - 1].innerText);
 console.log('mounted done');
 console.timeLog('mounted');
 // data.set('');

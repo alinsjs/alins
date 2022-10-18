@@ -20,16 +20,16 @@ export interface IDomInfoData {
     attributes?: IJson<string>;
     id?: string;
     textContent?: string;
+    tagName?: string;
 }
 
 export type TInfoType = keyof IDomInfoData;
 
-export const InfoKeys = ['className', 'attributes', 'id', 'textContent'] as const;
+export const InfoKeys = ['className', 'attributes', 'id', 'textContent', 'tagName'] as const;
 
-
-window.parseCount = 0;
+(window as any).parseCount = 0;
 export function parseDomInfo (info: string): IDomInfoData {
-    window.parseCount++;
+    (window as any).parseCount++;
     const result: IDomInfoData = {};
 
     let scope: TInfoType | '' = '';
@@ -59,17 +59,25 @@ export function parseDomInfo (info: string): IDomInfoData {
             case 'textContent': {
                 result.textContent = value;
             };break;
+            case 'tagName': {
+                result.tagName = value;
+            };break;
         }
         modScope(index, newScope);
     };
-
-    for (let i = 0; i < info.length; i++) {
+    let len = info.length;
+    for (let i = 0; i < len; i++) {
         switch (info[i]) {
             case '.': appendInfo(i, 'className'); break;
             case '#': appendInfo(i, 'id'); break;
             case '[': appendInfo(i, 'attributes'); break;
             case ']': appendInfo(i, ''); break;
-            case ':': appendInfo(i, 'textContent'); break;
+            case '/': appendInfo(i, 'tagName'); break;
+            case ':':
+                appendInfo(i, 'textContent');
+                // ? 此处有问题 对于分开写的 :， 由于是拼接的 后面的 内容会被前面的 : 覆盖掉
+                len = i; // ! 如果有 : 则立即退出循环 : 后面的全部认为是文本内容
+                break;
         }
     }
     appendInfo(info.length, '');

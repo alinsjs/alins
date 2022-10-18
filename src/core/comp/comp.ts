@@ -20,7 +20,7 @@ export interface IComponentBuilder {
     // todo controller
 }
 
-const CompMap: Map<Function, IComponentElement> = new Map(); // 或者可以使用 func.toString md5
+// const CompMap: Map<Function, IComponentElement> = new Map(); // 或者可以使用 func.toString md5
 
 export const comp: IComponentBuilder = (...data) => {
 
@@ -30,13 +30,13 @@ export const comp: IComponentBuilder = (...data) => {
   
     if (typeof el !== 'function') throw new Error('');
 
-    const mapValue = CompMap.get(el);
-    if (mapValue) return mapValue;
+    // const mapValue = CompMap.get(el);
+    // if (mapValue) return mapValue;
 
     const comp: IComponentElement = { // todo
     };
 
-    CompMap.set(el, comp);
+    // CompMap.set(el, comp);
 
     return comp;
 };

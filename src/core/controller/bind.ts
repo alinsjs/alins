@@ -24,19 +24,23 @@ export interface IBindBuilder extends IBuilderParameter {
     type: 'bind';
 }
 
-
+type TBindDecorator = 'number' | 'camel';
 export interface IBindController {
     (
         this: IBuilderConstructor,
         value: TBindArg,
-        isNumber?: boolean,
+        ...decorators: TBindDecorator[]
     ): ((...args: TBuilderArg[]) => IBindBuilder);
 }
+// camel
+// prop
+//
+
 
 // div.if(num.value > 1)(react`:${bool}`),
 // div.if(bool)(react`:${num.value}`),
 
-export const bindController: IBindController = function (this: IBuilderConstructor, value, isNumber = false) {
+export const bindController: IBindController = function (this: IBuilderConstructor, value, ...decorators) {
     const react = transformToReaction(value);
     const constructor = this;
     return (...args) => {
@@ -60,8 +64,16 @@ export const bindController: IBindController = function (this: IBuilderConstruct
                 }));
                 dom.addEventListener('input', () => {
                     isInput = true;
-                    const v = getValue();
-                    react.set(isNumber ? parseFloat(v) : v);
+                    let v = getValue() as any;
+
+                    if (decorators.length !== 0) {
+                        if (decorators.includes('number')) {
+                            v = parseFloat(v);
+                        } else if (decorators.includes('camel')) {
+                            v = v.toLowerCase();
+                        }
+                    }
+                    react.set(v);
                 }, false);
                 return dom;
             },

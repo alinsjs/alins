@@ -29,11 +29,11 @@ export interface IElement {
     textContent: string;
     attributes: IJson<string>;
     children?: TChild[];
-    binding?: IReactBinding;
-    domInfo?: string;
+    binding: IReactBinding[];
+    events: IEventBuilder[];
+    domInfo: string;
     _if?: IIfBuilder;
     show?: TReactionItem;
-    events: IEventBuilder[];
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -93,17 +93,17 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     // console.log('transformBuilderToDom', config);
     // if (!dom) dom = div.cloneNode() as HTMLElement;
     // debugger;
-    if (config.binding) { // todo 支持多个binding
-        const {context} = config.binding;
-        switch (context.type) {
+    for (let i = 0; i < config.binding.length; i++) {
+        const binding = config.binding[i];
+        switch (binding.context.type) {
             case 'dom-info': {
                 // 提取表达式中没有binding的属性 merge到config中
-                const domInfo = applyDomInfoReaction(dom, config.binding);
+                const domInfo = applyDomInfoReaction(dom, binding);
                 mergeDomInfo(config, domInfo);
                 // ! binding 执行
-                
+                    
             }; break;
-            // todo other binding types
+                // todo other binding types
         }
     }
     
@@ -137,9 +137,9 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         // });
     }
 
-    config.events.forEach((item) => {
-        item.exe(dom);
-    });
+    for (let i = 0; i < config.events.length; i++) {
+        config.events[i].exe(dom);
+    };
 
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
@@ -186,7 +186,7 @@ function isInputNode (node: HTMLElement | Text) {
     return typeof (node as any).value !== 'undefined' && (node as HTMLElement).tagName !== 'BUTTON';
 }
 
-function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding, memo: TFPMemo): IDomInfoData {
+function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomInfoData {
     const {template, reactions} = binding;
     const replacement = join(template, createReplacement);
     // const
@@ -287,7 +287,7 @@ export function createElement ({
     textContent = '',
     attributes = {},
     children,
-    binding,
+    binding = [],
     domInfo = '',
     events = [],
     _if

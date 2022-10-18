@@ -13,10 +13,39 @@ export interface IEventBuilder extends IBuilderParameter {
     name: string;
 }
 
-export function on (name: string, listener: (...args: any[])=> void): IEventBuilder {
+// prevent：阻止默认事件（常用）；
+// stop：阻止事件冒泡（常用）；
+// once：事件只触发一次（常用）；
+// capture：使用事件的捕获模式；
+// self：只有event.target是当前操作的元素时才触发事件；
+type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self';
+
+export function on (
+    name: string,
+    listener: (...args: any[])=> void,
+    ...decorators: TEventDecorator[]
+): IEventBuilder {
     return {
         exe (dom: HTMLElement) {
-            dom.addEventListener(name, listener);
+            if (decorators.length === 0) {
+                dom.addEventListener(name, listener);
+            } else {
+                const is = (name: TEventDecorator) => decorators.includes(name);
+                const useCapture = is('capture');
+                const handle = (...args: any[]) => {
+                    const e = args[0] as Event;
+                    if (is('self')) {
+                        if (e.target !== dom) return;
+                    }
+
+                    if (is('stop')) e.stopPropagation();
+                    if (is('prevent')) e.preventDefault();
+                    listener.apply(dom, args);
+                    if (is('once')) dom.removeEventListener(name, handle, useCapture);
+                };
+                dom.addEventListener(name, handle, useCapture);
+
+            }
         },
         type: 'event',
         name,
