@@ -20,7 +20,7 @@ export interface IReactItem<T = any> {
     [subscribe](fn: (v:T, old:T) => void):  T;
 }
 
-export interface IReactObjectItem<T = any> extends IReactItem<T>{
+export interface IReactBase<T = any> extends IReactItem<T>{
     $del(): void;
     $get(): T;
     $set(): void;
@@ -68,7 +68,7 @@ export interface IReactObjectItem<T = any> extends IReactItem<T>{
 
 
 export type IReactWrap<T> = T extends object ? ({
-    [prop in (keyof T)]: IReactWrap<T[prop]> & IReactObjectItem<T>;
+    [prop in (keyof T)]: IReactWrap<T[prop]> & IReactBase<T>;
 } & IReactItem<T>): IReactItem<T>;
 
 export interface IReactBindingTemplate {

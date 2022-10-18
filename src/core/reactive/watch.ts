@@ -14,7 +14,7 @@ export function watch<T> (
     cb: TWatchCallback<T>
 ): void {
     if (!(target as any)[subscribe]) {
-        target = computed(target);
+        target = computed(target as TComputedBuilder<T>);
     }
     (target as IComputedItem<T>)[subscribe](cb);
 };

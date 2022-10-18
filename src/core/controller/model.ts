@@ -56,7 +56,7 @@ export const modelController: IModelController = function (this: IBuilderConstru
                             v = v.toLowerCase();
                         }
                     }
-                    (react as IReactItem).set(v);
+                    (react as IReactItem).value = v;
                 };
                 let isComposite = false;
                 dom.addEventListener('compositionstart', () => {

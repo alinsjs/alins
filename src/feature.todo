@@ -115,6 +115,16 @@
             }
           },
           {
+            "key": 1666088908099,
+            "children": [],
+            "todo": {
+              "content": "proxy改造响应式数据",
+              "id": 1666088908099,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
             "key": 1666058458627,
             "children": [],
             "todo": {
@@ -306,18 +316,59 @@
               "level": "danger",
               "done": true
             }
+          },
+          {
+            "key": 1666088897525,
+            "children": [],
+            "todo": {
+              "content": "组件 + 控制器",
+              "id": 1666088897525,
+              "level": "danger",
+              "done": false
+            }
           }
         ],
         "todo": {
           "content": "组件",
           "id": 1665494169984,
           "level": "danger",
-          "done": true
+          "done": false
         }
       },
       {
         "key": 1665494260180,
-        "children": [],
+        "children": [
+          {
+            "key": 1666088938044,
+            "children": [],
+            "todo": {
+              "content": "style规范设计",
+              "id": 1666088938044,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666088947372,
+            "children": [],
+            "todo": {
+              "content": "原子样式编写",
+              "id": 1666088947372,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1666088960572,
+            "children": [],
+            "todo": {
+              "content": "样式组合",
+              "id": 1666088960572,
+              "level": "danger",
+              "done": false
+            }
+          }
+        ],
         "todo": {
           "content": "css in js",
           "id": 1665494260180,
@@ -384,7 +435,8 @@
       1665494260180,
       1665494213348,
       1665835013054,
-      1665494195217
+      1665494195217,
+      1665494169984
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",

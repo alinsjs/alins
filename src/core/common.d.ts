@@ -4,5 +4,5 @@
  * @Description: Coding something
  */
 export interface IJson<T = any> {
-    [prop: string]: T;
+    [prop: string | symbol]: T;
 }

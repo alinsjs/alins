@@ -69,7 +69,7 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
 
     const exe = (start = 0) => {
         for (let i = start; i < reactList.length; i++) {
-            if (reactList[i].get() === true) {
+            if (reactList[i].value === true) {
                 activeIndex = i;
                 return getDom(builders[i]);
             }

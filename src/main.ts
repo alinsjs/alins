@@ -4,11 +4,9 @@
  * @Description: Coding something
  */
 import {mount} from './core/mount';
-import {button, div, input, span, TBuilderArg} from './core/builder/builder';
+import {button, div, input, span} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
 import {react} from './core/reactive/react';
-import {$case, $for, $if, $switch, $while} from './core/controller/controller';
-import {IElementBuilder} from './core/element/transform';
 import {computed} from './core/reactive/computed';
 import {click, on} from './core/event/on';
 import {comp} from './core/comp/comp';
@@ -46,6 +44,7 @@ for (let i = 0; i < 2; i++) {
 }
 const array3 = react(array);
 
+
 // array3.$set(1, {});
 
 
@@ -55,8 +54,8 @@ const array3 = react(array);
 //     },
 // });
 
-// object.a.get();
-// object2.a.b.get();
+// object.a.value;
+// object2.a.b.value;
 
 // object2.set('a', <any>11);
 // object.set(<any>{b: 'xx'});
@@ -71,9 +70,9 @@ const array3 = react(array);
 
 // array2[0].a;
 // array2[4].a;
-window.addEventListener('click', () => {
-    console.log(11);
-}),
+// window.addEventListener('click', () => {
+//     console.log(11);
+// }),
 console.time('mounted');
 console.log('time start');
 
@@ -85,7 +84,7 @@ btn1.onclick = () => {
         item.a.forEach(i2 => {
             i2.forEach(i3 => {
                 i3.value += 'xxx';
-                // i3.set(i3.get() + 'xxx');
+                // i3.set(i3.value + 'xxx');
             });
         });
     });
@@ -98,9 +97,9 @@ btn2.onclick = () => {
     document.body.innerHTML = '';
 };
 document.body.appendChild(btn2);
-window.addEventListener('click', () => {
-    console.log('click');
-});
+// window.addEventListener('click', () => {
+//     console.log('click');
+// });
 
 setTimeout(() => {
     console.log('setTimeout');
@@ -165,39 +164,39 @@ function count () {
     );
 }
 
-// mount('body',
-//     div('.x0#app',
-//         react`/span:aa${num}aa`,
-//         ':111.xxx#aa',
-//         div(':11'),
-//         span.if(() => num.value > 1)(react`:if-${num}`)
-//             .elif(() => num.value < 0)(react`/div:elif-${() => num.value + 1}`)
-//             .else(react`/div:else`, click(add)),
-//         input.model(num)(),
+mount('body',
+    div('.x0#app',
+        react`/span:aa${num}aa`,
+        ':111.xxx#aa',
+        div(':11'),
+        span.if(() => num.value > 1)(react`:if-${num}`)
+            .elif(() => num.value < 0)(react`/div:elif-${() => num.value + 1}`)
+            .else(react`/div:else`, click(add)),
+        input.model(num, 'number')(),
         
-//         // span.if(() => num.value > 1)(react`/div:if-${num}`)
-//         //     .elif(() => num.value < 0)(react`/div:elif-${num}`)
-//         //     .else(react`:else`),
-//         // // .else(react`:!!${bool}`),
-//         // div.switch(num)
-//         //     .case(1)(react`:case1-${num}`)
-//         //     .case(2)(react`:case2-${num}`),
-//         comp(hello,
-//             prop({num}),
-//             // emit({add})
-//             slot(div(react`:a-child-${num}`))
-//         ),
-//         // comp.if(() => num.value > 1)(hello)
-//         //     .else('/div:111'),
-//         // comp.show(() => num.value > 1),
-//         // comp.switch(num)
-//         //     .case(1)(hello)
-//         //     .case(2)(hello),
+        span.if(() => num.value > 1)(react`/div:if-${num}`)
+            .elif(() => num.value < 0)(react`/div:elif-${num}`)
+            .else(react`:else`),
+        // .else(react`:!!${bool}`),
+        div.switch(num)
+            .case(1)(react`:case1-${num}`)
+            .case(2)(react`:case2-${num}`),
+        comp(hello,
+            prop({num}),
+            // emit({add})
+            slot(div(react`:a-child-${num}`))
+        ),
+        // comp.if(() => num.value > 1)(hello)
+        //     .else('/div:111'),
+        // comp.show(() => num.value > 1),
+        // comp.switch(num)
+        //     .case(1)(hello)
+        //     .case(2)(hello),
         
-//         // comp.for(array3)(hello),
+        // comp.for(array3)(hello),
 
-//     ),
-// );
+    ),
+);
 
 // mount('body',
 //     div('.x0#app',
@@ -247,7 +246,7 @@ function count () {
 //         // ]),
 //         // div.for(array3)((item, index) => [ '.x1',
 //         //     // div('.x2', react`:x2-${index}`),
-//         //     div.for(item.a)((str, i) => i.get() === 0 ? [] : [])
+//         //     div.for(item.a)((str, i) => i.value === 0 ? [] : [])
 //         // ]),
 //         // div.for(array3)((item, index) => a),
         
@@ -286,7 +285,7 @@ const test = [
 
 
 // $for(array3, (item, index) => {
-//     return index.get() > 0 ? div([
+//     return index.value > 0 ? div([
 //         $for(item.a, (str, i) => div(react`.aa:${str}-${index}-${i}`) )
 //     ]) : div();
 // });
@@ -354,7 +353,7 @@ win.datab = datab;
 //     }
 // });
 
-// d.get();
+// d.value;
 // d.x.set({
 //     y: 2,
 //     z: 'z'
@@ -362,17 +361,17 @@ win.datab = datab;
 
 // const e = test([{a: 12}, {a: 11}]);
 
-// const dd = d.x.get();
+// const dd = d.x.value;
 
-// const value1 = e[0].get();
+// const value1 = e[0].value;
 // const v11 = value1.a;
-// const value2 = e[1].a.get(); // number;
+// const value2 = e[1].a.value; // number;
 
 // const e1 = e[1];
 
 // d.x.del();
 
-// const e11 = e1.a.get();
+// const e11 = e1.a.value;
 
 // // fg.get(1);
 
@@ -382,14 +381,14 @@ win.datab = datab;
 //     bool: boolean[],
 // } = {
 //     num: [
-//         b.get(),
-//         d.x.y.get(),
+//         b.value,
+//         d.x.y.value,
 //     ],
 //     str: [
-//         a.get(),
+//         a.value,
 //     ],
 //     bool: [
-//         c.get(),
+//         c.value,
 //     ]
 // };
 

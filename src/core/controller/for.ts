@@ -6,7 +6,7 @@
 
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IElementBuilder} from '../element/transform';
-import {createReactive, IReactItem, IReactWrap} from '../reactive/react';
+import {createReactive, index, IReactItem, IReactWrap} from '../reactive/react';
 
 // export interface IForController {
 //     <T>(
@@ -53,7 +53,7 @@ export const forController: IForController = function (this: IBuilderConstructor
         // ! 性能优化 检测到没有index引用就不创建 indexReactive
         const makeBuilder = (callback.length === 2) ? (i: number) => {
             const indexReactive = createReactive(i);
-            list[i].$index = indexReactive;
+            list[i][index] = indexReactive;
             return callback(list[i], indexReactive);
         } : (i: number) => {
             return callback(list[i], undefined as any);

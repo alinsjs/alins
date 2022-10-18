@@ -6,13 +6,15 @@
 import {transformBuilderToDom, TChild} from './element/transform';
 // import {delay} from './utils';
 
-export function mount (...builders: (string | TChild)[]) {
-    let selector = 'body';
-    if (typeof builders[0] === 'string') {
-        selector = builders.shift() as string;
+export function mount (...builders: (string | Element | TChild)[]) {
+    let parent: Element | string | null = builders[0] as any;
+    if (typeof parent === 'string') {
+        parent = document.querySelector(parent);
+        if (!(parent instanceof Element)) throw new Error('Parent is not defined');
     }
-    const parent = document.querySelector(selector);
-    if (!parent) throw new Error('Parent is not defined');
+    
+    if (parent instanceof HTMLElement) {builders.shift();}
+    else parent = document.body;
 
     for (let i = 0; i < builders.length; i++) {
         mountSingleChild(parent as HTMLElement, builders[i] as TChild);

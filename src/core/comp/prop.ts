@@ -27,7 +27,7 @@ export const prop: IPropConstructor = (props) => {
             for (const k in props) {
                 const item = props[k];
                 (window as any).item = item;
-                const computeTarget = typeof item === 'function' ? item : (() => item.get());
+                const computeTarget = typeof item === 'function' ? item : (() => item.value);
                 data[k] = computed(computeTarget);
             }
             return data;
