@@ -7,7 +7,7 @@
 // import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
 import {join} from '../utils';
-import {Compute, computed, TWatchFunc} from './computed';
+import {Compute, computed, TComputedFunc, IComputedItem} from './computed';
 
 export const subscribe = Symbol('subscribe_react');
 export const forceUpdate = Symbol('force_update_react');
@@ -195,7 +195,7 @@ function reactiveObject<T> (data: T) {
     } as IReactObjectItem<T>);
 }
 
-export type TReactionItem = IReactItem | TWatchFunc;
+export type TReactionItem<T=any> = IReactItem<T> | TComputedFunc<T> | IComputedItem<T>;
 
 // 生成响应数据绑定
 export function react(ts: TemplateStringsArray, ...reactions: TReactionItem[]): IReactBuilder;

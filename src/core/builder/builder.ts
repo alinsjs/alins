@@ -5,7 +5,7 @@
  */
 
 import {controllers, IControllerBuilder} from '../controller/controller';
-import {IEventBuilder} from '../event/event';
+import {IEventBuilder} from '../event/on';
 import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
 import {countBindingValue, IReactBuilder} from '../reactive/react';
 
@@ -59,6 +59,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'show':
                 case 'bind':
                 case 'switch':
+                case 'comp':
                     elementOptions.children.push(item); break;
                 case 'event':
                     elementOptions.events?.push(item); break;

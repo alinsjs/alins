@@ -11,7 +11,7 @@ import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
 import {ISwitchBuilder} from '../controller/switch';
 import {IBuilderParameter} from '../core';
-import {IEventBuilder} from '../event/event';
+import {IEventBuilder} from '../event/on';
 import {createFuncProcessMemo, TFPMemo} from '../memorize/memorize';
 // import {batchMountDom} from '../mount';
 import {IDomInfoData, InfoKeys, parseDomInfo} from '../parser/info-parser';
@@ -44,9 +44,6 @@ export interface IElementBuilder extends IBuilderParameter {
     exe(): IElement;
 }
 
-export interface IComponentElement {
-
-}
 
 function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
     // // merge instead of assign
@@ -70,7 +67,7 @@ const cloneNodeCount = 0;
 const cloneNodeCountNo = 0;
  
 // const div = document.createElement('div');
-export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
+export function transformBuilderToDom (builder: IElementBuilder | IComponentBuilder): HTMLElement {
     const config = builder.exe(); // ! 关键代码 执行builder
     // console.count('transformBuilderToDomCount');
 
@@ -96,6 +93,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     // console.log('transformBuilderToDom', config);
     // if (!dom) dom = div.cloneNode() as HTMLElement;
     // debugger;
+    if (!config.binding) debugger;
     for (let i = 0; i < config.binding.length; i++) {
         const binding = config.binding[i];
         switch (binding.context.type) {
@@ -168,7 +166,9 @@ function mountChildrenDoms (
         // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
         } else {
             switch (item.type) {
-                case 'builder': dom.appendChild(transformBuilderToDom(item)); break;
+                case 'comp':
+                case 'builder':
+                    dom.appendChild(transformBuilderToDom(item)); break;
                 case 'if':
                 case 'switch':
                     dom.appendChild(item.exe(dom)); break;

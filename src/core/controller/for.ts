@@ -15,7 +15,7 @@ import {createReactive, IReactItem, IReactWrap} from '../reactive/react';
 //     ): IElementBuilder[];
 // }
 
-// export interface IForCallback<T=any> {
+// export interface IForCallback<T = any> {
 //     (item: IReactWrap<T>, index?: number): TBuilderArg[];
 // }
 
@@ -40,7 +40,7 @@ export interface IForController {
         ((fn: IForCallback<T>) => IElementBuilder[]);
 }
 
-export interface IForCallback<T=any> {
+export interface IForCallback<T = any> {
     (item: IReactWrap<T>, index: IReactItem<number>): TBuilderArg[];
 }
 

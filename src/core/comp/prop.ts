@@ -1,5 +1,6 @@
 import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
+import {computed, IComputedItem} from '../reactive/computed';
 import {TReactionItem} from '../reactive/react';
 
 /*
@@ -8,21 +9,27 @@ import {TReactionItem} from '../reactive/react';
  * @Description: Coding something
  */
 
-interface IProps extends IBuilderParameter {
-    type: 'props';
-    exe(): any;
+
+export interface IProp extends IBuilderParameter {
+    type: 'prop';
+    exe(): IJson<IComputedItem>;
 }
 
-interface IPropsConstructor {
-    (props: IJson<TReactionItem>): IProps;
+export  interface IPropConstructor {
+    (props: IJson<TReactionItem>): IProp;
 }
 
-export const prop: IPropsConstructor = (props) => {
-    
+export const prop: IPropConstructor = (props) => {
     return {
-        type: 'props',
+        type: 'prop',
         exe () {
-            
+            const data: IJson<IComputedItem> = {};
+            for (const k in props) {
+                const prop = props[k];
+                const computeTarget = typeof prop === 'function' ? prop : () => prop.value;
+                data[k] = computed(computeTarget);
+            }
+            return data;
         }
     };
 

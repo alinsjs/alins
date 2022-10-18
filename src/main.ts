@@ -10,9 +10,11 @@ import {react} from './core/reactive/react';
 import {$case, $for, $if, $switch, $while} from './core/controller/controller';
 import {IElementBuilder} from './core/element/transform';
 import {computed} from './core/reactive/computed';
-import {click, on} from './core/event/event';
+import {click, on} from './core/event/on';
 import {comp} from './core/comp/comp';
 import {hello} from './hello';
+import {prop} from './core/comp/prop';
+import {slot} from './core/comp/slot';
 
 const win = (window as any);
 
@@ -140,6 +142,7 @@ mount('body',
     div('.x0#app',
         react`/span:aa${num}aa`,
         ':111.xxx#aa',
+        div(':11'),
         span.if(() => num.value > 1)(react`:if-${num}`)
             .elif(() => num.value < 0)(react`/div:elif-${() => num.value + 1}`)
             .else(react`/div:else`, click(add)),
@@ -154,17 +157,17 @@ mount('body',
         //     .case(2)(react`:case2-${num}`),
         comp(hello,
             prop({num}),
-            emit({add})
-            slot(div(':a'))
+            // emit({add})
+            slot(div(react`:a-child-${num}`))
         ),
-        comp.if(() => num.value > 1)(hello)
-            .else('/div:111'),
-        comp.show(() => num.value > 1),
-        comp.switch(num)
-            .case(1)(hello)
-            .case(2)(hello),
+        // comp.if(() => num.value > 1)(hello)
+        //     .else('/div:111'),
+        // comp.show(() => num.value > 1),
+        // comp.switch(num)
+        //     .case(1)(hello)
+        //     .case(2)(hello),
         
-        comp.for(array3)(hello),
+        // comp.for(array3)(hello),
 
     ),
 );

@@ -4,13 +4,16 @@
  * @Description: Coding something
  */
 
-import {createReactive, IReactItem, subscribe} from './react';
+import {createReactive, forceUpdate, IReactItem, subscribe} from './react';
 
-export type TWatchFunc<T = any> = (...args: any[]) => T;
+export type TComputedFunc<T = any> = (...args: any[]) => T;
 
-interface TWatchObject {
-    set?: null | ((v: any, old: any) => void);
-    get(): any;
+interface TComputedObject<T> {
+    get(): T;
+}
+
+interface TComputedObjectSet<T> extends TComputedObject<T>{
+    set: ((v: T, old: T) => void);
 }
 
 export const Compute: {
@@ -19,10 +22,23 @@ export const Compute: {
     add: null,
 };
 
-export function computed<T> (target: TWatchFunc<T> | TWatchObject ) {
+export interface IComputedItem<T = any> {
+    $index?: IComputedItem<number>;
+    get(): T;
+    get value(): T;
+    [forceUpdate](): void;
+    [subscribe](fn: (v:T, old:T) => void):  T;
+}
+
+export interface IComputed {
+    <T>(target: TComputedObjectSet<T> ): IReactItem<T>;
+    <T>(target: TComputedFunc<T> | TComputedObject<T> ): IComputedItem<T>;
+}
+
+export const computed: IComputed = (target) => {
     const isFunc = typeof target === 'function';
     const get = isFunc ? target : target.get;
-    const set = isFunc ? null : target.set;
+    const set = isFunc ? null : (target as TComputedObjectSet<any>).set;
 
     const reacts: IReactItem[] = [];
     Compute.add = (item: IReactItem) => {
@@ -42,4 +58,4 @@ export function computed<T> (target: TWatchFunc<T> | TWatchObject ) {
         console.warn('对只读computed设置值无效');
     };
     return react;
-}
+};
