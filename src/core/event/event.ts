@@ -34,9 +34,7 @@ export function on (
                 const useCapture = is('capture');
                 const handle = (...args: any[]) => {
                     const e = args[0] as Event;
-                    if (is('self')) {
-                        if (e.target !== dom) return;
-                    }
+                    if (is('self') && e.target !== dom) return;
 
                     if (is('stop')) e.stopPropagation();
                     if (is('prevent')) e.preventDefault();
