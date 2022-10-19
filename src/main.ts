@@ -164,6 +164,15 @@ mount('body',
     div('.x0#app',
         react`:value=${oo.a.b}-${oo.a.c}`,
     ),
+    div.for(array3)((item, index) => [
+        div(':xxx'),
+        div.for(item.a)((str, i) => [
+            '.x3', react`.x3-${index}-${i}`,
+            div.for(str)((a, ii) => [
+                react`:${a}-${index}-${i}-${ii}`
+            ])
+        ])
+    ]),
 );
 
 const x: {

@@ -11,7 +11,7 @@ export interface IBuilderParameter {
         'text' | 'selector' | 'children' |
         'comp' | 'react' | 'builder' |
         // 控制器 没有for
-        'if' | 'show' | 'model' | 'switch' |
+        'for' | 'if' | 'show' | 'model' | 'switch' |
         'on' |
         // 组件
         'event' | 'prop' | 'slot';

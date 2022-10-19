@@ -5,7 +5,8 @@
  */
 
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
-import {IElementBuilder} from '../element/transform';
+import {IBuilderParameter} from '../core';
+import {IElementBuilder, transformBuilderToDom} from '../element/transform';
 import {createReactive, index, IReactItem, IReactWrap} from '../reactive/react';
 
 // export interface IForController {
@@ -33,11 +34,15 @@ import {createReactive, index, IReactItem, IReactWrap} from '../reactive/react';
 
 //     return builders;
 // };
+export interface IForBuilder extends IBuilderParameter{
+    exe(): DocumentFragment;
+    type: 'for';
+}
 
 
 export interface IForController {
     <T>(list: IReactWrap<T>[]):
-        ((fn: IForCallback<T>) => IElementBuilder[]);
+        ((fn: IForCallback<T>) => IForBuilder);
 }
 
 export interface IForCallback<T = any> {
@@ -61,10 +66,23 @@ export const forController: IForController = function (this: IBuilderConstructor
         // console.log('callback_tostring', callback.toString());
         for (let i = 0; i < list.length; i++) {
             const builder = makeBuilder(i);
+            debugger;
             // builder.unshift(num);
             // console.log('forController_builder', i, builder);
             builders.push(this.apply(null, builder));
         }
-        return builders;
+        return {
+            exe () {
+                const frag = document.createDocumentFragment();
+                for (const child of builders) {
+                    // ! 关键代码 根据build解析dom 渲染到父元素
+                    frag.appendChild(transformBuilderToDom(child));
+                }
+                debugger;
+                return frag;
+            },
+            type: 'for',
+        };
     };
+
 };

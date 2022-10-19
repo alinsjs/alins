@@ -17,10 +17,12 @@ import {IDomInfoData, parseDomInfo} from '../parser/info-parser';
 import {createReplacement, extractReplacement, parseReplacementToNumber, reactiveTemplate, ReplaceExp} from '../reactive/binding';
 import {IReactBinding, subscribe, transformToReaction, TReactionItem} from '../reactive/react';
 import {join} from '../utils';
+import {IForBuilder} from '../controller/for';
 
 export type TElementChild = IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
 export type TChild = TElementChild |
+    IForBuilder |
     IIfBuilder | IShowBuilder | IModelBuilder | ISwitchBuilder<any>;
 
 export interface IElement {
@@ -170,6 +172,7 @@ function mountChildrenDoms (
                 case 'if':
                 case 'switch':
                     dom.appendChild(item.exe(dom)); break;
+                case 'for':
                 case 'show':
                 case 'model':
                     dom.appendChild(item.exe()); break;
