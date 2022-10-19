@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {createReactive, forceUpdate, index, IReactBase, IReactItem, subscribe} from './react';
+import {forceUpdate, IReactItem, isSimpleValue, reactValue, subscribe} from './react';
 
 export type TComputedFunc<T = any> = (...args: any[]) => T;
 
@@ -44,7 +44,7 @@ export const computed: IComputed = (target) => {
     Compute.add = null;
 
     const react = reactiveComputed(get, set, value) as IReactItem;
-    reacts.forEach(item => item[subscribe]((v, old) => {
+    reacts.forEach(item => item[subscribe](() => {
         react[forceUpdate]();
     }));
     return react;
@@ -77,6 +77,8 @@ function reactiveComputed<T> (
             const old = value;
             const v = this.value;
             changeList.forEach(fn => {fn(v, old);});
-        }
+        },
+        [reactValue]: isSimpleValue(value),
+        toJSON: () => value,
     };
 }

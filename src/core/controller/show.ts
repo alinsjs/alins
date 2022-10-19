@@ -9,11 +9,9 @@
  * @Description: Coding something
  */
 
-import {type} from 'os';
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IBuilderParameter} from '../core';
-import {IElementBuilder, transformBuilderToDom} from '../element/transform';
-import {computed} from '../reactive/computed';
+import {transformBuilderToDom} from '../element/transform';
 import {subscribe, transformToReaction} from '../reactive/react';
 import {TIfArg} from './if';
 

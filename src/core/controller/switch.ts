@@ -12,7 +12,7 @@
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IBuilderParameter} from '../core';
 import {IElementBuilder, transformBuilderToDom} from '../element/transform';
-import {IReactItem, IReactWrap, subscribe, transformToReaction} from '../reactive/react';
+import {IReactItem, subscribe, transformToReaction} from '../reactive/react';
 
 export type TSwitchArg<T> = IReactItem<T> | (()=>T);
 

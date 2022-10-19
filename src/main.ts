@@ -6,7 +6,7 @@
 import {mount} from './core/mount';
 import {button, div, input, span} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
-import {IReactItem, react} from './core/reactive/react';
+import {IReactItem, react, value} from './core/reactive/react';
 import {computed} from './core/reactive/computed';
 import {click, on} from './core/event/on';
 import {comp} from './core/comp/comp';
@@ -151,12 +151,14 @@ const arr = react([
     {a: 2}
 ]);
 
-arr[0] = {a: 1};
+// arr[0] = {a: 1};
 
 arr[0] = react({a: 1});
-set(arr[0], {a: 1});
+
 arr[0].$value = 1;
 arr[0].a.value;
+arr[0][value] = {a: 1};
+
 
 mount('body',
     div('.x0#app',
@@ -415,4 +417,11 @@ win.datab = datab;
 
 // console.log(info);
 
+// const o = react({a: {b: 1}});
 
+// o.a = {b: 2};
+
+// const arr = react([]);
+
+// arr[0] = o;
+// arr[1] = 1;

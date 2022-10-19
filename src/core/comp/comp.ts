@@ -5,7 +5,6 @@
  */
 
 import {IJson} from '../common';
-import {IControllerBuilder} from '../controller/controller';
 import {IBuilderParameter} from '../core';
 import {IElement, IElementBuilder, TElementChild} from '../element/transform';
 import {IComputedItem} from '../reactive/computed';

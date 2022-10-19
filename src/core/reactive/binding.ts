@@ -5,7 +5,7 @@
  */
 import {IJson} from '../common';
 import {join} from '../utils';
-import {IReactItem, subscribe, transformToReaction, TReactionItem} from './react';
+import {subscribe, transformToReaction, TReactionItem} from './react';
 
 export const ReplaceExp = /\$\$\d+\$\$/;
 export const ReplaceExpG = /\$\$\d+\$\$/g;

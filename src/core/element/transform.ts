@@ -214,7 +214,9 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
                     const reaction = transformToReaction(reactionItem);
                     // ! 关键代码
                     const node = document.createTextNode(
-                        reaction[subscribe]((v) => {node.textContent = v;})
+                        reaction[subscribe]((v) => {
+                            node.textContent = v;
+                        })
                     );
                     dom.appendChild(node);
                     // memo.add((config: IElement) => {
