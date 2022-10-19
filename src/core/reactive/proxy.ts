@@ -5,16 +5,16 @@
  */
 
 import {IJson} from '../common';
-import {forceUpdate, subscribe, reactiveValue, reactValue, isSimpleValue, IReactObject, value, getListeners, IReactBase, switchReact, switchListeners, isReaction, emptyValue, getReactionValue, getReactionPureValue, json} from './react';
+import {
+    forceUpdate, subscribe, reactiveValue, reactValue,
+    isSimpleValue, IReactObject, value, getListeners,
+    IReactBase, switchReact, isReaction,
+    emptyValue, getReactionValue, getReactionPureValue, json, mergeReact, reactiveProxyValue
+} from './react';
 
 // todo 1. emptyValue // 使用 isUndefined 函数解决
 // 2. change value 参数问题 getReactionPureValue
 // 3. switchListeners 深度遍历问题
-
-function reactiveProxyValue (v: any, setValue?: (v: any)=>void) {
-    if (!isSimpleValue(v)) return createProxy(v, false, setValue);
-    return reactiveValue(v);
-}
 
 export function createProxy<T extends IJson> (
     originData: T,
@@ -28,7 +28,10 @@ export function createProxy<T extends IJson> (
     if (typeof data === 'object') {
         for (const key in data) {
             if (key === 'toJSON') break;
-            data[key] = reactiveProxyValue(data[key], (v: any) => { data[key] = v; });
+            data[key] = reactiveProxyValue(data[key], (v: any) => {
+                debugger;
+                data[key] = v;
+            });
         }
     }
 
@@ -50,29 +53,30 @@ export function createProxy<T extends IJson> (
             triggerChange(data, data);
         },
         [reactValue]: false,
-        get [value] () {
-            debugger;
-            return data;
-        },
-        set [value] (v: any) {
-            debugger;
-            const newValue = reactiveProxyValue(v, setValue);
-            console.warn('newValue', newValue);
-            console.warn('data', data);
-            triggerChange(newValue, data);
-            setValue?.(newValue);
-        },
         [switchReact]: (target: IReactBase<any>, property: string) => {
             console.warn('appendToReact', data, target, property);
             firstLevel = false;
-            switchListeners(data, target, property);
+            // switchListeners(data, target, property);
         },
         [getListeners]: () => changeList,
         get [json] () { return getReactionPureValue(data);}
     });
 
+    // get [value] () {
+    //     debugger;
+    //     return data;
+    // },
+    // set [value] (v: any) {
+    //     debugger;
+    //     const newValue = reactiveProxyValue(v, setValue);
+    //     console.warn('newValue', newValue);
+    //     console.warn('data', data);
+    //     triggerChange(newValue, data);
+    //     setValue?.(newValue);
+    // },
     return new Proxy(data, {
         get (target: IJson, property, receiver) {
+            if (property === value) return data;
             const type = typeof data[property];
             if (!(Array.isArray(target) && (property === 'length' || type === 'function'))) {
                 if (type === 'undefined' && property !== 'toJSON') {
@@ -98,8 +102,11 @@ export function createProxy<T extends IJson> (
                         console.warn('不能对一级对象设置value属性');
                         return true;
                     } else {
-                        setValue?.(reactiveProxyValue(v, setValue));
+                        const oldValue = getReactionPureValue(data);
+                        mergeReact(data, v, setValue);
+                        triggerChange(v, oldValue);
                     }
+                    return true;
                 }
                 return set();
             }
@@ -115,29 +122,23 @@ export function createProxy<T extends IJson> (
             if (isOldValueUnd) {
                 // ! 新创建的属性或元素做一下reactive处理
                 v = reactiveProxyValue(v, (v) => {target[property] = v;});
-                switchListeners(v, target as any, property);
+                // switchListeners(v, target as any, property);
             } else {
                 // 如果值一样则不设置
                 const trueValue = oldValue[subscribe] ? getReactionValue(oldValue) : oldValue;
                 if (v === trueValue) return false;
                 // ! 对reaction值的设置转移到 value 属性上来
-                // triggerChange(v, oldValue);
-                // debugger;
-                // v = reactiveProxyValue(v, setValue);
-                
-                // setValue?.(reactiveProxyValue(v, setValue));
-
-                // switchListeners(v, target as any, property);
                 target = oldValue;
                 property = (target[reactValue]) ? 'value' : value;
-                debugger;
             }
             return set();
         },
         deleteProperty (target: IJson, property) {
             console.log('delete', {target, property});
-            // todo
             triggerChange(undefined, target[property]);
+            // 释放内存
+            (changeList as any) = null;
+            (originData as any) = null;
             return Reflect.deleteProperty(target, property);
         }
     }) as any;

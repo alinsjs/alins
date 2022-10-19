@@ -122,7 +122,7 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
         toJSON () {return isUndefined ? undefined : this.value;},
         [getListeners]: () => changeList,
         [switchReact] (target, property) {
-            switchListeners(this, target, property);
+            // switchListeners(this, target, property);
         }
     };
 }
@@ -163,10 +163,11 @@ export function isSimpleValue (v: any) {
 }
 
 export function mergeReact (
-    target: IReactBase<any>,
-    toReact: IReactBase<any>,
-    property: string
+    oldReact: IReactObject<any>,
+    newValue: any,
+    setValue?: (v: any)=>void
 ) {
+
     // const target = toReact as any;
     // console.warn('react', react);
     // console.warn('target', property, toReact);
@@ -178,6 +179,49 @@ export function mergeReact (
     //         react[getListeners]().push(...listener);
     //     }
     // }
+    // {a: {b: 1, c: 2}, c: 2}, // 旧值
+    // {a: {b: 2, d: 3}, d: 3} // 新值
+    if (isSimpleValue(newValue)) {
+        const newReact = reactiveValue(newValue);
+        setValue?.(newReact);
+        mergeListeners(oldReact, newReact);
+        // debugger;
+    } else {
+        const newKeys = Object.keys(newValue);
+        // ! 对于对象 需要双向排重
+        const oldTarget = oldReact as any;
+        // debugger;
+        for (const k in oldReact) {
+            const oldItem = oldTarget[k];
+            const index = newKeys.indexOf(k);
+            if (index !== -1) { // 旧值 新值中都有
+                mergeReact(oldItem, newValue[k], (v) => {
+                    oldTarget[k] = v; // ?
+                });
+                newKeys.splice(index, 1);
+            } else { // 新值中没有
+                // todo 对于动态属性没有良好的支持
+                delete oldTarget[k];
+            }
+        }
+        // 新值中有旧值中没有的
+        for (let i = 0; i < newKeys.length; i++) {
+            const key = newKeys[i];
+            oldTarget[key] = reactiveProxyValue(newValue[key]);
+        }
+    }
+
+}
+
+export function mergeListeners (
+    oldReact: IReactBase<any>, // 被覆盖的值
+    newReact: IReactBase<any>, // 新值
+) {
+    const arr = oldReact[getListeners]();
+    if (arr.length > 0) {
+        newReact[getListeners]().push(...arr);
+        newReact[forceUpdate](); // 被覆盖的数据触发更新
+    }
 }
 
 export function getReactionValue (reaction: any) {
@@ -196,4 +240,10 @@ export function isReaction (v: any): boolean {
 
 export function getReactionPureValue (data: any) {
     return isReaction(data) ? JSON.parse(JSON.stringify(data)) : data;
+}
+
+export function reactiveProxyValue (v: any, setValue?: (v: any)=>void) {
+    if (isReaction(v)) return v;
+    if (!isSimpleValue(v)) return createProxy(v, false, setValue);
+    return reactiveValue(v);
 }
