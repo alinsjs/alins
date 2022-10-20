@@ -147,33 +147,40 @@ const oo = react({
 });
 
 const arr = react([
-    {a: 1},
-    {a: 2}
+    {a: 'a1'},
+    {a: 'a2'}
 ]);
+
+mount('body',
+    div.for(arr)((item, index) => [
+        '.a1',
+        div('.a2', react`:xxx-${item.a}-${index}`),
+    ]),
+);
 
 // arr[0] = {a: 1};
 
-arr[0] = react({a: 1});
+// arr[0] = react({a: 1});
 
-arr[0].$value = 1;
-arr[0].a.value;
-arr[0][value] = {a: 1};
+// arr[0].$value = 1;
+// arr[0].a.value;
+// arr[0][value] = {a: 1};
 
 
-mount('body',
-    div('.x0#app',
-        react`:value=${oo.a.b}-${oo.a.c}`,
-    ),
-    div.for(array3)((item, index) => [
-        div(':xxx'),
-        div.for(item.a)((str, i) => [
-            '.x3', react`.x3-${index}-${i}`,
-            div.for(str)((a, ii) => [
-                react`:${a}-${index}-${i}-${ii}`
-            ])
-        ])
-    ]),
-);
+// mount('body',
+//     div('.x0#app',
+//         react`:value=${oo.a.b}-${oo.a.c}`,
+//     ),
+//     div.for(array3)((item, index) => [
+//         div(':xxx'),
+//         div.for(item.a)((str, i) => [
+//             '.x3', react`.x3-${index}-${i}`,
+//             div.for(str)((a, ii) => [
+//                 react`:${a}-${index}-${i}-${ii}`
+//             ])
+//         ])
+//     ]),
+// );
 
 const x: {
     a: {

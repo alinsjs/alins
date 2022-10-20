@@ -93,7 +93,7 @@ export function transformBuilderToDom (builder: IElementBuilder | IComponentBuil
     // console.log('transformBuilderToDom', config);
     // if (!dom) dom = div.cloneNode() as HTMLElement;
     // debugger;
-    if (!config.binding) debugger;
+    // if (!config.binding) debugger;
     for (let i = 0; i < config.binding.length; i++) {
         const binding = config.binding[i];
         switch (binding.context.type) {

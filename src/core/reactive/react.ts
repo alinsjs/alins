@@ -24,7 +24,7 @@ export type TBaseTypes = number | boolean | string | null | undefined;
 export interface IReactBase<T = any> {
     [index]?: IReactItem<number>;
     [forceUpdate](): void;
-    [subscribe](fn: (v:T, old:T) => void):  T;
+    [subscribe](fn: (v:T, old:T, index: number) => void):  T;
     [reactValue]: boolean;
     [getListeners](): Function[];
     [switchReact](target: IReactBase<any>, property: string): void;
@@ -113,6 +113,8 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
         },
         [reactValue]: true,
         [subscribe] (fn) {
+            console.trace();
+            debugger;
             changeList.push(fn);
             return this.value;
         },
@@ -120,7 +122,11 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
             changeList.forEach(fn => {fn(value, value);});
         },
         toJSON () {return isUndefined ? undefined : this.value;},
-        [getListeners]: () => changeList,
+        [getListeners]: () => {
+            // debugger;
+            console.count('getListeners');
+            return changeList;
+        },
         [switchReact] (target, property) {
             // switchListeners(this, target, property);
         }
@@ -161,12 +167,15 @@ export function countBindingValue (binding: IReactBinding) {
 export function isSimpleValue (v: any) {
     return typeof v !== 'object' || v === null;
 }
+export function isReactSimpleValue (v: any) {
+    return v[reactValue] === true;
+}
 
 export function mergeReact (
     oldReact: IReactObject<any>,
     newValue: any,
-    setValue?: (v: any)=>void
 ) {
+    if (typeof newValue === 'function') return;
 
     // const target = toReact as any;
     // console.warn('react', react);
@@ -181,10 +190,11 @@ export function mergeReact (
     // }
     // {a: {b: 1, c: 2}, c: 2}, // 旧值
     // {a: {b: 2, d: 3}, d: 3} // 新值
-    if (isSimpleValue(newValue)) {
-        const newReact = reactiveValue(newValue);
-        setValue?.(newReact);
-        mergeListeners(oldReact, newReact);
+    if (isReactSimpleValue(newValue)) {
+        debugger;
+        // const newReact = reactiveValue(newValue);
+        // setValue?.(newReact);
+        mergeListeners(oldReact, newValue);
         // debugger;
     } else {
         const newKeys = Object.keys(newValue);
@@ -192,12 +202,11 @@ export function mergeReact (
         const oldTarget = oldReact as any;
         // debugger;
         for (const k in oldReact) {
+            // todo 如果是arr不能按照这种方式
             const oldItem = oldTarget[k];
             const index = newKeys.indexOf(k);
             if (index !== -1) { // 旧值 新值中都有
-                mergeReact(oldItem, newValue[k], (v) => {
-                    oldTarget[k] = v; // ?
-                });
+                mergeReact(oldItem, newValue[k]);
                 newKeys.splice(index, 1);
             } else { // 新值中没有
                 // todo 对于动态属性没有良好的支持
@@ -217,8 +226,10 @@ export function mergeListeners (
     oldReact: IReactBase<any>, // 被覆盖的值
     newReact: IReactBase<any>, // 新值
 ) {
+    console.count('mergeListeners');
     const arr = oldReact[getListeners]();
     if (arr.length > 0) {
+        // debugger;
         newReact[getListeners]().push(...arr);
         newReact[forceUpdate](); // 被覆盖的数据触发更新
     }

@@ -7,7 +7,8 @@
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IBuilderParameter} from '../core';
 import {IElementBuilder, transformBuilderToDom} from '../element/transform';
-import {createReactive, index, IReactItem, IReactWrap} from '../reactive/react';
+import {createReactive, index, IReactItem, IReactObject, IReactWrap, mergeReact, subscribe} from '../reactive/react';
+import {IReactBase} from '../reactive/react.back';
 
 // export interface IForController {
 //     <T>(
@@ -54,31 +55,58 @@ export const forController: IForController = function (this: IBuilderConstructor
     // console.count('forController');
     // console.log('forController', list);
     return (callback) => {
+        const mount = document.createComment('');
+        const doms: HTMLElement[] = [];
         const builders: IElementBuilder[] = [];
         // ! 性能优化 检测到没有index引用就不创建 indexReactive
-        const makeBuilder = (callback.length === 2) ? (i: number) => {
+        const makeBuilder = (callback.length === 2) ? (i: number, item?: IReactWrap<any>) => {
             const indexReactive = createReactive(i);
-            list[i][index] = indexReactive;
-            return callback(list[i], indexReactive);
-        } : (i: number) => {
-            return callback(list[i], undefined as any);
+            if (typeof item === 'undefined') item = list[i];
+            item[index] = indexReactive;
+            return callback(item as any, indexReactive);
+        } : (i: number, item?: IReactWrap<any>) => {
+            if (typeof item === 'undefined') item = list[i];
+            return callback(item as any, undefined as any);
         };
         // console.log('callback_tostring', callback.toString());
         for (let i = 0; i < list.length; i++) {
             const builder = makeBuilder(i);
-            debugger;
             // builder.unshift(num);
             // console.log('forController_builder', i, builder);
             builders.push(this.apply(null, builder));
         }
+        const p = list as any as IReactObject<any>;
+        p[subscribe]((newValue, oldValue, i) => {
+            // v: reaction
+            const oldIndex = list.indexOf(newValue);
+            // todo
+            debugger;
+            if (oldIndex !== -1) {
+                doms[i] = doms[oldIndex];
+                newValue[index].value = i;
+            } else {
+                debugger;
+                const builder = this.apply(null, makeBuilder(i, newValue));
+                const dom = transformBuilderToDom(builder);
+                const after = doms[i + 1];
+                if (after) {
+                    mount.parentElement?.insertBefore(dom, after);
+                } else {
+                    mount.parentElement?.appendChild(dom);
+                }
+                doms[i] = dom;
+            }
+        });
         return {
             exe () {
                 const frag = document.createDocumentFragment();
+                frag.append(mount);
                 for (const child of builders) {
+                    const dom = transformBuilderToDom(child);
+                    doms.push(dom);
                     // ! 关键代码 根据build解析dom 渲染到父元素
-                    frag.appendChild(transformBuilderToDom(child));
+                    frag.appendChild(dom);
                 }
-                debugger;
                 return frag;
             },
             type: 'for',

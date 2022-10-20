@@ -29,17 +29,18 @@ export function createProxy<T extends IJson> (
         for (const key in data) {
             if (key === 'toJSON') break;
             data[key] = reactiveProxyValue(data[key], (v: any) => {
-                debugger;
+                // debugger;
                 data[key] = v;
             });
         }
     }
 
-    const triggerChange = (value: any, oldValue: any) => {
-        value = getReactionPureValue(value);
-        oldValue = getReactionPureValue(oldValue);
+    const triggerChange = (value: any, oldValue: any, index?: number) => {
+        // value = getReactionPureValue(value);
+        // oldValue = getReactionPureValue(oldValue);
+        // debugger;
         for (let i = 0; i < changeList.length; i++) {
-            changeList[i](value, oldValue);
+            changeList[i](value, oldValue, index);
         }
     };
 
@@ -86,47 +87,60 @@ export function createProxy<T extends IJson> (
             return Reflect.get(target, property, receiver);
         },
         set (target: IJson, property, v, receiver) {
-            const set = () => Reflect.set(target, property, v, receiver);
-
-            if (target instanceof Array) {
+            const isArray = target instanceof Array;
+            const isSymbol = typeof property === 'symbol';
+            // if (isArray && !isSymbol && /^\d+$/.test(property as string)) debugger;
+            const parseIndex = () => (isArray && !isSymbol && /^\d+$/.test(property as string)) ? parseInt(property as string) : -1;
+            const set = () => {
+                return Reflect.set(target, property, v, receiver);
+            };
+            if (isArray) {
                 if (property === 'length') return set();// 数组的length属性
                 if (target.includes(v)) { // 数组类型的内部元素位置变更
                     // todo 监听
+                    const index = parseIndex();
+                    triggerChange(v, target[index], index);
                     return set();
                 }
             }
 
-            if (typeof property === 'symbol') {
+            if (isSymbol) {
                 if (property === value) {
                     if (firstLevel) {
                         console.warn('不能对一级对象设置value属性');
                         return true;
                     } else {
-                        const oldValue = getReactionPureValue(data);
-                        mergeReact(data, v, setValue);
+                        // const oldValue = getReactionPureValue(data);
+                        const oldValue = data;
+                        // todo 需要reactive ？
+                        v = reactiveProxyValue(v, setValue);
+                        mergeReact(data, v);
+                        // todo
                         triggerChange(v, oldValue);
                     }
-                    return true;
+                    // return true;
                 }
                 return set();
             }
 
+            const oldValue = target[property];
             if (isReaction(v)) { // ! 当值是reaction时不需要代理直接设置
                 // todo 监听
                 // 直接设置
-                v[switchReact](target, property);
+                v[switchReact](target, property); // ! 这一步是为了去掉 旧数据的firstLevel
+                triggerChange(v, oldValue);
                 return set();
             }
-            const oldValue = target[property];
             const isOldValueUnd = typeof oldValue === 'undefined';
             if (isOldValueUnd) {
                 // ! 新创建的属性或元素做一下reactive处理
                 v = reactiveProxyValue(v, (v) => {target[property] = v;});
                 // switchListeners(v, target as any, property);
+                triggerChange(v, oldValue, parseIndex());
             } else {
                 // 如果值一样则不设置
                 const trueValue = oldValue[subscribe] ? getReactionValue(oldValue) : oldValue;
-                if (v === trueValue) return false;
+                if (v === trueValue) return true;
                 // ! 对reaction值的设置转移到 value 属性上来
                 target = oldValue;
                 property = (target[reactValue]) ? 'value' : value;
