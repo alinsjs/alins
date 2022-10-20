@@ -16,8 +16,9 @@ export const index = Symbol();
 export const value = Symbol();
 export const reactValue = Symbol();
 export const getListeners = Symbol();
-export const switchReact = Symbol();
+export const updateFirstLevel = Symbol();
 export const json = Symbol();
+
 export type TBaseTypes = number | boolean | string | null | undefined;
 // type TReactTypes = TBaseTypes | IJson<TReactTypes> | TReactTypes[];
 
@@ -27,11 +28,16 @@ export interface IReactBase<T = any> {
     [subscribe](fn: (v:T, old:T, index: number) => void):  T;
     [reactValue]: boolean;
     [getListeners](): Function[];
-    [switchReact](target: IReactBase<any>, property: string): void;
 }
 export interface IReactObject<T = any> extends IReactBase<T> {
-    [value]: T;
-    get [json](): T;
+    // ! 本来应该使用 T，
+    // ! 由于封装了一层，所以赋值时ts类型系统会报错，故使用IJson
+    // ! 牺牲了 value和json返回值的类型
+    get [value](): IJson;
+    get [json](): IJson;
+    // get [value](): T;
+    // get [json](): T;
+    [updateFirstLevel](): void;
 }
 export interface IReactItem<T = any> extends IReactBase<T>{
     value: T;
@@ -41,8 +47,8 @@ export interface IReactItem<T = any> extends IReactBase<T>{
 
 export type IReactWrap<T> = T extends object ? ({
     [prop in (keyof T)]: IReactWrap<T[prop]>;
-} & IJson // ! & IJson 为了绑定的时候不报类型错误
-    & IReactObject<T>
+} & IReactObject<T>
+    & IJson // ! & IJson 为了绑定的时候不报类型错误
 ): IReactItem<T>;
 
 export interface IReactBindingTemplate {
@@ -113,8 +119,6 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
         },
         [reactValue]: true,
         [subscribe] (fn) {
-            console.trace();
-            debugger;
             changeList.push(fn);
             return this.value;
         },
@@ -123,13 +127,9 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
         },
         toJSON () {return isUndefined ? undefined : this.value;},
         [getListeners]: () => {
-            // debugger;
-            console.count('getListeners');
+            // console.count('getListeners');
             return changeList;
         },
-        [switchReact] (target, property) {
-            // switchListeners(this, target, property);
-        }
     };
 }
 
@@ -191,7 +191,6 @@ export function mergeReact (
     // {a: {b: 1, c: 2}, c: 2}, // 旧值
     // {a: {b: 2, d: 3}, d: 3} // 新值
     if (isReactSimpleValue(newValue)) {
-        debugger;
         // const newReact = reactiveValue(newValue);
         // setValue?.(newReact);
         mergeListeners(oldReact, newValue);
@@ -226,10 +225,9 @@ export function mergeListeners (
     oldReact: IReactBase<any>, // 被覆盖的值
     newReact: IReactBase<any>, // 新值
 ) {
-    console.count('mergeListeners');
+    // console.count('mergeListeners');
     const arr = oldReact[getListeners]();
     if (arr.length > 0) {
-        // debugger;
         newReact[getListeners]().push(...arr);
         newReact[forceUpdate](); // 被覆盖的数据触发更新
     }
@@ -253,8 +251,18 @@ export function getReactionPureValue (data: any) {
     return isReaction(data) ? JSON.parse(JSON.stringify(data)) : data;
 }
 
-export function reactiveProxyValue (v: any, setValue?: (v: any)=>void) {
+export function reactiveProxyValue (v: any) {
     if (isReaction(v)) return v;
-    if (!isSimpleValue(v)) return createProxy(v, false, setValue);
+    if (!isSimpleValue(v)) return createProxy(v, false);
     return reactiveValue(v);
+}
+declare global {
+    // for ts declaration
+    // interface Array<T> extends IReactObject<T>{
+    // }
+    interface String extends IReactItem<string> {}
+    interface Number extends IReactItem<number> {}
+    interface Boolean extends IReactItem<boolean> {}
+    interface Object extends IReactObject<any>{
+    }
 }

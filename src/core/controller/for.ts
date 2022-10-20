@@ -8,7 +8,6 @@ import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IBuilderParameter} from '../core';
 import {IElementBuilder, transformBuilderToDom} from '../element/transform';
 import {createReactive, index, IReactItem, IReactObject, IReactWrap, mergeReact, subscribe} from '../reactive/react';
-import {IReactBase} from '../reactive/react.back';
 
 // export interface IForController {
 //     <T>(
@@ -56,7 +55,7 @@ export const forController: IForController = function (this: IBuilderConstructor
     // console.log('forController', list);
     return (callback) => {
         const mount = document.createComment('');
-        const doms: HTMLElement[] = [];
+        const doms: (HTMLElement|null)[] = [];
         const builders: IElementBuilder[] = [];
         // ! 性能优化 检测到没有index引用就不创建 indexReactive
         const makeBuilder = (callback.length === 2) ? (i: number, item?: IReactWrap<any>) => {
@@ -78,23 +77,28 @@ export const forController: IForController = function (this: IBuilderConstructor
         const p = list as any as IReactObject<any>;
         p[subscribe]((newValue, oldValue, i) => {
             // v: reaction
-            const oldIndex = list.indexOf(newValue);
-            // todo
-            debugger;
+            const oldIndex = list.indexOf(newValue); // 仅仅是移动了位置的元素
             if (oldIndex !== -1) {
+                const oldDom = doms[i];
                 doms[i] = doms[oldIndex];
+                doms[oldIndex] = oldDom;
                 newValue[index].value = i;
             } else {
-                debugger;
-                const builder = this.apply(null, makeBuilder(i, newValue));
-                const dom = transformBuilderToDom(builder);
-                const after = doms[i + 1];
-                if (after) {
-                    mount.parentElement?.insertBefore(dom, after);
+                if (typeof newValue === 'undefined') { // remove
+                    doms[i]?.remove();
+                    doms.splice(i, 1);
                 } else {
-                    mount.parentElement?.appendChild(dom);
+                    const builder = this.apply(null, makeBuilder(i, newValue));
+                    const oldDom = doms[i];
+                    if (oldDom) {
+                        mergeReact(oldValue, newValue);
+                    } else {
+                        const dom = transformBuilderToDom(builder);
+                        const after = doms[i + 1];
+                        mount.parentElement?.insertBefore(dom, after || mount);
+                        doms[i] = dom;
+                    }
                 }
-                doms[i] = dom;
             }
         });
         return {

@@ -8,6 +8,7 @@
 import {IBuilderParameter} from '../core';
 
 export interface IEventBuilder extends IBuilderParameter {
+    args(...args: any[]): IEventBuilder;
     exe(dom: HTMLElement): void;
     type: 'on';
     name: string;
@@ -25,24 +26,29 @@ export function on (
     listener: (...args: any[])=> void,
     ...decorators: TEventDecorator[]
 ): IEventBuilder {
+    const eventArgs: any[] = [];
     return {
+        args (...args) {
+            eventArgs.push(...args);
+            return this;
+        },
         exe (dom: HTMLElement) {
             if (decorators.length === 0) {
-                dom.addEventListener(name, listener);
+                dom.addEventListener(name, (e) => {
+                    listener.apply(dom, [...eventArgs, e]);
+                });
             } else {
                 const is = (name: TEventDecorator) => decorators.includes(name);
                 const useCapture = is('capture');
-                const handle = (...args: any[]) => {
-                    const e = args[0] as Event;
+                const handle = (e: Event) => {
                     if (is('self') && e.target !== dom) return;
 
                     if (is('stop')) e.stopPropagation();
                     if (is('prevent')) e.preventDefault();
-                    listener.apply(dom, args);
+                    listener.apply(dom, [...eventArgs, e]);
                     if (is('once')) dom.removeEventListener(name, handle, useCapture);
                 };
                 dom.addEventListener(name, handle, useCapture);
-
             }
         },
         type: 'on',

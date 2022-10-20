@@ -6,7 +6,7 @@
 import {mount} from './core/mount';
 import {button, div, input, span} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
-import {IReactItem, react, value} from './core/reactive/react';
+import {getListeners, IReactItem, react, value} from './core/reactive/react';
 import {computed} from './core/reactive/computed';
 import {click, on} from './core/event/on';
 import {comp} from './core/comp/comp';
@@ -140,23 +140,27 @@ const add = () => {num.value++;};
 //     console.log(v, old);
 // });
 
-const oo = react({
-    a: {
-        b: 1,
-    }
-});
+// const arr = react([
+//     {a: 'a1'},
+//     {a: 'a2'}
+// ]);
+// win.logArrFN = () => arr.forEach((item, i) => console.log(item.a[getListeners](), i));
+// win.testArr = () => {
+//     arr.unshift({a: 'a0'});
+//     arr[0].a = 'a00';
+//     arr[1].a = 'a11';
+// };
+// win.testRemove = () => {
+    
+//     arr.splice(1, 1);
+// };
 
-const arr = react([
-    {a: 'a1'},
-    {a: 'a2'}
-]);
-
-mount('body',
-    div.for(arr)((item, index) => [
-        '.a1',
-        div('.a2', react`:xxx-${item.a}-${index}`),
-    ]),
-);
+// mount('body',
+//     div.for(arr)((item, index) => [
+//         '.a1',
+//         div('.a2', react`:xxx-${item.a}-${index}`),
+//     ]),
+// );
 
 // arr[0] = {a: 1};
 
@@ -167,20 +171,34 @@ mount('body',
 // arr[0][value] = {a: 1};
 
 
-// mount('body',
-//     div('.x0#app',
-//         react`:value=${oo.a.b}-${oo.a.c}`,
-//     ),
-//     div.for(array3)((item, index) => [
-//         div(':xxx'),
-//         div.for(item.a)((str, i) => [
-//             '.x3', react`.x3-${index}-${i}`,
-//             div.for(str)((a, ii) => [
-//                 react`:${a}-${index}-${i}-${ii}`
-//             ])
-//         ])
-//     ]),
-// );
+const oo = react({
+    a: {
+        b: 1,
+        c: {
+            d: 1
+        }
+    }
+});
+
+win.testOO = () => {
+    oo.a = {b: 2, c: {d: 3}};
+};
+
+mount('body',
+    // div('.x0#app',
+    //     react`:value=${oo.a.b}-${oo.a.c.d}`,
+    // ),
+    comp(todoList),
+    // div.for(array3)((item, index) => [
+    //     div(':xxx'),
+    //     div.for(item.a)((str, i) => [
+    //         '.x3', react`.x3-${index}-${i}`,
+    //         div.for(str)((a, ii) => [
+    //             react`:${a}-${index}-${i}-${ii}`
+    //         ])
+    //     ])
+    // ]),
+);
 
 const x: {
     a: {
@@ -441,3 +459,49 @@ win.datab = datab;
 
 // arr[0] = o;
 // arr[1] = 1;
+
+function todoList () {
+    const edit = react('');
+
+    const list = react<{
+        content: string
+    }[]>([]);
+    win.list = list;
+    // const arrr = react({a: [1]});
+    // arrr.a = [1, 2];
+
+    // list[0].content;
+
+    const addItem = () => {
+        list[0].content = '';
+        list[0] = {content: edit.value};
+        list.push({content: edit.value});
+        edit.value = '';
+        list[0].value = 1;
+    };
+    // list[0].content.value = '1';
+    const removeItem = (index: IReactItem) => {
+        list.splice(index.value, 1);
+    };
+
+    const oo = react({a: {b: 1}});
+
+    oo.value;
+
+    oo.a = {b: 2};
+
+    // const item = list[0];
+
+    return div(
+        input.model(edit)(),
+        button(':提交', click(addItem)),
+        div('.todo-list',
+            div(':111'),
+            div.for(list)((item, index) => [
+                react`.todo-item:${() => index.value + 1}:${item.content}`,
+                button(':删除', click(removeItem).args(index)),
+            ]),
+            div(':222'),
+        )
+    );
+}
