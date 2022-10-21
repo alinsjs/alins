@@ -74,7 +74,6 @@ function bindReactive ({
     reactions,
 }: IReactBindingTemplate): IReactBuilder {
     // console.log('bindReactive', template, reactions);
-    // debugger;
     return {
         // todo 从div构建处传入上下文环境
         exe (context: IReactContext) {
@@ -84,8 +83,6 @@ function bindReactive ({
         type: 'react'
     };
 }
-// export function createReactive<T extends object> (data: T): IReactWrap<T>;
-// export function createReactive<T extends TBaseTypes> (data: T): IReactItem<T>;
 export function createReactive<T> (data: T): IReactWrap<T> {
     if (isSimpleValue(data)) {
         // 值类型
@@ -135,13 +132,13 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
 
 export type TReactionItem<T=any> = IReactItem<T> | TComputedFunc<T> | IComputedItem<T>;
 
+// 初始化响应数据
+export function react<T>(data: T): IReactWrap<T>;
+
 // 生成响应数据绑定
 export function react(ts: TemplateStringsArray, ...reactions: TReactionItem[]): IReactBuilder;
 // es6兼容写法
 export function react(data: string, ...reactions: (TReactionItem | string)[]): IReactBuilder;
-// 初始化响应数据
-export function react<T>(data: T): IReactWrap<T>;
-
 
 export function react<T> (
     data: TemplateStringsArray | T | string,
@@ -154,19 +151,34 @@ export function react<T> (
             reactions,
         });
     } else if (typeof data === 'string' && reactions.length > 0) {
-        const template = [data];
-        for (let i = 0; i < reactions.length; i++) {
-            const reaction = reactions[i];
-            if (typeof reaction === 'string') {
-                template.push(reaction);
-                reactions.splice(i, 1);
-                i --;
-            }
-        }
-        return bindReactive({template, reactions});
+        return bindReactive(transArgsToTemplate(data, reactions));
     } else {
         return createReactive<T>(data as T);
     }
+}
+
+// es6兼容写法
+function transArgsToTemplate (data: string, reactions: (string|TReactionItem)[]) {
+    const template = [data];
+    let isLastString = true;
+    for (let i = 0; i < reactions.length; i++) {
+        const reaction = reactions[i];
+        const isString = typeof reaction === 'string';
+        if (isString) {
+            isLastString ? template[template.length - 1] += reaction : template.push(reaction);
+            reactions.splice(i, 1);
+            i --;
+        }
+        if (!isLastString && !isString) {
+            template.push('');
+        }
+        isLastString = isString; ;
+    }
+    if (!isLastString) template.push('');
+    return {
+        template,
+        reactions,
+    };
 }
 
 export function transformToReaction<T> (item: TReactionItem<T>): IReactItem<T> | IComputedItem<T> {

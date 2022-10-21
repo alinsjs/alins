@@ -10,6 +10,7 @@ import {IReactItem, react} from './core/reactive/react';
 // import {computed} from './core/reactive/computed';
 import {click} from './core/event/on';
 import {comp} from './core/comp/comp';
+import {Parent} from './component/hello-world';
 // import {hello} from './hello';
 // import {prop} from './core/comp/prop';
 // import {slot} from './core/comp/slot';
@@ -498,11 +499,12 @@ function todoList () {
         div('.todo-list',
             div(':111'),
             div.for(list)((item, index) => [
-                react('aa', ()=>{}, 'aa', sa, '' )
-                react`.todo-item:${() => index.value + 1}:${item.content}`,
+                react('.todo-item:', () => index.value + 1, ':', item.content),
+                // react`.todo-item:${() => index.value + 1}:${item.content}`,
                 button(':删除', click(removeItem).args(index)),
             ]),
             div(':222'),
-        )
+        ),
+        comp(Parent),
     );
 }

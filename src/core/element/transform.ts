@@ -69,6 +69,7 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 // const div = document.createElement('div');
 export function transformBuilderToDom (builder: IElementBuilder | IComponentBuilder): HTMLElement {
     const config = builder.exe(); // ! 关键代码 执行builder
+    // debugger;
     // console.count('transformBuilderToDomCount');
 
     // const str = JSON.stringify(config);

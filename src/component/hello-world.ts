@@ -3,80 +3,36 @@
  * @Date: 2022-10-11 07:21:04
  * @Description: Coding something
  */
-function div (...args: any[]): any {
-    console.log(args);
-}
-div.for = function (...args: any[]): any {
-    console.log(args);
-};
-div.if = function (...args: any[]): any {
-    console.log(args);
-};
-div.bind = function (...args: any[]): any {
-    console.log(args);
-};
- 
-function span (...args: any[]): any {
-    console.log(args);
-}
-span.if = function (...args: any[]): any {
-    console.log(args);
-};
-function img (...args: any[]): any {
-    console.log(args);
-}
-function i (...args: any[]): any {
-    console.log(args);
-}
-function click (...args: any[]): any {
-    console.log(args);
-}
-function props (...args: any[]): any {
-    console.log(args);
-}
-function comp (...args: any[]): any {
-    console.log(args);
-}
-function input (...args: any[]): any {
-    console.log(args);
-}
-function text (...args: any[]): any {
-    console.log(args);
-}
-span.bind = function (...args: any[]): any {
-    console.log(args);
-};
-function ref (...args: any[]): any {
-    console.log(args);
-}
-function css (...args: any[]): any {
-    console.log(args);
-}
-function react (...args: any[]): any {
-    console.log(args);
-}
-function event (...args: any[]): any {
-    console.log(args);
-}
-function slot (...args: any[]): any {
-    console.log(args);
-}
 
-export function HelloWorld ({props, slot, event}: any) {
-    const onClick = () => {};
-    const data = ref({
+import {button, div, i, img, input, span, text} from 'src/core/builder/builder';
+import {comp} from 'src/core/comp/comp';
+import {event} from 'src/core/comp/event';
+import {prop} from 'src/core/comp/prop';
+import {slot} from 'src/core/comp/slot';
+import {click} from 'src/core/event/on';
+import {react} from 'src/core/reactive/react';
+
+export function HelloWorld ({props, slots, events}: any) {
+    const onClick = () => {
+        console.log('onClick');
+    };
+    const data = react({
         msg: '',
-        list: []
+        list: [],
+        src: 'https://shiyix.cn/wx-pay.png'
     });
-    return div('.flex-4-num1', click(onClick), [
-        span('.flex-4-img', click(event.test), [
-            `Hello ${data.msg} ${props.value}`,
-            img('.item-img[alt=xxx;lazy=loaded;src=https://shiyix.cn/wx-pay.png]')
-        ]),
-        slot,
-        div('.flex-4-num1-des', [
-        ]),
-    ]);
+    const switchSrc = () => {
+        data.src = 'https://img0.baidu.com/it/u=3380674861,1672768141&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400';
+    };
+    return div('.flex-4-num1', click(onClick),
+        span('.flex-4-img', click(events.test),
+            react`Hello ${data.msg} ${props.value}`,
+            img(react`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
+        ),
+        button('切换图片', click(switchSrc)),
+        slots.default,
+        div('.flex-4-num1-des'),
+    );
 }
 
 
@@ -86,49 +42,50 @@ function ReactiveContent () {
         value: 100,
         list: [{a: 1}, {a: 2}]
     });
-    return div('.reactive', [
-        div('.reactive-content', react`hello ${data.world}`),
-        div(react`.reactive-class.reactive-${data.world}`),
-        div(react`.reactive-attr[reactive=${data.world}]`),
-        div('.reactive-css', css({
-            color: react`rgba(255, ${data.value}, 255)`
-        })),
-    ]);
+    return div('.reactive',
+        div('.reactive-content', react`hello ${data.msg}`),
+        div(react`.reactive-class.reactive-${data.msg}`),
+        div(react`.reactive-attr[reactive=${data.msg}]`),
+        div('.reactive-css'),
+        input.model(data.msg)('.input'),
+    );
 }
 
 function ForDemo () {
     const data = react({
+        input: 'test',
         list: [{a: 1}, {a: 2}]
     });
-    return div('.reactive', [
+    return div('.reactive',
     // only content
-        div.for(data.list)((item: any) => ['.class', react`:content ${item.a}`]),
-        div.for(data.list)((item: any) => [react`.class:content ${item.a}`]),
+        div.for(data.list)((item) => ['.class', react`:content ${item.a}`]),
+        div.for(data.list)((item) => [react`.class:content ${item.a}`]),
         // 容器
-        div.for(data.list)((item:any) => [
-            div([
-                span.if(item.name)('.name', [
-                    i(':xxxx')
-                ])
-            ]),
-            div('.flex-4-num1-operation', [
+        div.for(data.list)((item) => [
+            div(
+                span.if(item.name)('.name', i(':xxxx'))
+            ),
+            div('.flex-4-num1-operation',
                 div('.flex-4-num1-play', ':click')
-            ]),
-            input.bind(data.a)('.input')
+            ),
+            input.model(item.a)('.input'),
+            input.model(data.input)('.input')
         ])
-    ]);
+    );
 }
 
 export function Parent () {
-    return div('.parent', [
-        ':Hello World',
-        text('hello'),
+    return div('.parent',
+        text('Hello World'),
         span(':content'),
-        
-        comp(HelloWorld, props(), event(), slot()),
+        comp(HelloWorld, prop({
+            value: '11',
+        }), event({
+            test: () => console.log('test event')
+        }), slot(div(':slot'))),
         comp(ReactiveContent),
         comp(ForDemo),
-    ]);
+    );
 }
 
 // return `
