@@ -79,6 +79,7 @@ export function parseDomInfo (info: string): IDomInfoData {
             case ':':
                 appendInfo(i, 'textContent');
                 // ? 此处有问题 对于分开写的 :， 由于是拼接的 后面的 内容会被前面的 : 覆盖掉
+                // todo fix
                 if (scope === '') len = i; // ! 如果有 : 且不在其他scope中 则立即退出循环 : 后面的全部认为是文本内容
                 break;
         }

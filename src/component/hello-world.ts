@@ -26,7 +26,8 @@ export function HelloWorld ({props, slots, events}: any) {
     };
     return div('.flex-4-num1', click(onClick),
         span('.flex-4-img', click(events.test),
-            react`Hello ${data.msg} ${props.value}`,
+            react`Hello ${data.msg} ${props.value}`, // todo fix
+            img('[width=100][src=https://shiyix.cn/wx-pay.png]'),
             img(react`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
         ),
         button('切换图片', click(switchSrc)),
