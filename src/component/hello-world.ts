@@ -13,11 +13,12 @@ import {click} from 'src/core/event/on';
 import {react} from 'src/core/reactive/react';
 
 export function HelloWorld ({props, slots, events}: any) {
+    debugger;
     const onClick = () => {
         console.log('onClick');
     };
     const data = react({
-        msg: '',
+        msg: '1',
         list: [],
         src: 'https://shiyix.cn/wx-pay.png'
     });
@@ -27,7 +28,7 @@ export function HelloWorld ({props, slots, events}: any) {
     return div('.flex-4-num1', click(onClick),
         span('.flex-4-img', click(events.test),
             react`Hello ${data.msg} ${props.value}`, // todo fix
-            img('[width=100][src=https://shiyix.cn/wx-pay.png]'),
+            img('aa[width=100][src=https://shiyix.cn/wx-pay.png]'),
             img(react`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
         ),
         button('切换图片', click(switchSrc)),
@@ -78,12 +79,12 @@ function ForDemo () {
 export function Parent () {
     return div('.parent',
         text('Hello World'),
-        span(':content'),
+        span('content'),
         comp(HelloWorld, prop({
             value: '11',
         }), event({
             test: () => console.log('test event')
-        }), slot(div(':slot'))),
+        }), slot(div('slot'))),
         comp(ReactiveContent),
         comp(ForDemo),
     );

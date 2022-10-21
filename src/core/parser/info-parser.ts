@@ -23,17 +23,15 @@ export interface IDomInfoData {
     tagName?: string;
 }
 
-export type TInfoType = keyof IDomInfoData;
 
 export const InfoKeys = ['className', 'attributes', 'id', 'textContent', 'tagName'] as const;
+export type TInfoType = typeof InfoKeys[number];
 
 (window as any).parseCount = 0;
 export function parseDomInfo (info: string): IDomInfoData {
     (window as any).parseCount++;
-    if (!('./#[:'.includes(info[0]))) {
-        return {textContent: info};
-    }
-    const result: IDomInfoData = {};
+    if (!('./#[:'.includes(info[0]))) info = `:${info}`;
+    const result: IDomInfoData = {textContent: ''};
 
     let scope: TInfoType | '' = '';
     let lastIndex = 0;
@@ -60,7 +58,7 @@ export function parseDomInfo (info: string): IDomInfoData {
                 result.attributes[key] = kv;
             }; break;
             case 'textContent': {
-                result.textContent = value;
+                result.textContent += value;
             };break;
             case 'tagName': {
                 result.tagName = value;
@@ -68,20 +66,20 @@ export function parseDomInfo (info: string): IDomInfoData {
         }
         modScope(index, newScope);
     };
-    let len = info.length;
+    const len = info.length;
     for (let i = 0; i < len; i++) {
         switch (info[i]) {
             case '.': appendInfo(i, 'className'); break;
             case '#': appendInfo(i, 'id'); break;
             case '[': appendInfo(i, 'attributes'); break;
             case ']': appendInfo(i, ''); break;
-            case '/': appendInfo(i, 'tagName'); break;
+            case '/':
+                appendInfo(i, 'tagName'); break;
             case ':':
-                appendInfo(i, 'textContent');
-                // ? 此处有问题 对于分开写的 :， 由于是拼接的 后面的 内容会被前面的 : 覆盖掉
-                // todo fix
-                if (scope === '') len = i; // ! 如果有 : 且不在其他scope中 则立即退出循环 : 后面的全部认为是文本内容
-                break;
+                // ! :中的所有 : 都认为是文本
+                if (scope !== 'textContent' as TInfoType | '') { // ? 这里不知为何scope居然判定为 '' 了
+                    appendInfo(i, 'textContent');
+                } break;
         }
     }
     appendInfo(info.length, '');

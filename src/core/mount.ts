@@ -3,7 +3,7 @@
  * @Date: 2022-10-11 16:16:59
  * @Description: Coding something
  */
-import {transformBuilderToDom, TChild} from './element/transform';
+import {TChild, mountChildrenDoms} from './element/transform';
 // import {delay} from './utils';
 
 export function mount (...builders: (string | Element | TChild)[]) {
@@ -15,24 +15,7 @@ export function mount (...builders: (string | Element | TChild)[]) {
     
     if (parent instanceof HTMLElement) {builders.shift();}
     else parent = document.body;
-
-    for (let i = 0; i < builders.length; i++) {
-        mountSingleChild(parent as HTMLElement, builders[i] as TChild);
-    }
-}
-
-function mountSingleChild (parent: HTMLElement, child: TChild) {
-    if (child instanceof Array) {
-        for (let i = 0; i < child.length; i++) {
-            mountSingleChild(parent, child[i]);
-        }
-    } else {
-        if (child.type === 'builder' || child.type === 'comp') {
-            parent.appendChild(transformBuilderToDom(child));
-        } else {
-            parent.appendChild(child.exe(parent));
-        }
-    }
+    mountChildrenDoms(parent as HTMLElement, builders as TChild[]);
 }
 
 // export async function batchMountDom (dom: HTMLElement, doms: HTMLElement[]) {

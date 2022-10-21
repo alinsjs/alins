@@ -23,7 +23,7 @@ export type TElementChild = IElementBuilder | IElementBuilder[] | IComponentBuil
 
 export type TChild = TElementChild |
     IForBuilder |
-    IIfBuilder | IShowBuilder | IModelBuilder | ISwitchBuilder<any>;
+    IIfBuilder | IShowBuilder | IModelBuilder | ISwitchBuilder<any> | TChild[];
 
 export interface IElement {
     tag: string;
@@ -67,7 +67,7 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
 // const cloneNodeCountNo = 0;
  
 // const div = document.createElement('div');
-export function transformBuilderToDom (builder: IElementBuilder | IComponentBuilder): HTMLElement {
+export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     const config = builder.exe(); // ! 关键代码 执行builder
     // debugger;
     // console.count('transformBuilderToDomCount');
@@ -150,33 +150,44 @@ export function transformBuilderToDom (builder: IElementBuilder | IComponentBuil
     return dom;
 }
 
-function mountChildrenDoms (
-    dom: HTMLElement,
+export function mountChildrenDoms (
+    parent: HTMLElement,
+    children: TChild[]
+) {
+    const frag = document.createDocumentFragment();
+    mountChildrenDomsBase(parent, frag, children);
+    parent.appendChild(frag);
+}
+
+function mountChildrenDomsBase (
+    parent: HTMLElement,
+    frag: DocumentFragment,
     children: TChild[]
 ) {
     for (const item of children) {
         if (item instanceof Array) {
             // (memo as any).name = i++;
             // debugger;
-            const frag = document.createDocumentFragment();
-            for (const child of item) {
-                // ! 关键代码 根据build解析dom 渲染到父元素
-                frag.appendChild(transformBuilderToDom(child));
-            }
-            dom.appendChild(frag);
+            mountChildrenDomsBase(parent, frag, item);
         // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
+        } else if (item instanceof HTMLElement) {
+            frag.appendChild(item);
         } else {
             switch (item.type) {
                 case 'comp':
+                    const compChildren = item.exe();
+                    debugger;
+                    children.push(compChildren); break;
                 case 'builder':
-                    dom.appendChild(transformBuilderToDom(item)); break;
+                    debugger;
+                    frag.appendChild(transformBuilderToDom(item)); break;
                 case 'if':
                 case 'switch':
-                    dom.appendChild(item.exe(dom)); break;
+                    frag.appendChild(item.exe(parent)); break;
                 case 'for':
                 case 'show':
                 case 'model':
-                    dom.appendChild(item.exe()); break;
+                    frag.appendChild(item.exe()); break;
             }
         }
     }

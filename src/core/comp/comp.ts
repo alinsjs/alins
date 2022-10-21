@@ -6,13 +6,17 @@
 
 import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
-import {IElement, IElementBuilder, TElementChild} from '../element/transform';
+import {TChild, TElementChild} from '../element/transform';
 import {IComputedItem} from '../reactive/computed';
 import {IEvent, IEventFunc} from './event';
 import {IProp} from './prop';
 import {ISlot} from './slot';
 
-export type TCompBuilderArg = IComponent | IProp | IEvent | ISlot;
+
+export type TCompArgs = IProp | IEvent | ISlot;
+export type TCompBuildFunc = () => TCompArgs[];
+
+export type TCompBuilderArg = IComponent | TCompArgs | TCompBuildFunc;
 
 export interface IComponentOptions {
     props: IJson<IComputedItem>;
@@ -20,12 +24,12 @@ export interface IComponentOptions {
     slots: IJson<TElementChild>;
 }
 export interface IComponent {
-    (options: IComponentOptions): IElementBuilder;
+    (options: IComponentOptions): TChild;
 }
 
 export type TCompArg = string; // props event slot
 export interface IComponentBuilder extends IBuilderParameter {
-    exe(): IElement;
+    exe(): TChild;
     type: 'comp';
 }
 export interface ICompConstructor{ // extends IControllerBuilder
@@ -52,7 +56,11 @@ export const comp: ICompConstructor = (...args) => {
             for (let i = 0; i < args.length; i++) {
                 const item = args[i];
                 if (typeof item === 'function') {
-                    component = item;
+                    if (i === 0) {
+                        component = item as IComponent;
+                    } else {
+                        args.push(...(item as TCompBuildFunc)());
+                    }
                 } else {
                     switch (item.type) {
                         case 'prop': options.props = item.exe(); break;
@@ -62,7 +70,7 @@ export const comp: ICompConstructor = (...args) => {
                 }
             }
             if (!component) throw new Error('Component not found');
-            return component(options).exe();
+            return component(options);
         },
         type: 'comp',
     };

@@ -336,6 +336,16 @@
               "level": "warning",
               "done": false
             }
+          },
+          {
+            "key": 1666324322495,
+            "children": [],
+            "todo": {
+              "content": "组件返回数组",
+              "id": 1666324322495,
+              "level": "danger",
+              "done": false
+            }
           }
         ],
         "todo": {
@@ -408,6 +418,16 @@
         }
       },
       {
+        "key": 1666324350783,
+        "children": [],
+        "todo": {
+          "content": "组件和dombuilder支持方法作为参数",
+          "id": 1666324350783,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
         "key": 1665564673720,
         "children": [],
         "todo": {
@@ -443,11 +463,8 @@
       1665494269048,
       1665564936729,
       1665494260180,
-      1665494213348,
       1665835013054,
-      1665494195217,
-      1665494169984,
-      1665982682369
+      1665494169984
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",

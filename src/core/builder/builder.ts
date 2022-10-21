@@ -9,8 +9,9 @@ import {IEventBuilder} from '../event/on';
 import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
 import {countBindingValue, IReactBuilder} from '../reactive/react';
 
-export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild; // (IElementBuilder|IElementBuilder[])[];
+export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild | IBuildFunction; // (IElementBuilder|IElementBuilder[])[];
 
+export type IBuildFunction = () => TBuilderArg[];
 export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
     // todo controller
 }
@@ -71,6 +72,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'on':
                     elementOptions.events?.push(item); break;
             }
+        } else if (typeof item === 'function') {
+            data.push(...item());
         }
     }
     // console.count('createElement');

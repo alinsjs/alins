@@ -77,6 +77,7 @@ export const forController: IForController = function (this: IBuilderConstructor
         const p = list as any as IReactObject<any>;
         p[subscribe]((newValue, oldValue, i) => {
             // v: reaction
+            console.log(newValue, oldValue, i);
             const oldIndex = list.indexOf(newValue); // 仅仅是移动了位置的元素
             if (oldIndex !== -1) {
                 const oldDom = doms[i];
@@ -104,13 +105,14 @@ export const forController: IForController = function (this: IBuilderConstructor
         return {
             exe () {
                 const frag = document.createDocumentFragment();
-                frag.append(mount);
                 for (const child of builders) {
                     const dom = transformBuilderToDom(child);
                     doms.push(dom);
+                    // debugger;
                     // ! 关键代码 根据build解析dom 渲染到父元素
                     frag.appendChild(dom);
                 }
+                frag.append(mount);
                 return frag;
             },
             type: 'for',

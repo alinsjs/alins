@@ -1,7 +1,7 @@
 import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
 import {computed, IComputedItem} from '../reactive/computed';
-import {TReactionItem} from '../reactive/react';
+import {isReaction, TReactionItem} from '../reactive/react';
 
 /*
  * @Author: tackchen
@@ -27,7 +27,8 @@ export const prop: IPropConstructor = (props) => {
             for (const k in props) {
                 const item = props[k];
                 (window as any).item = item;
-                const computeTarget = typeof item === 'function' ? item : (() => item.value);
+                const computeTarget = typeof item === 'function' ? item :
+                    (isReaction(item) ? () => item.value : () => item);
                 data[k] = computed(computeTarget);
             }
             return data;

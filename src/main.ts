@@ -11,6 +11,10 @@ import {IReactItem, react} from './core/reactive/react';
 import {click} from './core/event/on';
 import {comp} from './core/comp/comp';
 import {Parent} from './component/hello-world';
+import {todoList} from './component/todo-list';
+import {For3} from './component/for-3';
+import {Count, CountProps} from './component/count';
+import {prop} from './core/comp/prop';
 // import {hello} from './hello';
 // import {prop} from './core/comp/prop';
 // import {slot} from './core/comp/slot';
@@ -181,24 +185,28 @@ const oo = react({
     }
 });
 
-win.testOO = () => {
-    oo.a = {b: 2, c: {d: 3}};
-};
 
 mount('body',
     // div('.x0#app',
-    //     react`:value=${oo.a.b}-${oo.a.c.d}`,
+    //     react`value=${oo.a.b}-${oo.a.c.d}`,
     // ),
-    comp(todoList),
-    // div.for(array3)((item, index) => [
-    //     div(':xxx'),
-    //     div.for(item.a)((str, i) => [
-    //         '.x3', react`.x3-${index}-${i}`,
-    //         div.for(str)((a, ii) => [
-    //             react`:${a}-${index}-${i}-${ii}`
-    //         ])
-    //     ])
-    // ]),
+    // div('-----------'),
+    // comp(todoList),
+    // div('-----------'),
+    // comp(Parent),
+    // div('-----------'),
+    // comp(For3),
+    // div('-----------'),
+    comp(Count),
+    // div('countProps-----------'),
+    // div(() => {
+    //     const count = react(1);
+    //     return [
+    //         button('add', (click(() => count.value ++))),
+    //         comp(CountProps, prop({count})),
+    //         comp(CountProps, prop({count})),
+    //     ];
+    // })
 );
 
 // const x: {
@@ -460,51 +468,3 @@ win.datab = datab;
 
 // arr[0] = o;
 // arr[1] = 1;
-
-function todoList () {
-    const edit = react('');
-
-    const list = react<{
-        content: string
-    }[]>([]);
-    win.list = list;
-    // const arrr = react({a: [1]});
-    // arrr.a = [1, 2];
-
-    // list[0].content;
-
-    const addItem = () => {
-        list[0].content = '';
-        list[0] = {content: edit.value};
-        list.push({content: edit.value});
-        edit.value = '';
-        list[0].value = 1;
-    };
-    // list[0].content.value = '1';
-    const removeItem = (index: IReactItem) => {
-        list.splice(index.value, 1);
-    };
-
-    const oo = react({a: {b: 1}});
-
-    oo.value;
-
-    oo.a = {b: 2};
-
-    // const item = list[0];
-
-    return div(
-        input.model(edit)(),
-        button(':提交', click(addItem)),
-        div('.todo-list',
-            div(':111'),
-            div.for(list)((item, index) => [
-                react('.todo-item:', () => index.value + 1, ':', item.content),
-                // react`.todo-item:${() => index.value + 1}:${item.content}`,
-                button(':删除', click(removeItem).args(index)),
-            ]),
-            div(':222'),
-        ),
-        comp(Parent),
-    );
-}
