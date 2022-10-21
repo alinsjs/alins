@@ -4,16 +4,16 @@
  * @Description: Coding something
  */
 import {mount} from './core/mount';
-import {button, div, input, span} from './core/builder/builder';
+import {button, div, input} from './core/builder/builder';
 import {parseDomInfo} from './core/parser/info-parser';
-import {getListeners, IReactItem, react, value} from './core/reactive/react';
-import {computed} from './core/reactive/computed';
-import {click, on} from './core/event/on';
+import {IReactItem, react} from './core/reactive/react';
+// import {computed} from './core/reactive/computed';
+import {click} from './core/event/on';
 import {comp} from './core/comp/comp';
-import {hello} from './hello';
-import {prop} from './core/comp/prop';
-import {slot} from './core/comp/slot';
-import {watch} from './core/reactive/watch';
+// import {hello} from './hello';
+// import {prop} from './core/comp/prop';
+// import {slot} from './core/comp/slot';
+// import {watch} from './core/reactive/watch';
 
 const win = (window as any);
 
@@ -122,20 +122,20 @@ window.addEventListener('DOMContentLoaded', () => {
 // todo 理论上最佳方案
 // 不可缓存元素 1个根元素 x1. x2 .x3 .x4, 可缓存元素 29的
 
-const bool = react(true);
-const num = react(1);
-const num1 = react(3);
-const num2 = computed({
-    get () {
-        return num.value + num1.value + 3;
-    },
-    set (v, old) {
-        console.log(v, old);
-        num1.value = v;
-    }
-});
+// const bool = react(true);
+// const num = react(1);
+// const num1 = react(3);
+// const num2 = computed({
+//     get () {
+//         return num.value + num1.value + 3;
+//     },
+//     set (v, old) {
+//         console.log(v, old);
+//         num1.value = v;
+//     }
+// });
 
-const add = () => {num.value++;};
+// const add = () => {num.value++;};
 // watch(num, (v, old) => {
 //     console.log(v, old);
 // });
@@ -200,26 +200,26 @@ mount('body',
     // ]),
 );
 
-const x: {
-    a: {
-        b: number;
-    },
-    [prop: string]: string
-} = {} as any;
+// const x: {
+//     a: {
+//         b: number;
+//     },
+//     [prop: string]: string
+// } = {} as any;
 
-x.x = '1';
+// x.x = '1';
 
 // mount(
 //     comp(count)
 // );
 
-function count () {
-    const count = react(0);
-    return button(
-        click(() => {count.value++;}),
-        react`:Count is ${count}`
-    );
-}
+// function count () {
+//     const count = react(0);
+//     return button(
+//         click(() => {count.value++;}),
+//         react`:Count is ${count}`
+//     );
+// }
 
 // mount('body',
 //     div('.x0#app',
@@ -310,26 +310,26 @@ function count () {
 //     )
 // );
 
-const funcA = (d) => {
-    console.log('funcA');
-    console.log(d);
-    console.log('funcA2');
-};
-const funcB = (d) => {
-    console.log('funcB');
-    console.log(d);
-    console.log('funcB2');
-};
+// const funcA = (d) => {
+//     console.log('funcA');
+//     console.log(d);
+//     console.log('funcA2');
+// };
+// const funcB = (d) => {
+//     console.log('funcB');
+//     console.log(d);
+//     console.log('funcB2');
+// };
 
-const funcC = () => {
-    console.log('funcC');
-    return 'c';
-};
+// const funcC = () => {
+//     console.log('funcC');
+//     return 'c';
+// };
 
-const test = [
-    funcA(funcC()),
-    funcB(funcC() + 1)
-];
+// const test = [
+//     funcA(funcC()),
+//     funcB(funcC() + 1)
+// ];
 
 
 // mount('body',
@@ -498,6 +498,7 @@ function todoList () {
         div('.todo-list',
             div(':111'),
             div.for(list)((item, index) => [
+                react('aa', ()=>{}, 'aa', sa, '' )
                 react`.todo-item:${() => index.value + 1}:${item.content}`,
                 button(':删除', click(removeItem).args(index)),
             ]),

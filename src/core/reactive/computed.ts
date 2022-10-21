@@ -57,6 +57,7 @@ function reactiveComputed<T> (
 ): IReactItem<T> {
     const changeList: Function[] = [];
     return {
+        isUndefined: () => typeof value === 'undefined',
         get value () {
             Compute.add?.(this);
             value = get();

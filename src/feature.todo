@@ -128,10 +128,10 @@
             "key": 1666058458627,
             "children": [],
             "todo": {
-              "content": "数组方法hack",
+              "content": "数组新增和删除元素",
               "id": 1666058458627,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -141,7 +141,7 @@
               "content": "json新增和删除属性",
               "id": 1666058468872,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -436,7 +436,8 @@
       1665494213348,
       1665835013054,
       1665494195217,
-      1665494169984
+      1665494169984,
+      1665982682369
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",

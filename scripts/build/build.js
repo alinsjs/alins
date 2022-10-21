@@ -13,7 +13,7 @@ const {build, builddts} = require('../rollup.base');
 
 
 async function main () {
-    const version = process.argv[2];
+    const version = process.argv[2] || '0.0.1';
     if (!version) throw new Error('Invalid version');
     pkg.version = version;
     writeJsonIntoFile('@package.json', pkg);
