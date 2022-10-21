@@ -12,31 +12,6 @@ import {slot} from 'src/core/comp/slot';
 import {click} from 'src/core/event/on';
 import {react} from 'src/core/reactive/react';
 
-export function HelloWorld ({prop, slot, event}: any) {
-    debugger;
-    const onClick = () => {
-        console.log('onClick');
-    };
-    const data = react({
-        msg: '1',
-        list: [],
-        src: 'https://shiyix.cn/wx-pay.png'
-    });
-    const switchSrc = () => {
-        data.src = 'https://img0.baidu.com/it/u=3380674861,1672768141&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400';
-    };
-    return div('.flex-4-num1', click(onClick),
-        span('.flex-4-img', click(event.test),
-            react`Hello ${data.msg} ${prop.value}`, // todo fix
-            img('aa[width=100][src=https://shiyix.cn/wx-pay.png]'),
-            img(react`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
-        ),
-        button('切换图片', click(switchSrc)),
-        slot.default,
-        div('.flex-4-num1-des'),
-    );
-}
-
 
 function ReactiveContent () {
     const data = react({
@@ -84,10 +59,41 @@ export function Parent () {
             value: '11',
         }), event({
             test: () => console.log('test event')
-        }), slot(div('slot'))),
+        // }), slot(div('slot'))),
+        }), slot((childProp) => div(react`slot-${childProp}`))),
         comp(ReactiveContent),
         comp(ForDemo),
     );
+}
+
+function HelloWorld ({prop, slot, event}: any) {
+    const onClick = () => {
+        console.log('onClick');
+    };
+    const data = react({
+        msg: '1',
+        list: [],
+        src: 'https://shiyix.cn/wx-pay.png'
+    });
+    const switchSrc = () => {
+        data.src = 'https://img0.baidu.com/it/u=3380674861,1672768141&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400';
+    };
+    return div('.flex-4-num1', click(onClick),
+        span('.flex-4-img', click(event.test),
+            react`Hello ${data.msg} ${prop.value}`, // todo fix
+            img('aa[width=100][src=https://shiyix.cn/wx-pay.png]'),
+            img(react`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
+        ),
+        button('切换图片', click(switchSrc)),
+        div('test-slot*********'),
+        input.model(data.msg)(),
+        slot(data.msg),
+        div('.flex-4-num1-des'),
+    );
+}
+
+export function testLife () {
+    return null;
 }
 
 // return `

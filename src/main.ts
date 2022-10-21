@@ -10,7 +10,7 @@ import {IReactItem, react} from './core/reactive/react';
 // import {computed} from './core/reactive/computed';
 import {click} from './core/event/on';
 import {comp} from './core/comp/comp';
-import {Parent} from './component/hello-world';
+import {Parent, testLife} from './component/hello-world';
 import {todoList} from './component/todo-list';
 import {For3} from './component/for-3';
 import {Count, CountProps} from './component/count';
@@ -190,23 +190,24 @@ mount('body',
     // div('.x0#app',
     //     react`value=${oo.a.b}-${oo.a.c.d}`,
     // ),
-    // div('-----------'),
+    // div('todoList-----------'),
     // comp(todoList),
-    div('Parent-----------'),
-    comp(Parent),
-    // div('-----------'),
-    comp(For3),
-    // div('-----------'),
-    comp(Count),
-    div('countProps-----------'),
-    div(() => {
-        const count = react(1);
-        return [
-            button('add', (click(() => count.value ++))),
-            comp(CountProps, prop({count})),
-            comp(CountProps, prop({count})),
-        ];
-    })
+    // div('Parent-----------'),
+    // comp(Parent),
+    // div('For3-----------'),
+    // comp(For3),
+    // div('Count-----------'),
+    // comp(Count),
+    // div('countProps-----------'),
+    // div(() => {
+    //     const count = react(1);
+    //     return [
+    //         button('add', (click(() => count.value ++))),
+    //         comp(CountProps, prop({count})),
+    //         comp(CountProps, prop({count})),
+    //     ];
+    // })
+    comp(testLife)
 );
 
 // const x: {

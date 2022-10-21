@@ -6,28 +6,24 @@
 
 import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
-import {TElementChild} from '../element/transform';
+import {TChild} from '../element/transform';
 
+export type TSlotFunction = (...args: any[]) => TChild;
+
+export type TSlotElement = IJson<TChild | TSlotFunction> | TChild | TSlotFunction;
 
 export interface ISlot extends IBuilderParameter {
     type: 'slot';
-    exe(): IJson<TElementChild>;
+    exe(): TSlotElement;
 }
 
 export  interface ISlotConstructor {
-    (slot: IJson<TElementChild> | TElementChild): ISlot;
+    (slot: IJson<TChild | TSlotFunction> | TChild | TSlotFunction): ISlot;
 }
 
 export const slot: ISlotConstructor = (slot) => {
     return {
         type: 'slot',
-        exe () {
-            if (typeof (slot as any).type === 'string' || slot instanceof Array) {
-                return {
-                    default: slot as TElementChild
-                };
-            }
-            return slot as IJson<TElementChild>;
-        }
+        exe: () => slot,
     };
 };

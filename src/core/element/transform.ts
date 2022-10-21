@@ -19,7 +19,7 @@ import {IReactBinding, subscribe, transformToReaction, TReactionItem} from '../r
 import {join} from '../utils';
 import {IForBuilder} from '../controller/for';
 
-export type TElementChild = IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
+export type TElementChild = null | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
 export type TChild = TElementChild |
     IForBuilder |
@@ -172,12 +172,11 @@ function mountSingleChild (
         }
     } else if (item instanceof HTMLElement) {
         frag.appendChild(item);
-    } else {
+    } else if (item) {
         switch (item.type) {
             case 'comp':
                 mountSingleChild(parent, frag, item.exe()); break;
             case 'builder':
-                debugger;
                 frag.appendChild(transformBuilderToDom(item)); break;
             case 'if':
             case 'switch':
@@ -187,6 +186,7 @@ function mountSingleChild (
             case 'model':
                 frag.appendChild(item.exe()); break;
         }
+        // todo life mounted
     }
 }
 

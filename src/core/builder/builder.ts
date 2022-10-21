@@ -51,7 +51,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         } else if (item instanceof Array) {
             // append children
             elementOptions.children.push(item);
-        } else if (typeof item === 'object') {
+        } else if (typeof item === 'object' && item) {
             switch (item.type) {
                 case 'react':
                     const binding = item.exe({type: 'dom-info'});

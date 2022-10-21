@@ -236,6 +236,7 @@ export function mergeReact (
             } else { // 新值中没有
                 // todo 对于动态属性没有良好的支持
                 delete oldTarget[k];
+                debugger;
             }
         }
         // 新值中有旧值中没有的

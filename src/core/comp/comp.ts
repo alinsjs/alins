@@ -6,12 +6,11 @@
 
 import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
-import {TChild, TElementChild} from '../element/transform';
+import {TChild} from '../element/transform';
 import {IComputedItem} from '../reactive/computed';
 import {IEvent, IEventFunc} from './event';
 import {IProp} from './prop';
-import {ISlot} from './slot';
-
+import {ISlot, TSlotElement} from './slot';
 
 export type TCompArgs = IProp | IEvent | ISlot;
 export type TCompBuildFunc = () => TCompArgs[];
@@ -21,7 +20,7 @@ export type TCompBuilderArg = IComponent | TCompArgs | TCompBuildFunc;
 export interface IComponentOptions {
     prop: IJson<IComputedItem>;
     event: IJson<IEventFunc>;
-    slot: IJson<TElementChild>;
+    slot: TSlotElement;
 }
 export interface IComponent {
     (options: IComponentOptions): TChild;
@@ -61,7 +60,7 @@ export const comp: ICompConstructor = (...args) => {
                     } else {
                         args.push(...(item as TCompBuildFunc)());
                     }
-                } else {
+                } else if (item) {
                     switch (item.type) {
                         case 'prop': options.prop = item.exe(); break;
                         case 'event': options.event = item.exe(); break;
