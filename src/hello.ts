@@ -9,14 +9,14 @@ import {watch} from './core/reactive/watch';
  * @Date: 2022-10-17 22:00:45
  * @Description: Coding something
  */
-export const hello: IComponent = ({props, events, slots}) => {
-    console.log(props.num);
-    watch(props.num, (v, old) => {
+export const hello: IComponent = ({prop, event, slot}) => {
+    console.log(prop.num);
+    watch(prop.num, (v, old) => {
         console.log('hello', v, old);
     });
-    (window as any).props = props;
-    return div(react`:hello-${props.num}`,
-        click(events.add),
-        slots.default,
+    (window as any).prop = prop;
+    return div(react`:hello-${prop.num}`,
+        click(event.add),
+        slot.default,
     );
 };

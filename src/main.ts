@@ -192,21 +192,21 @@ mount('body',
     // ),
     // div('-----------'),
     // comp(todoList),
+    div('Parent-----------'),
+    comp(Parent),
     // div('-----------'),
-    // comp(Parent),
-    // div('-----------'),
-    // comp(For3),
+    comp(For3),
     // div('-----------'),
     comp(Count),
-    // div('countProps-----------'),
-    // div(() => {
-    //     const count = react(1);
-    //     return [
-    //         button('add', (click(() => count.value ++))),
-    //         comp(CountProps, prop({count})),
-    //         comp(CountProps, prop({count})),
-    //     ];
-    // })
+    div('countProps-----------'),
+    div(() => {
+        const count = react(1);
+        return [
+            button('add', (click(() => count.value ++))),
+            comp(CountProps, prop({count})),
+            comp(CountProps, prop({count})),
+        ];
+    })
 );
 
 // const x: {

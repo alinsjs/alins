@@ -21,8 +21,8 @@ export function Count2 () {
 }
 
 
-export function CountProps ({props}: IComponentOptions) {
+export function CountProps ({prop}: IComponentOptions) {
     return div(
-        react`:Count is ${props.count}`
+        react`:Count is ${prop.count}`
     );
 }

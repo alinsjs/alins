@@ -34,12 +34,12 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
     const elementOptions: IElementOptions = {
         tag,
         children: [],
-        events: [],
+        event: [],
         binding: [],
         domInfo: ''
     };
     elementOptions.children = [];
-    elementOptions.events = [];
+    elementOptions.event = [];
     elementOptions.binding = [];
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
@@ -70,7 +70,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'comp':
                     elementOptions.children.push(item); break;
                 case 'on':
-                    elementOptions.events?.push(item); break;
+                    elementOptions.event?.push(item); break;
             }
         } else if (typeof item === 'function') {
             data.push(...item());

@@ -24,29 +24,17 @@ export function For3 () {
     }
     const arrayReact = react(array);
     // todo 支持返回数组
-    // return div(
-    //     button('add', click(() => arrayReact.push(createItem()))),
-    //     button('clear', click(() => arrayReact.splice(0, arrayReact.length))),
-    //     div.for(arrayReact)((item, index) => [
-    //         div(':xxx', react`${index}`),
-    //         div.for(item.a)((str, i) => [
-    //             '.x3', react`.x3-${index}-${i}`,
-    //             div.for(str)((a, ii) => [
-    //                 react`${a}-${index}-${i}-${ii}`
-    //             ])
-    //         ])
-    //     ])
-    // );
-    const result = div.for(arrayReact)((item, index) => [
-        div(':xxx', react`${index}`),
-        div.for(item.a)((str, i) => [
-            '.x3', react`.x3-${index}-${i}`,
-            div.for(str)((a, ii) => [
-                react`${a}-${index}-${i}-${ii}`
+    return [
+        button('add', click(() => arrayReact.push(createItem()))),
+        button('clear', click(() => arrayReact.splice(0, arrayReact.length))),
+        div.for(arrayReact)((item, index) => [
+            div(':xxx', react`${index}`),
+            div.for(item.a)((str, i) => [
+                '.x3', react`.x3-${index}-${i}`,
+                div.for(str)((a, ii) => [
+                    react`${a}-${index}-${i}-${ii}`
+                ])
             ])
         ])
-    ]);
-
-    debugger;
-    return result;
+    ];
 }

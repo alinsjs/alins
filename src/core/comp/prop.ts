@@ -16,16 +16,16 @@ export interface IProp extends IBuilderParameter {
 }
 
 export  interface IPropConstructor {
-    (props: IJson<TReactionItem>): IProp;
+    (prop: IJson<TReactionItem>): IProp;
 }
 
-export const prop: IPropConstructor = (props) => {
+export const prop: IPropConstructor = (prop) => {
     return {
         type: 'prop',
         exe () {
             const data: IJson<IComputedItem> = {};
-            for (const k in props) {
-                const item = props[k];
+            for (const k in prop) {
+                const item = prop[k];
                 (window as any).item = item;
                 const computeTarget = typeof item === 'function' ? item :
                     (isReaction(item) ? () => item.value : () => item);

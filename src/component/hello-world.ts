@@ -12,7 +12,7 @@ import {slot} from 'src/core/comp/slot';
 import {click} from 'src/core/event/on';
 import {react} from 'src/core/reactive/react';
 
-export function HelloWorld ({props, slots, events}: any) {
+export function HelloWorld ({prop, slot, event}: any) {
     debugger;
     const onClick = () => {
         console.log('onClick');
@@ -26,13 +26,13 @@ export function HelloWorld ({props, slots, events}: any) {
         data.src = 'https://img0.baidu.com/it/u=3380674861,1672768141&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400';
     };
     return div('.flex-4-num1', click(onClick),
-        span('.flex-4-img', click(events.test),
-            react`Hello ${data.msg} ${props.value}`, // todo fix
+        span('.flex-4-img', click(event.test),
+            react`Hello ${data.msg} ${prop.value}`, // todo fix
             img('aa[width=100][src=https://shiyix.cn/wx-pay.png]'),
             img(react`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
         ),
         button('切换图片', click(switchSrc)),
-        slots.default,
+        slot.default,
         div('.flex-4-num1-des'),
     );
 }
@@ -94,7 +94,7 @@ export function Parent () {
 // div.flex-4-num1@click{onClick}
 //     @on:hover{onHover}
 //     span.flex-4-img
-//         Hello {ref.msg}{props.value}
+//         Hello {ref.msg}{prop.value}
 //         img.item-img[alt=xxx;lazy=loaded;src=https://shiyix.cn/wx-pay.png]
 //     {slot}
 //     div.flex-4-num1-des

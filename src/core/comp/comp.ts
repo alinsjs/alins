@@ -19,15 +19,15 @@ export type TCompBuildFunc = () => TCompArgs[];
 export type TCompBuilderArg = IComponent | TCompArgs | TCompBuildFunc;
 
 export interface IComponentOptions {
-    props: IJson<IComputedItem>;
-    events: IJson<IEventFunc>;
-    slots: IJson<TElementChild>;
+    prop: IJson<IComputedItem>;
+    event: IJson<IEventFunc>;
+    slot: IJson<TElementChild>;
 }
 export interface IComponent {
     (options: IComponentOptions): TChild;
 }
 
-export type TCompArg = string; // props event slot
+export type TCompArg = string; // prop event slot
 export interface IComponentBuilder extends IBuilderParameter {
     exe(): TChild;
     type: 'comp';
@@ -48,9 +48,9 @@ export const comp: ICompConstructor = (...args) => {
     return {
         exe () {
             const options: IComponentOptions = {
-                props: {},
-                events: {},
-                slots: {}
+                prop: {},
+                event: {},
+                slot: {}
             };
             let component: IComponent | null = null;
             for (let i = 0; i < args.length; i++) {
@@ -63,9 +63,9 @@ export const comp: ICompConstructor = (...args) => {
                     }
                 } else {
                     switch (item.type) {
-                        case 'prop': options.props = item.exe(); break;
-                        case 'event': options.events = item.exe(); break;
-                        case 'slot': options.slots = item.exe(); break;
+                        case 'prop': options.prop = item.exe(); break;
+                        case 'event': options.event = item.exe(); break;
+                        case 'slot': options.slot = item.exe(); break;
                     }
                 }
             }

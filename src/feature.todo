@@ -324,17 +324,7 @@
               "content": "组件 + 控制器",
               "id": 1666088897525,
               "level": "danger",
-              "done": false
-            }
-          },
-          {
-            "key": 1666313804988,
-            "children": [],
-            "todo": {
-              "content": "slot传参",
-              "id": 1666313804988,
-              "level": "warning",
-              "done": false
+              "done": true
             }
           },
           {
@@ -344,6 +334,16 @@
               "content": "组件返回数组",
               "id": 1666324322495,
               "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666313804988,
+            "children": [],
+            "todo": {
+              "content": "slot传参",
+              "id": 1666313804988,
+              "level": "warning",
               "done": false
             }
           }
@@ -464,7 +464,8 @@
       1665564936729,
       1665494260180,
       1665835013054,
-      1665494169984
+      1665494169984,
+      1666088897525
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",

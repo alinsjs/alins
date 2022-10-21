@@ -33,7 +33,7 @@ export interface IElement {
     attributes: IJson<string>;
     children?: TChild[];
     binding: IReactBinding[];
-    events: IEventBuilder[];
+    event: IEventBuilder[];
     domInfo: string;
     _if?: IIfBuilder;
     show?: TReactionItem;
@@ -139,8 +139,8 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         // });
     }
 
-    for (let i = 0; i < config.events.length; i++) {
-        config.events[i].exe(dom);
+    for (let i = 0; i < config.event.length; i++) {
+        config.event[i].exe(dom);
     };
 
     // // console.log('dom done', dom.children.length);
@@ -155,40 +155,37 @@ export function mountChildrenDoms (
     children: TChild[]
 ) {
     const frag = document.createDocumentFragment();
-    mountChildrenDomsBase(parent, frag, children);
+    for (const item of children) {
+        mountSingleChild(parent, frag, item);
+    }
     parent.appendChild(frag);
 }
 
-function mountChildrenDomsBase (
+function mountSingleChild (
     parent: HTMLElement,
     frag: DocumentFragment,
-    children: TChild[]
+    item: TChild
 ) {
-    for (const item of children) {
-        if (item instanceof Array) {
-            // (memo as any).name = i++;
-            // debugger;
-            mountChildrenDomsBase(parent, frag, item);
-        // batchMountDom(dom, item.map(i => transformBuilderToDom(i)));
-        } else if (item instanceof HTMLElement) {
-            frag.appendChild(item);
-        } else {
-            switch (item.type) {
-                case 'comp':
-                    const compChildren = item.exe();
-                    debugger;
-                    children.push(compChildren); break;
-                case 'builder':
-                    debugger;
-                    frag.appendChild(transformBuilderToDom(item)); break;
-                case 'if':
-                case 'switch':
-                    frag.appendChild(item.exe(parent)); break;
-                case 'for':
-                case 'show':
-                case 'model':
-                    frag.appendChild(item.exe()); break;
-            }
+    if (item instanceof Array) {
+        for (const child of item) {
+            mountSingleChild(parent, frag, child);
+        }
+    } else if (item instanceof HTMLElement) {
+        frag.appendChild(item);
+    } else {
+        switch (item.type) {
+            case 'comp':
+                mountSingleChild(parent, frag, item.exe()); break;
+            case 'builder':
+                debugger;
+                frag.appendChild(transformBuilderToDom(item)); break;
+            case 'if':
+            case 'switch':
+                frag.appendChild(item.exe(parent)); break;
+            case 'for':
+            case 'show':
+            case 'model':
+                frag.appendChild(item.exe()); break;
         }
     }
 }
@@ -307,7 +304,7 @@ export function createElement ({
     children,
     binding = [],
     domInfo = '',
-    events = [],
+    event = [],
     _if
 }: IElementOptions): IElement {
     return {
@@ -319,7 +316,7 @@ export function createElement ({
         children,
         binding,
         domInfo,
-        events,
+        event,
         _if
     };
 }

@@ -15,19 +15,19 @@ export interface ISlot extends IBuilderParameter {
 }
 
 export  interface ISlotConstructor {
-    (slots: IJson<TElementChild> | TElementChild): ISlot;
+    (slot: IJson<TElementChild> | TElementChild): ISlot;
 }
 
-export const slot: ISlotConstructor = (slots) => {
+export const slot: ISlotConstructor = (slot) => {
     return {
         type: 'slot',
         exe () {
-            if (typeof (slots as any).type === 'string' || slots instanceof Array) {
+            if (typeof (slot as any).type === 'string' || slot instanceof Array) {
                 return {
-                    default: slots as TElementChild
+                    default: slot as TElementChild
                 };
             }
-            return slots as IJson<TElementChild>;
+            return slot as IJson<TElementChild>;
         }
     };
 };

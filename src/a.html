@@ -94,7 +94,7 @@
     function component(){
         const data = ref({a:1});
 
-        const props = getProps();
+        const prop = getProps();
 
         const slot = getSlots();
 
@@ -106,7 +106,7 @@
 
         return div('.flex-4-num1', click(onClick), [
             span('.flex-4-img', [
-                `Hello ${ref.msg} ${props.value}`,
+                `Hello ${ref.msg} ${prop.value}`,
                 img('.item-img[alt=xxx;lazy=loaded;src=https://shiyix.cn/wx-pay.png]')
             ]),
             slot,
@@ -129,7 +129,7 @@
             div.flex-4-num1@click{onClick}
                 @on:hover{onHover}
                 span.flex-4-img
-                    Hello {ref.msg}{props.value}
+                    Hello {ref.msg}{prop.value}
                     img.item-img[alt=xxx;lazy=loaded;src=https://shiyix.cn/wx-pay.png]
                 {slot}
                 div.flex-4-num1-des
@@ -142,7 +142,7 @@
         `
 
         return div`.flex-4-num1
-            Hello ${ref.msg} ${props.value}
+            Hello ${ref.msg} ${prop.value}
             ${span`.flex-4-img
                 ${img`.item-img[alt=xxx;lazy=loaded;src=https://shiyix.cn/wx-pay.png]`}
             `}
@@ -170,7 +170,7 @@
 
     const parent = div`.parent
         ${
-            component.props(data).css()`${div``}`
+            component.prop(data).css()`${div``}`
         }
     `
 </script>

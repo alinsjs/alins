@@ -15,14 +15,14 @@ export interface IEvent extends IBuilderParameter {
 }
 
 export  interface IEventConstructor {
-    (props: IJson<IEventFunc>): IEvent;
+    (prop: IJson<IEventFunc>): IEvent;
 }
 
-export const event: IEventConstructor = (events) => {
+export const event: IEventConstructor = (event) => {
     return {
         type: 'event',
         exe () {
-            return events;
+            return event;
         }
     };
 };
