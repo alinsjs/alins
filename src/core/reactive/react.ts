@@ -137,12 +137,15 @@ export type TReactionItem<T=any> = IReactItem<T> | TComputedFunc<T> | IComputedI
 
 // 生成响应数据绑定
 export function react(ts: TemplateStringsArray, ...reactions: TReactionItem[]): IReactBuilder;
+// es6兼容写法
+export function react(data: string, ...reactions: (TReactionItem | string)[]): IReactBuilder;
 // 初始化响应数据
 export function react<T>(data: T): IReactWrap<T>;
 
+
 export function react<T> (
-    data: TemplateStringsArray | T,
-    ...reactions: TReactionItem[]
+    data: TemplateStringsArray | T | string,
+    ...reactions: (TReactionItem| string)[]
 ): IReactBuilder | IReactWrap<T> | IReactItem<T> {
     // todo check is TemplateStringsArray
     if (data instanceof Array && (data as any).raw instanceof Array) {
@@ -150,6 +153,17 @@ export function react<T> (
             template: data as unknown as string[],
             reactions,
         });
+    } else if (typeof data === 'string' && reactions.length > 0) {
+        const template = [data];
+        for (let i = 0; i < reactions.length; i++) {
+            const reaction = reactions[i];
+            if (typeof reaction === 'string') {
+                template.push(reaction);
+                reactions.splice(i, 1);
+                i --;
+            }
+        }
+        return bindReactive({template, reactions});
     } else {
         return createReactive<T>(data as T);
     }
