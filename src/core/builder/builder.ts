@@ -30,7 +30,13 @@ function getTagNameFromDomInfo (domInfo: string) {
  */
 function elementBuilder (tag: string, data: TBuilderArg[]) {
     // console.log('elementBuilder', tag, data, JSON.stringify(data));
-    const elementOptions: IElementOptions = {tag};
+    const elementOptions: IElementOptions = {
+        tag,
+        children: [],
+        events: [],
+        binding: [],
+        domInfo: ''
+    };
     elementOptions.children = [];
     elementOptions.events = [];
     elementOptions.binding = [];
@@ -98,6 +104,10 @@ export const div = buildFactory('div');
 export const span = buildFactory('span');
 export const input = buildFactory('input');
 export const button = buildFactory('button');
+export const img = buildFactory('img');
+export const a = buildFactory('a');
+export const i = buildFactory('i');
+export const text = (v: string) => ':' + v;
 // todo add element
 
 function createBaseBuilder (exe: ()=> IElement): IElementBuilder {

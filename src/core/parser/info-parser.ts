@@ -30,6 +30,9 @@ export const InfoKeys = ['className', 'attributes', 'id', 'textContent', 'tagNam
 (window as any).parseCount = 0;
 export function parseDomInfo (info: string): IDomInfoData {
     (window as any).parseCount++;
+    if (!('./#[:'.includes(info[0]))) {
+        return {textContent: info};
+    }
     const result: IDomInfoData = {};
 
     let scope: TInfoType | '' = '';
@@ -76,12 +79,11 @@ export function parseDomInfo (info: string): IDomInfoData {
             case ':':
                 appendInfo(i, 'textContent');
                 // ? 此处有问题 对于分开写的 :， 由于是拼接的 后面的 内容会被前面的 : 覆盖掉
-                len = i; // ! 如果有 : 则立即退出循环 : 后面的全部认为是文本内容
+                if (scope === '') len = i; // ! 如果有 : 且不在其他scope中 则立即退出循环 : 后面的全部认为是文本内容
                 break;
         }
     }
     appendInfo(info.length, '');
-
     return result;
 }
 
