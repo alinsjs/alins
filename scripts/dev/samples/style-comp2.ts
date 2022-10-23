@@ -23,9 +23,9 @@ export function Style2 () {
             span('修改颜色:'),
             input.model(color)(),
         ),
-        // div('文本', style({
-        //     color, fontSize: size
-        // })),
+        div('文本', style({
+            color, fontSize: size
+        })),
         div('.parent',
             div('.child:文本2')
         )
@@ -34,12 +34,10 @@ export function Style2 () {
 
 function initCss (size: any, color: any) {
     return css('.parent')(
-        style({
-            border: react`${size}px solid ${color}`
-        }),
-        // style.borderBottom(react`${size}px solid ${color}`),
+        style.borderBottom(react`${size}px solid ${color}`),
         ['.child',
             style({color, fontSize: size})
         ]
     ).mount();
 }
+

@@ -180,33 +180,43 @@ function todoList () {
 
 ```js
 import {
-    button, input, div, comp, click, react
+    span, input, div, react, mount, comp
 } from 'alins';
+import {css, style} from 'alins';
 
-function main(){
-  mount(comp(todoList));
+mount(comp(Style));
+
+function Style () {
+    const size = react(12);
+    const color = react('#222');
+
+    initCss(size, color);
+
+    return ([
+        div(
+            span('修改size:'),
+            input.model(size, 'number')(),
+        ),
+        div(
+            span('修改颜色:'),
+            input.model(color)(),
+        ),
+        div('文本', style({
+            color, fontSize: size
+        })),
+        div('.parent',
+            div('.child:文本2')
+        )
+    ]);
 }
 
-function todoList () {
-    const edit = react('');
-    const list = react([]);
-    const addItem = () => {
-        list.push({content: edit.value});
-        edit.value = '';
-    };
-    const removeItem = (index: IReactItem) => {
-        list.splice(index.value, 1);
-    };
-    return div(
-        input.model(edit)(),
-        button(':提交', click(addItem)),
-        div('.todo-list', react`.todo-${edit}`,
-            div.for(list)((item, index) => [
-                react`${() => index.value + 1}:${item.content}`,
-                button(':删除', click(removeItem).args(index)),
-            ]),
-        ),
-    );
+function initCss (size: any, color: any) {
+    return css('.parent')(
+        style.borderBottom(react`${size}px solid ${color}`),
+        ['.child',
+            style({color, fontSize: size})
+        ]
+    ).mount();
 }
 ```
 

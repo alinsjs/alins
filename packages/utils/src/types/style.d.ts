@@ -19,16 +19,16 @@ export type TUnit = 'px' | '%' | 'rm' | 'vh' | 'vw' | 'em' | 'rem' | 'in' | 'cm'
 
 export type TI = 'i';
 
-export type TStyleReaction = IReactBuilder | TReactionItem<number | string>;
+export type TStyleReaction<T> = IReactBuilder | TReactionItem<T>;
 
-type TStyleValue = number | string | TStyleReaction;
+type TStyleValue<T = number | string> = number | string | TStyleReaction<T>;
 
-type TCssCommonValue = 'inherit' | 'initial' | 'unset' | 'revert';
+type TCssCommonValue = 'inherit' | 'initial' | 'unset' | 'revert' | 'none' | 'auto';
 
 type TNumberStyle = (v: TStyleValue, unit?: TUnit | TI, i?: TI) => IStyleAtoms;
 
 type TNoneArgStyle = (i?: TI) => IStyleAtoms;
-type TStringStyle<T = string> = (v: T, i?: TI) => IStyleAtoms;
+type TStringStyle<T = string> = (v: T | TStyleValue<T>, i?: TI) => IStyleAtoms;
 interface TColorStyle {
     (r: number, g: number, b: number, a?: number, i?: TI): IStyleAtoms;
     (v: string, i?: TI): IStyleAtoms;
@@ -39,7 +39,8 @@ interface TFourValueStyle {
     (top: TStyleValue, right: TStyleValue, bottom: TStyleValue, left: TStyleValue, unit?: TUnit, i?: TI): IStyleAtoms;
 }
 
-
+export type TTextDeco = 'blink'|'dashed'|'dotted'|'double'|'line-through'|'overline'|'solid'|'underline'|'wavy'|TCssCommonValue;
+export type TPosition = 'relative' | 'absolute' | 'fixed' | 'sticky' | 'static' | TCssCommonValue
 export interface IStyleAtoms extends IBuilderParameter{
   result: IJson<string | (()=>string)>;
   borderBox: TNoneArgStyle;
@@ -54,14 +55,14 @@ export interface IStyleAtoms extends IBuilderParameter{
 
   width: TNumberStyle;
   maxWidth: TNumberStyle;
-  position: TStringStyle<
-      'relative' | 'absolute' | 'fixed' |
-      'sticky' | 'static' | TCssCommonValue
-  >;
+  position: TStringStyle<TPosition>;
 
   borderBottom: TNumberStyle;
   border: TStringStyle;
   color: TColorStyle;
   exe(parent: HTMLElement): string;
+  generate(start?: number): string;
+
+  textDecoration: TStringStyle<TTextDeco>;
   type: 'style';
 }

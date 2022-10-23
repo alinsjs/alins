@@ -10,7 +10,7 @@ import {
 } from 'alins-reactive';
 import {IReactBuilder, IReactItem} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common.d';
-import {IStyleAtoms, TStyleValue, TUnit, TI} from 'alins-utils/src/types/style.d';
+import {IStyleAtoms, TStyleValue, TUnit, TI, TTextDeco} from 'alins-utils/src/types/style.d';
 import {OnlyNumberAttrs, style} from './style';
 
 const IMP = 'i';
@@ -24,6 +24,12 @@ export const StyleAtoms: IStyleAtoms = {
     width (v: TStyleValue, unit?: TUnit | TI, i?: TI) {
         return createAtomChild({}).width(v, unit, i);
     },
+    textDecoration (v: TTextDeco, i?: TI) {
+        return createAtomChild({}).textDecoration(v, i);
+    },
+    color (v: string, i?: TI) {
+        return createAtomChild({}).color(v, i);
+    }
 } as any as IStyleAtoms;
 
 export function createAtomChild (
@@ -32,6 +38,14 @@ export function createAtomChild (
     (window as any).xx = result;
     return {
         result,
+        textDecoration (v: TTextDeco, i?: TI) {
+            result.textDecoration = transformAtomStyleValue('textDecoration', v, i);
+            return this;
+        },
+        color (v: string, i?: TI) {
+            result.color = transformAtomStyleValue('color', v, i);
+            return this;
+        },
         borderBottom (v: TStyleValue, unit?: TUnit | TI, i?: TI) {
             result.borderBottom = transformAtomStyleValue('borderBottom', v, unit, i);
             // console.log(result);
@@ -41,6 +55,9 @@ export function createAtomChild (
             result.width = transformAtomStyleValue('width', v, unit, i);
             // console.log(result);
             return this;
+        },
+        generate (start = 0) {
+            return style(this.result).generate(start);
         },
         exe (dom: HTMLElement) {
             return style(this.result).exe(dom);

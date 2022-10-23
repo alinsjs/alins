@@ -6,9 +6,9 @@
 
 import {TReactionItem} from 'alins-utils/src/types/react.d';
 import {reactiveTemplate} from 'alins-reactive';
-import {IStyleBuilder} from 'alins-utils/src/types/style.d';
+import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
 
-type ICssCBArg = string | IStyleBuilder | ICssCBArg[];
+type ICssCBArg = string | IStyleBuilder | IStyleAtoms | ICssCBArg[];
 
 export interface ICssCallback {
     (...args: ICssCBArg[]): {
@@ -29,7 +29,7 @@ export const css: ICssConstructor = (selector: string) => {
         if (reactions.length > 0) { // 有响应数据需要渲染
             content = reactiveTemplate(template, reactions, (content) => {
                 style.innerText = content;
-            }, false, () => {});
+            });
         } else {
             content = template;
         }
