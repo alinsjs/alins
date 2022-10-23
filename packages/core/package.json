@@ -1,0 +1,21 @@
+{
+    "name": "alins",
+    "version": "0.0.1",
+    "description": "lerna demo",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
+    "repository": "git@github.com:alinsjs/alins.git",
+    "author": "tackchen <theajack@qq.com>",
+    "scripts": {
+        "build": "node ../../scripts/build/build.js main"
+    },
+    "license": "",
+    "type": "module",
+    "dependencies": {
+        "alins-reactive": "^0.0.1",
+        "alins-utils": "^0.0.1"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
+    }
+}

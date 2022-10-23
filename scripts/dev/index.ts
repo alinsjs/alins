@@ -1,7 +1,11 @@
 /*
  * @Author: tackchen
- * @Date: 2022-08-03 20:32:39
+ * @Date: 2022-07-11 17:17:54
  * @Description: Coding something
  */
 
-import '../../src/main';
+import {mount, div} from './alins';
+
+mount(
+    div('Hello World')
+);

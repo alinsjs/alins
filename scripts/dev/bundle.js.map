@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../packages/main/src/index.ts", "index.ts"],
+  "sourcesContent": ["export default {\n    name: 'main',\n    mainFn () {\n        console.log('main');\n    }\n};", "\nimport main from 'packages/main';\n\n(window as any).demo = main;\n"],
+  "mappings": ";AAAA,IAAO,cAAQ;AAAA,EACX,MAAM;AAAA,EACN,SAAU;AACN,YAAQ,IAAI,MAAM;AAAA,EACtB;AACJ;;;ACFA,AAAC,OAAe,OAAO;",
+  "names": []
+}

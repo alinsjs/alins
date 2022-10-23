@@ -1,0 +1,14 @@
+[
+    {
+        "name": "@alins/main",
+        "version": "0.0.1",
+        "dependencies": [
+            "@alins/utils"
+        ]
+    },
+    {
+        "name": "@alins/utils",
+        "version": "0.0.1",
+        "dependencies": []
+    }
+]

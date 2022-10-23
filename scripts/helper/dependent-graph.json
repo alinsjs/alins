@@ -1,0 +1,5 @@
+{
+  "@alins/main": [
+    "@alins/main-utils"
+  ]
+}

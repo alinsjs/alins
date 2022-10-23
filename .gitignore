@@ -1,9 +1,5 @@
 node_modules
-/dist
-/cdn
+dist
+cdn
+lerna-debug.log
 .pnpm-debug.log
-/npm
-bundle.js
-bundle.js.map
-/docs
-.DS_Store

@@ -1,26 +1,51 @@
-/*
- * @Author: tackchen
- * @Date: 2022-07-25 08:31:19
- * @Description: Coding something
- */
 module.exports = {
-    parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint'],
-    'globals': {
-        'globalThis': true,
-    },
-    env: {
+    // "parser": '@typescript-eslint/parser', // 启用会导致vue文件eslint错误
+    extends: [
+        'plugin:vue/vue3-recommended'
+    ],
+    'plugins': [
+        '@typescript-eslint',
+    ],
+    'env': {
         'browser': true,
         'es6': true,
         'node': true,
-        'commonjs': true,
+        'commonjs': true
     },
+    // 接入vue失败 暂且eslint 忽略vue文件
+    'extends': [
+    // "standard",
+        'plugin:vue/essential'
+    ],
     'parserOptions': {
-        'sourceType': 'module' // ts 中使用 es 模块
+    // "parser": "babel-eslint",
+        'parser': '@typescript-eslint/parser',
+        'ecmaVersion': 2018,
+        'ecmaFeatures': {
+            'arrowFunctions': true,
+            'classes': true,
+            'modules': true,
+            'defaultParams': true,
+            'experimentalObjectRestSpread': true
+        },
+        'sourceType': 'module',
+        'parserOptions': {
+            'allowImportExportEverywhere': true
+        },
+        project: 'tsconfig.json',
+        tsconfigRootDir: './',
+        extraFileExtensions: ['.vue'],
+    },
+    'globals': {
+        'window': true,
+        'define': true,
+        'console': true,
+        'require': true,
+        'module': true,
     },
     'rules': {
-        'no-var': 'error',
-        // 优先使用 interface 而不是 type
+    // 'no-var': "error",
+    // 优先使用 interface 而不是 type
         '@typescript-eslint/consistent-type-definitions': [
             'error',
             'interface'
@@ -28,6 +53,8 @@ module.exports = {
         '@typescript-eslint/no-unused-vars': 'error', // 使用 ts 未使用变量的规则 比如枚举类型在es中会报错
         'no-extend-native': 0,
         'no-new': 0,
+        'no-var': 2,
+        'prefer-const': 2,
         'no-useless-escape': 0,
         'no-useless-constructor': 0,
         'no-trailing-spaces': ['error', {'skipBlankLines': true}],
@@ -49,6 +76,7 @@ module.exports = {
         'object-curly-spacing': ['error', 'never'],
         'arrow-spacing': 'error',
         'no-multiple-empty-lines': 'error',
+        'no-unused-vars': 'error',
         'spaced-comment': 'error',
         'quotes': ['error', 'single', {'allowTemplateLiterals': true}],
         'no-unreachable': 'error',
@@ -61,6 +89,21 @@ module.exports = {
         'prefer-const': ['error', {
             'destructuring': 'any',
             'ignoreReadBeforeAssign': false
-        }]
-    }
+        }],
+        'vue/script-indent': ['warn', 4, {
+            'baseIndent': 1,
+            'switchCase': 1
+        }],
+        'vue/html-indent': ['error', 4],
+        'vue/html-quotes': ['error', 'single', {'avoidEscape': true}],
+        'no-restricted-syntax': 'off',
+    },
+    'overrides': [
+        {
+            'files': ['*.vue'],
+            'rules': {
+                'indent': 'off'
+            }
+        }
+    ]
 };
