@@ -12,7 +12,7 @@ build({
     bundle: true,
     sourcemap: true,
     format: 'cjs',
-    globalName: 'LernaDemo',
+    globalName: 'Alins',
     platform: 'browser',
     // plugins:
     //   format === 'cjs' || pkg.buildOptions?.enableNonBrowserBranches

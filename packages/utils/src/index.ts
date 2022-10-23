@@ -6,3 +6,5 @@
 
 export * from './utils';
 export * from './types/symbol';
+
+export default {};
