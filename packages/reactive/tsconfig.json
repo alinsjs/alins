@@ -23,7 +23,7 @@
         "types": [
             "node"
         ],
-        "rootDir": "../..",
+        "rootDir": ".",
         "noEmit": false,
         "paths": {}
     },

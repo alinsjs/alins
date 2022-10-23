@@ -3,3 +3,4 @@ scripts/dev/*.js
 *.html
 **/libs/*.js
 dist
+cdn

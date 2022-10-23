@@ -11,8 +11,7 @@
     },
     "license": "",
     "type": "module",
-    "dependencies": {
-    },
+    "dependencies": {},
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     }

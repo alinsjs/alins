@@ -8,7 +8,7 @@ import {babel} from '@rollup/plugin-babel';
 import dts from 'rollup-plugin-dts';
 import typescript from 'rollup-plugin-typescript2';
 // import vuePlugin from 'rollup-plugin-vue';
-import yaml from '@rollup/plugin-yaml';
+// import yaml from '@rollup/plugin-yaml';
 import commonjs from '@rollup/plugin-commonjs';
 import {uglify} from 'rollup-plugin-uglify';
 import path from 'path';
@@ -43,8 +43,8 @@ const config = [
         },
         plugins: [
             uglify(),
-            commonjs(),
-            yaml(),
+            // commonjs(),
+            // yaml(),
             // vuePlugin(),
             typescript(),
             nodeResolve({
@@ -56,7 +56,7 @@ const config = [
                 configFile: path.join(__dirname, './babel.config.js'),
             }),
         ],
-        sourceMap: true,
+        sourceMap: false,
         external: packageInfo.dependencies,
     },
     {

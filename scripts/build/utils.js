@@ -1,3 +1,8 @@
+/*
+ * @Author: tackchen
+ * @Date: 2022-10-23 20:12:31
+ * @Description: Coding something
+ */
 const fs = require('fs');
 const path = require('path');
 
@@ -50,8 +55,8 @@ function initSinglePackageInfo (dir, isDev = false) {
         package.main = 'src/index.ts';
         package.typings = 'src/index.ts';
     } else {
-        package.main = `dist/${packageName}.min.js`;
-        package.typings = `dist/${packageName}.d.ts`;
+        // package.main = `dist/${packageName}.min.js`;
+        // package.typings = `dist/${packageName}.d.ts`;
     }
     package.publishConfig = {
         registry: 'https://registry.npmjs.org/',
