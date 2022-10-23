@@ -31,8 +31,15 @@ export function extractReplacement (str: string): null | string[] {
     return results;
 }
 
+export function createTemplateReplacement (template: string[], start = 0) {
+    return join(template, (i) => createReplacement(i + start));
+}
+
+// 传入模板和reaction callback传回每次更新渲染的新值
+// template = 'aaa$$0$$aaa'
+// 初次会返回首次渲染的值
 export function reactiveTemplate (
-    template: string,
+    templateRep: string,
     reactions: TReactionItem[],
     callback: (
         content: string,
@@ -40,9 +47,10 @@ export function reactiveTemplate (
     ) => void,
     needOldContent = false,
 ) {
-    const results = extractReplacement(template);
+    if (reactions.length === 0) return templateRep;
+    const results = extractReplacement(templateRep);
     if (results) {
-        const texts = template.split(ReplaceExp);
+        const texts = templateRep.split(ReplaceExp);
         const filler: string[] = results.map((item, i) => {
             const index = parseReplacementToNumber(item);
             const reaction = transformToReaction(reactions[index]);
@@ -59,5 +67,5 @@ export function reactiveTemplate (
         });
         return join(texts, filler);
     }
-    return template;
+    return templateRep;
 }

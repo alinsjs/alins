@@ -6,7 +6,7 @@
 
 import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
-import {join} from '../utils';
+import {isStringTemplateArray, join} from '../utils';
 import {Compute, computed, TComputedFunc, IComputedItem} from './computed';
 import {createProxy} from './proxy';
 
@@ -58,7 +58,7 @@ export interface IReactBindingTemplate {
 
 // react上下文环境
 export interface IReactContext {
-    type: 'dom-info',
+    type: 'dom-info' | 'style',
 }; // todo
 
 export interface IReactBinding extends IReactBindingTemplate {
@@ -145,7 +145,7 @@ export function react<T> (
     ...reactions: (TReactionItem| string)[]
 ): IReactBuilder | IReactWrap<T> | IReactItem<T> {
     // todo check is TemplateStringsArray
-    if (data instanceof Array && (data as any).raw instanceof Array) {
+    if (isStringTemplateArray(data)) {
         return bindReactive({
             template: data as unknown as string[],
             reactions,
@@ -181,12 +181,15 @@ function transArgsToTemplate (data: string, reactions: (string|TReactionItem)[])
     };
 }
 
+// 将 TReactionItem 转换 成 computed或者 reactItem
 export function transformToReaction<T> (item: TReactionItem<T>): IReactItem<T> | IComputedItem<T> {
     return (typeof item === 'function') ? computed(item) : item;
 }
+// 计算TReactionItem的值
 export function countReaction (item: TReactionItem) {
     return (typeof item === 'function') ? item() : item.value;
 }
+// 计算一次IReactBinding渲染后的值
 export function countBindingValue (binding: IReactBinding) {
     return join(binding.template, binding.reactions.map(r => countReaction(r)));
 }

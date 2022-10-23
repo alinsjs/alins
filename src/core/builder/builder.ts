@@ -71,6 +71,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                     elementOptions.children.push(item); break;
                 case 'on':
                     elementOptions.event?.push(item); break;
+                case 'style':
+                    elementOptions.style = item; break;
             }
         } else if (typeof item === 'function') {
             data.push(...item());

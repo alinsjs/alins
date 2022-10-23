@@ -18,6 +18,7 @@ import {createReplacement, extractReplacement, parseReplacementToNumber, reactiv
 import {IReactBinding, subscribe, transformToReaction, TReactionItem} from '../reactive/react';
 import {join} from '../utils';
 import {IForBuilder} from '../controller/for';
+import {IStyleBuilder} from '../style/style';
 
 export type TElementChild = null | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
@@ -37,6 +38,7 @@ export interface IElement {
     domInfo: string;
     _if?: IIfBuilder;
     show?: TReactionItem;
+    style?: IStyleBuilder;
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -142,6 +144,10 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     for (let i = 0; i < config.event.length; i++) {
         config.event[i].exe(dom);
     };
+
+    if (config.style) {
+        config.style.exe(dom);
+    }
 
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
@@ -252,6 +258,7 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
     if (info.className) {
         info.className.forEach(name => {
             if (!data.className) data.className = [];
+            debugger;
             data.className.push(
                 reactiveTemplate(name, reactions, (content, oldContent) => {
                     dom.classList.replace(oldContent, content);
@@ -305,7 +312,8 @@ export function createElement ({
     binding = [],
     domInfo = '',
     event = [],
-    _if
+    _if,
+    style,
 }: IElementOptions): IElement {
     return {
         tag,
@@ -317,6 +325,7 @@ export function createElement ({
         binding,
         domInfo,
         event,
-        _if
+        _if,
+        style,
     };
 }

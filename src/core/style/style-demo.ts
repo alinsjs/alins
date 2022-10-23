@@ -3,6 +3,8 @@
  * @Date: 2022-10-18 09:52:03
  * @Description: Coding something
  */
+import {div} from '../builder/builder';
+import {computed} from '../reactive/computed';
 import {react} from '../reactive/react';
 import {css, style} from './style';
 
@@ -80,6 +82,27 @@ css('.d-form')(
             ]
         ]
     ]
+);
+
+const num = react('1');
+
+const reactBuilder = react`${() => num.value + 1}`;
+const compute = computed(() => num.value + 1);
+
+div(
+    style.borderBottom(reactBuilder), // react builder
+    style.borderBottom(num), // IReactItem
+    style.borderBottom(compute), // IComputedItem
+    style.borderBottom(() => num.value + 1), // TComputedFunc
+    style({
+        color: '#fff',
+        fontSize: react`${() => 1}px`
+    }),
+    style`
+        color: '#fff',
+        fontSize: ${() => 1}px
+    `,
+    style.borderBottom(() => 1),
 );
 
 

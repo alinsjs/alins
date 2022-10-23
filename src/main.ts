@@ -15,6 +15,8 @@ import {todoList} from './component/todo-list';
 import {For3} from './component/for-3';
 import {Count, CountProps} from './component/count';
 import {prop} from './core/comp/prop';
+import {style} from './core/style/style';
+import {createCss, StyleComp} from './component/style-comp';
 // import {hello} from './hello';
 // import {prop} from './core/comp/prop';
 // import {slot} from './core/comp/slot';
@@ -206,8 +208,10 @@ mount('body',
     //         comp(CountProps, prop({count})),
     //         comp(CountProps, prop({count})),
     //     ];
-    // })
-    comp(testLife)
+    // }),
+    // comp(testLife)
+    comp(StyleComp),
+    createCss(),
 );
 
 // const x: {

@@ -36,7 +36,7 @@ export function todoList () {
     return div(
         input.model(edit)(),
         button(':提交', click(addItem)),
-        div('.todo-list',
+        div('.todo-list', react`.todo-${edit}`,
             div(':111'),
             div.for(list)((item, index) => [
                 react('.todo-item:', () => index.value + 1, ':', item.content),
