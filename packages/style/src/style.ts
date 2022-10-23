@@ -169,7 +169,7 @@ function reactiveStyle (style: IJson<string>, styles: IJson<string>, reactions: 
 }
 
 function setDomStyle (style: IJson<string>, key: string, value: number | string) {
-    console.log(key, transformStyleValue(key, value));
+    // console.log(key, transformStyleValue(key, value));
     style[key] = transformStyleValue(key, value);
 }
 

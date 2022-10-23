@@ -80,7 +80,7 @@ export const forController: IForController = function (this: IBuilderConstructor
         const p = list as any as IReactObject<any>;
         p[subscribe]((newValue, oldValue, i) => {
             // v: reaction
-            console.log(newValue, oldValue, i);
+            // console.log(newValue, oldValue, i);
             const oldIndex = list.indexOf(newValue); // 仅仅是移动了位置的元素
             if (oldIndex !== -1) {
                 const oldDom = doms[i];

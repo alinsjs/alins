@@ -38,7 +38,7 @@ export function createProxy<T extends IJson> (
         // value = getReactionPureValue(value);
         // oldValue = getReactionPureValue(oldValue);
         // debugger;
-        console.log(newValue, oldValue);
+        // console.log(newValue, oldValue);
         for (let i = 0; i < changeList.length; i++) {
             changeList[i](newValue, oldValue, index);
         }

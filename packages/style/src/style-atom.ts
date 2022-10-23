@@ -34,12 +34,12 @@ export function createAtomChild (
         result,
         borderBottom (v: TStyleValue, unit?: TUnit | TI, i?: TI) {
             result.borderBottom = transformAtomStyleValue('borderBottom', v, unit, i);
-            console.log(result);
+            // console.log(result);
             return this;
         },
         width (v: TStyleValue, unit?: TUnit | TI, i?: TI) {
             result.width = transformAtomStyleValue('width', v, unit, i);
-            console.log(result);
+            // console.log(result);
             return this;
         },
         exe (dom: HTMLElement) {
