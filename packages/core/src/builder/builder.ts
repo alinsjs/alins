@@ -8,7 +8,7 @@ import {controllers, IControllerBuilder} from '../controller/controller';
 import {IEventBuilder} from '../event/on';
 import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
 import {countBindingValue} from 'alins-reactive';
-import {IReactBinding, IReactBuilder} from 'alins-utils/src/types/react';
+import {IReactBinding, IReactBuilder} from 'alins-utils/src/types/react.d';
 
 export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild | IBuildFunction; // (IElementBuilder|IElementBuilder[])[];
 

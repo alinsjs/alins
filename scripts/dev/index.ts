@@ -4,17 +4,49 @@
  * @Description: Coding something
  */
 
-import {mount, div, comp} from './alins';
-import {Count} from './samples/count';
+import {mount, div, comp, react, button, click, prop} from './alins';
+import {Count, CountProps} from './samples/count';
+import {For3} from './samples/for-3';
+import {Parent, testLife} from './samples/hello-world';
+import {createCss, StyleComp} from './samples/style-comp';
+import {todoList} from './samples/todo-list';
+
+const oo = react({
+    a: {
+        b: 'ab',
+        c: {d: 'acd'}
+    },
+});
 
 mount(
     div('Hello World'),
     div('Count------------------'),
     comp(Count),
-    div('Count------------------'),
+    div('.x0#app',
+        react`value=${oo.a.b}-${oo.a.c.d}`,
+    ),
+    div('todoList-----------'),
+    comp(todoList),
+    div('Parent-----------'),
+    comp(Parent),
+    div('For3-----------'),
+    comp(For3),
+    div('Count-----------'),
     comp(Count),
-    div('Count------------------'),
-    comp(Count),
-    div('Count------------------'),
-    comp(Count),
+    div('countProps-----------'),
+    div(() => {
+        const count = react(1);
+        return [
+            button('add', (click(() => count.value ++))),
+            comp(CountProps, prop({count})),
+            comp(CountProps, prop({count})),
+        ];
+    }),
+    div('testLife-----------'),
+    comp(testLife),
+    div('StyleComp-----------'),
+    comp(StyleComp),
 );
+
+
+createCss().mount();

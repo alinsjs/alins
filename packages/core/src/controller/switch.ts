@@ -12,7 +12,7 @@
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
-import {IReactItem} from 'alins-utils/src/types/react';
+import {IReactItem} from 'alins-utils/src/types/react.d';
 import {IElementBuilder, transformBuilderToDom} from '../element/transform';
 
 export type TSwitchArg<T> = IReactItem<T> | (()=>T);

@@ -10,7 +10,7 @@ import {
     createReactive, index, mergeReact, subscribe
 } from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
-import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react';
+import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
 
 // export interface IForController {
 //     <T>(

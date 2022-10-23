@@ -9,7 +9,7 @@ import {
     value, getListeners, updateFirstLevel, json
 } from 'alins-utils';
 import {IJson} from 'alins-utils/src/types/common.d';
-import {IReactObject} from 'alins-utils/src/types/react';
+import {IReactObject} from 'alins-utils/src/types/react.d';
 import {
     reactiveValue,  isReaction,
     getReactionPureValue, mergeReact, reactiveProxyValue

@@ -14,7 +14,7 @@ export function createCss () {
         fontSize: react`${num}px`,
     });
 
-    css('.d-form')(
+    return css('.d-form')(
         // simpleStyle,
         ['&.aa', simpleStyle],
         ['[a=xx]',
@@ -22,7 +22,7 @@ export function createCss () {
             ['&.aa', simpleStyle],
             ['.cc', simpleStyle]
         ],
-    ).mount();
+    );
 }
 
 export function StyleComp () {

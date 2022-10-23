@@ -35,7 +35,7 @@ export {
     react, computed, watch, createProxy, $,
 } from 'alins-reactive';
 
-export {IReactItem} from 'alins-utils/src/types/react';
+export {IReactItem} from 'alins-utils/src/types/react.d';
 
 export default {
     mount,

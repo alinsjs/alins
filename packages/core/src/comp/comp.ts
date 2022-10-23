@@ -5,7 +5,7 @@
  */
 
 import {IJson, IBuilderParameter} from 'alins-utils/src/types/common.d';
-import {IComputedItem} from 'alins-utils/src/types/react';
+import {IComputedItem} from 'alins-utils/src/types/react.d';
 import {TChild} from '../element/transform';
 import {IEvent, IEventFunc} from './event';
 import {IProp} from './prop';
