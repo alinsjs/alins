@@ -20,7 +20,7 @@ const {
     buildPackageName,
 } = require('./utils');
 
-const dirName = process.argv[4];
+const dirName = process.env.PACKAGE_NAME;
 const packageInfo = extrackSinglePackageInfo(dirName);
 
 const extensions = ['.ts', '.d.ts', '.js'];

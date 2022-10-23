@@ -1,3 +1,8 @@
+/*
+ * @Author: tackchen
+ * @Date: 2022-10-23 20:12:31
+ * @Description: Coding something
+ */
 
 const execa = require('execa');
 const {resolveRootPath, initSinglePackageInfo} = require('./utils');
@@ -7,17 +12,18 @@ const dirName = process.argv[2];
 console.log(`dirName=${dirName}`);
 
 async function build () {
-    if (dirName === 'utils') {
-        await execa(
-            resolveRootPath('node_modules/rollup/dist/bin/rollup'),
+    await execa(
+        resolveRootPath('node_modules/rollup/dist/bin/rollup'),
+        [
+            '-c',
+            resolveRootPath('scripts/build/rollup.config.js'),
+            '--environment',
             [
-                '-c',
-                resolveRootPath('scripts/build/rollup.config.js'),
-                dirName,
+                `PACKAGE_NAME:${dirName}`,
             ],
-            {stdio: 'inherit'},
-        );
-    }
+        ],
+        {stdio: 'inherit'},
+    );
 }
 
 async function main () {
