@@ -7,7 +7,7 @@
 import {
     isStringTemplateArray, splitTwoPart,
     subscribeReactBuilder, subscribe, transformToReaction,
-    createReplacement, createTemplateReplacement, reactiveTemplate, ReplaceExp,
+    createReplacement, createTemplateReplacement, reactiveTemplate, ReplaceExp, computed,
 } from 'alins-reactive';
 import {IReactBuilder, TReactionItem} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common.d';
@@ -29,11 +29,12 @@ export const style: IStyleConstructor = Object.assign((
     return {
         // 返回响应模板和响应数据
         generate (start = 0) {
+            debugger;
             let scopeTemplate = '';
             const scopeReactions: TReactionItem[] = [];
-            if (typeof a1 === 'string') {
+            if (typeof a1 === 'string') { // style('')
                 scopeTemplate += a1; // 静态style
-            } else if (isStringTemplateArray(a1)) {
+            } else if (isStringTemplateArray(a1)) { // style``
                 const template = a1 as any as string[]; // 静态style
                 if (reactions.length === 0) scopeTemplate += template[0]; // 没有响应数据
                 else {
@@ -44,6 +45,7 @@ export const style: IStyleConstructor = Object.assign((
                 for (const key in a1) {
                     const value = (a1 as IJson<string | number | TStyleReaction>)[key];
                     let styleValue = '';
+                    const startIndex = scopeReactions.length + start;
                     if (typeof value === 'string') { // 当json值是简单类型
                         styleValue = transformStyleValue(key, value);
                     } else if ((value as IJson).type === 'react' ) {
@@ -53,15 +55,20 @@ export const style: IStyleConstructor = Object.assign((
                             type: 'style',
                         });
                         if (reactions.length > 0) {
-                            styleValue = createTemplateReplacement(template, scopeReactions.length);
+                            styleValue = createTemplateReplacement(template, startIndex);
                             scopeReactions.push(...reactions);
                         } else {
                             styleValue = template.join('');
                         }
                     } else {
                         // 当json值是TReactionItem
-                        const reaction = transformToReaction(value as TReactionItem<number | string>);
-                        styleValue = createReplacement(scopeReactions.length);
+                        let reaction = transformToReaction(value as TReactionItem<number | string>);
+                        
+                        if (needDefaultUnit(key, reaction.value)) {
+                            const origin = reaction; // ! 如果需要使用默认单位 则这里进行一次computed加上单位
+                            reaction = computed(() => origin.value + DefaultUint);
+                        }
+                        styleValue = createReplacement(startIndex);
                         scopeReactions.push(reaction);
                     }
                     scopeTemplate += `${transformStyleAttr(key)}:${styleValue};`;
@@ -125,8 +132,11 @@ export function transformStyleAttr (name: string) {
 }
 
 export function transformStyleValue (key: string, v: string|number) {
-    if (typeof v === 'string') return v;
-    return v + (OnlyNumberAttrs.includes(key) ? '' : DefaultUint);
+    return v + (needDefaultUnit(key, v) ? DefaultUint : '');
+}
+
+function needDefaultUnit (k: string, v: any) {
+    return typeof v === 'number' && !OnlyNumberAttrs.includes(k);
 }
 
 // aaa; aaa$$0$$;

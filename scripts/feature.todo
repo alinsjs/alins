@@ -1,0 +1,509 @@
+{
+  "todotree": {
+    "tree": [
+      {
+        "key": 1665494147335,
+        "children": [],
+        "todo": {
+          "content": "总体设计",
+          "id": 1665494147335,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494041685,
+        "children": [],
+        "todo": {
+          "content": "emment风格解析",
+          "id": 1665494041685,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494115567,
+        "children": [],
+        "todo": {
+          "content": "单个元素渲染",
+          "id": 1665494115567,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494121067,
+        "children": [],
+        "todo": {
+          "content": "子元素渲染",
+          "id": 1665494121067,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494195217,
+        "children": [
+          {
+            "key": 1665564936729,
+            "children": [],
+            "todo": {
+              "content": "object 响应式",
+              "id": 1665564936729,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1665564946759,
+            "children": [],
+            "todo": {
+              "content": "数组响应式",
+              "id": 1665564946759,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1665564427802,
+            "children": [],
+            "todo": {
+              "content": "多个响应式数据源",
+              "id": 1665564427802,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1665564502063,
+            "children": [],
+            "todo": {
+              "content": "控制器响应式支持",
+              "id": 1665564502063,
+              "level": "warning",
+              "done": true
+            }
+          },
+          {
+            "key": 1665835219036,
+            "children": [],
+            "todo": {
+              "content": "computed",
+              "id": 1665835219036,
+              "level": "warning",
+              "done": true
+            }
+          },
+          {
+            "key": 1665982636261,
+            "children": [],
+            "todo": {
+              "content": "computed set",
+              "id": 1665982636261,
+              "level": "warning",
+              "done": true
+            }
+          },
+          {
+            "key": 1666052659088,
+            "children": [],
+            "todo": {
+              "content": "watch 实现",
+              "id": 1666052659088,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666088908099,
+            "children": [],
+            "todo": {
+              "content": "proxy改造响应式数据",
+              "id": 1666088908099,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666058458627,
+            "children": [],
+            "todo": {
+              "content": "数组新增和删除元素",
+              "id": 1666058458627,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666058468872,
+            "children": [],
+            "todo": {
+              "content": "json新增和删除属性",
+              "id": 1666058468872,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1665564467963,
+            "children": [],
+            "todo": {
+              "content": "css 中支持响应式",
+              "id": 1665564467963,
+              "level": "warning",
+              "done": false
+            }
+          }
+        ],
+        "todo": {
+          "content": "响应式数据",
+          "id": 1665494195217,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
+        "key": 1665982682369,
+        "children": [
+          {
+            "key": 1666052746085,
+            "children": [],
+            "todo": {
+              "content": "事件修饰符",
+              "id": 1666052746085,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666052837600,
+            "children": [],
+            "todo": {
+              "content": "事件类型定义",
+              "id": 1666052837600,
+              "level": "warning",
+              "done": false
+            }
+          }
+        ],
+        "todo": {
+          "content": "事件",
+          "id": 1665982682369,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665494213348,
+        "children": [
+          {
+            "key": 1665564553848,
+            "children": [],
+            "todo": {
+              "content": "model: 输入组件数据双向绑定 依赖控制器",
+              "id": 1665564553848,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666052820071,
+            "children": [],
+            "todo": {
+              "content": "model 修饰符",
+              "id": 1666052820071,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1665564619053,
+            "children": [],
+            "todo": {
+              "content": "for 循环控制器",
+              "id": 1665564619053,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1665564627795,
+            "children": [],
+            "todo": {
+              "content": "if 渲染绑定器",
+              "id": 1665564627795,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1665564636211,
+            "children": [],
+            "todo": {
+              "content": "show 显示控制器",
+              "id": 1665564636211,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1665929503849,
+            "children": [],
+            "todo": {
+              "content": "switch控制器",
+              "id": 1665929503849,
+              "level": "warning",
+              "done": true
+            }
+          },
+          {
+            "key": 1665564656160,
+            "children": [],
+            "todo": {
+              "content": "自定义控制器",
+              "id": 1665564656160,
+              "level": "success",
+              "done": false
+            }
+          }
+        ],
+        "todo": {
+          "content": "控制器",
+          "id": 1665494213348,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
+        "key": 1665494169984,
+        "children": [
+          {
+            "key": 1666052684603,
+            "children": [],
+            "todo": {
+              "content": "组件基础逻辑",
+              "id": 1666052684603,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666052694770,
+            "children": [],
+            "todo": {
+              "content": "组件props",
+              "id": 1666052694770,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666052703036,
+            "children": [],
+            "todo": {
+              "content": "组件event",
+              "id": 1666052703036,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666052708485,
+            "children": [],
+            "todo": {
+              "content": "组件slot",
+              "id": 1666052708485,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666088897525,
+            "children": [],
+            "todo": {
+              "content": "组件 + 控制器",
+              "id": 1666088897525,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666324322495,
+            "children": [],
+            "todo": {
+              "content": "组件返回数组",
+              "id": 1666324322495,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666313804988,
+            "children": [],
+            "todo": {
+              "content": "slot传参",
+              "id": 1666313804988,
+              "level": "warning",
+              "done": true
+            }
+          }
+        ],
+        "todo": {
+          "content": "组件",
+          "id": 1665494169984,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
+        "key": 1665494260180,
+        "children": [
+          {
+            "key": 1666088938044,
+            "children": [],
+            "todo": {
+              "content": "style规范设计",
+              "id": 1666088938044,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666088947372,
+            "children": [],
+            "todo": {
+              "content": "原子样式编写",
+              "id": 1666088947372,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1666088960572,
+            "children": [],
+            "todo": {
+              "content": "样式组合",
+              "id": 1666088960572,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666487396250,
+            "children": [],
+            "todo": {
+              "content": "css片段",
+              "id": 1666487396250,
+              "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666487369267,
+            "children": [],
+            "todo": {
+              "content": "样式兼容 添加前缀",
+              "id": 1666487369267,
+              "level": "warning",
+              "done": false
+            }
+          },
+          {
+            "key": 1666489492108,
+            "children": [],
+            "todo": {
+              "content": "原子样式支持reactive",
+              "id": 1666489492108,
+              "level": "danger",
+              "done": false
+            }
+          }
+        ],
+        "todo": {
+          "content": "css in js",
+          "id": 1665494260180,
+          "level": "danger",
+          "done": false
+        }
+      },
+      {
+        "key": 1665835013054,
+        "children": [
+          {
+            "key": 1665835021769,
+            "children": [],
+            "todo": {
+              "content": "for大列表缓存性能优化",
+              "id": 1665835021769,
+              "level": "warning",
+              "done": false
+            }
+          }
+        ],
+        "todo": {
+          "content": "性能优化",
+          "id": 1665835013054,
+          "level": "warning",
+          "done": false
+        }
+      },
+      {
+        "key": 1666324350783,
+        "children": [],
+        "todo": {
+          "content": "组件和dombuilder支持方法作为参数",
+          "id": 1666324350783,
+          "level": "danger",
+          "done": true
+        }
+      },
+      {
+        "key": 1665564673720,
+        "children": [],
+        "todo": {
+          "content": "ts 声明全支持",
+          "id": 1665564673720,
+          "level": "warning",
+          "done": false
+        }
+      },
+      {
+        "key": 1665494269048,
+        "children": [],
+        "todo": {
+          "content": "路由",
+          "id": 1665494269048,
+          "level": "default",
+          "done": false
+        }
+      },
+      {
+        "key": 1666052811305,
+        "children": [],
+        "todo": {
+          "content": "自定义渲染",
+          "id": 1666052811305,
+          "level": "default",
+          "done": false
+        }
+      }
+    ],
+    "expandKeys": [
+      1665494041685,
+      1665494269048,
+      1665564936729,
+      1665494260180,
+      1665835013054,
+      1665494169984,
+      1666088897525,
+      1665494213348,
+      1665982682369,
+      1665494195217
+    ],
+    "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
+    "add_mode": "bottom",
+    "virtual": false,
+    "showLine": false,
+    "playFontSize": 24
+  }
+}

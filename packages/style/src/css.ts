@@ -29,7 +29,7 @@ export const css: ICssConstructor = (selector: string) => {
         if (reactions.length > 0) { // 有响应数据需要渲染
             content = reactiveTemplate(template, reactions, (content) => {
                 style.innerText = content;
-            });
+            }, false, () => {});
         } else {
             content = template;
         }
@@ -67,13 +67,12 @@ function buildCssFragment (
 
     for (const item of args) {
         if (typeof item === 'string') {
-            currentStyle += item + ';';
+            currentStyle += item + ';'; // css 静态样式
         } else if (item instanceof Array) { // 子类
-            const result = buildCssFragment(item[0] as string, item.slice(1), selectorPath);
+            const result = buildCssFragment(item[0] as string, item.slice(1), selectorPath, reactions);
             childStyles += result.template;
             reactions.push(...result.reactions);
-        } else if (typeof item === 'object') {
-            // todo reaction style
+        } else if (typeof item === 'object') { // style(...)
             const {scopeReactions, scopeTemplate} = item.generate(reactions.length);
             currentStyle += scopeTemplate;
             reactions.push(...scopeReactions);
