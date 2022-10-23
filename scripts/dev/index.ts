@@ -4,8 +4,17 @@
  * @Description: Coding something
  */
 
-import {mount, div} from './alins';
+import {mount, div, comp} from './alins';
+import {Count} from './samples/count';
 
 mount(
-    div('Hello World')
+    div('Hello World'),
+    div('Count------------------'),
+    comp(Count),
+    div('Count------------------'),
+    comp(Count),
+    div('Count------------------'),
+    comp(Count),
+    div('Count------------------'),
+    comp(Count),
 );

@@ -5,3 +5,4 @@
  */
 
 export * from 'packages/core/src/index';
+export * from 'packages/style/src/index';

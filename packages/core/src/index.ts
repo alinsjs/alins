@@ -25,7 +25,7 @@ export {
 export {
     dom, div, span, input, button, img, a, i, text,
 } from './builder/builder';
-export {comp} from './comp/comp';
+export {comp, IComponent, IComponentOptions} from './comp/comp';
 export {prop} from './comp/prop';
 export {event} from './comp/event';
 export {slot} from './comp/slot';
@@ -34,6 +34,8 @@ export {on, click} from './event/on';
 export {
     react, computed, watch, createProxy, $,
 } from 'alins-reactive';
+
+export {IReactItem} from 'alins-utils/src/types/react';
 
 export default {
     mount,
