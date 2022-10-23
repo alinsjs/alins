@@ -3,3 +3,5 @@ dist
 cdn
 lerna-debug.log
 .pnpm-debug.log
+bundle.js
+bundle.js.map
