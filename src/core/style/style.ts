@@ -6,10 +6,11 @@
 
 import {IJson} from '../common';
 import {IBuilderParameter} from '../core';
-import {IReactBinding, IReactBuilder, react, subscribe, transformToReaction, TReactionItem} from '../reactive/react';
+import {IReactBuilder, subscribe, transformToReaction, TReactionItem} from '../reactive/react';
 import {createReplacement, createTemplateReplacement, reactiveTemplate, ReplaceExp} from '../reactive/binding';
 import {isStringTemplateArray, splitTwoPart} from '../utils';
 import {DefaultUint, IStyleAtoms, StyleAtoms} from './style-atom';
+import {subscribeReactBuilder} from '../reactive/computed';
 
 
 // const StyleAtoms = {
@@ -23,7 +24,7 @@ import {DefaultUint, IStyleAtoms, StyleAtoms} from './style-atom';
 export type TStyleReaction = IReactBuilder | TReactionItem<number | string>;
 
 export interface IStyleBuilder extends IBuilderParameter{
-    exe(parent: HTMLElement): string;
+    exe(parent: HTMLElement): void;
     // generateBindings(onchange: (onctent: string)=>void): string;
     generate(start?: number): {scopeTemplate: string, scopeReactions: TReactionItem[]};
     type: 'style';
@@ -35,7 +36,7 @@ export interface IStyleConstructor extends IStyleAtoms{
     (style: string): IStyleBuilder;
 }
 
-const OnlyNumberAttrs = ['lineHeight', 'zIndex', 'opacity', 'flex'];
+export const OnlyNumberAttrs = ['lineHeight', 'zIndex', 'opacity', 'flex'];
 
 export const style: IStyleConstructor = Object.assign((
     a1: IJson<string | number | TStyleReaction> | TemplateStringsArray | string,
@@ -114,18 +115,9 @@ export const style: IStyleConstructor = Object.assign((
                         styleValue = transformStyleValue(key, value);
                     } else if ((value as IJson).type === 'react' ) {
                         // 当json值是IReactBuilder react`1-${xx}`
-                        // 参数是reactBuilder的时候需要合并一下 reactions
-                        const {template, reactions} = (value as IReactBuilder).exe({
-                            type: 'style',
-                        });
-                        if (reactions.length > 0) {
-                            const templateRep = createTemplateReplacement(template);
-                            styleValue = reactiveTemplate(templateRep, reactions, (content) => {
-                                setDomStyle(style, key, content);
-                            });
-                        } else {
-                            styleValue = template.join('');
-                        }
+                        styleValue = subscribeReactBuilder(value as IReactBuilder, (content) => {
+                            setDomStyle(style, key, content);
+                        }, 'style');
                     } else {
                         // 当json值是TReactionItem
                         const reaction = transformToReaction(value as TReactionItem<number | string>);
@@ -135,10 +127,10 @@ export const style: IStyleConstructor = Object.assign((
                     }
                     newStyle += `${transformStyleAttr(key)}:${transformStyleValue(key, styleValue)};`;
                 }
+            } else {
+                console.warn('Invalid style arguments');
             }
-            console.warn('Invalid style arguments');
             dom.setAttribute('style', newStyle);
-            return newStyle;
         },
         type: 'style' as 'style',
     };
@@ -148,7 +140,7 @@ export function transformStyleAttr (name: string) {
     return name.replace(/[A-Z]/g, i => '-' + i.toLowerCase());
 }
 
-function transformStyleValue (key: string, v: string|number) {
+export function transformStyleValue (key: string, v: string|number) {
     if (typeof v === 'string') return v;
     return v + (OnlyNumberAttrs.includes(key) ? '' : DefaultUint);
 }

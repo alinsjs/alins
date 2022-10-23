@@ -19,10 +19,12 @@ import {IReactBinding, subscribe, transformToReaction, TReactionItem} from '../r
 import {join} from '../utils';
 import {IForBuilder} from '../controller/for';
 import {IStyleBuilder} from '../style/style';
+import {IStyleAtoms} from '../style/style-atom';
 
 export type TElementChild = null | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
 export type TChild = TElementChild |
+    IStyleBuilder | IStyleAtoms |
     IForBuilder |
     IIfBuilder | IShowBuilder | IModelBuilder | ISwitchBuilder<any> | TChild[];
 
@@ -38,7 +40,7 @@ export interface IElement {
     domInfo: string;
     _if?: IIfBuilder;
     show?: TReactionItem;
-    style?: IStyleBuilder;
+    styles: (IStyleBuilder | IStyleAtoms)[];
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -145,9 +147,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         config.event[i].exe(dom);
     };
 
-    if (config.style) {
-        config.style.exe(dom);
-    }
+    config.styles.forEach(style => style.exe(dom));
 
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
@@ -258,7 +258,6 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
     if (info.className) {
         info.className.forEach(name => {
             if (!data.className) data.className = [];
-            debugger;
             data.className.push(
                 reactiveTemplate(name, reactions, (content, oldContent) => {
                     dom.classList.replace(oldContent, content);
@@ -313,7 +312,7 @@ export function createElement ({
     domInfo = '',
     event = [],
     _if,
-    style,
+    styles = [],
 }: IElementOptions): IElement {
     return {
         tag,
@@ -326,6 +325,6 @@ export function createElement ({
         domInfo,
         event,
         _if,
-        style,
+        styles,
     };
 }

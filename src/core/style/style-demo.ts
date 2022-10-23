@@ -6,7 +6,7 @@
 import {div} from '../builder/builder';
 import {computed} from '../reactive/computed';
 import {react} from '../reactive/react';
-import {css, style} from './style';
+import {style} from './style';
 
 
 style({
@@ -52,7 +52,7 @@ style.paddingTop(10);
 
 /**
  * 原子属性
- * 屏蔽兼容写法
+ * 兼容写法
  * 积木式组合使用
  * 响应数据
  */
@@ -93,7 +93,7 @@ div(
     style.borderBottom(reactBuilder), // react builder
     style.borderBottom(num), // IReactItem
     style.borderBottom(compute), // IComputedItem
-    style.borderBottom(() => num.value + 1), // TComputedFunc
+    style.borderBottom(() => num.value + 1, 'px', 'i'), // TComputedFunc
     style({
         color: '#fff',
         fontSize: react`${() => 1}px`

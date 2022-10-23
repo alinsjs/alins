@@ -56,9 +56,10 @@ export interface IReactBindingTemplate {
     reactions: TReactionItem[], // | any[], // ? 为了绑定的时候不报类型错误
 }
 
+export type TReactContextType = 'dom-info' | 'style' | 'computed';
 // react上下文环境
 export interface IReactContext {
-    type: 'dom-info' | 'style',
+    type: TReactContextType,
 }; // todo
 
 export interface IReactBinding extends IReactBindingTemplate {
@@ -67,6 +68,9 @@ export interface IReactBinding extends IReactBindingTemplate {
 export interface IReactBuilder extends IBuilderParameter {
     type: 'react';
     exe(context: IReactContext): IReactBinding;
+    modTemplate(mod: (v: string) => string, i?: number): void;
+    isEmpty(): boolean;
+    templateValue(): string;
 }
 
 function bindReactive ({
@@ -75,10 +79,19 @@ function bindReactive ({
 }: IReactBindingTemplate): IReactBuilder {
     // console.log('bindReactive', template, reactions);
     return {
+        templateValue () {
+            return template.join('');
+        },
+        isEmpty () {
+            return reactions.length === 0;
+        },
         // todo 从div构建处传入上下文环境
         exe (context: IReactContext) {
             // debugger;
             return {template, reactions, context}; // todo
+        },
+        modTemplate (mod, i = template.length - 1) {
+            template[i] = mod(template[i]);
         },
         type: 'react'
     };
@@ -239,7 +252,7 @@ export function mergeReact (
             } else { // 新值中没有
                 // todo 对于动态属性没有良好的支持
                 delete oldTarget[k];
-                debugger;
+                // debugger;
             }
         }
         // 新值中有旧值中没有的
@@ -296,3 +309,5 @@ declare global {
     interface Object extends IReactObject<any>{
     }
 }
+
+(window as any).react = react;

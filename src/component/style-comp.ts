@@ -32,6 +32,7 @@ export function createCss () {
 export function StyleComp () {
     const num = react(30);
     (window as any).num = num;
+    
     return [
         div('d-form.d-form',
             div('d-form-aa.aa',
@@ -58,6 +59,19 @@ export function StyleComp () {
             color: red;
             marginTop: ${num}px;
             fontSize: ${() => num.value}px;
-        `)
+        `),
+        div('555',
+            style.borderBottom(react`${num}px solid #000`)
+                .width(() => num.value + 2)
+        ),
+
+        // div('444',
+        //     style.borderBottom(reactBuilder), // react builder
+        //     style.borderBottom(num), // IReactItem
+        //     style.borderBottom(compute), // IComputedItem
+        //     style.borderBottom(() => num.value + 1, 'px', 'i'), // TComputedFunc
+        //     style.borderBottom(reactBuilder).width(),
+        // )
+        
     ];
 }

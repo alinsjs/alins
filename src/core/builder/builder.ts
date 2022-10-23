@@ -7,7 +7,7 @@
 import {controllers, IControllerBuilder} from '../controller/controller';
 import {IEventBuilder} from '../event/on';
 import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
-import {countBindingValue, IReactBuilder} from '../reactive/react';
+import {countBindingValue, IReactBinding, IReactBuilder} from '../reactive/react';
 
 export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild | IBuildFunction; // (IElementBuilder|IElementBuilder[])[];
 
@@ -31,16 +31,17 @@ function getTagNameFromDomInfo (domInfo: string) {
  */
 function elementBuilder (tag: string, data: TBuilderArg[]) {
     // console.log('elementBuilder', tag, data, JSON.stringify(data));
-    const elementOptions: IElementOptions = {
+    const elementOptions: IElementOptions & {
+        children: TChild[],
+        binding: IReactBinding[],
+    } = {
         tag,
         children: [],
         event: [],
         binding: [],
+        styles: [],
         domInfo: ''
     };
-    elementOptions.children = [];
-    elementOptions.event = [];
-    elementOptions.binding = [];
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
         if (typeof item === 'string') {
@@ -72,7 +73,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'on':
                     elementOptions.event?.push(item); break;
                 case 'style':
-                    elementOptions.style = item; break;
+                    elementOptions.styles?.push(item); break;
+                default: console.warn('unkonwn builder', item); break;
             }
         } else if (typeof item === 'function') {
             data.push(...item());

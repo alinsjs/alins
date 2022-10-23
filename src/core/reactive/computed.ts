@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {forceUpdate, IReactItem, isSimpleValue, reactValue, subscribe} from './react';
+import {countBindingValue, forceUpdate, getListeners, IReactBuilder, IReactItem, isSimpleValue, reactValue, subscribe, TReactContextType} from './react';
 
 export type TComputedFunc<T = any> = (...args: any[]) => T;
 
@@ -42,6 +42,7 @@ export const computed: IComputed = (target) => {
     Compute.add = (item: IReactItem) => { reacts.push(item); };
     const value = get();
     Compute.add = null;
+    // debugger;
 
     const react = reactiveComputed(get, set, value) as IReactItem;
     reacts.forEach(item => item[subscribe](() => {
@@ -80,6 +81,62 @@ function reactiveComputed<T> (
             changeList.forEach(fn => {fn(v, old);});
         },
         [reactValue]: isSimpleValue(value),
+        [getListeners]: () => changeList,
         toJSON: () => value,
     };
 }
+
+export function computedReactBuilder (
+    builder: IReactBuilder,
+    type: TReactContextType = 'computed'
+) {
+    if (!builder.isEmpty()) {
+        return computed(() => countBindingValue(builder.exe({type})));
+    }
+    return null;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // return {[subscribe]: (v: any) => builder.templateValue()};
+}
+
+export function subscribeReactBuilder (
+    builder: IReactBuilder,
+    onchange: (v: string, old: string) => void,
+    type: TReactContextType = 'computed',
+) {
+    const compute = computedReactBuilder(builder, type);
+    return compute ?
+        compute[subscribe](onchange) :
+        builder.templateValue();
+}
+
+(window as any).computedReactBuilder = computedReactBuilder;
+
+// const num = react(1);
+// const binding = react`${num}-1`;
+// const b = computedReactBuilder(binding);
+// b[subscribe](v => {
+//     console.log(v);
+// });
+
+// function test () {
+//     const num = react(1);
+//     const binding = react`${num}-1`;
+//     const {template, reactions} = binding.exe({
+//         type: 'style',
+//     });
+//     const templateRep = createTemplateReplacement(template);
+//     const v = reactiveTemplate(templateRep, reactions, (content, old) => {
+//         console.warn('111', content, old);
+//     }, true);
+//     console.warn('v', v);
+//     return num;
+// }
+// function test () {
+//     const num = react(1);
+//     const binding = react`${num}-1`;
+//     const v = computedReactBuilder(binding)[subscribe]((v, old) => {
+//         console.warn('111222', v, old);
+//     });
+//     console.warn('v', v);
+//     return num;
+// }
