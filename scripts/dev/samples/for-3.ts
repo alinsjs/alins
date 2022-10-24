@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {button, div, click, react} from '../alins';
+import {button, div, click, $} from '../alins';
 
 function createItem () {
     return {
@@ -20,17 +20,17 @@ export function For3 () {
     for (let i = 0; i < 2; i++) {
         array.push(createItem());
     }
-    const arrayReact = react(array);
+    const arrayReact = $(array);
     // todo 支持返回数组
     return [
         button('add', click(() => arrayReact.push(createItem()))),
         button('clear', click(() => arrayReact.splice(0, arrayReact.length))),
         div.for(arrayReact)((item, index) => [
-            div(':xxx', react`${index}`),
+            div(':xxx', $`${index}`),
             div.for(item.a)((str, i) => [
-                '.x3', react`.x3-${index}-${i}`,
+                '.x3', $`.x3-${index}-${i}`,
                 div.for(str)((a, ii) => [
-                    react`${a}-${index}-${i}-${ii}`
+                    $`${a}-${index}-${i}-${ii}`
                 ])
             ])
         ])

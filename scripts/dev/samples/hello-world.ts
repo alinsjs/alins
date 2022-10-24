@@ -6,34 +6,34 @@
 
 import {
     button, div, i, img, input, span, text,
-    comp, event, prop, slot, click, react
+    comp, event, prop, slot, click, $
 } from '../alins';
 
 
 function ReactiveContent () {
-    const data = react({
+    const data = $({
         msg: 'world',
         value: 100,
         list: [{a: 1}, {a: 2}]
     });
     return div('.reactive',
-        div('.reactive-content', react`hello ${data.msg}`),
-        div(react`.reactive-class.reactive-${data.msg}`),
-        div(react`.reactive-attr[reactive=${data.msg}]`),
+        div('.reactive-content', $`hello ${data.msg}`),
+        div($`.reactive-class.reactive-${data.msg}`),
+        div($`.reactive-attr[reactive=${data.msg}]`),
         div('.reactive-css'),
         input.model(data.msg)('.input'),
     );
 }
 
 function ForDemo () {
-    const data = react({
+    const data = $({
         input: 'test',
         list: [{a: 1}, {a: 2}]
     });
     return div('.reactive',
     // only content
-        div.for(data.list)((item) => ['.class', react`:content ${item.a}`]),
-        div.for(data.list)((item) => [react`.class:content ${item.a}`]),
+        div.for(data.list)((item) => ['.class', $`:content ${item.a}`]),
+        div.for(data.list)((item) => [$`.class:content ${item.a}`]),
         // 容器
         div.for(data.list)((item) => [
             div(
@@ -57,7 +57,7 @@ export function Parent () {
         }), event({
             test: () => console.log('test event')
         // }), slot(div('slot'))),
-        }), slot((childProp) => div(react`slot-${childProp}`))),
+        }), slot((childProp) => div($`slot-${childProp}`))),
         comp(ReactiveContent),
         comp(ForDemo),
     );
@@ -67,7 +67,7 @@ function HelloWorld ({prop, slot, event}: any) {
     const onClick = () => {
         console.log('onClick');
     };
-    const data = react({
+    const data = $({
         msg: '1',
         list: [],
         src: 'https://shiyix.cn/wx-pay.png'
@@ -77,9 +77,9 @@ function HelloWorld ({prop, slot, event}: any) {
     };
     return div('.flex-4-num1', click(onClick),
         span('.flex-4-img', click(event.test),
-            react`Hello ${data.msg} ${prop.value}`, // todo fix
+            $`Hello ${data.msg} ${prop.value}`, // todo fix
             img('aa[width=100][src=https://shiyix.cn/wx-pay.png]'),
-            img(react`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
+            img($`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
         ),
         button('切换图片', click(switchSrc)),
         div('test-slot*********'),

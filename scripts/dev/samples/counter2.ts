@@ -4,16 +4,16 @@
  * @Description: Coding something
  */
 import {
-    button, div, comp, IComponent, click, react
+    button, div, comp, IComponent, click, $
 } from '../alins';
 
 export const Count2: IComponent = () => {
-    // const count = react(0);
+    // const count = $(0);
     return comp(Count2Comp);
 };
 function Count2Comp () {
-    const count = react(0);
-    const isStop = react(false);
+    const count = $(0);
+    const isStop = $(false);
 
     let timer: any = null;
 
@@ -29,9 +29,9 @@ function Count2Comp () {
     toggle();
 
     return [
-        div(react`Count is ${count}`),
+        div($`Count is ${count}`),
         button(
-            react`${() => isStop.value ? '暂停' : '继续'}`,
+            $`${() => isStop.value ? '暂停' : '继续'}`,
             click(toggle),
         ),
     ];

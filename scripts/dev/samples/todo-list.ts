@@ -3,44 +3,52 @@
  * @Date: 2022-10-20 23:54:34
  * @Description: Coding something
  */
-import {button, div, input, click, IReactItem, react} from '../alins';
+import {button, div, input, style, click, IReactItem, $} from '../alins';
 
 export function todoList () {
-    const edit = react('');
-
-    const list = react<{
-        content: string
-    }[]>([]);
-    // const arrr = react({a: [1]});
-    // arrr.a = [1, 2];
-
-    // list[0].content;
-
+    const edit = $('');
+    const list = $<{content: string, done: boolean}[]>([]);
     const addItem = () => {
-        // list[0].content = '';
-        // list[0] = {content: edit.value};
-        list.push({content: edit.value});
+        list.push({content: edit.value, done: false});
         edit.value = '';
-        // list[0].value = 1;
     };
-    // list[0].content.value = '1';
-    const removeItem = (index: IReactItem) => {
-        list.splice(index.value, 1);
+    const removeItem = (index: any) => {list.splice(index.value, 1);};
+    const finishItem = (item: any) => {
+        item.done = !item.done.value;
     };
-
-    // const item = list[0];
-
+    const a = input.model(edit);
     return div(
-        input.model(edit)(),
-        button(':提交', click(addItem)),
-        div('.todo-list', react`.todo-${edit}`,
-            div('before'),
+        input.model(edit),
+        button('提交', click(addItem)),
+        div('.todo-list', $`.todo-${edit}`,
             div.for(list)((item, index) => [
-                // react('.todo-item:', () => index.value + 1, ':', item.content),
-                react`.todo-item:${() => index.value + 1}:${item.content}`,
-                button(':删除', click(removeItem).args(index)),
+                style.textDecoration(() => item.done.value ? 'line-through' : 'none')
+                    .color(() => item.done.value ? '#888' : '#222'),
+                $`${() => index.value + 1}:${item.content}`,
+                button('删除', click(removeItem).args(index)),
+                button(
+                    $`${() => item.done.value ? '撤销' : '完成'}`,
+                    click(finishItem).args(item)
+                ),
+                // todo 计划重构
+                // style.textDecoration(item.done ? 'line-through' : 'none')
+                //     .color(item.done ? '#888' : '#222'),
+                // $`${index.value + 1}:${item.content}`,
+                // button('删除', click(removeItem).args(index)),
+                // button(
+                //     $`${item.done ? '撤销' : '完成'}`,
+                //     click(finishItem).args(item)
+                // ),
             ]),
-            div('after'),
         ),
     );
 }
+// // function a (x) {
+// //     console.log('x', x);
+// // }
+
+
+// // function b (a, b) {
+// //     console.log('b', a, b);
+// //     return a + b;
+// // }

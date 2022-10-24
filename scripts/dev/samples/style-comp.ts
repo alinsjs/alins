@@ -3,15 +3,15 @@
  * @Date: 2022-10-23 08:46:52
  * @Description: Coding something
  */
-import {div, react, css, style} from '../alins';
+import {div, $, css, style} from '../alins';
 
 function createCss () {
-    const num = react(30);
+    const num = $(30);
     (window as any).num2 = num;
 
     const simpleStyle = style({
         color: '#888',
-        fontSize: react`${num}px`,
+        fontSize: $`${num}px`,
     });
 
     return css('.d-form')(
@@ -27,7 +27,7 @@ function createCss () {
 
 export function StyleComp () {
     createCss();
-    const num = react(30);
+    const num = $(30);
     (window as any).num = num;
     
     return [
@@ -49,8 +49,8 @@ export function StyleComp () {
         })),
         div('333', style({
             color: 'red',
-            marginTop: react`${num}px`,
-            fontSize: react`${() => num.value}px`
+            marginTop: $`${num}px`,
+            fontSize: $`${() => num.value}px`
         })),
         div('444', style`
             color: red;
@@ -58,12 +58,12 @@ export function StyleComp () {
             fontSize: ${() => num.value}px;
         `),
         div('555',
-            style.borderBottom(react`${num}px solid #000`)
+            style.borderBottom($`${num}px solid #000`)
                 .width(() => num.value + 2)
         ),
 
         // div('444',
-        //     style.borderBottom(reactBuilder), // react builder
+        //     style.borderBottom(reactBuilder), // $ builder
         //     style.borderBottom(num), // IReactItem
         //     style.borderBottom(compute), // IComputedItem
         //     style.borderBottom(() => num.value + 1, 'px', 'i'), // TComputedFunc

@@ -5,19 +5,19 @@
  */
 import {
     button, div, comp, IComponent,
-    IComponentOptions, click, react
+    IComponentOptions, click, $
 } from '../alins';
 
 export const Count: IComponent = () => {
-    // const count = react(0);
+    // const count = $(0);
     return comp(CountComp);
 };
 function CountComp () {
-    const count = react(0);
+    const count = $(0);
     return [
         button(
             click(() => {count.value++;}),
-            react`:Count is ${count}`
+            $`:Count is ${count}`
         ),
     ];
 }
@@ -25,6 +25,6 @@ function CountComp () {
 
 export function CountProps ({prop}: IComponentOptions) {
     return div(
-        react`:Count is ${prop.count}`
+        $`:Count is ${prop.count}`
     );
 }
