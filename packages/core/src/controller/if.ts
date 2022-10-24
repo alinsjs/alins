@@ -95,7 +95,7 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
                     activeIndex = i;
                     dom = transformBuilderToDom(builders[i]);
                 }
-            } else {
+            } else if (activeIndex >= 0) {
                 dom = exe(activeIndex);
             }
             if (dom) changeList.forEach(fn => fn(dom));
