@@ -14,8 +14,9 @@ import {IJson} from 'alins-utils/src/types/common.d';
 import {IStyleAtoms, IStyleBuilder, TStyleReaction} from 'alins-utils/src/types/style.d';
 import {DefaultUint, StyleAtoms} from './style-atom';
 
+type TStyleJsonValue = IJson<string | number | TStyleReaction<string|number>>
 export interface IStyleConstructor extends IStyleAtoms{
-    (json: IJson<string | number | TStyleReaction>): IStyleBuilder;
+    (json: TStyleJsonValue): IStyleBuilder;
     (ts: TemplateStringsArray, ...reactions: TReactionItem[]): IStyleBuilder;
     (style: string): IStyleBuilder;
 }
@@ -23,13 +24,12 @@ export interface IStyleConstructor extends IStyleAtoms{
 export const OnlyNumberAttrs = ['lineHeight', 'zIndex', 'opacity', 'flex'];
 
 export const style: IStyleConstructor = Object.assign((
-    a1: IJson<string | number | TStyleReaction> | TemplateStringsArray | string,
+    a1: TStyleJsonValue | TemplateStringsArray | string,
     ...reactions: TReactionItem[]
 ) => {
     return {
         // 返回响应模板和响应数据
         generate (start = 0) {
-            debugger;
             let scopeTemplate = '';
             const scopeReactions: TReactionItem[] = [];
             if (typeof a1 === 'string') { // style('')
@@ -43,7 +43,7 @@ export const style: IStyleConstructor = Object.assign((
                 }
             } else if (typeof a1 === 'object' || a1 !== null) { // json
                 for (const key in a1) {
-                    const value = (a1 as IJson<string | number | TStyleReaction>)[key];
+                    const value = (a1 as TStyleJsonValue)[key];
                     let styleValue = '';
                     const startIndex = scopeReactions.length + start;
                     if (typeof value === 'string') { // 当json值是简单类型
@@ -73,14 +73,15 @@ export const style: IStyleConstructor = Object.assign((
                     }
                     scopeTemplate += `${transformStyleAttr(key)}:${styleValue};`;
                 }
-                // 交给外部处理
-                return {
-                    scopeTemplate,
-                    scopeReactions
-                };
+            } else {
+                console.warn('Invalid style arguments', a1, reactions);
+                return {scopeTemplate: '', scopeReactions: []};
             }
-            console.warn('Invalid style arguments');
-            return {scopeTemplate: '', scopeReactions: []};
+            // 交给外部处理
+            return {
+                scopeTemplate,
+                scopeReactions
+            };
         },
         exe (dom: HTMLElement) {
             const beforeStyle = dom.getAttribute('style') || '';
@@ -100,7 +101,7 @@ export const style: IStyleConstructor = Object.assign((
             } else if (typeof a1 === 'object' || a1 !== null) { // json
                 const style = dom.style as any as IJson<string>;
                 for (const key in a1) {
-                    const value = (a1 as IJson<string | number | TStyleReaction>)[key];
+                    const value = (a1 as TStyleJsonValue)[key];
                     let styleValue: string|number = '';
                     if (typeof value === 'string' || typeof value === 'number') { // 当json值是简单类型
                         styleValue = transformStyleValue(key, value);
