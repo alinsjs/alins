@@ -81,16 +81,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
             data.push(...item());
         }
     }
-    // console.count('createElement');
     return createElement(elementOptions);
 };
-
-// export const getBuilderId = (() => {
-//     const map: IJson<number> = {};
-//     return (name: string) => {
-//         if(map)
-//     };
-// })();
 
 
 export interface IBuilderConstructor extends IControllerBuilder {
@@ -116,6 +108,8 @@ export const img = buildFactory('img');
 export const a = buildFactory('a');
 export const i = buildFactory('i');
 export const text = (v: string) => ':' + v;
+
+// dom('b')()
 // todo add element
 
 function createBaseBuilder (exe: ()=> IElement): IElementBuilder {

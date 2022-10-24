@@ -5,12 +5,12 @@
  */
 import {div, react, css, style} from '../alins';
 
-export function createCss () {
+function createCss () {
     const num = react(30);
     (window as any).num2 = num;
 
     const simpleStyle = style({
-        color: '#fff',
+        color: '#888',
         fontSize: react`${num}px`,
     });
 
@@ -22,10 +22,11 @@ export function createCss () {
             ['&.aa', simpleStyle],
             ['.cc', simpleStyle]
         ],
-    );
+    ).mount();
 }
 
 export function StyleComp () {
+    createCss();
     const num = react(30);
     (window as any).num = num;
     

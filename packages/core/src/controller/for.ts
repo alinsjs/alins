@@ -109,13 +109,12 @@ export const forController: IForController = function (this: IBuilderConstructor
             exe () {
                 const frag = document.createDocumentFragment();
                 for (const child of builders) {
+                    // ! 根据build解析dom 渲染到父元素
                     const dom = transformBuilderToDom(child);
                     doms.push(dom);
-                    // debugger;
-                    // ! 关键代码 根据build解析dom 渲染到父元素
                     frag.appendChild(dom);
                 }
-                frag.append(mount);
+                frag.append(mount); // 锚点放在最后面
                 return frag;
             },
             type: 'for',

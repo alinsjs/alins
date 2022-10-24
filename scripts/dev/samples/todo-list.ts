@@ -34,13 +34,13 @@ export function todoList () {
         input.model(edit)(),
         button(':提交', click(addItem)),
         div('.todo-list', react`.todo-${edit}`,
-            div(':111'),
+            div('before'),
             div.for(list)((item, index) => [
-                react('.todo-item:', () => index.value + 1, ':', item.content),
-                // react`.todo-item:${() => index.value + 1}:${item.content}`,
+                // react('.todo-item:', () => index.value + 1, ':', item.content),
+                react`.todo-item:${() => index.value + 1}:${item.content}`,
                 button(':删除', click(removeItem).args(index)),
             ]),
-            div(':222'),
+            div('after'),
         ),
     );
 }

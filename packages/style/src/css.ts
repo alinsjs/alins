@@ -28,12 +28,12 @@ export const css: ICssConstructor = (selector: string) => {
         let content = '';
         if (reactions.length > 0) { // 有响应数据需要渲染
             content = reactiveTemplate(template, reactions, (content) => {
-                style.innerText = content;
+                style.textContent = content;
             });
         } else {
             content = template;
         }
-        style.innerText = content;
+        style.textContent = content;
         return {
             style,
             mount (selector = 'head') {
@@ -44,7 +44,6 @@ export const css: ICssConstructor = (selector: string) => {
                     parent = selector;
                 }
                 if (!parent) throw new Error('Invalid mount target');
-
                 parent.appendChild(style);
             }
         };

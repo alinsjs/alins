@@ -10,14 +10,16 @@ import {
 
 export const Count: IComponent = () => {
     // const count = react(0);
-    return comp(Count2);
+    return comp(CountComp);
 };
-export function Count2 () {
+function CountComp () {
     const count = react(0);
-    return button(
-        click(() => {count.value++;}),
-        react`:Count deep is ${count}`
-    );
+    return [
+        button(
+            click(() => {count.value++;}),
+            react`:Count is ${count}`
+        ),
+    ];
 }
 
 
