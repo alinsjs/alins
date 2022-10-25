@@ -53,12 +53,23 @@ export type IReactWrap<T> = T extends object ? ({
   & IJson // ! & IJson 为了绑定的时候不报类型错误
 ): IReactItem<T>;
 
-export interface IReactBindingTemplate {
+export type TOnChangeFunc = (content: string, oldContent: string) => void;
+
+export interface IReactBindingTemplate<T=any> {
   template: string[], // TemplateStringsArray
-  reactions: TReactionItem[], // | any[], // ? 为了绑定的时候不报类型错误
+  reactions: (TReactionItem<T>)[], // | any[], // ? 为了绑定的时候不报类型错误
+}
+export interface IReactBindingTemplateFactory<T=any> {
+  add(d: IReactBindingTemplate<T>): void;
+  get(): IReactBindingTemplate<T>;
+  reactive(
+    onchange: TOnChangeFunc,
+    needOldContent?: boolean,
+  ): void;
+  computed(): IComputedItem<T>;
 }
 
-export type TReactContextType = 'dom-info' | 'style' | 'computed';
+export type TReactContextType = 'dom-info' | 'style' | 'computed' | 'css';
 // react上下文环境
 export interface IReactContext {
   type: TReactContextType,

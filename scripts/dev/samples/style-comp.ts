@@ -15,8 +15,11 @@ function createCss () {
         fontSize: $`${num}px`,
     });
 
-    return css('.d-form')(
-        // simpleStyle,
+    return css()(
+        $`@keyframes aa {
+            ${simpleStyle.react()}
+        }`,
+        simpleStyle,
         ['&.aa', simpleStyle],
         ['[a=xx]',
             simpleStyle,

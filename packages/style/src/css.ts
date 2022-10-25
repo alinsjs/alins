@@ -4,11 +4,11 @@
  * @Description: Coding something
  */
 
-import {TReactionItem} from 'alins-utils/src/types/react.d';
+import {IReactBuilder, TReactionItem} from 'alins-utils/src/types/react.d';
 import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
-import {reactiveTemplate} from 'alins-reactive';
+import {createTemplateReplacement, reactiveTemplate} from 'alins-reactive';
 
-export type ICssBase = string | IStyleBuilder | IStyleAtoms;
+export type ICssBase = string | IStyleBuilder | IStyleAtoms | IReactBuilder;
 
 type ICssCBArg = ICssBase | ICssCBArg[];
 
@@ -20,12 +20,12 @@ export interface ICssCallback {
 }
 
 export interface ICssConstructor {
-    (selector: string): ICssCallback;
+    (selector?: string): ICssCallback;
 }
 
 const supporteAdoptedStyle = typeof window.document.adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
 
-export const css: ICssConstructor = (selector: string) => {
+export const css: ICssConstructor = (selector: string = '') => {
     return (...args: ICssCBArg[]) => {
         const reactiveStyle = (setStyle: (v:string)=>void) => {
             const {template, reactions} = buildCssFragment(selector, args);
@@ -56,7 +56,7 @@ export const css: ICssConstructor = (selector: string) => {
 export function insertStyle (parent?: HTMLElement | null) {
     if (parent) {
         return insertHTMLStyle(parent);
-    } else if (supporteAdoptedStyle) {
+    } else if (!supporteAdoptedStyle) {
         const style = new CSSStyleSheet();
         document.adoptedStyleSheets.push(style);
         return (v: string) => {style.replace(v);};
@@ -93,19 +93,31 @@ function buildCssFragment (
             childStyles += result.template;
             reactions.push(...result.reactions);
         } else if (typeof item === 'object') { // style(...)
-            const {scopeReactions, scopeTemplate} = item.generate(reactions.length);
-            currentStyle += scopeTemplate;
-            reactions.push(...scopeReactions);
+            if (item.type === 'react') {
+                const result = item.exe({type: 'style'});
+                currentStyle += createTemplateReplacement(result.template, reactions.length);
+                result.reactions.forEach(item => {
+                    if ((item as any).type === 'style') {
+                        
+                    }
+                });
+                reactions.push(...result.reactions);
+            } else {
+                const {scopeReactions, scopeTemplate} = item.generate(reactions.length);
+                currentStyle += scopeTemplate;
+                reactions.push(...scopeReactions);
+            }
         }
     }
 
     return {
-        template: `${selectorPath}{${currentStyle}}${childStyles}`,
+        template: !!selectorPath ? `${selectorPath}{${currentStyle}}${childStyles}` : `${currentStyle}${childStyles}`,
         reactions,
     };
 }
 
 function concatSelectorPath (path: string, name: string) {
+    if (!path && !name) return '';
     if (name[0] === '&') {
         return `${path}${name.substring(1)}`;
     } else {

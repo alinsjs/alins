@@ -11,7 +11,7 @@ import {
     countBindingValue, isSimpleValue,
 } from './react';
 
-import {IComputedItem, IReactItem, TComputedFunc, IReactBuilder, TReactContextType} from 'alins-utils/src/types/react.d';
+import {IComputedItem, IReactItem, TComputedFunc, IReactBuilder, TReactContextType, IReactBindingTemplate} from 'alins-utils/src/types/react.d';
 
 export interface TComputedObject<T> {
     get(): T;
@@ -93,11 +93,15 @@ export function computedReactBuilder (
     type: TReactContextType = 'computed'
 ) {
     if (!builder.isEmpty()) {
-        return computed(() => countBindingValue(builder.exe({type})));
+        return computedBindingTemplate(builder.exe({type}));
     }
     return null;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // return {[subscribe]: (v: any) => builder.templateValue()};
+}
+
+export function computedBindingTemplate (data: IReactBindingTemplate) {
+    return computed(() => countBindingValue(data));
 }
 
 export function subscribeReactBuilder (

@@ -12,7 +12,7 @@ import {TReactionItem, TReactionValue} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common.d';
 import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
 import {DefaultUint, StyleAtoms} from './style-atom';
-import {exeReactionValue, parseReactionValue} from 'alins-reactive/src/react';
+import {countBindingValue, exeReactionValue, parseReactionValue} from 'alins-reactive/src/react';
 
 type TStyleJsonValue = IJson<TReactionValue<string|number>>
 export interface IStyleConstructor extends IStyleAtoms{
@@ -102,6 +102,13 @@ export const style: IStyleConstructor = Object.assign((
             if (typeof dom === 'string') dom = document.querySelector(dom) as HTMLElement;
             if (!dom) throw new Error('invalid dom');
             this.exe(dom);
+        },
+        react () {
+            const {scopeReactions, scopeTemplate} = this.generate();
+            const template = scopeTemplate.split(ReplaceExp);
+            return () => countBindingValue({
+                template, reactions: scopeReactions
+            });
         },
         type: 'style' as 'style',
     };

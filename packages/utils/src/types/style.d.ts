@@ -5,13 +5,14 @@
  */
 
 import {IBuilderParameter, IJson} from './common.d';
-import {TReactionItem, TReactionValue} from './react.d';
+import {TComputedFunc, TReactionItem, TReactionValue} from './react.d';
 
 export interface IStyleBuilder extends IBuilderParameter{
   exe(parent: HTMLElement): void;
   mount(parent: HTMLElement | string): void;
   // generateBindings(onchange: (onctent: string)=>void): string;
-  generate(start?: number): {scopeTemplate: string, scopeReactions: TReactionItem[]};
+  generate(start: number): {scopeTemplate: string, scopeReactions: TReactionItem[]};
+  react(): TComputedFunc<string>;
   type: 'style';
 
 }

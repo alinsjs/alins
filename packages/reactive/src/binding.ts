@@ -23,6 +23,14 @@ export function createReplacement (i: number) {
     return str;
 }
 
+function createReplacementArray (length: number) {
+    if (length <= 0) return [];
+    const arr = [];
+    for (let i = 0; i < length; i++)
+        arr.push(createReplacement(i));
+    return arr;
+}
+
 export function parseReplacementToNumber (replacement: string): number {
     return ReplacementMapReverse[replacement] || parseInt(replacement.replace(/\$\$/g, ''));
 }
@@ -41,7 +49,7 @@ export function createTemplateReplacement (template: string[], start = 0) {
 // template = 'aaa$$0$$aaa'
 // 初次会返回首次渲染的值
 export function reactiveTemplate (
-    templateRep: string,
+    template: string | (string[]),
     reactions: TReactionItem[],
     callback: (
         content: string,
@@ -49,27 +57,29 @@ export function reactiveTemplate (
     ) => void,
     needOldContent = false,
     // valueHandle?: <T=any>(value: T) => T,
-) {
-    if (reactions.length === 0) return templateRep;
-    const results = extractReplacement(templateRep);
-    if (results) {
-        const texts = templateRep.split(ReplaceExp);
-        const filler: string[] = results.map((item, i) => {
-            const index = parseReplacementToNumber(item);
-            const reaction = transformToReaction(reactions[index]);
-            return reaction[subscribe]((value) => {
-                // if (valueHandle) debugger;
-                const oldContent = needOldContent ? join(texts, filler) : '';
-                filler[i] = value;
-                const newContent = join(texts, filler);
-                callback(newContent, oldContent);
-                
-                // const oldClass = join(texts, filler);
-                // filler[i] = value;
-                // dom.classList.replace(oldClass, join(texts, filler));
+): string {
+    const isArray = template instanceof Array;
+    if (reactions.length > 0) {
+        const results = isArray ? createReplacementArray(reactions.length) : extractReplacement(template);
+        if (results) {
+            const texts = isArray ? template : template.split(ReplaceExp);
+            const filler: string[] = results.map((item, i) => {
+                const index = parseReplacementToNumber(item);
+                const reaction = transformToReaction(reactions[index]);
+                return reaction[subscribe]((value) => {
+                    // if (valueHandle) debugger;
+                    const oldContent = needOldContent ? join(texts, filler) : '';
+                    filler[i] = value;
+                    const newContent = join(texts, filler);
+                    callback(newContent, oldContent);
+                    
+                    // const oldClass = join(texts, filler);
+                    // filler[i] = value;
+                    // dom.classList.replace(oldClass, join(texts, filler));
+                });
             });
-        });
-        return join(texts, filler);
+            return join(texts, filler);
+        }
     }
-    return templateRep;
+    return isArray ? template.join('') : template;
 }

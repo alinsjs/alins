@@ -11,8 +11,8 @@ import {
 import {IJson} from 'alins-utils/src/types/common';
 import {
     IReactBindingTemplate, IReactBuilder, IReactContext,
-    IReactWrap, TReactionItem, IReactItem, IReactBinding,
-    IReactObject, IReactBase, IComputedItem, TReactionValue
+    IReactWrap, TReactionItem, IReactItem,
+    IReactObject, IReactBase, IComputedItem, TReactionValue,
 } from 'alins-utils/src/types/react.d';
 import {createReplacement, createTemplateReplacement} from './binding';
 import {Compute, computed, subscribeReactBuilder} from './computed';
@@ -98,7 +98,7 @@ export function react(data: string, ...reactions: (TReactionItem | string)[]): I
 
 export function react<T> (
     data: TemplateStringsArray | T | string,
-    ...reactions: (TReactionItem| string)[]
+    ...reactions: (TReactionItem | string)[]
 ): IReactBuilder | IReactWrap<T> | IReactItem<T> {
     // todo check is TemplateStringsArray
     if (isStringTemplateArray(data)) {
@@ -112,6 +112,7 @@ export function react<T> (
         return createReactive<T>(data as T);
     }
 }
+
 
 // es6兼容写法
 function transArgsToTemplate (data: string, reactions: (string|TReactionItem)[]) {
@@ -146,9 +147,40 @@ export function countReaction (item: TReactionItem) {
     return (typeof item === 'function') ? item() : item.value;
 }
 // 计算一次IReactBinding渲染后的值
-export function countBindingValue (binding: IReactBinding) {
+export function countBindingValue (binding: IReactBindingTemplate) {
     return join(binding.template, binding.reactions.map(r => countReaction(r)));
 }
+
+// export function createBindingTemplateFactory (): IReactBindingTemplateFactory {
+//     const data: IReactBindingTemplate = {
+//         template: [],
+//         reactions: [],
+//     };
+//     return {
+//         add (d) {
+//             data.template.push(...d.template);
+//             data.reactions.push(...d.reactions);
+//         },
+//         get () {
+//             return data;
+//         },
+//         reactive (
+//             onchange,
+//             needOldContent
+//         ) {
+//             return reactiveTemplate(
+//                 data.template,
+//                 data.reactions,
+//                 onchange,
+//                 needOldContent
+//             );
+//         },
+//         computed () {
+//             return computedBindingTemplate(data);
+//         }
+//     };
+// }
+
 export function isSimpleValue (v: any) {
     return typeof v !== 'object' || v === null;
 }
