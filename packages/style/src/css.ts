@@ -5,14 +5,14 @@
  */
 
 import {TReactionItem} from 'alins-utils/src/types/react.d';
-import {reactiveTemplate} from 'alins-reactive';
 import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
+import {reactiveTemplate} from 'alins-reactive';
 
 type ICssCBArg = string | IStyleBuilder | IStyleAtoms | ICssCBArg[];
 
 export interface ICssCallback {
     (...args: ICssCBArg[]): {
-        style: HTMLStyleElement;
+        reactiveStyle(setStyle: (v:string) => void): void;
         mount(selector?: string | HTMLElement): void;
     };
 }
@@ -21,34 +21,53 @@ export interface ICssConstructor {
     (selector: string): ICssCallback;
 }
 
+const supporteAdoptedStyle = typeof window.document.adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
+
 export const css: ICssConstructor = (selector: string) => {
     return (...args: ICssCBArg[]) => {
-        const style = document.createElement('style');
-        const {template, reactions} = buildCssFragment(selector, args);
-        let content = '';
-        if (reactions.length > 0) { // 有响应数据需要渲染
-            content = reactiveTemplate(template, reactions, (content) => {
-                style.textContent = content;
-            });
-        } else {
-            content = template;
+        const reactiveStyle = (setStyle: (v:string)=>void) => {
+            const {template, reactions} = buildCssFragment(selector, args);
+            if (reactions.length > 0) { // 有响应数据需要渲染
+                setStyle(reactiveTemplate(template, reactions, setStyle));
+            } else {
+                setStyle(template);
+            }
+        };
+        if (supporteAdoptedStyle) {
+            const style = new CSSStyleSheet();
+            reactiveStyle((v) => {style.replaceSync(v);});
         }
-        style.textContent = content;
         return {
-            style,
-            mount (selector = 'head') {
-                let parent: HTMLElement | null;
-                if (typeof selector === 'string') {
-                    parent = document.querySelector(selector);
-                } else {
-                    parent = selector;
+            reactiveStyle,
+            mount (selector) {
+                let parent: HTMLElement | null = null;
+                if (selector) {
+                    parent = typeof selector === 'string' ? document.querySelector(selector) : selector;
+                    if (!parent) throw new Error('Invalid mount target');
                 }
-                if (!parent) throw new Error('Invalid mount target');
-                parent.appendChild(style);
+                return reactiveStyle(insertStyle(parent));
             }
         };
     };
 };
+
+export function insertStyle (parent?: HTMLElement | null) {
+    if (parent) {
+        return insertHTMLStyle(parent);
+    } else if (supporteAdoptedStyle) {
+        const style = new CSSStyleSheet();
+        document.adoptedStyleSheets.push(style);
+        return (v: string) => {style.replace(v);};
+    } else {
+        return insertHTMLStyle(document.head);
+    }
+}
+
+function insertHTMLStyle (parent: HTMLElement) {
+    const style = document.createElement('style');
+    parent.appendChild(style);
+    return (v: string) => {style.textContent = v;};
+}
 
 function buildCssFragment (
     selector: string,
