@@ -10,10 +10,11 @@ import {For3} from './samples/for-3';
 import {Parent, testLife} from './samples/hello-world';
 import {StyleComp} from './samples/style-comp';
 import {todoList} from './samples/todo-list';
-import {Style2} from './samples/style-comp2';
+import {Style2, StyleAtom} from './samples/style-comp2';
 import {Count2} from './samples/counter2';
 import {renderObject} from './samples/render-obj';
 import {Controller} from './samples/controller';
+import {onlyUseStyle} from './samples/style-only';
 
 const num = $(20);
 const titleBg = $('#ddd');
@@ -62,6 +63,12 @@ mount(
     comp(StyleComp),
     div('.title:StyleComp2----------'),
     comp(Style2),
-    div('.title:StyleComp2----------'),
-    comp(Controller)
+    div('.title:StyleAtom----------'),
+    comp(StyleAtom),
+    div('.title:Controllers----------'),
+    comp(Controller),
+    div('.title:单独使用style----------'),
+    onlyUseStyle()
 );
+
+// dom 单独使用

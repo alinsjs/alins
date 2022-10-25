@@ -62,6 +62,11 @@ export function StyleComp () {
                 .width(() => num.value + 2)
         ),
 
+        div('666', pseudo('hover')(
+            style.borderBottom('1px solid #000'),
+            style.borderBox(),
+        ))
+
         // div('444',
         //     style.borderBottom(reactBuilder), // $ builder
         //     style.borderBottom(num), // IReactItem

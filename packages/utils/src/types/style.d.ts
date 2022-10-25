@@ -5,10 +5,11 @@
  */
 
 import {IBuilderParameter, IJson} from './common.d';
-import {TReactionItem, IReactBuilder} from './react.d';
+import {TReactionItem, TReactionValue} from './react.d';
 
 export interface IStyleBuilder extends IBuilderParameter{
   exe(parent: HTMLElement): void;
+  mount(parent: HTMLElement | string): void;
   // generateBindings(onchange: (onctent: string)=>void): string;
   generate(start?: number): {scopeTemplate: string, scopeReactions: TReactionItem[]};
   type: 'style';
@@ -19,19 +20,18 @@ export type TUnit = 'px' | '%' | 'rm' | 'vh' | 'vw' | 'em' | 'rem' | 'in' | 'cm'
 
 export type TI = 'i';
 
-export type TStyleReaction<T> = IReactBuilder | TReactionItem<T>;
-
-type TStyleValue<T = number | string> = number | string | TStyleReaction<T>;
+type TStyleValue<T = number | string> = TReactionValue<T>;
 
 type TCssCommonValue = 'inherit' | 'initial' | 'unset' | 'revert' | 'none' | 'auto';
 
 type TNumberStyle = (v: TStyleValue, unit?: TUnit | TI, i?: TI) => IStyleAtoms;
+type TPureNumberStyle = (v: TStyleValue<number>, unit?: TUnit | TI, i?: TI) => IStyleAtoms;
 
 type TNoneArgStyle = (i?: TI) => IStyleAtoms;
 type TStringStyle<T = string> = (v: T | TStyleValue<T>, i?: TI) => IStyleAtoms;
 interface TColorStyle {
-    (r: number, g: number, b: number, a?: number, i?: TI): IStyleAtoms;
-    (v: string, i?: TI): IStyleAtoms;
+    (r: TReactionValue<number>, g:  TReactionValue<number>, b:  TReactionValue<number>, a?:  TReactionValue<number>, i?: TI): IStyleAtoms;
+    (v:  TReactionValue<string>, i?: TI): IStyleAtoms;
 }
 interface TFourValueStyle {
     (v: TStyleValue, unit?: TUnit, i?: TI): IStyleAtoms;
@@ -41,28 +41,56 @@ interface TFourValueStyle {
 
 export type TTextDeco = 'blink'|'dashed'|'dotted'|'double'|'line-through'|'overline'|'solid'|'underline'|'wavy'|TCssCommonValue;
 export type TPosition = 'relative' | 'absolute' | 'fixed' | 'sticky' | 'static' | TCssCommonValue
-export interface IStyleAtoms extends IBuilderParameter{
-  result: IJson<string | (()=>string)>;
+
+export interface INoneArgsAtoms {
+  // none arg style
   borderBox: TNoneArgStyle;
+  relative: TNoneArgStyle;
+}
+
+export interface IStyleArgsAtoms {
+  // ([a-zA-Z]*?)(: [a-zA-Z<>]*?;\n) => '$1', 正则
   // number style
   paddingTop: TNumberStyle;
-  fontSize: TNumberStyle;
-  padding: TFourValueStyle;
-
-  margin: TFourValueStyle;
+  paddingBottom: TNumberStyle;
+  paddingLeft: TNumberStyle;
+  paddingRight: TNumberStyle;
+  marginTop: TNumberStyle;
   marginBottom: TNumberStyle;
   marginLeft: TNumberStyle;
-
+  marginRight: TNumberStyle;
+  fontSize: TNumberStyle;
+  lineHeight: TNumberStyle;
   width: TNumberStyle;
   maxWidth: TNumberStyle;
+  height: TNumberStyle;
+  maxHeight: TNumberStyle;
+  top: TNumberStyle;
+  left: TNumberStyle;
+
+  // pure number style
+  opacity: TPureNumberStyle;
+  zIndex: TPureNumberStyle;
+  flex: TPureNumberStyle;
+
+  // fournumber style
+  margin: TFourValueStyle;
+  padding: TFourValueStyle;
+
+  // optional string style
+  textDecoration: TStringStyle<TTextDeco>;
   position: TStringStyle<TPosition>;
 
-  borderBottom: TNumberStyle;
+  // common string style
   border: TStringStyle;
-  color: TColorStyle;
-  exe(parent: HTMLElement): string;
-  generate(start?: number): string;
+  borderBottom: TStringStyle;
+  fontWeight: TStringStyle;
 
-  textDecoration: TStringStyle<TTextDeco>;
-  type: 'style';
+  // color
+  color: TColorStyle;
+  backgroundColor: TColorStyle;
+}
+
+export interface IStyleAtoms extends IStyleArgsAtoms, INoneArgsAtoms, IStyleBuilder{
+  result: IJson<string | (()=>string)>;
 }

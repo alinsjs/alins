@@ -18,18 +18,23 @@ export interface IModelBuilder extends IBuilderParameter {
 }
 
 type TModelDecorator = 'number' | 'camel';
+
+interface IModelBuilderReturn extends IModelBuilder {
+    (...args: TBuilderArg[]): IModelBuilder;
+}
+
 export interface IModelController {
     <T>(
         this: IBuilderConstructor,
         value: TModelArg<T>,
         ...decorators: TModelDecorator[]
-    ): ((...args: TBuilderArg[]) => IModelBuilder);
+    ): IModelBuilderReturn;
 }
 
 export const modelController: IModelController = function (this: IBuilderConstructor, value, ...decorators) {
     const react = transformToReaction(value);
     const constructor = this;
-    return (...args) => {
+    const result: IModelBuilderReturn = (...args) => {
         return {
             exe () {
                 let isInput = false;
@@ -76,4 +81,7 @@ export const modelController: IModelController = function (this: IBuilderConstru
             type: 'model'
         };
     };
+    result.exe = () => result().exe();
+    result.type = 'model';
+    return result;
 };

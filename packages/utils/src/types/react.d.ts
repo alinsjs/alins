@@ -29,6 +29,8 @@ export type TComputedFunc<T = any> = (...args: any[]) => T;
 
 export type TReactionItem<T=any> = IReactItem<T> | TComputedFunc<T> | IComputedItem<T>;
 
+export type TReactionValue<T> = T | IReactBuilder | TReactionItem<T>;
+
 export interface IComputedItem<T = any> extends IReactItem<T> {}
 
 

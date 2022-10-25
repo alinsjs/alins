@@ -9,19 +9,19 @@ import {
     subscribeReactBuilder, subscribe, transformToReaction,
     createReplacement, createTemplateReplacement, reactiveTemplate, ReplaceExp, computed,
 } from 'alins-reactive';
-import {IReactBuilder, TReactionItem} from 'alins-utils/src/types/react.d';
+import {IReactBuilder, TReactionItem, TReactionValue} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common.d';
-import {IStyleAtoms, IStyleBuilder, TStyleReaction} from 'alins-utils/src/types/style.d';
+import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
 import {DefaultUint, StyleAtoms} from './style-atom';
 
-type TStyleJsonValue = IJson<string | number | TStyleReaction<string|number>>
+type TStyleJsonValue = IJson<TReactionValue<string|number>>
 export interface IStyleConstructor extends IStyleAtoms{
     (json: TStyleJsonValue): IStyleBuilder;
     (ts: TemplateStringsArray, ...reactions: TReactionItem[]): IStyleBuilder;
     (style: string): IStyleBuilder;
 }
 
-export const OnlyNumberAttrs = ['lineHeight', 'zIndex', 'opacity', 'flex'];
+export const OnlyNumberAttrs = ['zIndex', 'opacity', 'flex'];
 
 export const style: IStyleConstructor = Object.assign((
     a1: TStyleJsonValue | TemplateStringsArray | string,
@@ -123,6 +123,11 @@ export const style: IStyleConstructor = Object.assign((
                 console.warn('Invalid style arguments');
             }
             dom.setAttribute('style', newStyle);
+        },
+        mount (dom: HTMLElement|string) {
+            if (typeof dom === 'string') dom = document.querySelector(dom) as HTMLElement;
+            if (!dom) throw new Error('invalid dom');
+            this.exe(dom);
         },
         type: 'style' as 'style',
     };

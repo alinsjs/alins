@@ -415,6 +415,36 @@
               "content": "原子样式支持reactive",
               "id": 1666489492108,
               "level": "danger",
+              "done": true
+            }
+          },
+          {
+            "key": 1666618167895,
+            "children": [],
+            "todo": {
+              "content": "伪类",
+              "id": 1666618167895,
+              "level": "warning",
+              "done": false
+            }
+          },
+          {
+            "key": 1666618178926,
+            "children": [],
+            "todo": {
+              "content": "动画",
+              "id": 1666618178926,
+              "level": "warning",
+              "done": false
+            }
+          },
+          {
+            "key": 1666618183343,
+            "children": [],
+            "todo": {
+              "content": "媒介查询",
+              "id": 1666618183343,
+              "level": "warning",
               "done": false
             }
           }

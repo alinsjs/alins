@@ -78,7 +78,12 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 default: console.warn('unkonwn builder', item); break;
             }
         } else if (typeof item === 'function') {
-            data.push(...item());
+            const result = item();
+            if ((result as any).type === 'model') { // model
+                elementOptions.children.push((result as any).exe());
+            } else {
+                data.push(...result);
+            }
         }
     }
     return createElement(elementOptions);
