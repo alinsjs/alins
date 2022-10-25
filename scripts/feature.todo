@@ -151,7 +151,7 @@
               "content": "css 中支持响应式",
               "id": 1665564467963,
               "level": "warning",
-              "done": false
+              "done": true
             }
           }
         ],
@@ -446,6 +446,26 @@
               "id": 1666618183343,
               "level": "warning",
               "done": false
+            }
+          },
+          {
+            "key": 1666707522681,
+            "children": [],
+            "todo": {
+              "content": "css规则",
+              "id": 1666707522681,
+              "level": "default",
+              "done": false
+            }
+          },
+          {
+            "key": 1666707536106,
+            "children": [],
+            "todo": {
+              "content": "css react支持传入style",
+              "id": 1666707536106,
+              "level": "warning",
+              "done": true
             }
           }
         ],
