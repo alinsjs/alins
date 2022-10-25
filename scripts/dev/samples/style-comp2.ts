@@ -17,11 +17,11 @@ export function Style2 () {
     return [
         div(
             span('修改size:'),
-            input.model(size, 'number')(),
+            input.model(size, 'number'),
         ),
         div(
             span('修改颜色:'),
-            input.model(color)(),
+            input.model(color),
         ),
         div('文本', style({
             color, fontSize: size

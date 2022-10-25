@@ -9,7 +9,7 @@ export interface IJson<T = any> {
 
 export interface IBuilderParameter {
     exe: Function;
-    type: 'style' |
+    type: 'style' | 'pseudo' |
         'text' | 'selector' | 'children' |
         'comp' | 'react' | 'builder' |
         // 控制器 没有for

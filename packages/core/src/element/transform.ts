@@ -22,14 +22,14 @@ import {
     IReactBinding, TReactionItem
 } from 'alins-utils/src/types/react.d';
 import {
-    IStyleBuilder, IStyleAtoms,
+    IStyleBuilder, IStyleAtoms, IPseudoBuilder,
 } from 'alins-utils/src/types/style.d';
 import {IForBuilder} from '../controller/for';
 
 export type TElementChild = null | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
 export type TChild = TElementChild |
-    IStyleBuilder | IStyleAtoms |
+    IStyleBuilder | IStyleAtoms | IPseudoBuilder |
     IForBuilder |
     IIfBuilder | IShowBuilder | IModelBuilder | ISwitchBuilder<any> | TChild[];
 
@@ -46,6 +46,7 @@ export interface IElement {
     _if?: IIfBuilder;
     show?: TReactionItem;
     styles: (IStyleBuilder | IStyleAtoms)[];
+    pseudos: IPseudoBuilder[];
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -153,6 +154,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     };
 
     config.styles.forEach(style => style.exe(dom));
+    config.pseudos.forEach(pseudo => pseudo.exe(dom));
 
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
@@ -318,6 +320,7 @@ export function createElement ({
     event = [],
     _if,
     styles = [],
+    pseudos = [],
 }: IElementOptions): IElement {
     return {
         tag,
@@ -331,5 +334,6 @@ export function createElement ({
         event,
         _if,
         styles,
+        pseudos,
     };
 }

@@ -3,6 +3,7 @@
  * @Date: 2022-10-23 08:46:52
  * @Description: Coding something
  */
+import {pseudo} from 'packages/style/src/pseudo';
 import {div, $, css, style} from '../alins';
 
 function createCss () {
@@ -62,10 +63,13 @@ export function StyleComp () {
                 .width(() => num.value + 2)
         ),
 
-        // div('666', pseudo('hover')(
-        //     style.borderBottom('1px solid #000'),
-        //     style.borderBox(),
-        // ))
+        div('666', pseudo('nth-child', num)(
+            style.borderBottom($`${num}px solid #000`),
+            style.borderBox(),
+        ), pseudo('hover')(
+            style.borderBottom($`${num}px solid #000`),
+            style.borderBox(),
+        ))
 
         // div('444',
         //     style.borderBottom(reactBuilder), // $ builder

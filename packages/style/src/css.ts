@@ -8,7 +8,9 @@ import {TReactionItem} from 'alins-utils/src/types/react.d';
 import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
 import {reactiveTemplate} from 'alins-reactive';
 
-type ICssCBArg = string | IStyleBuilder | IStyleAtoms | ICssCBArg[];
+export type ICssBase = string | IStyleBuilder | IStyleAtoms;
+
+type ICssCBArg = ICssBase | ICssCBArg[];
 
 export interface ICssCallback {
     (...args: ICssCBArg[]): {

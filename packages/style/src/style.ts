@@ -55,7 +55,6 @@ export const style: IStyleConstructor = Object.assign((
                     );
 
                     if (reactions.length > 0) scopeReactions.push(...reactions);
-
                     scopeTemplate += `${transformStyleAttr(key)}:${template};`;
                 }
             } else {

@@ -41,6 +41,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         event: [],
         binding: [],
         styles: [],
+        pseudos: [],
         domInfo: ''
     };
     for (let i = 0; i < data.length; i++) {
@@ -75,6 +76,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                     elementOptions.event?.push(item); break;
                 case 'style':
                     elementOptions.styles?.push(item); break;
+                case 'pseudo':
+                    elementOptions.pseudos?.push(item); break;
                 default: console.warn('unkonwn builder', item); break;
             }
         } else if (typeof item === 'function') {

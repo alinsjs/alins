@@ -94,3 +94,7 @@ export interface IStyleArgsAtoms {
 export interface IStyleAtoms extends IStyleArgsAtoms, INoneArgsAtoms, IStyleBuilder{
   result: IJson<string | (()=>string)>;
 }
+export interface IPseudoBuilder extends IBuilderParameter {
+  type: 'pseudo',
+  exe (dom: HTMLElement): void;
+}
