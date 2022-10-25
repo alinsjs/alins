@@ -8,12 +8,14 @@ import {
     isStringTemplateArray, join,
     subscribe, forceUpdate, value, reactValue, getListeners
 } from 'alins-utils';
+import {IJson} from 'alins-utils/src/types/common';
 import {
     IReactBindingTemplate, IReactBuilder, IReactContext,
     IReactWrap, TReactionItem, IReactItem, IReactBinding,
-    IReactObject, IReactBase, IComputedItem
+    IReactObject, IReactBase, IComputedItem, TReactionValue
 } from 'alins-utils/src/types/react.d';
-import {Compute, computed} from './computed';
+import {createReplacement, createTemplateReplacement} from './binding';
+import {Compute, computed, subscribeReactBuilder} from './computed';
 import {createProxy} from './proxy';
 
 function bindReactive ({
@@ -240,6 +242,64 @@ export function reactiveProxyValue (v: any) {
     if (!isSimpleValue(v)) return createProxy(v, false);
     return reactiveValue(v);
 }
+
+export function parseReactionValue (
+    value: TReactionValue<string|number>,
+    startIndex = 0,
+    handleSimpleValue?: (v: string|number) => string,
+    handleReaction?: (r: IReactItem<string | number> | IComputedItem<string | number>) => IReactItem<string | number> | IComputedItem<string | number>,
+) {
+    let scopeTemplate = '';
+    const scopeReactions = [];
+    if (typeof value === 'string' || typeof value === 'number') { // 当json值是简单类型
+        scopeTemplate += handleSimpleValue ? handleSimpleValue(value) : value;
+    } else if ((value as IJson).type === 'react' ) {
+        // 当json值是IReactBuilder react`1-${xx}`
+        // 参数是reactBuilder的时候需要合并一下 reactions
+        const {template, reactions} = (value as IReactBuilder).exe({
+            type: 'style',
+        });
+        if (reactions.length > 0) {
+            scopeTemplate = createTemplateReplacement(template, startIndex);
+            scopeReactions.push(...reactions);
+        } else {
+            scopeTemplate = template.join('');
+        }
+    } else {
+        // 当json值是TReactionItem
+        let reaction = transformToReaction(value as TReactionItem<number | string>);
+        if (handleReaction) {
+            reaction = handleReaction(reaction);
+        }
+        scopeTemplate = createReplacement(startIndex);
+        scopeReactions.push(reaction);
+    }
+    return {reactions: scopeReactions, template: scopeTemplate};
+}
+
+export function exeReactionValue (
+    value: TReactionValue<string|number>,
+    onchange: (v: string|number) => void,
+) {
+    // const styleValue: string|number = '';
+    if (typeof value === 'string' || typeof value === 'number') { // 当json值是简单类型
+        return value;
+    } else if ((value as IJson).type === 'react' ) {
+        // 当json值是IReactBuilder react`1-${xx}`
+        return subscribeReactBuilder(value as IReactBuilder, (content) => {
+            // setDomStyle(style, key, content);
+            onchange(content);
+        }, 'style');
+    } else {
+        // 当json值是TReactionItem
+        const reaction = transformToReaction(value as TReactionItem<number | string>);
+        return reaction[subscribe](v => {
+            // setDomStyle(style, key, v);
+            onchange(v);
+        });
+    }
+}
+
 declare global {
     // for ts declaration
     // interface Array<T> extends IReactObject<T>{
