@@ -9,6 +9,7 @@ import {
     subscribe, forceUpdate, value, reactValue, getListeners
 } from 'alins-utils';
 import {IJson} from 'alins-utils/src/types/common';
+import {IStyleBuilder} from 'alins-utils/src/types/style';
 import {
     IReactBindingTemplate, IReactBuilder, IReactContext,
     IReactWrap, TReactionItem, IReactItem,
@@ -92,27 +93,37 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
 export function react<T>(data: T): IReactWrap<T>;
 
 // 生成响应数据绑定
-export function react(ts: TemplateStringsArray, ...reactions: TReactionItem[]): IReactBuilder;
+export function react(ts: TemplateStringsArray, ...reactions: (TReactionItem|IStyleBuilder)[]): IReactBuilder;
 // es6兼容写法
 export function react(data: string, ...reactions: (TReactionItem | string)[]): IReactBuilder;
 
 export function react<T> (
     data: TemplateStringsArray | T | string,
-    ...reactions: (TReactionItem | string)[]
+    ...reactions: (TReactionItem | string | IStyleBuilder)[]
 ): IReactBuilder | IReactWrap<T> | IReactItem<T> {
-    // todo check is TemplateStringsArray
+
+    handleStyleBuilder(reactions);
+
     if (isStringTemplateArray(data)) {
         return bindReactive({
             template: data as unknown as string[],
-            reactions,
+            reactions: reactions as TReactionItem[],
         });
     } else if (typeof data === 'string' && reactions.length > 0) {
-        return bindReactive(transArgsToTemplate(data, reactions));
+        return bindReactive(transArgsToTemplate(data, reactions as TReactionItem[]));
     } else {
         return createReactive<T>(data as T);
     }
 }
 
+function handleStyleBuilder (reactions: (TReactionItem | IStyleBuilder)[]) {
+    // ! 兼容styleBuilder
+    for (let i = 0; i < reactions.length; i++) {
+        const item = reactions[i];
+        if ((item as any).type === 'style')
+            reactions[i] = (item as IStyleBuilder).react();
+    }
+}
 
 // es6兼容写法
 function transArgsToTemplate (data: string, reactions: (string|TReactionItem)[]) {
