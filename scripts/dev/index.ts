@@ -16,6 +16,9 @@ import {renderObject} from './samples/render-obj';
 import {Controller} from './samples/controller';
 import {onlyUseStyle} from './samples/style-only';
 
+// ! 调试时关闭CSSStyleSheet
+(window as any).CSSStyleSheet = null;
+
 const num = $(20);
 const titleBg = $('#ddd');
 

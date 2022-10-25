@@ -56,7 +56,7 @@ export const css: ICssConstructor = (selector: string = '') => {
 export function insertStyle (parent?: HTMLElement | null) {
     if (parent) {
         return insertHTMLStyle(parent);
-    } else if (!supporteAdoptedStyle) {
+    } else if (supporteAdoptedStyle) {
         const style = new CSSStyleSheet();
         document.adoptedStyleSheets.push(style);
         return (v: string) => {style.replace(v);};
