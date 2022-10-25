@@ -23,7 +23,8 @@ export interface ICssConstructor {
     (selector?: string): ICssCallback;
 }
 
-const supporteAdoptedStyle = typeof window.document.adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
+// ! 调试时关闭CSSStyleSheet
+const supporteAdoptedStyle = false; // typeof window.document.adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
 
 export const css: ICssConstructor = (selector: string = '') => {
     return (...args: ICssCBArg[]) => {
@@ -35,7 +36,7 @@ export const css: ICssConstructor = (selector: string = '') => {
                 setStyle(template);
             }
         };
-        if (supporteAdoptedStyle) {
+        if (supporteAdoptedStyle && !(window as any).__disableStyleSheet) {
             const style = new CSSStyleSheet();
             reactiveStyle((v) => {style.replaceSync(v);});
         }
