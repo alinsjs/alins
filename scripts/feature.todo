@@ -372,9 +372,9 @@
             "key": 1666088947372,
             "children": [],
             "todo": {
-              "content": "原子样式编写",
+              "content": "原子样式补全",
               "id": 1666088947372,
-              "level": "danger",
+              "level": "warning",
               "done": false
             }
           },
@@ -404,7 +404,7 @@
             "todo": {
               "content": "样式兼容 添加前缀",
               "id": 1666487369267,
-              "level": "warning",
+              "level": "success",
               "done": false
             }
           },
@@ -434,7 +434,7 @@
             "todo": {
               "content": "动画",
               "id": 1666618178926,
-              "level": "warning",
+              "level": "default",
               "done": false
             }
           },
@@ -444,7 +444,7 @@
             "todo": {
               "content": "媒介查询",
               "id": 1666618183343,
-              "level": "warning",
+              "level": "default",
               "done": false
             }
           },

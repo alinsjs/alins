@@ -17,7 +17,7 @@ function createCss () {
 
     return css()(
         $`@keyframes aa {
-            ${simpleStyle}
+            ${simpleStyle},
         }`,
         simpleStyle,
         ['&.aa', simpleStyle],

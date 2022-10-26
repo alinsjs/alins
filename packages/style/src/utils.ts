@@ -31,7 +31,7 @@ export function createCssPool () {
         add (v: string) {
             const index = css.length;
             css.push(v);
-            setStyle(css.join());
+            setStyle(css.join(''));
             return this.update(index);
         },
     };
