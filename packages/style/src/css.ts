@@ -7,6 +7,7 @@
 import {IReactBuilder, TReactionItem} from 'alins-utils/src/types/react.d';
 import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
 import {createTemplateReplacement, reactiveTemplate} from 'alins-reactive';
+import {insertStyle} from './utils';
 
 export type ICssBase = string | IStyleBuilder | IStyleAtoms | IReactBuilder;
 
@@ -22,10 +23,6 @@ export interface ICssCallback {
 export interface ICssConstructor {
     (selector?: string): ICssCallback;
 }
-
-// ! 调试时关闭CSSStyleSheet
-const supporteAdoptedStyle = false; // typeof window.document.adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
-
 export const css: ICssConstructor = (selector: string = '') => {
     return (...args: ICssCBArg[]) => {
         const reactiveStyle = (setStyle: (v:string)=>void) => {
@@ -36,10 +33,6 @@ export const css: ICssConstructor = (selector: string = '') => {
                 setStyle(template);
             }
         };
-        if (supporteAdoptedStyle && !(window as any).__disableStyleSheet) {
-            const style = new CSSStyleSheet();
-            reactiveStyle((v) => {style.replaceSync(v);});
-        }
         return {
             reactiveStyle,
             mount (selector) {
@@ -53,24 +46,6 @@ export const css: ICssConstructor = (selector: string = '') => {
         };
     };
 };
-
-export function insertStyle (parent?: HTMLElement | null) {
-    if (parent) {
-        return insertHTMLStyle(parent);
-    } else if (supporteAdoptedStyle) {
-        const style = new CSSStyleSheet();
-        document.adoptedStyleSheets.push(style);
-        return (v: string) => {style.replace(v);};
-    } else {
-        return insertHTMLStyle(document.head);
-    }
-}
-
-function insertHTMLStyle (parent: HTMLElement) {
-    const style = document.createElement('style');
-    parent.appendChild(style);
-    return (v: string) => {style.textContent = v;};
-}
 
 function buildCssFragment (
     selector: string,
@@ -87,27 +62,12 @@ function buildCssFragment (
     let currentStyle = '';
 
     for (const item of args) {
-        if (typeof item === 'string') {
-            currentStyle += item + ';'; // css 静态样式
-        } else if (item instanceof Array) { // 子类
+        if (item instanceof Array) { // 子类
             const result = buildCssFragment(item[0] as string, item.slice(1), selectorPath, reactions);
             childStyles += result.template;
             reactions.push(...result.reactions);
-        } else if (typeof item === 'object') { // style(...)
-            if (item.type === 'react') {
-                const result = item.exe({type: 'style'});
-                currentStyle += createTemplateReplacement(result.template, reactions.length);
-                result.reactions.forEach(item => {
-                    if ((item as any).type === 'style') {
-                        
-                    }
-                });
-                reactions.push(...result.reactions);
-            } else {
-                const {scopeReactions, scopeTemplate} = item.generate(reactions.length);
-                currentStyle += scopeTemplate;
-                reactions.push(...scopeReactions);
-            }
+        } else {
+            currentStyle += parseSingleCssItem(item, reactions);
         }
     }
 
@@ -115,6 +75,23 @@ function buildCssFragment (
         template: !!selectorPath ? `${selectorPath}{${currentStyle}}${childStyles}` : `${currentStyle}${childStyles}`,
         reactions,
     };
+}
+
+export function parseSingleCssItem (item: ICssBase, reactions: TReactionItem[]) {
+    if (typeof item === 'string') {
+        return item + ';'; // css 静态样式
+    } else  if (typeof item === 'object') { // style(...)
+        if (item.type === 'react') {
+            const result = item.exe({type: 'style'});
+            reactions.push(...result.reactions);
+            return createTemplateReplacement(result.template, reactions.length);
+        } else {
+            const {scopeReactions, scopeTemplate} = item.generate(reactions.length);
+            reactions.push(...scopeReactions);
+            return scopeTemplate;
+        }
+    }
+    return '';
 }
 
 function concatSelectorPath (path: string, name: string) {

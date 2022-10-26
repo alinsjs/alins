@@ -8,7 +8,8 @@ import {reactiveTemplate} from 'alins-reactive';
 import {parseReactionValue} from 'alins-reactive/src/react';
 import {TReactionItem, TReactionValue} from 'alins-utils/src/types/react';
 import {IPseudoBuilder} from 'alins-utils/src/types/style';
-import {ICssBase, insertStyle} from './css';
+import {ICssBase, parseSingleCssItem} from './css';
+import {createCssPool, DataAlinsDom, getAlinsDomId, insertStyle} from './utils';
 
 
 const NoArgPseudo = ['active', 'any-link', 'blank', 'checked', 'current', 'default',
@@ -32,22 +33,15 @@ export interface IPseudoConstructor {
   (name: TPseudoName, arg?: TReactionValue<string|number>): IPseudoClass;
 }
 
-let PseudoId = 0;
+const PseudoPool = createCssPool();
 
 export const pseudo: IPseudoConstructor = (name, arg) => {
     return (...args: ICssBase[]) => {
-        const attr = `alins-pseudo-${++PseudoId}`;
         let template = '';
         const reactions: TReactionItem[] = [];
         
-        args.forEach(style => {
-            if (typeof style === 'string') {
-                template += style;
-            } else {
-                const {scopeReactions, scopeTemplate} = style.generate(reactions.length);
-                template += scopeTemplate;
-                reactions.push(...scopeReactions);
-            }
+        args.forEach(item => {
+            template += parseSingleCssItem(item, reactions);
         });
         let argTemplate = '';
         if (typeof arg !== 'undefined') {
@@ -59,20 +53,21 @@ export const pseudo: IPseudoConstructor = (name, arg) => {
             argTemplate = `(${argReaction.template})`;
         } else {
         }
-        template = `[${attr}]:${name}${argTemplate}{${template}}`;
 
         const setStyle = insertStyle(document.head);
         
-        if (reactions.length > 0) { // 有响应数据需要渲染
-            setStyle(reactiveTemplate(template, reactions, setStyle));
-        } else {
-            setStyle(template);
-        }
-
         return {
             type: 'pseudo',
             exe (dom: HTMLElement) {
-                dom.setAttribute(attr, '');
+                const id = getAlinsDomId(dom);
+                template = `[${DataAlinsDom}="${id}"]:${name}${argTemplate}{${template}}`;
+                if (reactions.length > 0) { // 有响应数据需要渲染
+                    PseudoPool.add(reactiveTemplate(template, reactions, PseudoPool.update()));
+                } else {
+                    PseudoPool.add(template);
+                    setStyle(template);
+                }
+                dom.setAttribute(DataAlinsDom, id);
             }
         };
     };

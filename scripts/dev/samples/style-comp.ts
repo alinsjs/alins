@@ -55,6 +55,7 @@ export function StyleComp () {
             color: 'red',
             marginTop: $`${num}px`,
             fontSize: $`${() => num.value}px`
+            // animation: keyframe
         })),
         div('444', style`
             color: red;
@@ -64,9 +65,11 @@ export function StyleComp () {
         div('555',
             style.borderBottom($`${num}px solid #000`)
                 .width(() => num.value + 2)
+                // .animation(keyframe)
         ),
 
         div('666', pseudo('nth-child', num)(
+            $`width: ${num}px;`,
             style.borderBottom($`${num}px solid #000`),
             style.borderBox(),
         ), pseudo('hover')(
