@@ -29,10 +29,19 @@ const titleBg = $('#ddd');
 //       background-color: ${titleBg};
 //     `
 // ).mount();
-
+const list = $([1, 2, 3]);
 mount(
-    div('.title:Count------------------'),
-    comp(Count),
+    div('.title:for normal------------------'),
+    div.for(list)((item, index) => [
+        $`item=${item}`
+    ]),
+    div('.title:for comp------------------'),
+    // todo ? 为什么这里类型提示有问题
+    comp.for(list)((item, index) => [
+        Count,
+        prop({value: item})
+    ]),
+    // ]),
     // div('Hello World'),
     // div('title font-size:', input.model(num, 'number')),
     // div('title background:', input.model(titleBg)),
@@ -67,8 +76,8 @@ mount(
     // comp(Style2),
     // div('.title:StyleAtom----------'),
     // comp(StyleAtom),
-    // div('.title:Controllers----------'),
-    // comp(Controller),
+    div('.title:Controllers----------'),
+    comp(Controller),
     // div('.title:单独使用style----------'),
     // onlyUseStyle()
 );

@@ -169,31 +169,29 @@ export function mountChildrenDoms (
 ) {
     const frag = document.createDocumentFragment();
     for (const item of children) {
-        mountSingleChild(parent, frag, item);
+        frag.appendChild(mountSingleChild(item));
     }
     parent.appendChild(frag);
 }
 
-function mountSingleChild (
-    parent: HTMLElement,
-    frag: DocumentFragment,
-    item: TChild
-) {
+export function mountSingleChild (
+    item: TChild,
+): DocumentFragment {
+    const frag = document.createDocumentFragment();
     if (item instanceof Array) {
         for (const child of item) {
-            mountSingleChild(parent, frag, child);
+            frag.appendChild(mountSingleChild(child));
         }
     } else if (item instanceof HTMLElement) {
         frag.appendChild(item);
     } else if (item) {
         switch (item.type) {
             case 'comp':
-                mountSingleChild(parent, frag, item.exe()); break;
+                frag.appendChild(mountSingleChild(item.exe())); break;
             case 'builder':
                 frag.appendChild(transformBuilderToDom(item)); break;
             case 'if':
             case 'switch':
-                frag.appendChild(item.exe(parent)); break;
             case 'for':
             case 'show':
             case 'model':
@@ -201,6 +199,7 @@ function mountSingleChild (
         }
         // todo life mounted
     }
+    return frag;
 }
 
 function setNodeText (node: HTMLElement | Text, v: string) {

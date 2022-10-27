@@ -27,7 +27,7 @@ export function Controller () {
         div.switch(num)
             .case(1)($`:case1-${num}`)
             .case(2)($`:case2-${num}`)
-            .default($`default-${num}`)
+            // .default($`default-${num}`)
             
         // comp.if(() => num.value > 1)(hello)
         //     .else('/div:111'),

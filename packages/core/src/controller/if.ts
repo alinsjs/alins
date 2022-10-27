@@ -20,7 +20,7 @@ export type TIfArg = IReactItem<boolean> | (()=>boolean);
 export interface IIfBuilder extends IBuilderParameter{
     elif: IElseIf;
     else: IElse;
-    exe(parent: HTMLElement): Node|HTMLElement;
+    exe(): Node|HTMLElement;
     type: 'if';
 }
 
@@ -107,12 +107,13 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
     return (...args: TBuilderArg[]) => {
         pushBuilder(args);
         return {
-            exe (parent: HTMLElement) {
+            exe () {
                 let node = exe();
                 changeList.push((d: Node) => {
                     if (d === node) return;
-                    parent.insertBefore(d, node);
-                    parent.removeChild(node);
+                    const parent = node.parentElement;
+                    parent?.insertBefore(d, node);
+                    parent?.removeChild(node);
                     node = d;
                 });
                 return node;

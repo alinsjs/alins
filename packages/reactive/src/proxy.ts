@@ -82,10 +82,12 @@ export function createProxy<T extends IJson> (
             };
             if (isArray) {
                 if (property === 'length') return set();// 数组的length属性
-                if (target.includes(v)) { // 数组类型的内部元素位置变更
+                const oldIndex = target.indexOf(v);
+                if (oldIndex !== -1) { // 数组类型的内部元素位置变更
                     // todo 监听
                     const index = parseIndex();
                     triggerChange(v, target[index], index);
+                    target[oldIndex] = undefined;
                     return set();
                 }
             }

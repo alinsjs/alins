@@ -6,6 +6,8 @@
 
 import {IJson, IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IComputedItem} from 'alins-utils/src/types/react.d';
+import {controllers, IControllerBuilder} from 'src/controller/controller';
+import {IForController} from 'src/controller/for';
 import {TChild} from '../element/transform';
 import {IEvent, IEventFunc} from './event';
 import {IProp} from './prop';
@@ -30,13 +32,14 @@ export interface IComponentBuilder extends IBuilderParameter {
     exe(): TChild;
     type: 'comp';
 }
-export interface ICompConstructor{ // extends IControllerBuilder
+export interface ICompConstructor extends IControllerBuilder { // extends IControllerBuilder
     (comp: IComponent, ...args: TCompBuilderArg[]): IComponentBuilder;
 }
 
 // const CompMap: Map<Function, IComponentElement> = new Map(); // 或者可以使用 func.toString md5
 
-export const comp: ICompConstructor = (...args) => {
+// todo ? 为什么这里类型提示有问题
+export const comp = Object.assign((...args: TCompBuilderArg[]) => {
     // const mapValue = CompMap.get(el);
     // if (mapValue) return mapValue;
 
@@ -72,4 +75,4 @@ export const comp: ICompConstructor = (...args) => {
         },
         type: 'comp',
     };
-};
+}, controllers);

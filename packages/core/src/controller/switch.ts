@@ -20,7 +20,7 @@ export type TSwitchArg<T> = IReactItem<T> | (()=>T);
 export interface ISwitchBuilder<T> extends IBuilderParameter{
     case: ICase<T>;
     default: IDefault<T>;
-    exe(parent: HTMLElement): Node|HTMLElement;
+    exe(): Node|HTMLElement;
     type: 'switch';
 }
 
@@ -69,14 +69,15 @@ export const switchController: ISwitchController = function <T> (this: IBuilderC
     const react = transformToReaction(value);
 
     return {
-        exe (parent: HTMLElement) {
+        exe () {
             let node = getDom(react.value);
 
             react[subscribe](v => {
                 const dom = getDom(v);
                 if (dom === node) return;
-                parent.insertBefore(dom, node);
-                parent.removeChild(node);
+                const parent = node.parentElement;
+                parent?.insertBefore(dom, node);
+                parent?.removeChild(node);
                 node = dom;
             });
             return node;

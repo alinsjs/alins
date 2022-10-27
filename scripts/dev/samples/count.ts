@@ -8,9 +8,13 @@ import {
     IComponentOptions, click, $
 } from '../alins';
 
-export const Count: IComponent = () => {
+export const Count: IComponent = ({prop}) => {
     // const count = $(0);
-    return comp(CountComp);
+    return [
+        div($`prop,${prop.value}`),
+        comp(CountComp),
+        comp(CountComp)
+    ];
 };
 function CountComp () {
     const count = $(0);
