@@ -9,6 +9,7 @@ import {IEventBuilder} from '../event/on';
 import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
 import {countBindingValue} from 'alins-reactive';
 import {IReactBinding, IReactBuilder} from 'alins-utils/src/types/react.d';
+import {IJson} from 'alins-utils/src/types/common';
 
 export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild | IBuildFunction; // (IElementBuilder|IElementBuilder[])[];
 
@@ -107,18 +108,36 @@ export function buildFactory (tag: string): IBuilderConstructor {
 }
 
 export const dom = buildFactory;
- 
-export const div = buildFactory('div');
-export const span = buildFactory('span');
-export const input = buildFactory('input');
-export const button = buildFactory('button');
-export const img = buildFactory('img');
-export const a = buildFactory('a');
-export const i = buildFactory('i');
+
+
+const MainDomNames = [
+    'a', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'button', 'canvas', 'code', 'pre', 'table', 'th',  'td', 'tr', 'video', 'audio',
+    'ol', 'select',  'option', 'p', 'i', 'iframe', 'img', 'input', 'label', 'li', 'span', 'textarea', 'form',
+] as const;
+
+const DomNames = [
+    ...MainDomNames,
+    'abbr', 'article', 'aside', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'br',  'caption', 'cite', 'del', 'details', 'dialog',
+    'em', 'embed', 'figure', 'footer', 'header', 'hr', 'menu', 'nav', 'noscript',
+    'object', 'progress', 'section', 'slot', 'small', 'strong', 'sub', 'summary', 'sup', 'tbody',  'template',
+    'title', 'ul', 'var',
+] as const;
+
 export const text = (v: string) => ':' + v;
 
-// dom('b')()
-// todo add element
+export const doms = (() => {
+    const map: IJson<any> = {};
+    DomNames.map(name => {
+        map[name] = buildFactory(name);
+    });
+    return map as {
+        [name in (typeof DomNames)[number]]: IBuilderConstructor;
+    };
+})();
+
+export const [
+    a, div, h1, h2, h3, h4, h5, h6, button, canvas, code, pre, table, th, td, tr, video, audio, ol, select, option, p, i, iframe, img, input, label, li, span, textarea, form
+] = MainDomNames.map(name => doms[name]);
 
 function createBaseBuilder (exe: ()=> IElement): IElementBuilder {
     return {

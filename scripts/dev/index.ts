@@ -30,7 +30,7 @@ const titleBg = $('#ddd');
 // ).mount();
 
 const list = $([1, 2, 3]);
-const add = (item: IReactItem) => {item.value++;};
+const add = (item: IReactItem, e: Event) => {item.value++; console.log(e);};
 const value = $(0);
 const value1 = $(1);
 const value2 = $(2);

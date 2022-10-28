@@ -8,13 +8,17 @@ import {
 } from 'alins-reactive';
 import {mount} from './mount';
 import {
-    dom, div, span, input, button, img, a, i, text,
+    dom, text, doms,
+    a, div, h1, h2, h3, h4, h5, h6, button, canvas, code, pre, table, th, td, tr, video, audio, ol, select, option, p, i, iframe, img, input, label, li, span, textarea, form
 } from './builder/builder';
 import {comp} from './comp/comp';
 import {prop} from './comp/prop';
 import {event} from './comp/event';
 import {slot} from './comp/slot';
-import {on, click} from './event/on';
+import {
+    events, on,
+    click, mousedown, mouseenter, mouseleave, mousemove, mouseover, mouseup, touchend, touchmove, touchstart, wheel, $input, change
+} from './event/on';
 
 export {mount} from './mount';
 
@@ -22,14 +26,12 @@ export {
     IElement,
 } from './element/transform';
 
-export {
-    dom, div, span, input, button, img, a, i, text,
-} from './builder/builder';
+export * from './builder/builder';
 export {comp, IComponent, IComponentOptions} from './comp/comp';
 export {prop} from './comp/prop';
 export {event} from './comp/event';
 export {slot} from './comp/slot';
-export {on, click} from './event/on';
+export * from './event/on';
 
 export {
     react, computed, watch, createProxy, $,
@@ -39,8 +41,10 @@ export {IReactItem} from 'alins-utils/src/types/react.d';
 
 export default {
     mount,
-    text, dom, div, span, input, button, img, a, i, // todo add
+    dom, text, doms,
+    a, div, h1, h2, h3, h4, h5, h6, button, canvas, code, pre, table, th, td, tr, video, audio, ol, select, option, p, i, iframe, img, input, label, li, span, textarea, form,
     react, computed, watch, createProxy, $,
     comp, prop, slot, event,
-    on, click, // todo add
+    events, on,
+    click, mousedown, mouseenter, mouseleave, mousemove, mouseover, mouseup, touchend, touchmove, touchstart, wheel, $input, change
 };

@@ -5,7 +5,7 @@
  */
 // export type TEventName = keyof HTMLElementEventMap;
 
-import {IBuilderParameter} from 'alins-utils/src/types/common.d';
+import {IBuilderParameter, IJson} from 'alins-utils/src/types/common.d';
 
 export interface IEventBuilder extends IBuilderParameter {
     args(...args: any[]): IEventBuilder;
@@ -56,18 +56,37 @@ export function on (
     };
 }
 
-// todo add
+const MainEventNames = [
+    'click', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseover', 'mouseup',
+    'touchend', 'touchmove', 'touchstart', 'wheel', 'input', 'change'
+] as const;
+
+const EventNames = [
+    ...MainEventNames,
+    'fullscreenchange', 'fullscreenerror', 'copy', 'cut', 'paste', 'abort', 'auxclick',
+    'beforeinput', 'blur', 'canplay', 'canplaythrough', 'close',
+    'compositionend', 'compositionstart', 'compositionupdate', 'contextmenu',
+    'cuechange', 'dblclick', 'drag', 'dragend', 'dragenter', 'dragleave', 'dragover',
+    'dragstart', 'drop', 'durationchange', 'emptied', 'ended', 'error', 'focus', 'focusin',
+    'focusout', 'formdata', 'gotpointercapture', 'invalid', 'keydown', 'keypress',
+    'keyup', 'load', 'loadeddata', 'loadedmetadata', 'loadstart', 'lostpointercapture',
+    'mouseout', 'pause', 'play', 'playing', 'pointercancel', 'pointerdown', 'pointerenter', 'pointerleave',
+    'pointermove', 'pointerout', 'pointerover', 'pointerup', 'progress', 'ratechange', 'reset',
+    'resize', 'scroll', 'select', 'selectionchange', 'selectstart', 'submit', 'suspend', 'timeupdate',
+    'toggle', 'touchcancel',
+] as const;
+
+export const events = (() => {
+    const map: IJson<any> = {};
+    EventNames.map(name => {
+        map[name] = (listener: (...args: any[])=> void) => on(name, listener);
+    });
+    return map as {
+        [name in (typeof EventNames)[number]]: (listener: (...args: any[])=> void) => IEventBuilder;
+    };
+})();
+
+
 export const [
-    click,
-    mousedown,
-    mouseup,
-    mousemove,
-] = [
-    'click',
-    'mousedown',
-    'mouseup',
-    'mousemove',
-].map(name => {
-    // todo add event args
-    return (listener: (...args: any[])=> void) => on(name, listener);
-});
+    click, mousedown, mouseenter, mouseleave, mousemove, mouseover, mouseup, touchend, touchmove, touchstart, wheel, $input, change
+] = MainEventNames.map(name => events[name]);
