@@ -31,7 +31,7 @@ export type TElementChild = null | IElementBuilder | IElementBuilder[] | ICompon
 export type TChild = TElementChild |
     IStyleBuilder | IStyleAtoms | IPseudoBuilder |
     IForBuilder |
-    IIfBuilder | IShowBuilder | IModelBuilder | ISwitchBuilder<any> | TChild[];
+    IIfBuilder<any> | IShowBuilder | IModelBuilder | ISwitchBuilder<any> | TChild[];
 
 export interface IElement {
     tag: string;
@@ -43,7 +43,7 @@ export interface IElement {
     binding: IReactBinding[];
     event: IEventBuilder[];
     domInfo: string;
-    _if?: IIfBuilder;
+    _if?: IIfBuilder<any>;
     show?: TReactionItem;
     styles: (IStyleBuilder | IStyleAtoms)[];
     pseudos: IPseudoBuilder[];

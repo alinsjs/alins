@@ -13,9 +13,8 @@ import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
-import {IElementBuilder, transformBuilderToDom} from '../element/transform';
-import {TControllerArg, TControllerType} from './controller';
-import {TCompBuilderArg} from '../comp/comp';
+import {getControllerDoms, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
+import {ICompConstructor, TCompBuilderArg} from '../comp/comp';
 
 export type TIfArg = IReactItem<boolean> | (()=>boolean);
 
@@ -35,7 +34,7 @@ interface IElse<K extends TControllerType>{
 
 export interface IIfController<K extends TControllerType = 'builder'> {
     (
-        this: IBuilderConstructor,
+        this: IBuilderConstructor | ICompConstructor,
         bool: TIfArg,
     ): ((...args: TControllerArg<K>[]) => IIfBuilder<K>);
 }
@@ -44,32 +43,32 @@ export interface IIfController<K extends TControllerType = 'builder'> {
 // div.if(bool)(react`:${num.value}`),
 
 
-export const ifController: IIfController = function (this: IBuilderConstructor, bool) {
+export const ifController: IIfController<'builder'> = function (this: IBuilderConstructor | ICompConstructor, bool) {
     type TArgs = (TBuilderArg|TCompBuilderArg)[];
     const changeList: Function[] = [];
     const node = document.createComment('');
 
-    let elseBuilder: null | IElementBuilder = null;
+    let elseBuilder: null | TControllerBuilder = null;
 
-    const builders: IElementBuilder[] = [];
+    const builders: (TControllerBuilder)[] = [];
 
     const pushBuilder = (args: TArgs, isElse = false) => {
-        const builder = this.apply(null, args) as IElementBuilder;
+        const builder = this.apply(null, args);
         if (isElse) elseBuilder = builder;
         else builders.push(builder);
     };
 
     let activeIndex = 0;
 
-    const doms: (Node|HTMLElement) [] = []; // ! 缓存doms节点
+    const doms: (Node|HTMLElement|(HTMLElement)[]) [] = []; // ! 缓存doms节点
 
-    const getDom = (builder?: IElementBuilder) => {
+    const getDom = (builder?: TControllerBuilder) => {
         if (!builder) return node;
-        let dom = doms[activeIndex];
-        if (dom) return dom;
-        dom = transformBuilderToDom(builder);
-        doms[activeIndex] = dom;
-        return dom;
+        const oldDom = doms[activeIndex];
+        if (oldDom) return oldDom;
+        const {children} = getControllerDoms(builder);
+        doms[activeIndex] = children;
+        return children;
     };
 
     const exe = (start = 0) => {
@@ -93,11 +92,12 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
         const i = reactList.length;
         const react = transformToReaction(bool);
         react[subscribe](v => {
-            let dom: HTMLElement | Node | null = null;
+            let dom: HTMLElement | Node | null | HTMLElement[] = null;
             if (v) {
                 if (i < activeIndex || activeIndex === -1) {
                     activeIndex = i;
-                    dom = transformBuilderToDom(builders[i]);
+                    const result = getControllerDoms(builders[i]);
+                    dom = result.children;
                 }
             } else if (activeIndex >= 0) {
                 dom = exe(activeIndex);
@@ -113,12 +113,10 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
         return {
             exe () {
                 let node = exe();
-                changeList.push((d: Node) => {
-                    if (d === node) return;
-                    const parent = node.parentElement;
-                    parent?.insertBefore(d, node);
-                    parent?.removeChild(node);
-                    node = d;
+                changeList.push((newDom: HTMLElement | HTMLElement[]) => {
+                    if (newDom === node) return;
+                    replaceControllerDoms(node as any, newDom);
+                    node = newDom;
                 });
                 return node;
             },

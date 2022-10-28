@@ -4,15 +4,15 @@
  * @Description: Coding something
  */
 
-import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
-import {IElementBuilder, mountSingleChild, transformBuilderToDom} from '../element/transform';
+import {IBuilderConstructor} from '../builder/builder';
+import {IElementBuilder} from '../element/transform';
 import {
     createReactive, index, mergeReact, subscribe
 } from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
-import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
-import {TControllerArg, TControllerType} from './controller';
+import {ICompConstructor, IComponentBuilder} from '../comp/comp';
+import {getControllerDoms, removeControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
 
 // export interface IForController {
 //     <T>(
@@ -90,21 +90,16 @@ export const forController: IForController = function (this: IBuilderConstructor
                 newValue[index].value = i;
             } else {
                 if (typeof newValue === 'undefined') { // remove
-                    const item = doms[i];
-                    if (item instanceof Array) {
-                        item.forEach(i => {i.remove();});
-                    } else {
-                        item.remove();
-                    }
+                    removeControllerDoms(doms[i]);
                     doms.splice(i, 1);
                 } else {
-                    const builder: IElementBuilder|IComponentBuilder = this.apply(null, makeBuilder(i, newValue));
+                    const builder: TControllerBuilder = this.apply(null, makeBuilder(i, newValue));
                     const oldDom = doms[i];
                     if (oldDom) {
                         mergeReact(oldValue, newValue);
                     } else {
-                        const dom = builder.type === 'builder' ? transformBuilderToDom(builder) : mountSingleChild(builder.exe());
-                        doms[i] = (dom instanceof HTMLElement) ? dom : [].slice.call(dom.children);
+                        const {dom, children} = getControllerDoms(builder);
+                        doms[i] = children;
                         const item = doms[i + 1];
                         const after = item instanceof Array ? item[0] : item;
                         mount.parentElement?.insertBefore(dom, after || mount);
@@ -119,15 +114,9 @@ export const forController: IForController = function (this: IBuilderConstructor
                 for (const child of builders) {
                     // ! 根据build解析dom 渲染到父元素
                     // child.type
-                    if (child.type === 'comp') {
-                        const item = mountSingleChild(child.exe());
-                        doms.push([].slice.call(item.children));
-                        frag.appendChild(item);
-                    } else {
-                        const dom = transformBuilderToDom(child);
-                        doms.push(dom);
-                        frag.appendChild(dom);
-                    }
+                    const {dom, children} = getControllerDoms(child);
+                    doms.push(children);
+                    frag.appendChild(dom);
                 }
                 frag.append(mount); // 锚点放在最后面
                 return frag;
@@ -137,3 +126,4 @@ export const forController: IForController = function (this: IBuilderConstructor
     };
 
 };
+

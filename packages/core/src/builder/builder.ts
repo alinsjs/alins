@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {controllers, IControllerBuilder} from '../controller/controller';
+import {controllers, IControllers} from '../controller/controller';
 import {IEventBuilder} from '../event/on';
 import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
 import {countBindingValue} from 'alins-reactive';
@@ -13,7 +13,7 @@ import {IReactBinding, IReactBuilder} from 'alins-utils/src/types/react.d';
 export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild | IBuildFunction; // (IElementBuilder|IElementBuilder[])[];
 
 export type IBuildFunction = () => TBuilderArg[];
-export interface IBuilder extends IControllerBuilder, IBuilderConstructor {
+export interface IBuilder extends IControllers, IBuilderConstructor {
     // todo controller
 }
 
@@ -93,7 +93,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
 };
 
 
-export interface IBuilderConstructor extends IControllerBuilder {
+export interface IBuilderConstructor extends IControllers<'builder'> {
     (...args: TBuilderArg[]): IElementBuilder;
 }
 

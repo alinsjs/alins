@@ -6,7 +6,7 @@
 
 import {IJson, IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IComputedItem} from 'alins-utils/src/types/react.d';
-import {controllers, IControllerBuilder} from '../controller/controller';
+import {controllers, IControllers} from '../controller/controller';
 import {TChild} from '../element/transform';
 import {IEvent, IEventFunc} from './event';
 import {IProp} from './prop';
@@ -31,7 +31,7 @@ export interface IComponentBuilder extends IBuilderParameter {
     exe(): TChild;
     type: 'comp';
 }
-export interface ICompConstructor extends IControllerBuilder<'comp'> { // extends IControllerBuilder
+export interface ICompConstructor extends IControllers<'comp'> {
     (...args: (IComponent | TCompBuilderArg)[]): IComponentBuilder;
 }
 

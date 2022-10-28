@@ -16,6 +16,7 @@ import {renderObject} from './samples/render-obj';
 import {Controller} from './samples/controller';
 import {onlyUseStyle} from './samples/style-only';
 const num = $(20);
+(window as any).numx =  num;
 const titleBg = $('#ddd');
 // css('.title')(
 //     style`
@@ -41,6 +42,14 @@ mount(
         Count,
         prop({value: item})
     ]),
+    comp.for(list)((item, index) => [
+        Count,
+        prop({value: item})
+    ]),
+
+    comp.if(() => num.value > 1)($`:if-${num}`)
+        .elif(() => num.value < 0)($`/div:elif-${() => num.value + 1}`)
+        .else($`/div:${num}`),
     // ]),
     // div('Hello World'),
     // div('title font-size:', input.model(num, 'number')),
