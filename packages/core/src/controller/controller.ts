@@ -10,8 +10,8 @@ import {ifController, IIfController} from './if';
 import {IShowController, showController} from './show';
 import {ISwitchController, switchController} from './switch';
 
-export interface IControllerBuilder {
-    for: IForController;
+export interface IControllerBuilder<K extends 'comp' | 'builder' = 'builder'> {
+    for: IForController<K>;
     if: IIfController;
     show: IShowController;
     model: IModelController;

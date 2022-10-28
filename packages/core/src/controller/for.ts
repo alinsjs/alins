@@ -11,7 +11,7 @@ import {
 } from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
-import {ICompConstructor, IComponentBuilder} from 'src/comp/comp';
+import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
 
 // export interface IForController {
 //     <T>(
@@ -44,13 +44,13 @@ export interface IForBuilder extends IBuilderParameter{
 }
 
 
-export interface IForController {
+export interface IForController<K extends 'comp' | 'builder' = 'builder'> {
     <T>(list: IReactWrap<T>[]):
-        ((fn: IForCallback<T>) => IForBuilder);
+        ((fn: IForCallback<T, K>) => IForBuilder);
 }
 
-export interface IForCallback<T = any> {
-    (item: IReactWrap<T>, index: IReactItem<number>): TBuilderArg[];
+export interface IForCallback<T = any, K = 'builder'> {
+    (item: IReactWrap<T>, index: IReactItem<number>): (K extends 'builder' ? TBuilderArg : TCompBuilderArg)[];
 }
 
 export const forController: IForController = function (this: IBuilderConstructor | ICompConstructor, list) {

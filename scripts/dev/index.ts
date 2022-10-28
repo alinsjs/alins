@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {mount, div, comp, react, button, click, prop, css, style, $, input} from './alins';
+import {mount, div, react, comp, button, IReactItem, click, prop, css, style, $, input} from './alins';
 import {Count, CountProps} from './samples/count';
 import {For3} from './samples/for-3';
 import {Parent, testLife} from './samples/hello-world';
@@ -15,10 +15,8 @@ import {Count2} from './samples/counter2';
 import {renderObject} from './samples/render-obj';
 import {Controller} from './samples/controller';
 import {onlyUseStyle} from './samples/style-only';
-
 const num = $(20);
 const titleBg = $('#ddd');
-
 // css('.title')(
 //     style`
 //       font-weight: bold;
@@ -29,14 +27,16 @@ const titleBg = $('#ddd');
 //       background-color: ${titleBg};
 //     `
 // ).mount();
+
 const list = $([1, 2, 3]);
+const add = (item: IReactItem) => {item.value++;};
 mount(
     div('.title:for normal------------------'),
     div.for(list)((item, index) => [
+        click(add).args(item),
         $`item=${item}`
     ]),
     div('.title:for comp------------------'),
-    // todo ? 为什么这里类型提示有问题
     comp.for(list)((item, index) => [
         Count,
         prop({value: item})
