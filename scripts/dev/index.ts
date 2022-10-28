@@ -31,7 +31,11 @@ const titleBg = $('#ddd');
 
 const list = $([1, 2, 3]);
 const add = (item: IReactItem) => {item.value++;};
+const value = $(0);
+const value1 = $(1);
+const value2 = $(2);
 mount(
+    input.model(num),
     div('.title:for normal------------------'),
     div.for(list)((item, index) => [
         click(add).args(item),
@@ -42,14 +46,17 @@ mount(
         Count,
         prop({value: item})
     ]),
+    div('.title:comp for--------------'),
     comp.for(list)((item, index) => [
         Count,
         prop({value: item})
     ]),
 
-    comp.if(() => num.value > 1)($`:if-${num}`)
-        .elif(() => num.value < 0)($`/div:elif-${() => num.value + 1}`)
-        .else($`/div:${num}`),
+    div('.title:comp if--------------'),
+
+    comp.if(() => num.value > 1)(Count, prop({value}))
+        .elif(() => num.value < 0)(Count, prop({value: value1}))
+        .else(Count, prop({value: value2})),
     // ]),
     // div('Hello World'),
     // div('title font-size:', input.model(num, 'number')),

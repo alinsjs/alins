@@ -13,7 +13,7 @@ import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
-import {getControllerDoms, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
+import {getControllerDoms, parseHTMLElement, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
 import {ICompConstructor, TCompBuilderArg} from '../comp/comp';
 
 export type TIfArg = IReactItem<boolean> | (()=>boolean);
@@ -21,29 +21,29 @@ export type TIfArg = IReactItem<boolean> | (()=>boolean);
 export interface IIfBuilder<K extends TControllerType> extends IBuilderParameter {
     elif: IElseIf<K>;
     else: IElse<K>;
-    exe(): Node|HTMLElement;
+    exe(): Node|HTMLElement|DocumentFragment;
     type: 'if';
 }
 
 interface IElseIf<K extends TControllerType> {
-    (bool: TIfArg): ((...args: TControllerArg<K>[]) => IIfBuilder<K>);
+    (bool: TIfArg): ((...args: TControllerArg<K>) => IIfBuilder<K>);
 }
 interface IElse<K extends TControllerType>{
-    (...args: TControllerArg<K>[]): IIfBuilder<K>;
+    (...args: TControllerArg<K>): IIfBuilder<K>;
 }
 
 export interface IIfController<K extends TControllerType = 'builder'> {
     (
         this: IBuilderConstructor | ICompConstructor,
         bool: TIfArg,
-    ): ((...args: TControllerArg<K>[]) => IIfBuilder<K>);
+    ): ((...args: TControllerArg<K>) => IIfBuilder<K>);
 }
 
 // div.if(num.value > 1)(react`:${bool}`),
 // div.if(bool)(react`:${num.value}`),
 
 
-export const ifController: IIfController<'builder'> = function (this: IBuilderConstructor | ICompConstructor, bool) {
+export const ifController: IIfController<any> = function (this: IBuilderConstructor | ICompConstructor, bool) {
     type TArgs = (TBuilderArg|TCompBuilderArg)[];
     const changeList: Function[] = [];
     const node = document.createComment('');
@@ -68,6 +68,7 @@ export const ifController: IIfController<'builder'> = function (this: IBuilderCo
         if (oldDom) return oldDom;
         const {children} = getControllerDoms(builder);
         doms[activeIndex] = children;
+        
         return children;
     };
 
@@ -118,7 +119,7 @@ export const ifController: IIfController<'builder'> = function (this: IBuilderCo
                     replaceControllerDoms(node as any, newDom);
                     node = newDom;
                 });
-                return node;
+                return parseHTMLElement(node);
             },
             elif (bool) {
                 pushReact(bool);

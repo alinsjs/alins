@@ -64,10 +64,15 @@ export function replaceControllerDoms (
     const parent = target.parentElement;
     if (!parent) throw new Error('parent not found');
     
-    if (newDoms instanceof Array) {
-        newDoms.forEach(d => {parent.insertBefore(d, target);});
-    } else {
-        parent.insertBefore(newDoms, target);
-    }
+    parent.insertBefore(parseHTMLElement(newDoms), target);
     (oldDoms instanceof Array) ? oldDoms.forEach(n => {n.remove();}) : oldDoms.remove();
+}
+
+export function parseHTMLElement (el: HTMLElement[]|HTMLElement|Node) {
+    if (el instanceof Array) {
+        const frag = document.createDocumentFragment();
+        el.forEach(dom => {frag.appendChild(dom);});
+        return frag;
+    }
+    return el;
 }

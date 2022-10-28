@@ -103,7 +103,6 @@ export const forController: IForController = function (this: IBuilderConstructor
                         const item = doms[i + 1];
                         const after = item instanceof Array ? item[0] : item;
                         mount.parentElement?.insertBefore(dom, after || mount);
-                        
                     }
                 }
             }
