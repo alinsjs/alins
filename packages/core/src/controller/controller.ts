@@ -9,31 +9,40 @@ import {forController, IForController} from './for';
 import {ifController, IIfController} from './if';
 import {IShowController, showController} from './show';
 import {ISwitchController, switchController} from './switch';
-import {TBuilderArg} from '../builder/builder';
-import {IComponentBuilder, TCompBuilderArg} from '../comp/comp';
+import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
+import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
 import {IElementBuilder, mountSingleChild, transformBuilderToDom} from '../element/transform';
 
+export type IControllerDom = Node | HTMLElement | HTMLElement[]
+
 export type TControllerBuilder = IElementBuilder | IComponentBuilder;
+
+export type IControllerConstructor = IBuilderConstructor | ICompConstructor;
 
 export type TControllerType = 'comp' | 'builder';
 
 export type TControllerArg<K extends TControllerType> = K extends 'builder' ? TBuilderArg[] : TCompBuilderArg[];
 
-export interface IControllers<K extends TControllerType = 'builder'> {
+export interface ICompControllers<K extends TControllerType = 'comp'> {
     for: IForController<K>;
     if: IIfController<K>;
-    show: IShowController;
-    model: IModelController;
-    switch: ISwitchController;
+    show: IShowController<K>;
+    switch: ISwitchController<K>;
 }
 
-export const controllers: IControllers = {
+export interface IControllers extends ICompControllers<'builder'> {
+    model: IModelController;
+}
+export const compControllers: ICompControllers = {
     for: forController,
     if: ifController,
     show: showController,
-    model: modelController,
     switch: switchController,
 };
+
+export const controllers: IControllers = Object.assign({
+    model: modelController,
+}, compControllers);
 
 export function getControllerDoms (builder: TControllerBuilder): {
     dom: HTMLElement | DocumentFragment,
@@ -58,7 +67,7 @@ export function removeControllerDoms (children: HTMLElement | HTMLElement[]) {
 
 export function replaceControllerDoms (
     oldDoms: HTMLElement | HTMLElement[],
-    newDoms: HTMLElement | HTMLElement[],
+    newDoms: IControllerDom,
 ) {
     const target = (oldDoms instanceof Array) ? oldDoms[0] : oldDoms;
     const parent = target.parentElement;

@@ -93,7 +93,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
 };
 
 
-export interface IBuilderConstructor extends IControllers<'builder'> {
+export interface IBuilderConstructor extends IControllers {
     (...args: TBuilderArg[]): IElementBuilder;
 }
 

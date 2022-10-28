@@ -9,60 +9,62 @@
  * @Description: Coding something
  */
 
-import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
-import {IElementBuilder, transformBuilderToDom} from '../element/transform';
+import {
+    getControllerDoms, IControllerConstructor, parseHTMLElement, replaceControllerDoms,
+    TControllerArg, TControllerBuilder, TControllerType
+} from './controller';
 
 export type TSwitchArg<T> = IReactItem<T> | (()=>T);
 
-export interface ISwitchBuilder<T> extends IBuilderParameter{
-    case: ICase<T>;
-    default: IDefault<T>;
-    exe(): Node|HTMLElement;
+export interface ISwitchBuilder<T, K extends TControllerType> extends IBuilderParameter{
+    case: ICase<T, K>;
+    default: IDefault<T, K>;
+    exe(): Node|HTMLElement|DocumentFragment;
     type: 'switch';
 }
 
-interface ICase<T> {
-    (bool: T): ((...args: TBuilderArg[]) => ISwitchBuilder<T>);
+interface ICase<T, K extends TControllerType> {
+    (bool: T): ((...args: TControllerArg<K>) => ISwitchBuilder<T, K>);
 }
-interface IDefault<T>{
-    (...args: TBuilderArg[]): ISwitchBuilder<T>;
+interface IDefault<T, K extends TControllerType>{
+    (...args: TControllerArg<K>): ISwitchBuilder<T, K>;
 }
 
-export interface ISwitchController {
+export interface ISwitchController<K extends TControllerType = 'builder'> {
     <T>(
-        this: IBuilderConstructor,
+        this: IControllerConstructor,
         value: TSwitchArg<T>,
-    ): ISwitchBuilder<T>;
+    ): ISwitchBuilder<T, K>;
 }
 
 // div.if(num.value > 1)(react`:${bool}`),
 // div.if(bool)(react`:${num.value}`),
 
-export const switchController: ISwitchController = function <T> (this: IBuilderConstructor, value: TSwitchArg<T>) {
+export const switchController: ISwitchController = function <T> (this: IControllerConstructor, value: TSwitchArg<T>) {
     const defaultValue = Symbol('def');
     const node = document.createComment('');
 
-    const builders: Map<any, IElementBuilder> = new Map();
+    const builders: Map<any, TControllerBuilder> = new Map();
 
-    const doms: Map<any, Node|HTMLElement> = new Map(); // ! 缓存doms节点
+    const doms: Map<any, Node|HTMLElement|HTMLElement[]> = new Map(); // ! 缓存doms节点
     const getDom = (value: any) => {
         const builder = builders.get(value) || builders.get(defaultValue);
         
         if (!builder) {
             return node;
         }
-        let dom = doms.get(builder);
+        const dom = doms.get(builder);
         if (dom) return dom;
-        dom = transformBuilderToDom(builder);
-        doms.set(builder, dom);
-        return dom;
+        const {children} = getControllerDoms(builder);
+        doms.set(builder, children);
+        return children;
     };
 
-    const addBuilder = (args: TBuilderArg[], value: any) => {
-        const builder = this.apply(null, args) as IElementBuilder;
+    const addBuilder = (args: TControllerArg<any>, value: any) => {
+        const builder = this.apply(null, args) as TControllerBuilder;
         builders.set(value, builder);
     };
 
@@ -71,18 +73,17 @@ export const switchController: ISwitchController = function <T> (this: IBuilderC
     return {
         exe () {
             let node = getDom(react.value);
+            debugger;
 
             react[subscribe](v => {
-                const dom = getDom(v);
-                if (dom === node) return;
-                const parent = node.parentElement;
-                parent?.insertBefore(dom, node);
-                parent?.removeChild(node);
-                node = dom;
+                const newDom = getDom(v);
+                if (newDom === node) return;
+                replaceControllerDoms(node as any, newDom);
+                node = newDom;
             });
-            return node;
+            return parseHTMLElement(node);
         },
-        case (value: any) {
+        case (value: T) {
             return (...args) => {
                 addBuilder(args, value);
                 return this;
@@ -93,5 +94,5 @@ export const switchController: ISwitchController = function <T> (this: IBuilderC
             return this;
         },
         type: 'switch'
-    } as ISwitchBuilder<T>;
+    } as ISwitchBuilder<T, any>;
 };

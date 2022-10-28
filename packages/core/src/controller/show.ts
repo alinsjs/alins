@@ -9,30 +9,28 @@
  * @Description: Coding something
  */
 
-import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
-import {transformBuilderToDom} from '../element/transform';
 import {TIfArg} from './if';
-
+import {getControllerDoms, IControllerConstructor, IControllerDom, parseHTMLElement, TControllerArg, TControllerType} from './controller';
 
 export interface IShowBuilder extends IBuilderParameter {
-    exe(): HTMLElement;
+    exe(): IControllerDom;
     type: 'show';
 }
 
 
-export interface IShowController {
+export interface IShowController<K extends TControllerType = 'builder'> {
     (
-        this: IBuilderConstructor,
+        this: IControllerConstructor,
         bool: TIfArg,
-    ): ((...args: TBuilderArg[]) => IShowBuilder);
+    ): ((...args: TControllerArg<K>) => IShowBuilder);
 }
 
 // div.if(num.value > 1)(react`:${bool}`),
 // div.if(bool)(react`:${num.value}`),
 
-export const showController: IShowController = function (this: IBuilderConstructor, bool) {
+export const showController: IShowController<any> = function (this: IControllerConstructor, bool) {
     
     const react = transformToReaction(bool);
     const constructor = this;
@@ -41,11 +39,14 @@ export const showController: IShowController = function (this: IBuilderConstruct
         return {
             exe () {
                 const builder = constructor.apply(null, args);
-                const dom = transformBuilderToDom(builder);
+                const {children} = getControllerDoms(builder);
                 react[subscribe](v => {
-                    dom.style.display = v ? '' : 'none';
+                    const s = v ? '' : 'none';
+                    children instanceof Array ?
+                        children.forEach(item => {item.style.display = s;}) :
+                        children.style.display = s;
                 });
-                return dom;
+                return parseHTMLElement(children);
             },
             type: 'show'
         };

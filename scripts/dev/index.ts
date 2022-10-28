@@ -35,7 +35,7 @@ const value = $(0);
 const value1 = $(1);
 const value2 = $(2);
 mount(
-    input.model(num),
+    input.model(num, 'number'),
     div('.title:for normal------------------'),
     div.for(list)((item, index) => [
         click(add).args(item),
@@ -57,6 +57,16 @@ mount(
     comp.if(() => num.value > 1)(Count, prop({value}))
         .elif(() => num.value < 0)(Count, prop({value: value1}))
         .else(Count, prop({value: value2})),
+
+    div('.title:comp switch--------------'),
+    comp.switch(num)
+        .case(20)(Count, prop({value: value}))
+        .case(1)(Count, prop({value: value1}))
+        .case(2)(Count, prop({value: value2})),
+    div('.title:comp switch end--------------'),
+    div('.title:comp show--------------'),
+    comp.show(() => num.value > 1)(Count, prop({value: value})),
+    div('.title:comp show end--------------'),
     // ]),
     // div('Hello World'),
     // div('title font-size:', input.model(num, 'number')),

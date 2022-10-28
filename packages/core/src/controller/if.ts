@@ -9,12 +9,12 @@
  * @Description: Coding something
  */
 
-import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
+import {TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
-import {getControllerDoms, parseHTMLElement, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
-import {ICompConstructor, TCompBuilderArg} from '../comp/comp';
+import {getControllerDoms, IControllerConstructor, parseHTMLElement, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
+import {TCompBuilderArg} from '../comp/comp';
 
 export type TIfArg = IReactItem<boolean> | (()=>boolean);
 
@@ -34,7 +34,7 @@ interface IElse<K extends TControllerType>{
 
 export interface IIfController<K extends TControllerType = 'builder'> {
     (
-        this: IBuilderConstructor | ICompConstructor,
+        this: IControllerConstructor,
         bool: TIfArg,
     ): ((...args: TControllerArg<K>) => IIfBuilder<K>);
 }
@@ -43,7 +43,7 @@ export interface IIfController<K extends TControllerType = 'builder'> {
 // div.if(bool)(react`:${num.value}`),
 
 
-export const ifController: IIfController<any> = function (this: IBuilderConstructor | ICompConstructor, bool) {
+export const ifController: IIfController<any> = function (this: IControllerConstructor, bool) {
     type TArgs = (TBuilderArg|TCompBuilderArg)[];
     const changeList: Function[] = [];
     const node = document.createComment('');
