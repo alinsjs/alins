@@ -56,7 +56,6 @@ export function reactiveTemplate (
         oldContent: string,
     ) => void,
     needOldContent = false,
-    // valueHandle?: <T=any>(value: T) => T,
 ): string {
     const isArray = template instanceof Array;
     if (reactions.length > 0) {
@@ -67,7 +66,6 @@ export function reactiveTemplate (
                 const index = parseReplacementToNumber(item);
                 const reaction = transformToReaction(reactions[index]);
                 return reaction[subscribe]((value) => {
-                    // if (valueHandle) debugger;
                     const oldContent = needOldContent ? join(texts, filler) : '';
                     filler[i] = value;
                     const newContent = join(texts, filler);

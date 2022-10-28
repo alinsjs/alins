@@ -13,7 +13,7 @@ import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
 import {
-    getControllerDoms, IControllerConstructor, parseHTMLElement, replaceControllerDoms,
+    getControllerDoms, IControllerConstructor, IControllerDom, IControllerDoms, parseHTMLElement, replaceControllerDoms,
     TControllerArg, TControllerBuilder, TControllerType
 } from './controller';
 
@@ -22,7 +22,7 @@ export type TSwitchArg<T> = IReactItem<T> | (()=>T);
 export interface ISwitchBuilder<T, K extends TControllerType> extends IBuilderParameter{
     case: ICase<T, K>;
     default: IDefault<T, K>;
-    exe(): Node|HTMLElement|DocumentFragment;
+    exe(): IControllerDom;
     type: 'switch';
 }
 
@@ -49,7 +49,7 @@ export const switchController: ISwitchController = function <T> (this: IControll
 
     const builders: Map<any, TControllerBuilder> = new Map();
 
-    const doms: Map<any, Node|HTMLElement|HTMLElement[]> = new Map(); // ! 缓存doms节点
+    const doms: Map<any, IControllerDoms> = new Map(); // ! 缓存doms节点
     const getDom = (value: any) => {
         const builder = builders.get(value) || builders.get(defaultValue);
         
@@ -73,8 +73,6 @@ export const switchController: ISwitchController = function <T> (this: IControll
     return {
         exe () {
             let node = getDom(react.value);
-            debugger;
-
             react[subscribe](v => {
                 const newDom = getDom(v);
                 if (newDom === node) return;

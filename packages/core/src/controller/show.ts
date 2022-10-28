@@ -19,7 +19,6 @@ export interface IShowBuilder extends IBuilderParameter {
     type: 'show';
 }
 
-
 export interface IShowController<K extends TControllerType = 'builder'> {
     (
         this: IControllerConstructor,

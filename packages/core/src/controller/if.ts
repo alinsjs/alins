@@ -9,19 +9,17 @@
  * @Description: Coding something
  */
 
-import {TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
-import {getControllerDoms, IControllerConstructor, parseHTMLElement, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
-import {TCompBuilderArg} from '../comp/comp';
+import {getControllerDoms, IControllerConstructor, IControllerDom, IControllerDoms, parseHTMLElement, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
 
 export type TIfArg = IReactItem<boolean> | (()=>boolean);
 
 export interface IIfBuilder<K extends TControllerType> extends IBuilderParameter {
     elif: IElseIf<K>;
     else: IElse<K>;
-    exe(): Node|HTMLElement|DocumentFragment;
+    exe(): IControllerDom;
     type: 'if';
 }
 
@@ -44,7 +42,6 @@ export interface IIfController<K extends TControllerType = 'builder'> {
 
 
 export const ifController: IIfController<any> = function (this: IControllerConstructor, bool) {
-    type TArgs = (TBuilderArg|TCompBuilderArg)[];
     const changeList: Function[] = [];
     const node = document.createComment('');
 
@@ -52,7 +49,7 @@ export const ifController: IIfController<any> = function (this: IControllerConst
 
     const builders: (TControllerBuilder)[] = [];
 
-    const pushBuilder = (args: TArgs, isElse = false) => {
+    const pushBuilder = (args: TControllerArg<any>, isElse = false) => {
         const builder = this.apply(null, args);
         if (isElse) elseBuilder = builder;
         else builders.push(builder);
@@ -60,7 +57,7 @@ export const ifController: IIfController<any> = function (this: IControllerConst
 
     let activeIndex = 0;
 
-    const doms: (Node|HTMLElement|(HTMLElement)[]) [] = []; // ! 缓存doms节点
+    const doms: IControllerDoms[] = []; // ! 缓存doms节点
 
     const getDom = (builder?: TControllerBuilder) => {
         if (!builder) return node;
@@ -109,7 +106,7 @@ export const ifController: IIfController<any> = function (this: IControllerConst
     };
 
     pushReact(bool);
-    return (...args: TArgs) => {
+    return (...args: TControllerArg<any>) => {
         pushBuilder(args);
         return {
             exe () {

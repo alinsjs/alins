@@ -31,7 +31,7 @@ export type TElementChild = null | IElementBuilder | IElementBuilder[] | ICompon
 export type TChild = TElementChild |
     IStyleBuilder | IStyleAtoms | IPseudoBuilder |
     IForBuilder |
-    IIfBuilder<any> | IShowBuilder | IModelBuilder | ISwitchBuilder<any> | TChild[];
+    IIfBuilder<any> | IShowBuilder | IModelBuilder | ISwitchBuilder<any, any> | TChild[];
 
 export interface IElement {
     tag: string;
@@ -78,7 +78,7 @@ function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
  
 // const div = document.createElement('div');
 export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
-    const config = builder.exe(); // ! 关键代码 执行builder
+    const config = builder.exe(); // ! 执行builder
     // debugger;
     // console.count('transformBuilderToDomCount');
 
@@ -107,16 +107,9 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     // if (!config.binding) debugger;
     for (let i = 0; i < config.binding.length; i++) {
         const binding = config.binding[i];
-        switch (binding.context.type) {
-            case 'dom-info': {
-                // 提取表达式中没有binding的属性 merge到config中
-                const domInfo = applyDomInfoReaction(dom, binding);
-                mergeDomInfo(config, domInfo);
-                // ! binding 执行
-                    
-            }; break;
-                // todo other binding types
-        }
+        // 提取表达式中没有binding的属性 merge到config中
+        const domInfo = applyDomInfoReaction(dom, binding);
+        mergeDomInfo(config, domInfo);
     }
     
     if (config.domInfo) mergeDomInfo(config, parseDomInfo(config.domInfo));

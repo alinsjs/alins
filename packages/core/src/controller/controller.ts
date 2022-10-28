@@ -13,7 +13,9 @@ import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
 import {IElementBuilder, mountSingleChild, transformBuilderToDom} from '../element/transform';
 
-export type IControllerDom = Node | HTMLElement | HTMLElement[]
+type INode = Node | HTMLElement;
+export type IControllerDom = INode | DocumentFragment;
+export type IControllerDoms = INode | HTMLElement[]
 
 export type TControllerBuilder = IElementBuilder | IComponentBuilder;
 
@@ -23,17 +25,17 @@ export type TControllerType = 'comp' | 'builder';
 
 export type TControllerArg<K extends TControllerType> = K extends 'builder' ? TBuilderArg[] : TCompBuilderArg[];
 
-export interface ICompControllers<K extends TControllerType = 'comp'> {
+export interface ICompControllers<K extends TControllerType> {
     for: IForController<K>;
     if: IIfController<K>;
     show: IShowController<K>;
     switch: ISwitchController<K>;
 }
 
-export interface IControllers extends ICompControllers<'builder'> {
+export interface IControllers<T extends TControllerType = 'builder'> extends ICompControllers<T> {
     model: IModelController;
 }
-export const compControllers: ICompControllers = {
+export const compControllers: ICompControllers<any> = {
     for: forController,
     if: ifController,
     show: showController,
@@ -67,7 +69,7 @@ export function removeControllerDoms (children: HTMLElement | HTMLElement[]) {
 
 export function replaceControllerDoms (
     oldDoms: HTMLElement | HTMLElement[],
-    newDoms: IControllerDom,
+    newDoms: IControllerDoms,
 ) {
     const target = (oldDoms instanceof Array) ? oldDoms[0] : oldDoms;
     const parent = target.parentElement;
@@ -77,7 +79,9 @@ export function replaceControllerDoms (
     (oldDoms instanceof Array) ? oldDoms.forEach(n => {n.remove();}) : oldDoms.remove();
 }
 
-export function parseHTMLElement (el: HTMLElement[]|HTMLElement|Node) {
+export function parseHTMLElement (
+    el: HTMLElement[]|HTMLElement|Node
+): IControllerDom {
     if (el instanceof Array) {
         const frag = document.createDocumentFragment();
         el.forEach(dom => {frag.appendChild(dom);});
