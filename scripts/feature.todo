@@ -153,13 +153,23 @@
               "level": "warning",
               "done": true
             }
+          },
+          {
+            "key": 1666972965574,
+            "children": [],
+            "todo": {
+              "content": "dom 名称补全",
+              "id": 1666972965574,
+              "level": "danger",
+              "done": true
+            }
           }
         ],
         "todo": {
           "content": "响应式数据",
           "id": 1665494195217,
           "level": "danger",
-          "done": false
+          "done": true
         }
       },
       {
@@ -182,7 +192,17 @@
               "content": "事件类型定义",
               "id": 1666052837600,
               "level": "warning",
-              "done": false
+              "done": true
+            }
+          },
+          {
+            "key": 1666972935020,
+            "children": [],
+            "todo": {
+              "content": "事件补全",
+              "id": 1666972935020,
+              "level": "danger",
+              "done": true
             }
           }
         ],
@@ -352,7 +372,7 @@
           "content": "组件",
           "id": 1665494169984,
           "level": "danger",
-          "done": false
+          "done": true
         }
       },
       {
@@ -514,7 +534,7 @@
           "content": "ts 声明全支持",
           "id": 1665564673720,
           "level": "warning",
-          "done": false
+          "done": true
         }
       },
       {
@@ -545,10 +565,7 @@
       1665494260180,
       1665835013054,
       1665494169984,
-      1666088897525,
-      1665494213348,
-      1665982682369,
-      1665494195217
+      1666088897525
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",
