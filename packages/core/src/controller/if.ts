@@ -14,34 +14,38 @@ import {subscribe, transformToReaction} from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
 import {IElementBuilder, transformBuilderToDom} from '../element/transform';
+import {TControllerArg, TControllerType} from './controller';
+import {TCompBuilderArg} from '../comp/comp';
 
 export type TIfArg = IReactItem<boolean> | (()=>boolean);
 
-export interface IIfBuilder extends IBuilderParameter{
-    elif: IElseIf;
-    else: IElse;
+export interface IIfBuilder<K extends TControllerType> extends IBuilderParameter {
+    elif: IElseIf<K>;
+    else: IElse<K>;
     exe(): Node|HTMLElement;
     type: 'if';
 }
 
-interface IElseIf {
-    (bool: TIfArg): ((...args: TBuilderArg[]) => IIfBuilder);
+interface IElseIf<K extends TControllerType> {
+    (bool: TIfArg): ((...args: TControllerArg<K>[]) => IIfBuilder<K>);
 }
-interface IElse{
-    (...args: TBuilderArg[]): IIfBuilder;
+interface IElse<K extends TControllerType>{
+    (...args: TControllerArg<K>[]): IIfBuilder<K>;
 }
 
-export interface IIfController {
+export interface IIfController<K extends TControllerType = 'builder'> {
     (
         this: IBuilderConstructor,
         bool: TIfArg,
-    ): ((...args: TBuilderArg[]) => IIfBuilder);
+    ): ((...args: TControllerArg<K>[]) => IIfBuilder<K>);
 }
 
 // div.if(num.value > 1)(react`:${bool}`),
 // div.if(bool)(react`:${num.value}`),
 
+
 export const ifController: IIfController = function (this: IBuilderConstructor, bool) {
+    type TArgs = (TBuilderArg|TCompBuilderArg)[];
     const changeList: Function[] = [];
     const node = document.createComment('');
 
@@ -49,7 +53,7 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
 
     const builders: IElementBuilder[] = [];
 
-    const pushBuilder = (args: TBuilderArg[], isElse = false) => {
+    const pushBuilder = (args: TArgs, isElse = false) => {
         const builder = this.apply(null, args) as IElementBuilder;
         if (isElse) elseBuilder = builder;
         else builders.push(builder);
@@ -104,7 +108,7 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
     };
 
     pushReact(bool);
-    return (...args: TBuilderArg[]) => {
+    return (...args: TArgs) => {
         pushBuilder(args);
         return {
             exe () {
@@ -130,6 +134,6 @@ export const ifController: IIfController = function (this: IBuilderConstructor, 
                 return this;
             },
             type: 'if'
-        } as IIfBuilder;
+        } as IIfBuilder<any>;
     };
 };

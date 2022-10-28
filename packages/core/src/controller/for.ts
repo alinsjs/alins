@@ -12,6 +12,7 @@ import {
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
 import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
+import {TControllerArg, TControllerType} from './controller';
 
 // export interface IForController {
 //     <T>(
@@ -44,13 +45,13 @@ export interface IForBuilder extends IBuilderParameter{
 }
 
 
-export interface IForController<K extends 'comp' | 'builder' = 'builder'> {
+export interface IForController<K extends TControllerType = 'builder'> {
     <T>(list: IReactWrap<T>[]):
-        ((fn: IForCallback<T, K>) => IForBuilder);
+        ((fn: IForCallback<K, T>) => IForBuilder);
 }
 
-export interface IForCallback<T = any, K = 'builder'> {
-    (item: IReactWrap<T>, index: IReactItem<number>): (K extends 'builder' ? TBuilderArg : TCompBuilderArg)[];
+export interface IForCallback<K extends TControllerType, T = any> {
+    (item: IReactWrap<T>, index: IReactItem<number>): TControllerArg<K>;
 }
 
 export const forController: IForController = function (this: IBuilderConstructor | ICompConstructor, list) {
@@ -80,8 +81,7 @@ export const forController: IForController = function (this: IBuilderConstructor
         p[subscribe]((newValue, oldValue, i) => {
             // v: reaction
             const oldIndex = list.indexOf(newValue); // 仅仅是移动了位置的元素
-            console.warn('oldIndex=', oldIndex, '-oldValue=', oldValue?.value, '-new index', i, '-new Value', newValue?.value);
-            debugger;
+            // console.warn('oldIndex=', oldIndex, '-oldValue=', oldValue?.value, '-new index', i, '-new Value', newValue?.value);
             // todo bugfix list.unshift(0);
             if (oldIndex !== -1) {
                 const oldDom = doms[i];
