@@ -104,5 +104,3 @@ function concatValue (iu: boolean, v: string | number, tail: string) {
 function createCssITail (i?: TI) {
     return i === IMP ? '!important' : '';
 }
-
-document.body.style.
