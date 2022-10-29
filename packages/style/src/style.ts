@@ -63,7 +63,6 @@ export const style: IStyleConstructor = Object.assign((
                 return {scopeTemplate: '', scopeReactions: []};
             }
             // 交给外部处理
-            debugger;
             return {
                 scopeTemplate: compateStaticStyle(scopeTemplate),
                 scopeReactions

@@ -12,6 +12,7 @@ import {ISwitchController, switchController} from './switch';
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
 import {IElementBuilder, mountSingleChild, transformBuilderToDom} from '../element/transform';
+import {insertBefore, removeDom} from '../builder/dom-proxy';
 
 type INode = Node | HTMLElement;
 export type IControllerDom = INode | DocumentFragment;
@@ -61,9 +62,9 @@ export function getControllerDoms (builder: TControllerBuilder): {
 
 export function removeControllerDoms (children: HTMLElement | HTMLElement[]) {
     if (children instanceof Array) {
-        children.forEach(i => {i.remove();});
+        children.forEach(i => {removeDom(i);});
     } else {
-        children.remove();
+        removeDom(children);
     }
 }
 
@@ -75,12 +76,12 @@ export function replaceControllerDoms (
     const parent = target.parentElement;
     if (!parent) throw new Error('parent not found');
     
-    parent.insertBefore(parseHTMLElement(newDoms), target);
-    (oldDoms instanceof Array) ? oldDoms.forEach(n => {n.remove();}) : oldDoms.remove();
+    insertBefore(parent, parseHTMLElement(newDoms), target);
+    removeControllerDoms(oldDoms);
 }
 
 export function parseHTMLElement (
-    el: HTMLElement[]|HTMLElement|Node
+    el: HTMLElement[]|INode
 ): IControllerDom {
     if (el instanceof Array) {
         const frag = document.createDocumentFragment();

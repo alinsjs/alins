@@ -25,6 +25,8 @@ import {
     IStyleBuilder, IStyleAtoms, IPseudoBuilder,
 } from 'alins-utils/src/types/style.d';
 import {IForBuilder} from '../controller/for';
+import {ILifes, IUpdatedCallback, LifeMountedCollector, mountLifes} from '../builder/life';
+import {appendFragment} from '../builder/dom-proxy';
 
 export type TElementChild = null | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
@@ -47,6 +49,7 @@ export interface IElement {
     show?: TReactionItem;
     styles: (IStyleBuilder | IStyleAtoms)[];
     pseudos: IPseudoBuilder[];
+    lifes: ILifes;
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -108,7 +111,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     for (let i = 0; i < config.binding.length; i++) {
         const binding = config.binding[i];
         // 提取表达式中没有binding的属性 merge到config中
-        const domInfo = applyDomInfoReaction(dom, binding);
+        const domInfo = applyDomInfoReaction(dom, binding, config.lifes.updated?.exe() as IUpdatedCallback);
         mergeDomInfo(config, domInfo);
     }
     
@@ -142,6 +145,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         // });
     }
 
+
     for (let i = 0; i < config.event.length; i++) {
         config.event[i].exe(dom);
     };
@@ -153,8 +157,15 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     // // ! 缓存节点 直接clone使用 可以提升性能
     // console.log((Memo.funcProcInstance as any).name);
     // debugger;
+    mountLifes(dom, config.lifes);
+    LifeMountedCollector.collectMounted(dom, config.lifes.mounted);
+    config.lifes.created?.exe()(dom);
     return dom;
 }
+
+document.body.addEventListener('DOMNodeRemoved', () => {
+    
+});
 
 export function mountChildrenDoms (
     parent: HTMLElement,
@@ -164,7 +175,7 @@ export function mountChildrenDoms (
     for (const item of children) {
         frag.appendChild(mountSingleChild(item));
     }
-    parent.appendChild(frag);
+    appendFragment(parent, frag);
 }
 
 export function mountSingleChild (
@@ -190,7 +201,6 @@ export function mountSingleChild (
             case 'model':
                 frag.appendChild(item.exe()); break;
         }
-        // todo life mounted
     }
     return frag;
 }
@@ -204,7 +214,9 @@ function isInputNode (node: HTMLElement | Text) {
     return typeof (node as any).value !== 'undefined' && (node as HTMLElement).tagName !== 'BUTTON';
 }
 
-function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomInfoData {
+function applyDomInfoReaction (
+    dom: HTMLElement, binding: IReactBinding, updated?: IUpdatedCallback
+): IDomInfoData {
     const {template, reactions} = binding;
     const replacement = join(template, createReplacement);
     // const
@@ -217,8 +229,9 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
         const results = extractReplacement(textContent);
         if (results) {
             if (isInputNode(dom)) {
-                (dom as any).value = reactiveTemplate(textContent, reactions, (content) => {
+                (dom as any).value = reactiveTemplate(textContent, reactions, (content, oldContent) => {
                     (dom as any).value = content;
+                    updated?.({node: dom, type: 'value', value: content, prevValue: oldContent});
                 }, false);
             } else {
                 const texts = textContent.split(ReplaceExp);
@@ -231,8 +244,9 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
                     const reaction = transformToReaction(reactionItem);
                     // ! 关键代码
                     const node = document.createTextNode(
-                        reaction[subscribe]((v) => {
+                        reaction[subscribe]((v, v2) => {
                             node.textContent = v;
+                            updated?.({node, type: 'text', value: v, prevValue: v2});
                         })
                     );
                     dom.appendChild(node);
@@ -260,6 +274,7 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
             data.className.push(
                 reactiveTemplate(name, reactions, (content, oldContent) => {
                     dom.classList.replace(oldContent, content);
+                    updated?.({node: dom, type: 'className', value: content, prevValue: oldContent});
                 }, true)
             );
         });
@@ -277,10 +292,12 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
                 dom.removeAttribute(oldContent);
                 dom.setAttribute(content, value);
                 key = content;
+                updated?.({node: dom, key, type: 'attribute-key', value: content, prevValue: oldContent});
             }, true);
-            value = reactiveTemplate(info.attributes[k], reactions, (content) => {
+            value = reactiveTemplate(info.attributes[k], reactions, (content, oldContent) => {
                 dom.setAttribute(key, content);
                 value = content;
+                updated?.({node: dom, key, type: 'attribute-value', value: content, prevValue: oldContent});
             });
             if (!data.attributes) data.attributes = {};
             data.attributes[key] = value;
@@ -288,8 +305,9 @@ function applyDomInfoReaction (dom: HTMLElement, binding: IReactBinding): IDomIn
     }
 
     if (info.id) {
-        const id = reactiveTemplate(info.id, reactions, (content) => {
+        const id = reactiveTemplate(info.id, reactions, (content, oldContent) => {
             dom.id = content;
+            updated?.({node: dom, type: 'id', value: content, prevValue: oldContent});
         });
         dom.id = id;
     }
@@ -313,6 +331,7 @@ export function createElement ({
     _if,
     styles = [],
     pseudos = [],
+    lifes = {},
 }: IElementOptions): IElement {
     return {
         tag,
@@ -327,5 +346,6 @@ export function createElement ({
         _if,
         styles,
         pseudos,
+        lifes,
     };
 }

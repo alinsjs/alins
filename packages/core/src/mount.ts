@@ -3,6 +3,7 @@
  * @Date: 2022-10-11 16:16:59
  * @Description: Coding something
  */
+import {LifeMountedCollector} from './builder/life';
 import {TChild, mountChildrenDoms} from './element/transform';
 
 export function mount (...builders: (string | Element | TChild)[]) {
@@ -14,5 +15,7 @@ export function mount (...builders: (string | Element | TChild)[]) {
     
     if (parent instanceof HTMLElement) {builders.shift();}
     else parent = document.body;
+    LifeMountedCollector.mountStart();
     mountChildrenDoms(parent as HTMLElement, builders as TChild[]);
+    LifeMountedCollector.mountFinish();
 }

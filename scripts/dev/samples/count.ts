@@ -3,6 +3,7 @@
  * @Date: 2022-10-20 23:41:34
  * @Description: Coding something
  */
+import {life} from 'packages/core/src/builder/life';
 import {
     button, div, comp, IComponent,
     IComponentOptions, click, $
@@ -29,8 +30,11 @@ function CountComp () {
 
 
 export function CountProps ({prop}: IComponentOptions) {
+
+    life.mounted(() => {
+
+    });
     return div(
-        // life(),
         $`:Count is ${prop.count}`
     );
 }

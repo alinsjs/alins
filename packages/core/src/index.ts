@@ -20,6 +20,13 @@ import {
     click, mousedown, mouseenter, mouseleave, mousemove, mouseover, mouseup, touchend, touchmove, touchstart, wheel, $input, change
 } from './event/on';
 
+import {
+    life, mounted, updated, created, appended, removed
+} from './builder/life';
+export {
+    life, mounted, updated, created, appended, removed
+} from './builder/life';
+
 export {mount} from './mount';
 
 export {
@@ -46,5 +53,6 @@ export default {
     react, computed, watch, createProxy, $,
     comp, prop, slot, event,
     events, on,
-    click, mousedown, mouseenter, mouseleave, mousemove, mouseover, mouseup, touchend, touchmove, touchstart, wheel, $input, change
+    click, mousedown, mouseenter, mouseleave, mousemove, mouseover, mouseup, touchend, touchmove, touchstart, wheel, $input, change,
+    life, mounted, updated, created, appended, removed
 };

@@ -13,6 +13,7 @@ import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
 import {ICompConstructor, IComponentBuilder} from '../comp/comp';
 import {getControllerDoms, removeControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
+import {insertBefore} from '../builder/dom-proxy';
 
 // export interface IForController {
 //     <T>(
@@ -80,10 +81,9 @@ export const forController: IForController = function (this: IBuilderConstructor
         const p = list as any as IReactObject<any>;
         p[subscribe]((newValue, oldValue, i) => {
             // v: reaction
-            const oldIndex = list.indexOf(newValue); // 仅仅是移动了位置的元素
+            const oldIndex = list.indexOf(newValue);
             // console.warn('oldIndex=', oldIndex, '-oldValue=', oldValue?.value, '-new index', i, '-new Value', newValue?.value);
-            // todo bugfix list.unshift(0);
-            if (oldIndex !== -1) {
+            if (oldIndex !== -1) { // 仅仅是移动了位置的元素
                 const oldDom = doms[i];
                 doms[i] = doms[oldIndex];
                 doms[oldIndex] = oldDom;
@@ -102,7 +102,7 @@ export const forController: IForController = function (this: IBuilderConstructor
                         doms[i] = children;
                         const item = doms[i + 1];
                         const after = item instanceof Array ? item[0] : item;
-                        mount.parentElement?.insertBefore(dom, after || mount);
+                        insertBefore(mount.parentElement as HTMLElement, dom, after || mount);
                     }
                 }
             }

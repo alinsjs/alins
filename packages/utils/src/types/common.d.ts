@@ -16,5 +16,5 @@ export interface IBuilderParameter {
         'for' | 'if' | 'show' | 'model' | 'switch' |
         'on' |
         // 组件
-        'event' | 'prop' | 'slot';
+        'event' | 'prop' | 'slot' | 'life';
 }

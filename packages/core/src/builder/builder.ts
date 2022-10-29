@@ -10,8 +10,9 @@ import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from 
 import {countBindingValue} from 'alins-reactive';
 import {IReactBinding, IReactBuilder} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common';
+import {ILifeBuilder, ILifes} from './life';
 
-export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild | IBuildFunction; // (IElementBuilder|IElementBuilder[])[];
+export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild | IBuildFunction | ILifeBuilder; // (IElementBuilder|IElementBuilder[])[];
 
 export type IBuildFunction = () => TBuilderArg[];
 export interface IBuilder extends IControllers, IBuilderConstructor {
@@ -36,6 +37,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
     const elementOptions: IElementOptions & {
         children: TChild[],
         binding: IReactBinding[],
+        lifes: ILifes,
     } = {
         tag,
         children: [],
@@ -43,7 +45,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         binding: [],
         styles: [],
         pseudos: [],
-        domInfo: ''
+        domInfo: '',
+        lifes: {},
     };
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
@@ -79,6 +82,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                     elementOptions.styles?.push(item); break;
                 case 'pseudo':
                     elementOptions.pseudos?.push(item); break;
+                case 'life':
+                    elementOptions.lifes[item.name] = item; break;
                 default: console.warn('unkonwn builder', item); break;
             }
         } else if (typeof item === 'function') {
