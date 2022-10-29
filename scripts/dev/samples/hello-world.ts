@@ -6,7 +6,7 @@
 
 import {
     button, div, i, img, input, span, text,
-    comp, event, prop, slot, click, $
+    comp, event, prop, slot, click, $, IComponentOptions
 } from '../alins';
 
 
@@ -63,7 +63,7 @@ export function Parent () {
     );
 }
 
-function HelloWorld ({prop, slot, event}: any) {
+function HelloWorld ({props, slots, events}: IComponentOptions) {
     const onClick = () => {
         console.log('onClick');
     };
@@ -76,15 +76,15 @@ function HelloWorld ({prop, slot, event}: any) {
         data.src = 'https://img0.baidu.com/it/u=3380674861,1672768141&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400';
     };
     return div('.flex-4-num1', click(onClick),
-        span('.flex-4-img', click(event.test),
-            $`Hello ${data.msg} ${prop.value}`, // todo fix
+        span('.flex-4-img', click(events.test),
+            $`Hello ${data.msg} ${props.value}`, // todo fix
             img('aa[width=100][src=https://shiyix.cn/wx-pay.png]'),
             img($`.item-img[width=100][alt=xxx][lazy=loaded][src=${data.src}]`)
         ),
         button('切换图片', click(switchSrc)),
         div('test-slot*********'),
         input.model(data.msg)(),
-        slot(data.msg),
+        slots(data.msg),
         div('.flex-4-num1-des'),
     );
 }

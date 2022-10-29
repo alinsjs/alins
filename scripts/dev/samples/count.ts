@@ -3,38 +3,24 @@
  * @Date: 2022-10-20 23:41:34
  * @Description: Coding something
  */
-import {life} from 'packages/core/src/builder/life';
 import {
     button, div, comp, IComponent,
-    IComponentOptions, click, $
+    IComponentOptions, click, $,
 } from '../alins';
 
-export const Count: IComponent = ({prop}) => {
-    // const count = $(0);
-    return [
-        div($`prop,${prop.value}`),
-        comp(CountComp),
-        comp(CountComp)
-    ];
-};
-function CountComp () {
+export const Count: IComponent = () => {
     const count = $(0);
     return [
-        // life(),
+        div($`Count is ${count}`),
         button(
             click(() => {count.value++;}),
             $`:Count is ${count}`
         ),
     ];
-}
+};
 
-
-export function CountProps ({prop}: IComponentOptions) {
-
-    life.mounted(() => {
-
-    });
+export function CountProps ({props}: IComponentOptions) {
     return div(
-        $`:Count is ${prop.count}`
+        $`:Count is ${props.value}`
     );
 }

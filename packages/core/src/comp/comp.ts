@@ -10,20 +10,20 @@ import {compControllers, ICompControllers} from '../controller/controller';
 import {TChild} from '../element/transform';
 import {IEvent, IEventFunc} from './event';
 import {IProp} from './prop';
-import {ISlot, TSlotElement} from './slot';
+import {ISlot, TSlotElement, TSlotFunction} from './slot';
 
 export type TCompArgs = IProp | IEvent | ISlot;
 export type TCompBuildFunc = () => TCompArgs[];
 
 export type TCompBuilderArg = IComponent | TCompArgs | TCompBuildFunc;
 
-export interface IComponentOptions {
-    prop: IJson<IComputedItem>;
-    event: IJson<IEventFunc>;
-    slot: TSlotElement;
+export interface IComponentOptions<T extends 'slot' | 'slots' = 'slot'> {
+    props: IJson<IComputedItem>;
+    events: IJson<IEventFunc>;
+    slots: T extends 'slot' ? TSlotFunction : TSlotElement;
 }
-export interface IComponent {
-    (options: IComponentOptions): TChild;
+export interface IComponent<T extends 'slot' | 'slots' = 'slot'> {
+    (options: IComponentOptions<T>): TChild;
 }
 
 export type TCompArg = string; // prop event slot
@@ -43,10 +43,10 @@ export const comp: ICompConstructor = Object.assign(((...args: TCompBuilderArg[]
 
     return {
         exe () {
-            const options: IComponentOptions = {
-                prop: {},
-                event: {},
-                slot: {}
+            const options: IComponentOptions<any> = {
+                props: {},
+                events: {},
+                slots: {}
             };
             let component: IComponent | null = null;
             for (let i = 0; i < args.length; i++) {
@@ -59,9 +59,9 @@ export const comp: ICompConstructor = Object.assign(((...args: TCompBuilderArg[]
                     }
                 } else if (item) {
                     switch (item.type) {
-                        case 'prop': options.prop = item.exe(); break;
-                        case 'event': options.event = item.exe(); break;
-                        case 'slot': options.slot = item.exe(); break;
+                        case 'prop': options.props = item.exe(); break;
+                        case 'event': options.events = item.exe(); break;
+                        case 'slot': options.slots = item.exe(); break;
                     }
                 }
             }
