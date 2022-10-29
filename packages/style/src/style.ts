@@ -21,7 +21,7 @@ export interface IStyleConstructor extends IStyleAtoms{
     (style: string): IStyleBuilder;
 }
 
-export const OnlyNumberAttrs = ['zIndex', 'opacity', 'flex'];
+export const OnlyNumberAttrs = ['zIndex', 'opacity', 'flex', 'flexGrow', 'flexShrink'];
 
 export const style: IStyleConstructor = Object.assign((
     a1: TStyleJsonValue | TemplateStringsArray | string,

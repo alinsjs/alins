@@ -65,7 +65,9 @@ export function StyleComp () {
         div('555',
             style.borderBottom($`${num}px solid #000`)
                 .width(() => num.value + 2)
-                // .animation(keyframe)
+                .cursorUrl('aaa', '111')
+                .fixed().top(10),
+            // .animation(keyframe)
         ),
 
         div('666', pseudo('nth-child', num)(

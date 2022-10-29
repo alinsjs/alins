@@ -6,18 +6,23 @@
 
 
 import {
+    $,
     countBindingValue,
 } from 'alins-reactive';
-import {IReactBuilder, IReactItem} from 'alins-utils/src/types/react.d';
+import {IReactBuilder, IReactItem, TReactionItem} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common.d';
-import {IStyleAtoms, IStyleArgsAtoms, INoneArgsAtoms, TStyleValue, TUnit, TI} from 'alins-utils/src/types/style.d';
+import {IStyleAtoms, IStyleArgsAtoms, INoneArgsAtoms, TStyleValue, TUnit, TI, IComposeStyle} from 'alins-utils/src/types/style.d';
 import {OnlyNumberAttrs, style} from './style';
 
 const IMP = 'i';
 
 export const DefaultUint = 'px';
 
-type TAtomFunc = (...args: any[]) => IStyleAtoms
+type TAtomFunc = (...args: any[]) => IStyleAtoms;
+
+export const CompatibleStyleNames = [
+    'animation', 'transform', 'filter', 'transition',
+];
 
 export const StyleAtoms = (() => {
     const FixedValue: {
@@ -25,21 +30,34 @@ export const StyleAtoms = (() => {
     } = {
         borderBox: {boxSizing: 'border-box'},
         relative: {position: 'relative'},
+        absolute: {position: 'absolute'},
+        fixed: {position: 'fixed'},
     };
     const FixedKeys = Object.keys(FixedValue);
+    const ComposeValue: {
+        [prop in keyof IComposeStyle]: (...args: TReactionItem[]) => IJson<TReactionItem|IReactBuilder>
+    } = {
+        cursorUrl: (...args) => {
+            transformComposeArgs(args);
+            return {
+                cursor: $`url('${args[0]}'), ${args[1] || 'default'}`
+            };
+        }
+    };
+    const ComposeValueKeys = Object.keys(ComposeValue);
     const StyleNames: (keyof IStyleArgsAtoms)[] = [
         // none arg style
-        'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'fontSize', 'lineHeight', 'width', 'maxWidth', 'height', 'maxHeight', 'top', 'left',
+        'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'fontSize', 'lineHeight', 'top', 'left', 'bottom', 'right', 'borderRadius', 'textIndent',
+        // TNumberAutoStyle
+        'width', 'maxWidth', 'height', 'maxHeight', 'flexBasis',
         // pure number style
-        'opacity', 'zIndex', 'flex',
-        // fournumber style
+        'opacity', 'zIndex', 'flex', 'flexGrow', 'flexShrink',        // fournumber style
         'margin', 'padding',
         // optional string style
-        'textDecoration', 'position',
+        'textDecoration', 'position', 'alignItems', 'justifyContent', 'display', 'alignContent', 'backgroundAttachment', 'backgroundBlendMode', 'backgroundClip', 'backgroundOrigin', 'backgroundRepeat', 'boxSizing', 'clear', 'textAlign', 'wordWrap', 'whiteSpace', 'wordBreak', 'wordSpacing', 'verticalAlign', 'fontStyle', 'flexDirection', 'flexWrap', 'resize', 'textOverflow', 'float', 'visibility', 'overflow', 'overflowX', 'overflowY', 'cursor',
         // common string style
-        'border', 'borderBottom', 'fontWeight',
-        // color
-        'color', 'backgroundColor',
+        'border', 'borderBottom', 'borderTop', 'borderLeft', 'borderRight', 'boxShadow', 'fontFamily', 'fontWeight', 'animation', 'backgroundImage', 'backgroundSize', 'backgroundPosition', 'backdropFilter', 'filter', 'transform', 'transition', 'outline', 'clip', 'flexFlow', 'textShadow', 'content',        // color
+        'color', 'backgroundColor', 'borderColor',
     ];
     const AtomsBase: IJson<any> = {
         generate (start = 0) {
@@ -69,6 +87,12 @@ export const StyleAtoms = (() => {
             return this;
         };
         setAtomValue(name);
+    });
+    ComposeValueKeys.forEach(name => {
+        AtomsBase[name] = function (this: IStyleAtoms, ...args: any[]) {
+            Object.assign(this.result, (ComposeValue as any)[name](...args));
+            return this;
+        };
     });
     return Atoms as any as IStyleAtoms;
 })();
@@ -103,4 +127,11 @@ function concatValue (iu: boolean, v: string | number, tail: string) {
 
 function createCssITail (i?: TI) {
     return i === IMP ? '!important' : '';
+}
+
+function transformComposeArgs (args: any[]) {
+    args.forEach((arg, i) => {
+        if (typeof arg === 'string' || typeof arg === 'number')
+            args[i] = () => arg;
+    });
 }
