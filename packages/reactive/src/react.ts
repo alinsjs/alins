@@ -343,6 +343,18 @@ export function exeReactionValue (
     }
 }
 
+export function reactionValueToItem (value: TReactionValue<string|number>): TReactionItem<string|number> {
+    if (typeof value === 'string' || typeof value === 'number') { // 当json值是简单类型
+        return () => value;
+    } else if ((value as IJson).type === 'react' ) {
+        // 当json值是IReactBuilder react`1-${xx}`
+        return () => countBindingValue((value as IReactBuilder).exe({type: 'computed'}));
+    } else {
+        // 当json值是TReactionItem
+        return value as TReactionItem<number | string>;
+    }
+}
+
 declare global {
     // for ts declaration
     // interface Array<T> extends IReactObject<T>{

@@ -6,13 +6,14 @@
 
 
 import {
-    $,
     countBindingValue,
 } from 'alins-reactive';
-import {IReactBuilder, IReactItem, TReactionItem} from 'alins-utils/src/types/react.d';
+import {IReactBuilder, IReactItem} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common.d';
-import {IStyleAtoms, IStyleArgsAtoms, INoneArgsAtoms, TStyleValue, TUnit, TI, IComposeStyle} from 'alins-utils/src/types/style.d';
-import {OnlyNumberAttrs, style} from './style';
+import {IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI} from 'alins-utils/src/types/style.d';
+import {OnlyNumberAttrs, style} from '../style';
+import {createComposeValue} from './style-compose';
+import {createFixedValue} from './style-fixed';
 
 const IMP = 'i';
 
@@ -20,31 +21,8 @@ export const DefaultUint = 'px';
 
 type TAtomFunc = (...args: any[]) => IStyleAtoms;
 
-export const CompatibleStyleNames = [
-    'animation', 'transform', 'filter', 'transition',
-];
-
 export const StyleAtoms = (() => {
-    const FixedValue: {
-        [prop in keyof INoneArgsAtoms]: object;
-    } = {
-        borderBox: {boxSizing: 'border-box'},
-        relative: {position: 'relative'},
-        absolute: {position: 'absolute'},
-        fixed: {position: 'fixed'},
-    };
-    const FixedKeys = Object.keys(FixedValue);
-    const ComposeValue: {
-        [prop in keyof IComposeStyle]: (...args: TReactionItem[]) => IJson<TReactionItem|IReactBuilder>
-    } = {
-        cursorUrl: (...args) => {
-            transformComposeArgs(args);
-            return {
-                cursor: $`url('${args[0]}'), ${args[1] || 'default'}`
-            };
-        }
-    };
-    const ComposeValueKeys = Object.keys(ComposeValue);
+
     const StyleNames: (keyof IStyleArgsAtoms)[] = [
         // none arg style
         'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'fontSize', 'lineHeight', 'top', 'left', 'bottom', 'right', 'borderRadius', 'textIndent',
@@ -59,6 +37,7 @@ export const StyleAtoms = (() => {
         'border', 'borderBottom', 'borderTop', 'borderLeft', 'borderRight', 'boxShadow', 'fontFamily', 'fontWeight', 'animation', 'backgroundImage', 'backgroundSize', 'backgroundPosition', 'backdropFilter', 'filter', 'transform', 'transition', 'outline', 'clip', 'flexFlow', 'textShadow', 'content',        // color
         'color', 'backgroundColor', 'borderColor',
     ];
+
     const AtomsBase: IJson<any> = {
         generate (start = 0) {
             return style(this.result).generate(start);
@@ -74,6 +53,7 @@ export const StyleAtoms = (() => {
             return Object.assign({result: {}}, AtomsBase)[name](...args);
         };
     };
+
     StyleNames.forEach(name => {
         AtomsBase[name] = function (this: IStyleAtoms, ...args: any[]) {
             this.result[name] = transformAtomStyleValue.apply(null, [name, ...args]);
@@ -81,14 +61,18 @@ export const StyleAtoms = (() => {
         };
         setAtomValue(name);
     });
-    FixedKeys.forEach(name => {
+
+    const FixedValue = createFixedValue();
+    Object.keys(FixedValue).forEach(name => {
         AtomsBase[name] = function (this: IStyleAtoms) {
             Object.assign(this.result, (FixedValue as any)[name]);
             return this;
         };
         setAtomValue(name);
     });
-    ComposeValueKeys.forEach(name => {
+
+    const ComposeValue = createComposeValue();
+    Object.keys(ComposeValue).forEach(name => {
         AtomsBase[name] = function (this: IStyleAtoms, ...args: any[]) {
             Object.assign(this.result, (ComposeValue as any)[name](...args));
             return this;
@@ -127,11 +111,4 @@ function concatValue (iu: boolean, v: string | number, tail: string) {
 
 function createCssITail (i?: TI) {
     return i === IMP ? '!important' : '';
-}
-
-function transformComposeArgs (args: any[]) {
-    args.forEach((arg, i) => {
-        if (typeof arg === 'string' || typeof arg === 'number')
-            args[i] = () => arg;
-    });
 }

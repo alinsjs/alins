@@ -5,7 +5,7 @@
  */
 
 import {IBuilderParameter, IJson} from './common.d';
-import {IReactBuilder, TComputedFunc, TReactionItem, TReactionValue} from './react.d';
+import {TComputedFunc, TReactionItem, TReactionValue} from './react.d';
 
 export interface IStyleBuilder extends IBuilderParameter{
   exe(parent: HTMLElement): void;
@@ -53,7 +53,7 @@ export interface INoneArgsAtoms {
 }
 
 export interface IComposeStyle {
-  cursorUrl: (...args: (TReactionItem|string|number)[]) => IStyleAtoms;
+  cursorUrl: (...args: TReactionValue<string|number>[]) => IStyleAtoms;
 }
 
 export interface IStyleArgsAtoms {
@@ -155,7 +155,6 @@ export interface IStyleArgsAtoms {
   color: TColorStyle;
   backgroundColor: TColorStyle;
   borderColor: TColorStyle;
-
 }
 
 export interface IStyleAtoms extends IStyleArgsAtoms, INoneArgsAtoms, IComposeStyle, IStyleBuilder{

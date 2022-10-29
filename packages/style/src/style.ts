@@ -11,8 +11,9 @@ import {
 import {TReactionItem, TReactionValue} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common.d';
 import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
-import {DefaultUint, StyleAtoms} from './style-atom';
+import {DefaultUint, StyleAtoms} from './style-func/style-atom';
 import {countBindingValue, exeReactionValue, parseReactionValue} from 'alins-reactive/src/react';
+import {compateKVStyle, compateStaticStyle} from './style-func/style-compatiable';
 
 type TStyleJsonValue = IJson<TReactionValue<string|number>>
 export interface IStyleConstructor extends IStyleAtoms{
@@ -62,16 +63,15 @@ export const style: IStyleConstructor = Object.assign((
                 return {scopeTemplate: '', scopeReactions: []};
             }
             // 交给外部处理
+            debugger;
             return {
-                scopeTemplate,
+                scopeTemplate: compateStaticStyle(scopeTemplate),
                 scopeReactions
             };
         },
         exe (dom: HTMLElement) {
             const beforeStyle = dom.getAttribute('style') || '';
             let newStyle = beforeStyle;
-
-            
             if (typeof a1 === 'string') {
                 newStyle += a1; // 静态style
             } else if (isStringTemplateArray(a1)) {
@@ -96,7 +96,7 @@ export const style: IStyleConstructor = Object.assign((
             } else {
                 console.warn('Invalid style arguments');
             }
-            dom.setAttribute('style', newStyle);
+            dom.setAttribute('style', compateStaticStyle(newStyle));
         },
         mount (dom: HTMLElement|string) {
             if (typeof dom === 'string') dom = document.querySelector(dom) as HTMLElement;
@@ -167,7 +167,9 @@ function reactiveStyle (style: IJson<string>, styles: IJson<string>, reactions: 
 
 function setDomStyle (style: IJson<string>, key: string, value: number | string) {
     // console.log(key, transformStyleValue(key, value));
-    style[key] = transformStyleValue(key, value);
+    const v = transformStyleValue(key, value);
+    style[key] = v;
+    compateKVStyle(style, key, v);
 }
 
 function concatStyleValue (key: string, value: number | string) {

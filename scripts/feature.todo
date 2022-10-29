@@ -425,7 +425,7 @@
               "content": "样式兼容 添加前缀",
               "id": 1666487369267,
               "level": "success",
-              "done": false
+              "done": true
             }
           },
           {
@@ -556,6 +556,16 @@
           "level": "default",
           "done": false
         }
+      },
+      {
+        "key": 1667035030023,
+        "children": [],
+        "todo": {
+          "content": "生命周期",
+          "id": 1667035030023,
+          "level": "default",
+          "done": false
+        }
       }
     ],
     "expandKeys": [
@@ -565,7 +575,8 @@
       1665494260180,
       1665835013054,
       1665494169984,
-      1666088897525
+      1666088897525,
+      1665494213348
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",

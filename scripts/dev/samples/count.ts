@@ -19,6 +19,7 @@ export const Count: IComponent = ({prop}) => {
 function CountComp () {
     const count = $(0);
     return [
+        // life(),
         button(
             click(() => {count.value++;}),
             $`:Count is ${count}`
@@ -29,6 +30,7 @@ function CountComp () {
 
 export function CountProps ({prop}: IComponentOptions) {
     return div(
+        // life(),
         $`:Count is ${prop.count}`
     );
 }
