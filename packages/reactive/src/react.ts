@@ -91,6 +91,8 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
 }
 // 初始化响应数据
 export function react<T>(data: T): IReactWrap<T>;
+// const v: boolean = false;
+// const d = react(v as boolean);
 
 // 生成响应数据绑定
 export function react(ts: TemplateStringsArray, ...reactions: (TReactionItem|IStyleBuilder)[]): IReactBuilder;
@@ -161,36 +163,6 @@ export function countReaction (item: TReactionItem) {
 export function countBindingValue (binding: IReactBindingTemplate) {
     return join(binding.template, binding.reactions.map(r => countReaction(r)));
 }
-
-// export function createBindingTemplateFactory (): IReactBindingTemplateFactory {
-//     const data: IReactBindingTemplate = {
-//         template: [],
-//         reactions: [],
-//     };
-//     return {
-//         add (d) {
-//             data.template.push(...d.template);
-//             data.reactions.push(...d.reactions);
-//         },
-//         get () {
-//             return data;
-//         },
-//         reactive (
-//             onchange,
-//             needOldContent
-//         ) {
-//             return reactiveTemplate(
-//                 data.template,
-//                 data.reactions,
-//                 onchange,
-//                 needOldContent
-//             );
-//         },
-//         computed () {
-//             return computedBindingTemplate(data);
-//         }
-//     };
-// }
 
 export function isSimpleValue (v: any) {
     return typeof v !== 'object' || v === null;

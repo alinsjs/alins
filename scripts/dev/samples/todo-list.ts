@@ -3,11 +3,15 @@
  * @Date: 2022-10-20 23:54:34
  * @Description: Coding something
  */
-import {button, div, input, style, click, IReactItem, $} from '../alins';
+import {button, div, input, style, click, $, IReactItem} from '../alins';
 
 export function todoList () {
+    const v = $(false);
+    const d = $({data: false});
+    d.data.value = 1 as any as boolean;
+    v.value = true;
     const edit = $('');
-    const list = $<{content: string, done: boolean}[]>([]);
+    const list = $([{content: '1', done: false}]);
     const addItem = () => {
         list.push({content: edit.value, done: false});
         edit.value = '';

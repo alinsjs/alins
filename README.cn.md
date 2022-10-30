@@ -142,7 +142,7 @@ export function todoList () {
     return [
         input.model(edit),
         button('提交', click(addItem)),
-        div('.todo-list', $`.todo-${edit}`,
+        div('.todo-list',
             div.for(list)((item, index) => [
                 itemStyle(item),
                 $`${() => index.value + 1}:${item.content}`,

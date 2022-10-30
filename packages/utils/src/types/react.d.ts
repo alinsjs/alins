@@ -47,11 +47,24 @@ export interface IReactObject<T = any> extends IReactBase<T> {
   // get [json](): T;
   [updateFirstLevel](): void;
 }
-export type IReactWrap<T> = T extends object ? ({
+
+/*
+  ! 针对一个可能是ts的很奇怪的bug
+  const list = $([{content: '1', done: false}]);
+  done 会被 推断了 IReactItem<true> | IReactItem<false>
+  而不是 IReactItem<boolean> 从而对其赋值时会导致出现ts报错
+  ! 不能将类型“boolean”分配给类型“IReactItem<false> | IReactItem<true>”。
+*/
+type TParseBoolean<T> = T extends object|string|undefined|symbol|number|Function ? T: boolean;
+
+type IReactJson<T> = T extends Array<infer K> ? (
+  Array<IReactWrap<K>>
+): ({
   [prop in (keyof T)]: IReactWrap<T[prop]>;
-} & IReactObject<T>
-  & IJson // ! & IJson 为了绑定的时候不报类型错误
-): IReactItem<T>;
+} & IJson) // ! & IJson 为了绑定的时候不报类型错误
+
+
+export type IReactWrap<T> = T extends object ? (IReactJson<T> & IReactObject<T>) : IReactItem<TParseBoolean<T>>;
 
 export type TOnChangeFunc = (content: string, oldContent: string) => void;
 
