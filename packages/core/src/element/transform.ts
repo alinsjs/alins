@@ -55,6 +55,7 @@ export interface IElement {
 export interface IElementBuilder extends IBuilderParameter {
     type: 'builder'; // todo comp
     exe(): IElement;
+    mount(parent?: string | HTMLElement): void;
 }
 
 
@@ -271,12 +272,17 @@ function applyDomInfoReaction (
     if (info.className) {
         info.className.forEach(name => {
             if (!data.className) data.className = [];
-            data.className.push(
-                reactiveTemplate(name, reactions, (content, oldContent) => {
+            const value = reactiveTemplate(name, reactions, (content, oldContent) => {
+                if (!oldContent) {
+                    dom.classList.add(content);
+                } else if (!content) {
+                    dom.classList.remove(oldContent);
+                } else {
                     dom.classList.replace(oldContent, content);
-                    updated?.({node: dom, type: 'className', value: content, prevValue: oldContent});
-                }, true)
-            );
+                }
+                updated?.({node: dom, type: 'className', value: content, prevValue: oldContent});
+            }, true);
+            if (value)data.className.push(value);
         });
     }
 

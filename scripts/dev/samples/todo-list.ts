@@ -16,7 +16,6 @@ export function todoList () {
     const finishItem = (item: any) => {
         item.done = !item.done.value;
     };
-    const a = input.model(edit);
     return div(
         input.model(edit),
         button('提交', click(addItem)),

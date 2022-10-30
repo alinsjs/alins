@@ -59,7 +59,7 @@ export const pseudo: IPseudoConstructor = (name, arg) => {
         } else {
         }
 
-        const setStyle = insertStyle(document.head);
+        const setStyle = insertStyle();
         
         return {
             type: 'pseudo',

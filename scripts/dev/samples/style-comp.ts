@@ -3,8 +3,11 @@
  * @Date: 2022-10-23 08:46:52
  * @Description: Coding something
  */
-import {pseudo} from 'packages/style/src/pseudo';
-import {div, $, css, style} from '../alins';
+import {attr, cls} from 'packages/core/src/builder/dom-info';
+import {
+    div, $, css, style, computed, pseudo,
+    button, hover, click, input
+} from '../alins';
 
 function createCss () {
     const num = $(30);
@@ -27,6 +30,42 @@ function createCss () {
             ['.cc', simpleStyle]
         ],
     ).mount();
+}
+
+function initCss (num: any) {
+    css('.main')(
+        style({
+            color: '#888',
+            marginLeft: $`${num}px`,
+        }),
+        ['&.active', style.fontSize(num)],
+        ['.child', style.marginTop(num)]
+    ).mount();
+}
+
+export function StyleDemo () {
+    const num = $(30);
+    const active = $(false);
+
+    initCss(num);
+
+    return div(`parent.main`,
+        cls({
+            'aaa': active,
+            'bbb': true,
+        }),
+        attr({
+            aaa: '',
+            bbb: 1,
+            ccc: active
+        }),
+        $`.${() => active.value ? 'active' : ''}`,
+        hover('color: #f44'),
+        // $`${() => active.value ? '.active' : ''}`,
+        input.model(num, 'number'),
+        button('toggle active', click(() => active.value = !active.value)),
+        div('child.child'),
+    );
 }
 
 export function StyleComp () {
@@ -66,7 +105,7 @@ export function StyleComp () {
             style.borderBottom($`${num}px solid #000`)
                 .width(() => num.value + 2)
                 .cursorUrl('aaa', '111')
-                .fixed().top(10),
+                .relative().top(3),
             // .animation(keyframe)
         ),
 
@@ -77,15 +116,16 @@ export function StyleComp () {
         ), pseudo('hover')(
             style.borderBottom($`${num}px solid #000`),
             style.borderBox(),
-        ))
+        )),
 
-        // div('444',
-        //     style.borderBottom(reactBuilder), // $ builder
-        //     style.borderBottom(num), // IReactItem
-        //     style.borderBottom(compute), // IComputedItem
-        //     style.borderBottom(() => num.value + 1, 'px', 'i'), // TComputedFunc
-        //     style.borderBottom(reactBuilder).width(),
-        // )
+        div('444',
+            style.borderBottom($`${num}px solid`) // react builder
+                .fontSize(num) // IReactItem
+                .marginLeft(computed(() => num.value + 1)) // IComputedItem
+                .marginTop(() => num.value + 1, 'px', 'i') // TComputedFunc
+                .marginRight(10)
+                .marginBottom('10px')
+        )
         
     ];
 }

@@ -5,7 +5,7 @@
  */
 
 import {
-    button, div, i, img, input, span, text,
+    button, div, i, img, input, span,
     comp, event, prop, slot, click, $, IComponentOptions
 } from '../alins';
 
@@ -50,7 +50,7 @@ function ForDemo () {
 
 export function Parent () {
     return div('.parent',
-        text('Hello World'),
+        'Hello World',
         span('content'),
         comp(HelloWorld, prop({
             value: '11',

@@ -8,7 +8,7 @@ import {
 } from 'alins-reactive';
 import {mount} from './mount';
 import {
-    dom, text, doms,
+    dom, doms,
     a, div, h1, h2, h3, h4, h5, h6, button, canvas, code, pre, table, th, td, tr, video, audio, ol, select, option, p, i, iframe, img, input, label, li, span, textarea, form
 } from './builder/builder';
 import {comp} from './comp/comp';
@@ -48,7 +48,7 @@ export {IReactItem} from 'alins-utils/src/types/react.d';
 
 export default {
     mount,
-    dom, text, doms,
+    dom, doms,
     a, div, h1, h2, h3, h4, h5, h6, button, canvas, code, pre, table, th, td, tr, video, audio, ol, select, option, p, i, iframe, img, input, label, li, span, textarea, form,
     react, computed, watch, createProxy, $,
     comp, prop, slot, event,

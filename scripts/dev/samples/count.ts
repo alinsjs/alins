@@ -4,23 +4,22 @@
  * @Description: Coding something
  */
 import {
-    button, div, comp, IComponent,
-    IComponentOptions, click, $,
+    button, IComponent, comp, prop,
+    IComponentOptions, click, $, input, span,
 } from '../alins';
 
 export const Count: IComponent = () => {
     const count = $(0);
     return [
-        div($`Count is ${count}`),
-        button(
-            click(() => {count.value++;}),
-            $`:Count is ${count}`
-        ),
+        span('输入count'),
+        input.model(count, 'number'),
+        comp(CountProps, prop({value: count})),
+        button('add', click(() => {count.value++;})),
     ];
 };
 
 export function CountProps ({props}: IComponentOptions) {
-    return div(
-        $`:Count is ${props.value}`
+    return span(
+        $`Count is ${props.value}`
     );
 }

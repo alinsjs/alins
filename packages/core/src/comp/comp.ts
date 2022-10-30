@@ -6,6 +6,7 @@
 
 import {IJson, IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IComputedItem} from 'alins-utils/src/types/react.d';
+import {mount} from 'src/mount';
 import {compControllers, ICompControllers} from '../controller/controller';
 import {TChild} from '../element/transform';
 import {IEvent, IEventFunc} from './event';
@@ -30,6 +31,7 @@ export type TCompArg = string; // prop event slot
 export interface IComponentBuilder extends IBuilderParameter {
     exe(): TChild;
     type: 'comp';
+    mount(parent?: string | HTMLElement): void;
 }
 export interface ICompConstructor extends ICompControllers<'comp'> {
     (...args: (IComponent | TCompBuilderArg)[]): IComponentBuilder;
@@ -69,5 +71,8 @@ export const comp: ICompConstructor = Object.assign(((...args: TCompBuilderArg[]
             return component(options);
         },
         type: 'comp',
+        mount (parent: string | HTMLElement = 'body') {
+            mount(parent, this);
+        }
     } as IComponentBuilder;
 }), compControllers);

@@ -52,8 +52,8 @@ npm i alins
 ```
 
 ```js
-import {mount, div} from 'alins';
-mount(div('Hello World!'));
+import {div} from 'alins';
+div('Hello World!').mount();
 ```
 
 ### 0.2 cdn
@@ -61,8 +61,7 @@ mount(div('Hello World!'));
 ```html
 <script src="https://cdn.jsdelivr.net/npm/alins"></script>
 <script>
-  const {mount, div} = window.Alins;
-  mount(div('Hello World!'));
+  Alins.div('Hello World!').mount();
 </script>
 ```
 
@@ -83,112 +82,95 @@ mount(div('Hello World!'));
 ### 2.1. 计数器 [在线使用](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/count.js)
 
 ```js
-import {
-    button, div, comp, click, react
-} from 'alins';
-
-function main(){
-  mount(comp(Count));
-}
+import { button, comp, click, $, mount } from 'alins';
 
 function Count () {
-    const count = react(0);
+    const count = $(0);
     return button(
         click(() => {count.value++;}),
-        react`:Count is ${count}`
+        $`Count is ${count}`
     );
 }
+
+comp(Count).mount();
 ```
 
 ### 2.2. 父子组件传参+model指令 [在线使用](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/model.js)
 
 ```js
 import {
-    span, input, mount, div, react
-} from 'alins';
-import {css, style} from 'alins-style';
+    button, comp, prop, click, $, input, span,
+} from '../alins';
 
-function main() {
-    const size = react(12);
-    const color = react('#222');
+export function Count () {
+    const count = $(0);
+    return [
+        span('输入count'),
+        input.model(count, 'number'),
+        comp(CountProps, prop({value: count})),
+        button('add', click(() => {count.value++;})),
+    ];
+};
 
-    initCss(size, color);
-
-    mount([
-        div(
-            span('修改size:'),
-            input.model(size)(),
-        ),
-        div(
-            span('修改颜色:'),
-            input.model(color)(),
-        ),
-        div('文本', style({
-            color, fontSize: size
-        })),
-        div('.parent',
-            div('.child:文本2')
-        )
-    ]);
+export function CountProps ({props}) {
+    return span($`Count is ${props.value}`);
 }
 
-function initCss (size, color) {
-    return css('.parent',
-        style.borderBottom(react`${size}px solid ${color}`),
-        ['.child',
-            style({color, fontSize: size})
-        ],
-    );
-}
+comp(Count).mount();
 ```
 
 ## 3. todolist [在线使用](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/todo-list.js)
 
 ```js
-import {
-    button, input, div, comp, click, react
-} from 'alins';
+import {button, div, input, style, click, $} from '../alins';
 
-function main(){
-  mount(comp(todoList));
-}
-
-function todoList () {
-    const edit = react('');
-    const list = react([]);
+export function todoList () {
+    const edit = $('');
+    const list = $([]);
     const addItem = () => {
-        list.push({content: edit.value});
+        list.push({content: edit.value, done: false});
         edit.value = '';
     };
-    const removeItem = (index: IReactItem) => {
-        list.splice(index.value, 1);
-    };
-    return div(
-        input.model(edit)(),
-        button(':提交', click(addItem)),
-        div('.todo-list', react`.todo-${edit}`,
+    const removeItem = (index) => { list.splice(index.value, 1); };
+    const finishItem = (item) => { item.done = !item.done.value; };
+
+    const itemStyle = (item) => {
+        return style.textDecoration(() => item.done.value ? 'line-through' : 'none')
+            .color(() => item.done.value ? '#888' : '#222');
+    }
+
+    return [
+        input.model(edit),
+        button('提交', click(addItem)),
+        div('.todo-list', $`.todo-${edit}`,
             div.for(list)((item, index) => [
-                react`${() => index.value + 1}:${item.content}`,
-                button(':删除', click(removeItem).args(index)),
+                itemStyle(item),
+                $`${() => index.value + 1}:${item.content}`,
+                button('删除', click(removeItem).args(index)),
+                button(
+                    $`${() => item.done.value ? '撤销' : '完成'}`,
+                    click(finishItem).args(item)
+                ),
             ]),
         ),
-    );
+    ];
 }
+comp(todoList).mount();
 ```
 
 ## 4. css in js [在线使用](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/style.js)
 
 ```js
 import {
-    span, input, div, react, mount, comp
+    span, input, div, $, mount, comp
 } from 'alins';
 import {css, style} from 'alins';
 
 mount(comp(Style));
 
 function Style () {
-    const size = react(12);
-    const color = react('#222');
+    const size = $(12);
+    const color = $('#222');
 
     initCss(size, color);
 
@@ -212,7 +194,7 @@ function Style () {
 
 function initCss (size: any, color: any) {
     return css('.parent')(
-        style.borderBottom(react`${size}px solid ${color}`),
+        style.borderBottom($`${size}px solid ${color}`),
         ['.child',
             style({color, fontSize: size})
         ]
@@ -221,8 +203,7 @@ function initCss (size: any, color: any) {
 ```
 
 todolist:
+
 1. 自定义控制器
-2. 原子属性扩展
-3. ts声明完善
-4. 自定义渲染器
-5. 路由方案
+2. 自定义渲染器
+3. 路由方案
