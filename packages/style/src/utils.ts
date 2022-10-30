@@ -18,7 +18,7 @@ export const getAlinsDomId = (() => {
 })();
 
 export function createCssPool () {
-    const setStyle = insertStyle(document.head);
+    const setStyle = insertStyle();
     const css: string[] = [];
 
     return {
@@ -37,10 +37,11 @@ export function createCssPool () {
     };
 };
 
-export const DefaultCssPool = createCssPool();
+// export const DefaultCssPool = createCssPool();
 
 // ! 调试时关闭CSSStyleSheet
-const supporteAdoptedStyle = false; // typeof window.document.adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
+// const supporteAdoptedStyle = false;
+const supporteAdoptedStyle = typeof window.document.adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
 
 export function insertStyle (parent?: HTMLElement | null) {
     if (parent) {
