@@ -5,7 +5,7 @@
  */
 
 const execa = require('execa');
-const {resolveRootPath, initSinglePackageInfo} = require('./utils');
+const {resolveRootPath} = require('./utils');
 
 const dirName = process.argv[2];
  
@@ -28,7 +28,7 @@ async function build () {
 
 async function main () {
     await build();
-    initSinglePackageInfo(dirName, false);
+    // initSinglePackageInfo(dirName, false);
 }
 
 main();

@@ -55,8 +55,10 @@ function initSinglePackageInfo (dir, isDev = false) {
         package.main = 'src/index.ts';
         package.typings = 'src/index.ts';
     } else {
-        // package.main = `dist/${packageName}.min.js`;
-        // package.typings = `dist/${packageName}.d.ts`;
+        package.main = `dist/${packageName}.esm.js`;
+        package.typings = `dist/${packageName}.d.ts`;
+        package.unpkg = `dist/${packageName}.min.js`;
+        package.jsdelivr = `dist/${packageName}.min.js`;
     }
     package.publishConfig = {
         registry: 'https://registry.npmjs.org/',
