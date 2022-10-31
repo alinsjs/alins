@@ -5,6 +5,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const rootPkg = require('../../package.json');
 
 function resolveRootPath (str) {
     return path.resolve(__dirname, `../../${str}`);
@@ -61,11 +62,15 @@ function initSinglePackageInfo (dir, isDev = false) {
         package.unpkg = `dist/${packageName}.min.js`;
         package.jsdelivr = `dist/${packageName}.min.js`;
     }
+    ['description', 'author', 'repository', 'license'].forEach(name => {
+        rootPkg[name] = package[name];
+    });
     package.publishConfig = {
         registry: 'https://registry.npmjs.org/',
     };
     writeJsonIntoFile(package, packagePath);
     fs.copyFileSync(resolveRootPath('README.md'), resolvePacakgePath(`${dir}/README.md`));
+    fs.copyFileSync(resolveRootPath('LICENSE'), resolvePacakgePath(`${dir}/LICENSE`));
     fs.copyFileSync(resolveRootPath('scripts/helper/.npmignore'), resolvePacakgePath(`${dir}/.npmignore`));
 
     const tsconfig = require(resolveRootPath('tsconfig.json'));

@@ -17,7 +17,7 @@
     "init:dev-package": "node ./scripts/init-packages-info.js dev",
     "init:dep": "node scripts/init-learn-dep.js"
   },
-  "license": "",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.18.5",
     "@babel/preset-env": "^7.18.2",
