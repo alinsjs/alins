@@ -71,7 +71,7 @@ function initSinglePackageInfo (dir, isDev = false) {
         package.jsdelivr = `dist/${packageName}.min.js`;
     }
     ['description', 'author', 'repository', 'license'].forEach(name => {
-        rootPkg[name] = package[name];
+        package[name] = rootPkg[name];
     });
     package.publishConfig = {
         registry: 'https://registry.npmjs.org/',
