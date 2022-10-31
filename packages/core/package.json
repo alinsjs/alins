@@ -1,19 +1,19 @@
 {
     "name": "alins",
-    "version": "0.0.2",
-    "description": "lerna demo",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "version": "0.0.4",
+    "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
+    "main": "dist/alins.esm.js",
+    "typings": "dist/alins.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
         "build": "node ../../scripts/build/build.js core"
     },
-    "license": "",
+    "license": "MIT",
     "type": "module",
     "dependencies": {
-        "alins-reactive": "^0.0.2",
-        "alins-utils": "^0.0.2"
+        "alins-reactive": "^0.0.4",
+        "alins-utils": "^0.0.4"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
