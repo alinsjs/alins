@@ -1,6 +1,6 @@
 {
     "name": "alins-style",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "lerna demo",
     "main": "src/index.ts",
     "typings": "src/index.ts",
@@ -12,8 +12,8 @@
     "license": "",
     "type": "module",
     "dependencies": {
-        "alins-utils": "^0.0.1",
-        "alins-reactive": "^0.0.1"
+        "alins-reactive": "^0.0.2",
+        "alins-utils": "^0.0.2"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"

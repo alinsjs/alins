@@ -43,10 +43,11 @@ jobs:
           echo "::set-output name=version::${version}"
 
       - name: Build # build npm
-        run: npm run eb:build -- ${{ steps.version.outputs.version }}
-
-      - name: Build Docs
-        run: npm run eb:docs -- ${{ steps.version.outputs.version }}
+        run:
+          - npx lerna bootstrap
+          - npx lerna version ${{ steps.version.outputs.version }} --no-git-tag-version --force-publish --yes
+          - npx lerna run build
+          - npx lerna publish from-package --yes
 
       - name: Pages # github pages
         uses: JamesIves/github-pages-deploy-action@v4.3.0

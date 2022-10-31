@@ -11,6 +11,7 @@ import typescript from 'rollup-plugin-typescript2';
 // import yaml from '@rollup/plugin-yaml';
 // import commonjs from '@rollup/plugin-commonjs';
 import {uglify} from 'rollup-plugin-uglify';
+import json from '@rollup/plugin-json';
 import path from 'path';
 
 const {
@@ -54,6 +55,7 @@ const createBaseConfig = ({
         },
         plugins: [
             uglify(),
+            json(),
             // commonjs(),
             // yaml(),
             // vuePlugin(),
@@ -88,7 +90,7 @@ const config = [
             file: resolvePacakgePath(`${dirName}/dist/${packageName}.d.ts`),
             format: 'es',
         },
-        plugins: [dts()],
+        plugins: [dts(), json()],
     },
 ];
 

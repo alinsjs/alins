@@ -5,10 +5,7 @@
  * @Date: 2022-07-11 17:17:54
  * @Description: Coding something
  */
-import {computed} from './computed';
-import {createProxy} from './proxy';
 import {react} from './react';
-import {watch} from './watch';
 export * from 'alins-utils';
 
 export {
@@ -48,5 +45,4 @@ export {
 } from './proxy';
 
 export const $ = react;
-
-export default {react, computed, watch, createProxy, $};
+export {version} from '../package.json';

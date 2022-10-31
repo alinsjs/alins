@@ -5,3 +5,4 @@
  */
 export * from './utils';
 export * from './types/symbol';
+export {version} from '../package.json';

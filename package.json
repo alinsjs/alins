@@ -1,7 +1,7 @@
 {
   "name": "alins",
-  "version": "0.0.1",
-  "description": "All in js Web Framework, No JSX/Template/CSS",
+  "version": "0.0.2",
+  "description": "All in js Web Framework, No JSX/Template/CSS/vdom",
   "main": "index.js",
   "repository": "git@github.com:alinsjs/alins.git",
   "author": "tackchen <theajack@qq.com>",
@@ -24,6 +24,7 @@
     "@babel/preset-typescript": "^7.17.12",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^5.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@rollup/plugin-yaml": "^3.1.0",
