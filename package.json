@@ -15,7 +15,8 @@
     "info": "node ./scripts/info.js",
     "init:package": "node ./scripts/init-packages-info.js",
     "init:dev-package": "node ./scripts/init-packages-info.js dev",
-    "init:dep": "node scripts/init-learn-dep.js"
+    "init:dep": "node scripts/init-learn-dep.js",
+    "eb:purge": "node scripts/purge-cdn.js"
   },
   "license": "MIT",
   "devDependencies": {

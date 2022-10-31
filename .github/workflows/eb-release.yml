@@ -50,14 +50,19 @@ jobs:
           - npx lerna bootstrap
           - npx lerna version ${{ steps.version.outputs.version }} --no-git-tag-version --force-publish --yes
           - npx lerna run build
-          - todo commit
+          - git add .
+          - git commit -m "Lerna build"
           - npx lerna publish from-package --yes
+          - npm run init:dev-package -- ${{ steps.version.outputs.version }}
+          - git add .
+          - git commit -m "Lerna build"
+          - git push
 
-      - name: Pages # github pages
-        uses: JamesIves/github-pages-deploy-action@v4.3.0
-        with:
-          branch: gh-pages
-          folder: docs
+      # - name: Pages # github pages
+      #   uses: JamesIves/github-pages-deploy-action@v4.3.0
+      #   with:
+      #     branch: gh-pages
+      #     folder: docs
       
       - name: Release # release
         uses: release-drafter/release-drafter@v5
@@ -67,10 +72,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
-      - name: Publish # npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
-        run: npm run eb:publish -- ${{ steps.version.outputs.version }}
+      # - name: Publish # npm publish
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      #   run: npm run eb:publish -- ${{ steps.version.outputs.version }}
       
       - name: Purge # purge cdn
         run: npm run eb:purge -- ${{ steps.version.outputs.version }}

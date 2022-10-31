@@ -39,11 +39,18 @@ function buildPackageName (dir) {
     return `alins${dir === 'core' ? '' : `-${dir}`}`;
 }
 
-function initPackageInfo (isDev) {
-    const dirs = fs.readdirSync(resolveRootPath('packages'));
+function traverseDir (path, callback) {
+    const dirs = fs.readdirSync(path);
 
     dirs.forEach((dir) => {
         if (dir === '.DS_Store') return;
+
+        callback(dir);
+    });
+}
+
+function initPackageInfo (isDev) {
+    traverseDir(resolveRootPath('packages'), (dir) => {
         initSinglePackageInfo(dir, isDev);
     });
 }
@@ -98,4 +105,5 @@ module.exports = {
     initSinglePackageInfo,
     writeJsonIntoFile,
     writeStringIntoFile,
+    traverseDir,
 };
