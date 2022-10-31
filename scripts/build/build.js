@@ -28,6 +28,8 @@ async function build () {
 
 async function main () {
     await build();
+
+    // ! 放在后面做 否则会build失败
     // initSinglePackageInfo(dirName, false);
 }
 

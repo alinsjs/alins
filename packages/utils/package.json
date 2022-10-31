@@ -2,8 +2,8 @@
     "name": "alins-utils",
     "version": "0.0.2",
     "description": "lerna demo",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-utils.esm.js",
+    "typings": "dist/alins-utils.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
