@@ -56,7 +56,6 @@ jobs:
             npx lerna bootstrap
             npx lerna version ${{ steps.version.outputs.version }} --no-git-tag-version --force-publish --yes
             npm run build
-            npm run mod-npm-package
             git add .
             git commit -m "Lerna build ${{ steps.version.outputs.version }}"
             npx lerna publish from-package --yes
