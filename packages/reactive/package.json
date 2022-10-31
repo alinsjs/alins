@@ -2,8 +2,8 @@
     "name": "alins-reactive",
     "version": "0.0.2",
     "description": "lerna demo",
-    "main": "dist/alins-reactive.esm.js",
-    "typings": "dist/alins-reactive.d.ts",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {

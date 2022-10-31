@@ -47,6 +47,7 @@ jobs:
           - npx lerna bootstrap
           - npx lerna version ${{ steps.version.outputs.version }} --no-git-tag-version --force-publish --yes
           - npx lerna run build
+          - todo commit
           - npx lerna publish from-package --yes
 
       - name: Pages # github pages
