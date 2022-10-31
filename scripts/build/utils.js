@@ -3,6 +3,7 @@
  * @Date: 2022-10-23 20:12:31
  * @Description: Coding something
  */
+const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const rootPkg = require('../../package.json');
@@ -94,6 +95,21 @@ function writeStringIntoFile (str, filePath) {
     fs.writeFileSync(filePath, str, 'utf8');
 }
 
+async function exec (cmd) {
+    return new Promise(resolve => {
+        childProcess.exec(cmd, function (error, stdout, stderr) {
+            if (error) {
+                resolve({success: false, stdout, stderr});
+            } else {
+                resolve({
+                    success: true,
+                    stdout,
+                    stderr
+                });
+            }
+        });
+    });
+}
 module.exports = {
     extrackSinglePackageInfo,
     resolveRootPath,
@@ -106,4 +122,5 @@ module.exports = {
     writeJsonIntoFile,
     writeStringIntoFile,
     traverseDir,
+    exec,
 };
