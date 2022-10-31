@@ -1,9 +1,8 @@
 /*
- * @Author: tackchen
- * @Date: 2022-10-23 19:09:15
+ * @Author: chenzhongsheng
+ * @Date: 2022-10-23 21:35:28
  * @Description: Coding something
  */
-
 
 export const subscribe = Symbol();
 export const forceUpdate = Symbol();

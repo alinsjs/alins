@@ -6,7 +6,7 @@
 
 import {IJson, IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IComputedItem} from 'alins-utils/src/types/react.d';
-import {mount} from 'src/mount';
+import {mount} from '../mount';
 import {compControllers, ICompControllers} from '../controller/controller';
 import {TChild} from '../element/transform';
 import {IEvent, IEventFunc} from './event';

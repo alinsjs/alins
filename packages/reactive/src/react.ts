@@ -338,4 +338,4 @@ declare global {
     }
 }
 
-(window as any).react = react;
+// (window as any).react = react;

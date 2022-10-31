@@ -18,7 +18,7 @@ export function CompController () {
         span('修改num:'),
         input.model(num, 'number'),
         div('comp for demo:'),
-        comp.for(list)((item, index) => [
+        comp.for(list)((item) => [
             CountProps,
             prop({value: item})
         ]),

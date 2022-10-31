@@ -63,7 +63,6 @@ type IReactJson<T> = T extends Array<infer K> ? (
   [prop in (keyof T)]: IReactWrap<T[prop]>;
 } & IJson) // ! & IJson 为了绑定的时候不报类型错误
 
-
 export type IReactWrap<T> = T extends object ? (IReactJson<T> & IReactObject<T>) : IReactItem<TParseBoolean<T>>;
 
 export type TOnChangeFunc = (content: string, oldContent: string) => void;

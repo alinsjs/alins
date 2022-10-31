@@ -4,8 +4,7 @@
  * @Description: 组合样式
  */
 
-import {$} from 'alins-reactive';
-import {reactionValueToItem} from 'alins-reactive/src/react';
+import {$, reactionValueToItem} from 'alins-reactive';
 import {IJson} from 'alins-utils/src/types/common';
 import {IReactBuilder, TReactionItem, TReactionValue} from 'alins-utils/src/types/react';
 import {IComposeStyle} from 'alins-utils/src/types/style';

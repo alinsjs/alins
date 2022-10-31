@@ -122,7 +122,9 @@ comp(Count).mount();
 ## 3. todolist [在线使用](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/todo-list.js)
 
 ```js
-import {button, div, input, style, click, $} from '../alins';
+import {comp, button, div, input, click, $} from '../alins';
+import {style} from '../alins-style';
+
 
 export function todoList () {
     const edit = $('');
@@ -162,48 +164,30 @@ comp(todoList).mount();
 
 ```js
 import {
-    span, input, div, $, mount, comp
+    div, $, css, style, button, hover, click, input, cls
 } from 'alins';
-import {css, style} from 'alins';
-
-mount(comp(Style));
 
 function Style () {
-    const size = $(12);
-    const color = $('#222');
+    const num = $(30);
+    const active = $(false);
 
-    initCss(size, color);
-
-    return ([
-        div(
-            span('修改size:'),
-            input.model(size, 'number')(),
-        ),
-        div(
-            span('修改颜色:'),
-            input.model(color)(),
-        ),
-        div('文本', style({
-            color, fontSize: size
-        })),
-        div('.parent',
-            div('.child:文本2')
-        )
-    ]);
-}
-
-function initCss (size: any, color: any) {
-    return css('.parent')(
-        style.borderBottom($`${size}px solid ${color}`),
-        ['.child',
-            style({color, fontSize: size})
-        ]
+    css('.main')(
+        style({
+            color: '#888',
+            marginLeft: $`${num}px`,
+        }),
+        ['&.active', style.fontSize(num)],
+        ['.child', style.marginTop(num)]
     ).mount();
+
+    return div(`parent.main`,
+        cls({active}),
+        hover('color: #f44'),
+        input.model(num, 'number'),
+        button('toggle active', click(() => active.value = !active.value)),
+        div('child.child'),
+    );
 }
+
+mount(comp(Style));
 ```
-
-todolist:
-
-1. 自定义控制器
-2. 自定义渲染器
-3. 路由方案

@@ -15,9 +15,7 @@
     "info": "node ./scripts/info.js",
     "init:package": "node ./scripts/init-packages-info.js",
     "init:dev-package": "node ./scripts/init-packages-info.js dev",
-    "init:dep": "node scripts/init-learn-dep.js",
-    "build:cdn": "node scripts/build-cdn/build.js",
-    "build:cdn-all": "npm run build:cdn && npm run build:cdn style && npm run build:cdn pure-style"
+    "init:dep": "node scripts/init-learn-dep.js"
   },
   "license": "",
   "devDependencies": {

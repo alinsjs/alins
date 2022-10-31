@@ -35,7 +35,7 @@ function upcaseFirstLetter (str) {
 }
 
 function buildPackageName (dir) {
-    return `alins${dir === 'main' ? '' : `-${dir}`}`;
+    return `alins${dir === 'core' ? '' : `-${dir}`}`;
 }
 
 function initPackageInfo (isDev) {
@@ -67,6 +67,7 @@ function initSinglePackageInfo (dir, isDev = false) {
 
     const tsconfig = require(resolveRootPath('tsconfig.json'));
     tsconfig.include = ['src/**/*'];
+    tsconfig.compilerOptions.rootDir = '../..';
     writeJsonIntoFile(tsconfig, resolvePacakgePath(`${dir}/tsconfig.json`));
 }
 

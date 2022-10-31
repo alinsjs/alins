@@ -18,6 +18,9 @@ export {
     transformToReaction,
     isReaction,
     mergeReact,
+    reactionValueToItem,
+    parseReactionValue,
+    exeReactionValue,
 } from './react';
 
 export {
@@ -28,6 +31,7 @@ export {
     parseReplacementToNumber,
     ReplaceExp,
 } from './binding';
+
 
 export {
     computed,

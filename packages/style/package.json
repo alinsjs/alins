@@ -12,8 +12,8 @@
     "license": "",
     "type": "module",
     "dependencies": {
-        "alins-reactive": "^0.0.1",
-        "alins-utils": "^0.0.1"
+        "alins-utils": "^0.0.1",
+        "alins-reactive": "^0.0.1"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"

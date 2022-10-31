@@ -164,10 +164,6 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     return dom;
 }
 
-document.body.addEventListener('DOMNodeRemoved', () => {
-    
-});
-
 export function mountChildrenDoms (
     parent: HTMLElement,
     children: TChild[]

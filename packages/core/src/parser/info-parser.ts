@@ -28,9 +28,9 @@ export interface IDomInfoData {
 export const InfoKeys = ['className', 'attributes', 'id', 'textContent', 'tagName'] as const;
 export type TInfoType = typeof InfoKeys[number];
 
-(window as any).parseCount = 0;
+// (window as any).parseCount = 0;
 export function parseDomInfo (info: string): IDomInfoData {
-    (window as any).parseCount++;
+    // (window as any).parseCount++;
     if (!('./#[:'.includes(info[0]))) info = `:${info}`;
     const result: IDomInfoData = {textContent: ''};
 

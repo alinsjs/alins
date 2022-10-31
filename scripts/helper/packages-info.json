@@ -1,14 +1,30 @@
 [
     {
-        "name": "@alins/main",
+        "name": "alins-utils",
+        "version": "0.0.1",
+        "dependencies": []
+    },
+    {
+        "name": "alins-reactive",
         "version": "0.0.1",
         "dependencies": [
-            "@alins/utils"
+            "alins-utils"
         ]
     },
     {
-        "name": "@alins/utils",
+        "name": "alins",
         "version": "0.0.1",
-        "dependencies": []
+        "dependencies": [
+            "alins-utils",
+            "alins-reactive"
+        ]
+    },
+    {
+        "name": "alins-style",
+        "version": "0.0.1",
+        "dependencies": [
+            "alins-utils",
+            "alins-reactive"
+        ]
     }
 ]

@@ -6,13 +6,12 @@
 
 import {
     isStringTemplateArray, splitTwoPart, createTemplateReplacement, reactiveTemplate,
-    ReplaceExp, computed,
+    ReplaceExp, computed, countBindingValue, exeReactionValue, parseReactionValue
 } from 'alins-reactive';
 import {TReactionItem, TReactionValue} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common.d';
 import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
 import {DefaultUint, StyleAtoms} from './style-func/style-atom';
-import {countBindingValue, exeReactionValue, parseReactionValue} from 'alins-reactive/src/react';
 import {compateKVStyle, compateStaticStyle} from './style-func/style-compatiable';
 
 type TStyleJsonValue = IJson<TReactionValue<string|number>>

@@ -41,15 +41,15 @@ export function createCssPool () {
 
 // ! 调试时关闭CSSStyleSheet
 // const supporteAdoptedStyle = false;
-const supporteAdoptedStyle = typeof window.document.adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
+const supporteAdoptedStyle = typeof (window.document as any).adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
 
 export function insertStyle (parent?: HTMLElement | null) {
     if (parent) {
         return insertHTMLStyle(parent);
     } else if (supporteAdoptedStyle) {
         const style = new CSSStyleSheet();
-        document.adoptedStyleSheets.push(style);
-        return (v: string) => {style.replace(v);};
+        (window.document as any).adoptedStyleSheets.push(style);
+        return (v: string) => {(style as any).replace(v);};
     } else {
         return insertHTMLStyle(document.head);
     }

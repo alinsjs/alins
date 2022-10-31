@@ -115,7 +115,7 @@ export function subscribeReactBuilder (
         builder.templateValue();
 }
 
-(window as any).computedReactBuilder = computedReactBuilder;
+// (window as any).computedReactBuilder = computedReactBuilder;
 
 // const num = react(1);
 // const binding = react`${num}-1`;

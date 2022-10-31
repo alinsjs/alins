@@ -1,5 +1,14 @@
 {
-  "@alins/main": [
-    "@alins/main-utils"
+  "alins-utils": [],
+  "alins-reactive": [
+    "alins-utils"
+  ],
+  "alins": [
+    "alins-utils",
+    "alins-reactive"
+  ],
+  "alins-style": [
+    "alins-utils",
+    "alins-reactive"
   ]
 }
