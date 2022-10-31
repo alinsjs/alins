@@ -42,6 +42,7 @@ function initPackageInfo (isDev) {
     const dirs = fs.readdirSync(resolveRootPath('packages'));
 
     dirs.forEach((dir) => {
+        if (dir === '.DS_Store') return;
         initSinglePackageInfo(dir, isDev);
     });
 }

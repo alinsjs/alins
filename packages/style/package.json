@@ -2,8 +2,8 @@
     "name": "alins-style",
     "version": "0.0.2",
     "description": "lerna demo",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-style.esm.js",
+    "typings": "dist/alins-style.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -17,5 +17,7 @@
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
-    }
+    },
+    "unpkg": "dist/alins-style.min.js",
+    "jsdelivr": "dist/alins-style.min.js"
 }

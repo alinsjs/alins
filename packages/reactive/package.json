@@ -2,8 +2,8 @@
     "name": "alins-reactive",
     "version": "0.0.2",
     "description": "lerna demo",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-reactive.esm.js",
+    "typings": "dist/alins-reactive.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -16,5 +16,7 @@
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
-    }
+    },
+    "unpkg": "dist/alins-reactive.min.js",
+    "jsdelivr": "dist/alins-reactive.min.js"
 }
