@@ -32,8 +32,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Npm Install
-        run: npm install
+      - name: Npm Install pnpm
+        run: npm install -g pnpm
+
+      - name: pnpm Install
+        run: pnpm i
 
       - name: Version
         id: version
