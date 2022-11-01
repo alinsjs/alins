@@ -5,4 +5,10 @@
  */
 export * from '../../packages/core/src/index';
 // 消除version重复
-export * from '../../packages/style/src/index';
+export {
+    css,
+    style,
+    pseudo, hover, active, before, after, nthChild,
+    StyleAtoms,
+    react, $
+} from '../../packages/style/src/index';

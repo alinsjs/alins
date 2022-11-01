@@ -4,6 +4,8 @@
  * @Description: Coding something
  */
 
+export {value, subscribe, forceUpdate, index, json} from 'alins-utils';
+
 export {attr, cls} from './builder/dom-info';
 export {
     life, mounted, updated, created, appended, removed

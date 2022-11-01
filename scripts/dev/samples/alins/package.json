@@ -1,0 +1,23 @@
+{
+  "name": "js-framework-benchmark-alins",
+  "version": "1.1.1",
+  "description": "Benchmark for alins framework",
+  "main": "index.js",
+  "js-framework-benchmark": {
+    "frameworkVersionFromPackage": "alins"
+  },
+  "scripts": {
+    "build-dev": "exit 0",
+    "build-prod": "exit 0"
+  },
+  "keywords": [
+    "alins"
+  ],
+  "author": "Stefan Krause",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/alinsjs/alins",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alinsjs/alins"
+  }
+}

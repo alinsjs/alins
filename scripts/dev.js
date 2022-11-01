@@ -1,3 +1,8 @@
+/*
+ * @Author: chenzhongsheng
+ * @Date: 2022-10-24 10:31:38
+ * @Description: Coding something
+ */
 const {build} = require('esbuild');
 const {resolve} = require('path');
 const {yamlPlugin} = require('esbuild-plugin-yaml');
@@ -7,7 +12,8 @@ const vuePlugin = require('esbuild-plugin-vue3');
 const outfile = resolve(__dirname, './dev/bundle.js');
 
 build({
-    entryPoints: [resolve(__dirname, './dev/index.ts')],
+    // entryPoints: [resolve(__dirname, './dev/index.ts')],
+    entryPoints: [resolve(__dirname, './dev/samples/alins/src/Main.js')],
     outfile,
     bundle: true,
     sourcemap: true,
