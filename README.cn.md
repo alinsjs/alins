@@ -39,13 +39,11 @@
     <a href="https://www.github.com/alinsjs/alins"><img src="https://img.shields.io/librariesio/dependent-repos/npm/alins.svg" alt="Dependent"></a>
 </p>
 
-### 🚀 [Alins](https://github.com/alinsjs/alins): `Al`l-`in`-j`s` web ui Framework，No jsx/template/vdom/css/html
+### 🚀 [Alins](https://github.com/alinsjs/alins): `Al`l-`in`-j`s` web ui框架，无 jsx/template/vdom/css/html
 
-**[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Docs](https://theajack.github.io/alins) | [VersionLog](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [FeedBacl](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | QQ Group: 958278438 | [MessageBoard](https://theajack.github.io/message-board/?app=alins)**
+**[English](https://github.com/alinsjs/alins/blob/master/README.md) | [文档](https://theajack.github.io/alins) | [更新日志](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [反馈错误/缺漏](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | QQ Group: 958278438 | [留言板](https://theajack.github.io/message-board/?app=alins)**
 
-**Docs in under Development [alins/docs](https://github.com/alinsjs/docs)**
-
-## 0 Quick Start
+## 0 快速开始
 
 ### 0.1 npm
 
@@ -67,21 +65,21 @@ div('Hello World!').mount();
 </script>
 ```
 
-## 1. Features
+## 1. 特性
 
-1. No vdom, the listening data is accurately modified to dom/textNode, and the dom node is reused
-2. Alins-style CSS-in-JS scheme, atomic properties/building block combinations/style response changes
-3. Good componentization support
-4. Support for, if, show, switch, model controller
-5. Support computed and watch
-6. One-way data flow + two-way binding
-7. Good TS support
+1. 无vdom，监听数据精准修改到dom/textNode，dom节点复用
+2. alins-style css-in-js方案，原子属性/积木式组合/样式响应变更
+3. 良好的组件化支持
+4. 支持for,if,show,switch,model控制器
+5. 支持computed、watch
+6. 单向数据流 + 双向绑定
+7. 良好的ts支持
 
-For more detailed functions, please refer to [Online Documentation](https://shiyix.cn/alins)
+更多详细功能请参考[在线文档](https://shiyix.cn/alins)
 
 ## 2. 实例程序
 
-### 2.1. Counter [Playground](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/count.js)
+### 2.1. 计数器 [在线使用](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/count.js)
 
 ```js
 import { button, comp, click, $, mount } from 'alins';
@@ -97,7 +95,7 @@ function Count () {
 comp(Count).mount();
 ```
 
-### 2.2. Components & Model [Playground](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/model.js)
+### 2.2. 父子组件传参+model指令 [在线使用](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/model.js)
 
 ```js
 import {
@@ -107,7 +105,7 @@ import {
 export function Count () {
     const count = $(0);
     return [
-        span('input count'),
+        span('输入count'),
         input.model(count, 'number'),
         comp(CountProps, prop({value: count})),
         button('add', click(() => {count.value++;})),
@@ -121,7 +119,7 @@ export function CountProps ({props}) {
 comp(Count).mount();
 ```
 
-## 3. todolist [Playground](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/todo-list.js)
+## 3. todolist [在线使用](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/todo-list.js)
 
 ```js
 import {comp, button, div, input, click, $} from '../alins';
@@ -145,14 +143,14 @@ export function todoList () {
 
     return [
         input.model(edit),
-        button('submit', click(addItem)),
+        button('提交', click(addItem)),
         div('.todo-list',
             div.for(list)((item, index) => [
                 itemStyle(item),
                 $`${() => index.value + 1}:${item.content}`,
-                button('delete', click(removeItem).args(index)),
+                button('删除', click(removeItem).args(index)),
                 button(
-                    $`${() => item.done.value ? 'undo' : 'done'}`,
+                    $`${() => item.done.value ? '撤销' : '完成'}`,
                     click(finishItem).args(item)
                 ),
             ]),
@@ -162,12 +160,13 @@ export function todoList () {
 comp(todoList).mount();
 ```
 
-## 4. css in js [Playground](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/style.js)
+## 4. css in js [在线使用](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/style.js)
 
 ```js
 import {
-    div, $, css, style, button, hover, click, input, cls
+    div, $ , button, hover, click, input, cls
 } from 'alins';
+import {css, style} from '../alins-style';
 
 function Style () {
     const num = $(30);
@@ -191,5 +190,5 @@ function Style () {
     );
 }
 
-mount(comp(Style));
+comp(Style).mount();
 ```

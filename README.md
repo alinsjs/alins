@@ -79,9 +79,9 @@ div('Hello World!').mount();
 
 For more detailed functions, please refer to [Online Documentation](https://shiyix.cn/alins)
 
-## 2. 实例程序
+## 2. Samples
 
-### 2.1. Counter [Playground](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/count.js)
+### 2.1. Counter [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/count.js)
 
 ```js
 import { button, comp, click, $, mount } from 'alins';
@@ -97,7 +97,7 @@ function Count () {
 comp(Count).mount();
 ```
 
-### 2.2. Components & Model [Playground](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/model.js)
+### 2.2. Components & Model [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/model.js)
 
 ```js
 import {
@@ -121,7 +121,7 @@ export function CountProps ({props}) {
 comp(Count).mount();
 ```
 
-## 3. todolist [Playground](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/todo-list.js)
+## 3. todolist [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/todo-list.js)
 
 ```js
 import {comp, button, div, input, click, $} from '../alins';
@@ -162,12 +162,13 @@ export function todoList () {
 comp(todoList).mount();
 ```
 
-## 4. css in js [Playground](https://shiyix.cn/jsbox?github=alinsjs.alins.scripts/samples/style.js)
+## 4. css in js [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/style.js)
 
 ```js
 import {
-    div, $, css, style, button, hover, click, input, cls
+    div, $ , button, hover, click, input, cls
 } from 'alins';
+import {css, style} from '../alins-style';
 
 function Style () {
     const num = $(30);
@@ -191,5 +192,5 @@ function Style () {
     );
 }
 
-mount(comp(Style));
+comp(Style).mount();
 ```

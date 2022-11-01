@@ -117,12 +117,12 @@ export const dom = buildFactory;
 
 const MainDomNames = [
     'a', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'button', 'canvas', 'code', 'pre', 'table', 'th',  'td', 'tr', 'video', 'audio',
-    'ol', 'select',  'option', 'p', 'i', 'iframe', 'img', 'input', 'label', 'li', 'span', 'textarea', 'form',
+    'ol', 'select',  'option', 'p', 'i', 'iframe', 'img', 'input', 'label', 'li', 'span', 'textarea', 'form', 'br,'
 ] as const;
 
 const DomNames = [
     ...MainDomNames,
-    'abbr', 'article', 'aside', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'br',  'caption', 'cite', 'del', 'details', 'dialog',
+    'abbr', 'article', 'aside', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'caption', 'cite', 'del', 'details', 'dialog',
     'em', 'embed', 'figure', 'footer', 'header', 'hr', 'menu', 'nav', 'noscript',
     'object', 'progress', 'section', 'slot', 'small', 'strong', 'sub', 'summary', 'sup', 'tbody',  'template',
     'title', 'ul', 'var',
@@ -139,7 +139,9 @@ export const doms = (() => {
 })();
 
 export const [
-    a, div, h1, h2, h3, h4, h5, h6, button, canvas, code, pre, table, th, td, tr, video, audio, ol, select, option, p, i, iframe, img, input, label, li, span, textarea, form
+    a, div, h1, h2, h3, h4, h5, h6, button, canvas, code, pre, table,
+    th, td, tr, video, audio, ol, select, option, p, i, iframe, img,
+    input, label, li, span, textarea, form, br
 ] = MainDomNames.map(name => doms[name]);
 
 function createBaseBuilder (exe: ()=> IElement): IElementBuilder {
