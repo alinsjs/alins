@@ -116,16 +116,16 @@ export function buildFactory (tag: string): IBuilderConstructor {
 export const dom = buildFactory;
 
 const MainDomNames = [
-    'a', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'button', 'canvas', 'code', 'pre', 'table', 'th',  'td', 'tr', 'video', 'audio',
-    'ol', 'select',  'option', 'p', 'i', 'iframe', 'img', 'input', 'label', 'li', 'span', 'textarea', 'form', 'br,'
+    'a', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'button', 'canvas', 'code', 'pre', 'table', 'th', 'td', 'tr', 'video', 'audio',
+    'ol', 'select', 'option', 'p', 'i', 'iframe', 'img', 'input', 'label', 'ul', 'li', 'span', 'textarea', 'form', 'br', 'tbody'
 ] as const;
 
 const DomNames = [
     ...MainDomNames,
     'abbr', 'article', 'aside', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'caption', 'cite', 'del', 'details', 'dialog',
     'em', 'embed', 'figure', 'footer', 'header', 'hr', 'menu', 'nav', 'noscript',
-    'object', 'progress', 'section', 'slot', 'small', 'strong', 'sub', 'summary', 'sup', 'tbody',  'template',
-    'title', 'ul', 'var',
+    'object', 'progress', 'section', 'slot', 'small', 'strong', 'sub', 'summary', 'sup', 'template',
+    'title', 'var',
 ] as const;
 
 export const doms = (() => {
@@ -141,7 +141,7 @@ export const doms = (() => {
 export const [
     a, div, h1, h2, h3, h4, h5, h6, button, canvas, code, pre, table,
     th, td, tr, video, audio, ol, select, option, p, i, iframe, img,
-    input, label, li, span, textarea, form, br
+    input, label, ul, li, span, textarea, form, br, tbody
 ] = MainDomNames.map(name => doms[name]);
 
 function createBaseBuilder (exe: ()=> IElement): IElementBuilder {

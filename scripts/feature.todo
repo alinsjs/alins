@@ -508,10 +508,30 @@
               "level": "warning",
               "done": false
             }
+          },
+          {
+            "key": 1667310846500,
+            "children": [],
+            "todo": {
+              "content": "[value] 对一级对象赋值",
+              "id": 1667310846500,
+              "level": "danger",
+              "done": false
+            }
+          },
+          {
+            "key": 1667310866600,
+            "children": [],
+            "todo": {
+              "content": "br tbody暴露 value等symbol暴露",
+              "id": 1667310866600,
+              "level": "danger",
+              "done": true
+            }
           }
         ],
         "todo": {
-          "content": "性能优化",
+          "content": "优化 & fix",
           "id": 1665835013054,
           "level": "warning",
           "done": false
