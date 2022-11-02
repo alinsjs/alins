@@ -24,6 +24,7 @@
     <a href="https://www.jsdelivr.com/package/npm/alins" target="_black">
         <img src="https://data.jsdelivr.com/v1/package/npm/alins/badge" alt="jsdelivr" />
     </a>
+    <img src="https://visitor-badge.glitch.me/badge?page_id=alinsjs_alins" alt="vistor" />
 </p>
 
 <p align="center">
