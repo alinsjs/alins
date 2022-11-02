@@ -258,7 +258,7 @@ export function getReactionPureValue (data: any) {
 export function reactiveProxyValue (v: any) {
     // if (isReaction(v)) return v;
     if (isReaction(v)) v = v[json];
-    if (!isSimpleValue(v)) return createProxy(v, false);
+    if (!isSimpleValue(v)) return createProxy(v);
     return reactiveValue(v);
 }
 

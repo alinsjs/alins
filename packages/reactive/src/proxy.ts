@@ -6,7 +6,7 @@
 
 import {
     forceUpdate, subscribe, reactValue,
-    value, getListeners, updateFirstLevel, json, index, replaceListeners
+    value, getListeners, json, index, replaceListeners
 } from 'alins-utils';
 import {IJson} from 'alins-utils/src/types/common.d';
 import {IReactObject} from 'alins-utils/src/types/react.d';
@@ -21,7 +21,6 @@ import {
 
 export function createProxy<T extends IJson> (
     originData: T,
-    firstLevel = true,
     changeList: Function[] = [],
 ): IReactObject<T> {
 
@@ -54,9 +53,6 @@ export function createProxy<T extends IJson> (
             triggerChange(data, data);
         },
         [reactValue]: false,
-        [updateFirstLevel]: () => {
-            firstLevel = false;
-        },
         [getListeners]: () => changeList,
         [replaceListeners]: (list: Function[]) => {changeList = list;},
         get [json] () { return getReactionPureValue(data);}
@@ -143,9 +139,7 @@ export function createProxy<T extends IJson> (
 
             const oldValue = target[property];
             if (isReaction(v)) { // ! 当值是reaction时不需要代理直接设置
-                // todo 监听
                 // 直接设置
-                v[updateFirstLevel](); // ! 这一步是为了去掉 旧数据的firstLevel
                 triggerChange(v, oldValue);
                 return set();
             }

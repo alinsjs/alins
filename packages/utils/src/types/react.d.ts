@@ -6,7 +6,7 @@
 
 import {
     index, forceUpdate, subscribe, reactValue, getListeners,
-    value, json, updateFirstLevel, replaceListeners
+    value, json, replaceListeners
 } from './symbol';
 import {IBuilderParameter, IJson} from './common';
 
@@ -48,7 +48,6 @@ export interface IReactObject<T = any> extends IReactBase<T> {
   get [json](): T; // todo ?
   // get [value](): T;
   // get [json](): T;
-  [updateFirstLevel](): void;
 }
 
 /*
