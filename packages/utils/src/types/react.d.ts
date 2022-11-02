@@ -17,7 +17,7 @@ export interface IReactBase<T = any> {
   [reactValue]: boolean;
   [getListeners](): Function[];
   [replaceListeners](list: Function[]): void;
-  get [json] (): T;
+  [json] (): T;
 }
 
 export interface IReactItem<T = any> extends IReactBase<T>{
@@ -45,9 +45,7 @@ export interface IReactObject<T = any> extends IReactBase<T> {
   // ! 牺牲了 value和json返回值的类型
   get [value](): IJson;
   set [value](v:any);
-  get [json](): T; // todo ?
-  // get [value](): T;
-  // get [json](): T;
+  [json](): T;
 }
 
 /*

@@ -91,7 +91,7 @@ export const forController: IForController = function (this: IBuilderConstructor
             } else {
                 if (typeof newValue === 'undefined') { // remove
                     removeControllerDoms(doms[i]);
-                    doms.splice(i, 1);
+                    (doms[i] as any) = undefined;
                 } else {
                     const builder: TControllerBuilder = this.apply(null, makeBuilder(i, newValue));
                     const oldDom = doms[i];

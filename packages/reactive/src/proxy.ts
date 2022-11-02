@@ -55,12 +55,14 @@ export function createProxy<T extends IJson> (
         [reactValue]: false,
         [getListeners]: () => changeList,
         [replaceListeners]: (list: Function[]) => {changeList = list;},
-        get [json] () { return getReactionPureValue(data);}
+        [json]: () => {
+            return getReactionPureValue(data);
+        }
     });
 
     return new Proxy(data, {
         get (target: IJson, property, receiver) {
-            if (property === value) return data;
+            if (property === value) return getReactionPureValue(data);
             const type = typeof data[property];
             if (!(Array.isArray(target) && (property === 'length' || type === 'function'))) {
                 if (type === 'undefined' && property !== 'toJSON') {
@@ -115,7 +117,7 @@ export function createProxy<T extends IJson> (
                         }
                     } else {
                         if (isReaction(v)) {
-                            v = v[json];
+                            v = v[json]();
                         }
                         for (const k in target) {
                             if (!(k in v)) {
@@ -132,6 +134,9 @@ export function createProxy<T extends IJson> (
                             target[k] = reaction;
                         }
                     }
+                    return true;
+                } else if (property === json) {
+                    console.warn('json symbol 属性不可设置');
                     return true;
                 }
                 return set();

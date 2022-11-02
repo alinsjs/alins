@@ -88,7 +88,7 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
             return changeList;
         },
         [replaceListeners]: (list: Function[]) => {changeList = list;},
-        get [json] () {return value;}
+        [json] () {return value;}
     };
 }
 // 初始化响应数据
@@ -252,6 +252,7 @@ export function isReaction (v: any): boolean {
 // }
 
 export function getReactionPureValue (data: any) {
+    debugger;
     return isReaction(data) ? JSON.parse(JSON.stringify(data)) : data;
 }
 
