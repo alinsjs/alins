@@ -6,7 +6,7 @@
 
 import {
     index, forceUpdate, subscribe, reactValue, getListeners,
-    value, json, updateFirstLevel
+    value, json, updateFirstLevel, replaceListeners
 } from './symbol';
 import {IBuilderParameter, IJson} from './common';
 
@@ -16,6 +16,8 @@ export interface IReactBase<T = any> {
   [subscribe](fn: (v:T, old:T, index: number) => void):  T;
   [reactValue]: boolean;
   [getListeners](): Function[];
+  [replaceListeners](list: Function[]): void;
+  get [json] (): T;
 }
 
 export interface IReactItem<T = any> extends IReactBase<T>{
@@ -42,7 +44,8 @@ export interface IReactObject<T = any> extends IReactBase<T> {
   // ! 由于封装了一层，所以赋值时ts类型系统会报错，故使用IJson
   // ! 牺牲了 value和json返回值的类型
   get [value](): IJson;
-  get [json](): IJson;
+  set [value](v:any);
+  get [json](): T; // todo ?
   // get [value](): T;
   // get [json](): T;
   [updateFirstLevel](): void;

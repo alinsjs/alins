@@ -4,11 +4,12 @@
  * @Description: Coding something
  */
 
-export const subscribe = Symbol();
-export const forceUpdate = Symbol();
-export const index = Symbol();
-export const value = Symbol();
-export const reactValue = Symbol();
-export const getListeners = Symbol();
-export const updateFirstLevel = Symbol();
-export const json = Symbol();
+export const subscribe = Symbol('sub');
+export const forceUpdate = Symbol('fu');
+export const index = Symbol('i');
+export const value = Symbol('v');
+export const reactValue = Symbol('rv');
+export const getListeners = Symbol('l');
+export const replaceListeners = Symbol('r');
+export const updateFirstLevel = Symbol('ufl');
+export const json = Symbol('j');

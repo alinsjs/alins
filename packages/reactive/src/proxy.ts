@@ -6,7 +6,7 @@
 
 import {
     forceUpdate, subscribe, reactValue,
-    value, getListeners, updateFirstLevel, json
+    value, getListeners, updateFirstLevel, json, index, replaceListeners
 } from 'alins-utils';
 import {IJson} from 'alins-utils/src/types/common.d';
 import {IReactObject} from 'alins-utils/src/types/react.d';
@@ -58,6 +58,7 @@ export function createProxy<T extends IJson> (
             firstLevel = false;
         },
         [getListeners]: () => changeList,
+        [replaceListeners]: (list: Function[]) => {changeList = list;},
         get [json] () { return getReactionPureValue(data);}
     });
 
@@ -71,6 +72,9 @@ export function createProxy<T extends IJson> (
                 }
             }
             return Reflect.get(target, property, receiver);
+            // const result = Reflect.get(target, property, receiver);
+            // if (result[reactValue] === false) return result[value];
+            // return result;
         },
         set (target: IJson, property, v, receiver) {
             const isArray = target instanceof Array;
@@ -94,10 +98,47 @@ export function createProxy<T extends IJson> (
 
             if (isSymbol) {
                 if (property === value) {
-                    if (firstLevel) {
-                        console.warn('不能对一级对象设置value属性');
-                        return true;
+                    // debugger;
+                    // console.warn('不能对一级对象设置value属性');
+                    if (isArray) {
+                        // target.splice(0, target.length, ...v);
+                        // debugger;
+                        for (let i = 0; i < v.length; i++) {
+                            const old = target[i];
+                            const newValue = reactiveProxyValue(v[i]);
+                            newValue[index] = reactiveValue(i); // ! index
+                            if (old) mergeReact(old, newValue);
+                            triggerChange(newValue, old, i);
+                            target[i] = newValue;
+                        }
+                        if (target.length > v.length) {
+                            const arr = target.splice(v.length, target.length - v.length);
+                            for (let i = 0; i < arr.length; i++) {
+                                triggerChange(undefined, arr[i], i + v.length);
+                            }
+                        }
+                    } else {
+                        for (const k in target) {
+                            if (!(k in v)) {
+                                debugger;
+                                const old = target[k];
+                                delete target[k];
+                                old[old[reactValue] ? 'value' : value] = undefined;
+                                triggerChange(undefined, old);
+                            }
+                        }
+                        debugger;
+                        for (const k in v) {
+                            const old = target[k];
+                            const reaction = reactiveProxyValue(v[k]);
+                            // old[old[reactValue] ? 'value' : value] = reaction;
+                            // triggerChange(reaction, old);
+                            mergeReact(old, reaction);
+                            target[k] = reaction;
+                            // todo fix
+                        }
                     }
+                    return true;
                 }
                 return set();
             }

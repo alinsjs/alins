@@ -6,7 +6,7 @@
 
 import {
     isStringTemplateArray, join,
-    subscribe, forceUpdate, value, reactValue, getListeners
+    subscribe, forceUpdate, value, reactValue, getListeners, replaceListeners, json
 } from 'alins-utils';
 import {IJson} from 'alins-utils/src/types/common';
 import {IStyleBuilder} from 'alins-utils/src/types/style';
@@ -57,7 +57,7 @@ export function createReactive<T> (data: T): IReactWrap<T> {
 }
 
 export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> {
-    const changeList: Function[] = [];
+    let changeList: Function[] = [];
     return {
         isUndefined () {
             return typeof value === 'undefined' || isUndefined;
@@ -87,6 +87,8 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
             // console.count('getListeners');
             return changeList;
         },
+        [replaceListeners]: (list: Function[]) => {changeList = list;},
+        get [json] () {return value;}
     };
 }
 // 初始化响应数据
@@ -193,7 +195,7 @@ export function mergeReact (
     if (isReactSimpleValue(newValue)) {
         // const newReact = reactiveValue(newValue);
         // setValue?.(newReact);
-        mergeListeners(oldReact, newValue);
+        if (oldReact) mergeListeners(oldReact, newValue);
         // debugger;
     } else {
         const newKeys = Object.keys(newValue);
@@ -230,6 +232,7 @@ export function mergeListeners (
     const arr = oldReact[getListeners]();
     if (arr.length > 0) {
         newReact[getListeners]().push(...arr);
+        // newReact[replaceListeners](arr);
         newReact[forceUpdate](); // 被覆盖的数据触发更新
     }
 }
@@ -253,7 +256,8 @@ export function getReactionPureValue (data: any) {
 }
 
 export function reactiveProxyValue (v: any) {
-    if (isReaction(v)) return v;
+    // if (isReaction(v)) return v;
+    if (isReaction(v)) v = v[json];
     if (!isSimpleValue(v)) return createProxy(v, false);
     return reactiveValue(v);
 }

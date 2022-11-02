@@ -1,6 +1,7 @@
 'use strict';
 import {
-    div, click, table, span, h1, button, $, dom, td, tr, a, comp
+    div, click, table, span, h1, button,
+    $, dom, td, tr, a, comp, value, json
 } from '../../../alins';
 import {buildData} from './data';
 // const {div, click, table, span, cls, h1, button, $, dom, td, tr, a, comp} = window.Alins;
@@ -9,15 +10,22 @@ import * as Alins from '../../../alins';
 
 (window).Alins = Alins;
 
-const value = window.__alins_value;
+// const value = window.__alins_value;
 
 const selected = $(-1);
 const rows = $([]);
+const array = $([1, 2]);
+const o = $({a: 1});
 
+div($`a:${o.a},b:${o.b}`).mount();
+div(
+    div.for(array)(item => [
+        $`--${item}`
+    ])
+).mount();
 
-function setRows (update = rows.slice()) {
-    rows.splice(0, rows.length);
-    rows.push.apply(rows, update);
+function setRows (update = []) {
+    rows[value] = update;
 }
 
 function add () {
@@ -48,7 +56,7 @@ function update () {
 }
   
 function runLots () {
-    setRows(buildData(10000));
+    setRows(buildData(2000));
     selected.value = -1;
 }
   
@@ -58,12 +66,11 @@ function clear () {
 }
   
 function swapRows () {
-    if (rows.length > 998) {
+    if (rows.length > 4) {
         const d1 = rows[1][value];
-        const d998 = rows[998][value];
-        debugger;
-        rows[1][value] = d998;
-        rows[998][value] = d1;
+        const d4 = rows[4][value];
+        rows[1][value] = d4;
+        rows[4][value] = d1;
     }
 }
 
