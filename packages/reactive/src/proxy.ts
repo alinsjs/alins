@@ -118,24 +118,22 @@ export function createProxy<T extends IJson> (
                             }
                         }
                     } else {
+                        if (isReaction(v)) {
+                            v = v[json];
+                        }
                         for (const k in target) {
                             if (!(k in v)) {
-                                debugger;
                                 const old = target[k];
                                 delete target[k];
                                 old[old[reactValue] ? 'value' : value] = undefined;
                                 triggerChange(undefined, old);
                             }
                         }
-                        debugger;
                         for (const k in v) {
                             const old = target[k];
                             const reaction = reactiveProxyValue(v[k]);
-                            // old[old[reactValue] ? 'value' : value] = reaction;
-                            // triggerChange(reaction, old);
                             mergeReact(old, reaction);
                             target[k] = reaction;
-                            // todo fix
                         }
                     }
                     return true;
