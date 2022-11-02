@@ -57,11 +57,11 @@ jobs:
             npx lerna version ${{ steps.version.outputs.version }} --no-git-tag-version --force-publish --yes
             npm run build
             git add .
-            git commit -m "Lerna build ${{ steps.version.outputs.version }}"
+            git commit -m "feat: Version ${{ steps.version.outputs.version }} Build"
             npx lerna publish from-package --yes
             npm run init:dev-package -- ${{ steps.version.outputs.version }}
             git add .
-            git commit -m "Lerna publish ${{ steps.version.outputs.version }}"
+            git commit -m "feat: Version ${{ steps.version.outputs.version }} Publish"
             git push origin master
 
       # - name: Pages # github pages
