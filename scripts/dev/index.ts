@@ -25,16 +25,16 @@ import {FuncBuilder} from './samples/func-as-builder';
 const num = $(20);
 (window as any).numx =  num;
 const titleBg = $('#ddd');
-// css('.title')(
-//     style`
-//       font-weight: bold;
-//       font-size: ${num}px;
-//       color: #f44;
-//       margin-top: 10px;
-//       margin-bottom: 5px;
-//       background-color: ${titleBg};
-//     `
-// ).mount();
+css('.title')(
+    style`
+      font-weight: bold;
+      font-size: ${num}px;
+      color: #f44;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      background-color: ${titleBg};
+    `
+).mount();
 
 const list = $([1, 2, 3]);
 const add = (item: IReactItem, e: Event) => {item.value++; console.log(e);};
