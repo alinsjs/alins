@@ -4,15 +4,15 @@
  * @Description: Coding something
  */
 
-import {IBuilderConstructor} from '../builder/builder';
+import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
 import {IElementBuilder} from '../element/transform';
 import {
     createReactive, index, mergeReact, subscribe
 } from 'alins-reactive';
 import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
-import {ICompConstructor, IComponentBuilder} from '../comp/comp';
-import {getControllerDoms, removeControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
+import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
+import {getControllerDoms, removeControllerDoms, TControllerBuilder, TControllerType} from './controller';
 import {insertBefore} from '../builder/dom-proxy';
 
 // export interface IForController {
@@ -51,8 +51,11 @@ export interface IForController<K extends TControllerType = 'builder'> {
         ((fn: IForCallback<K, T>) => IForBuilder);
 }
 
+export type TForControllerArg<K extends TControllerType> = K extends 'builder' ?
+    TBuilderArg|TBuilderArg[] : TCompBuilderArg|TCompBuilderArg[];
+
 export interface IForCallback<K extends TControllerType, T = any> {
-    (item: IReactWrap<T>, index: IReactItem<number>): TControllerArg<K>;
+    (item: IReactWrap<T>, index: IReactItem<number>): TForControllerArg<K>;
 }
 
 export const forController: IForController = function (this: IBuilderConstructor | ICompConstructor, list) {
@@ -69,7 +72,10 @@ export const forController: IForController = function (this: IBuilderConstructor
             const indexReactive = createReactive(i);
             if (typeof item === 'undefined') item = list[i];
             item[index] = indexReactive;
-            return callback(item as any, indexReactive);
+            const result = callback(item as any, indexReactive);
+            debugger;
+            console.log('11111111111111111');
+            return Array.isArray(result) ? result : [result];
         };
         // console.log('callback_tostring', callback.toString());
         for (let i = 0; i < list.length; i++) {

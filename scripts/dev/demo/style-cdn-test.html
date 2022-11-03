@@ -1,0 +1,49 @@
+<!--
+ * @Author: chenzhongsheng
+ * @Date: 2022-11-03 08:11:13
+ * @Description: Coding something
+ * @LastEditors: chenzhongsheng
+ * @LastEditTime: 2022-11-03 08:12:34
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../../../packages/style/dist/alins-style.min.js"></script>
+  <script>
+const {comp, button, div, input, click, $, style, value} = AlinsStyle;
+
+function todoList () {
+    const edit = $('');
+    const list = $([]);
+    const addItem = () => {
+        list.push({content: edit.value, done: false});
+        edit.value = '';
+    };
+    const removeItem = (index) => { list.splice(index.value, 1); };
+    const finishItem = (item) => { item.done = !item.done.value; };
+    const clear = () => { list[value] = []; };
+
+    const itemStyle = (item) => {
+        return style.textDecoration(() => item.done.value ? 'line-through' : 'none')
+            .color(() => item.done.value ? '#888' : '#fff');
+    }
+
+    return [
+        input.model(edit),
+        button('submit', click(addItem)),
+        div('.todo-list',
+            div.for(list)((item, index) => button('delete', click(removeItem).args(index))),
+        ),
+        button('clear', click(clear)),
+    ];
+}
+comp(todoList).mount('body');
+  </script>
+</body>
+</html>
