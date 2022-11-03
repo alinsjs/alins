@@ -9,11 +9,12 @@ import {IElementBuilder} from '../element/transform';
 import {
     createReactive, index, mergeReact, subscribe
 } from 'alins-reactive';
-import {IBuilderParameter} from 'alins-utils/src/types/common.d';
+import {IMountBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
 import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
 import {getControllerDoms, removeControllerDoms, TControllerBuilder, TControllerType} from './controller';
 import {insertBefore} from '../builder/dom-proxy';
+import {mount} from '../mount';
 
 // export interface IForController {
 //     <T>(
@@ -40,7 +41,7 @@ import {insertBefore} from '../builder/dom-proxy';
 
 //     return builders;
 // };
-export interface IForBuilder extends IBuilderParameter{
+export interface IForBuilder extends IMountBuilderParameter{
     exe(): DocumentFragment;
     type: 'for';
 }
@@ -63,7 +64,7 @@ export const forController: IForController = function (this: IBuilderConstructor
     // console.count('forController');
     // console.log('forController', list);
     return (callback) => {
-        const mount = document.createComment('');
+        const mountNode = document.createComment('');
         const doms: (HTMLElement|HTMLElement[])[] = [];
         const builders: (IElementBuilder|IComponentBuilder)[] = [];
         // // ! 性能优化 检测到没有index引用就不创建 indexReactive
@@ -106,7 +107,7 @@ export const forController: IForController = function (this: IBuilderConstructor
                         doms[i] = children;
                         const item = doms[i + 1];
                         const after = item instanceof Array ? item[0] : item;
-                        insertBefore(mount.parentElement as HTMLElement, dom, after || mount);
+                        insertBefore(mountNode.parentElement as HTMLElement, dom, after || mountNode);
                     }
                 }
             }
@@ -121,10 +122,13 @@ export const forController: IForController = function (this: IBuilderConstructor
                     doms.push(children);
                     frag.appendChild(dom);
                 }
-                frag.append(mount); // 锚点放在最后面
+                frag.append(mountNode); // 锚点放在最后面
                 return frag;
             },
             type: 'for',
+            mount (parent = 'body') {
+                mount(parent, this);
+            }
         };
     };
 

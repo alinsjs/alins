@@ -18,3 +18,7 @@ export interface IBuilderParameter {
         // 组件
         'event' | 'prop' | 'slot' | 'life' | 'html';
 }
+
+export interface IMountBuilderParameter extends IBuilderParameter {
+    mount(parent?: string | HTMLElement): void;
+}

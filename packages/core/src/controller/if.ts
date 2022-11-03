@@ -10,13 +10,14 @@
  */
 
 import {subscribe, transformToReaction} from 'alins-reactive';
-import {IBuilderParameter} from 'alins-utils/src/types/common.d';
+import {IMountBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
+import {mount} from '../mount';
 import {getControllerDoms, IControllerConstructor, IControllerDom, IControllerDoms, parseHTMLElement, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
 
 export type TIfArg = IReactItem<boolean> | (()=>boolean);
 
-export interface IIfBuilder<K extends TControllerType> extends IBuilderParameter {
+export interface IIfBuilder<K extends TControllerType> extends IMountBuilderParameter {
     elif: IElseIf<K>;
     else: IElse<K>;
     exe(): IControllerDom;
@@ -129,7 +130,10 @@ export const ifController: IIfController<any> = function (this: IControllerConst
                 pushBuilder(args, true);
                 return this;
             },
-            type: 'if'
+            type: 'if',
+            mount (parent = 'body') {
+                mount(parent, this);
+            }
         } as IIfBuilder<any>;
     };
 };

@@ -10,8 +10,9 @@
  */
 
 import {subscribe, transformToReaction} from 'alins-reactive';
-import {IBuilderParameter} from 'alins-utils/src/types/common.d';
+import {IMountBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
+import {mount} from '../mount';
 import {
     getControllerDoms, IControllerConstructor, IControllerDom, IControllerDoms, parseHTMLElement, replaceControllerDoms,
     TControllerArg, TControllerBuilder, TControllerType
@@ -19,7 +20,7 @@ import {
 
 export type TSwitchArg<T> = IReactItem<T> | (()=>T);
 
-export interface ISwitchBuilder<T, K extends TControllerType> extends IBuilderParameter{
+export interface ISwitchBuilder<T, K extends TControllerType> extends IMountBuilderParameter{
     case: ICase<T, K>;
     default: IDefault<T, K>;
     exe(): IControllerDom;
@@ -91,6 +92,9 @@ export const switchController: ISwitchController = function <T> (this: IControll
             addBuilder(args, defaultValue);
             return this;
         },
-        type: 'switch'
+        type: 'switch',
+        mount (parent = 'body') {
+            mount(parent, this);
+        }
     } as ISwitchBuilder<T, any>;
 };

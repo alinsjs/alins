@@ -49,6 +49,8 @@ const value2 = $(2);
 //     div('title font-size:', input.model(num, 'number')),
 // );
 
+div.show(() => value.value === 0)('test controller mount').mount();
+
 mount(
     
     div('Hello World'),
