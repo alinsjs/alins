@@ -285,6 +285,16 @@
               "level": "success",
               "done": false
             }
+          },
+          {
+            "key": 1667439004357,
+            "children": [],
+            "todo": {
+              "content": "控制器mount",
+              "id": 1667439004357,
+              "level": "danger",
+              "done": true
+            }
           }
         ],
         "todo": {
@@ -594,7 +604,17 @@
           "content": "生命周期",
           "id": 1667035030023,
           "level": "default",
-          "done": false
+          "done": true
+        }
+      },
+      {
+        "key": 1667439021662,
+        "children": [],
+        "todo": {
+          "content": "html builder",
+          "id": 1667439021662,
+          "level": "default",
+          "done": true
         }
       }
     ],
