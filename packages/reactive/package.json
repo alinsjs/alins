@@ -1,6 +1,6 @@
 {
     "name": "alins-reactive",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
     "typings": "src/index.ts",
@@ -12,7 +12,7 @@
     "license": "MIT",
     "type": "module",
     "dependencies": {
-        "alins-utils": "^0.0.6"
+        "alins-utils": "^0.0.7"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
