@@ -1,9 +1,9 @@
 {
     "name": "alins-utils",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-utils.esm.js",
+    "typings": "dist/alins-utils.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
