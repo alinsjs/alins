@@ -7,7 +7,8 @@
 import {
     mount, div, react, comp, button,
     IReactItem, click, prop, css, style,
-    $, input, mounted, updated, created, removed, appended
+    $, input, mounted, updated, created, removed, appended,
+    html
 } from './alins';
 import {Count, CountProps} from './samples/count';
 import {For3} from './samples/for-3';
@@ -22,6 +23,7 @@ import {onlyUseStyle} from './samples/style-only';
 import {Life} from './samples/life';
 import {CompController} from './samples/comp-controller';
 import {FuncBuilder} from './samples/func-as-builder';
+import {htmlComp} from './samples/html';
 const num = $(20);
 (window as any).numx =  num;
 const titleBg = $('#ddd');
@@ -43,10 +45,17 @@ const value1 = $(1);
 const value2 = $(2);
 (window as any).valuex = value;
 
+// mount(
+//     div('title font-size:', input.model(num, 'number')),
+// );
+
 mount(
+    
     div('Hello World'),
     div('title font-size:', input.model(num, 'number')),
     div('title background:', input.model(titleBg)),
+    div('.title:comp HTML--------------'),
+    comp(htmlComp),
     div('.title:comp Life--------------'),
     comp(Life),
     div('.title:comp CompController--------------'),

@@ -29,9 +29,19 @@ export interface IShowController<K extends TControllerType = 'builder'> {
 // div.if(num.value > 1)(react`:${bool}`),
 // div.if(bool)(react`:${num.value}`),
 
+function setDisplay (children: DocumentFragment | HTMLElement | HTMLElement[], v: boolean) {
+    const s = v ? '' : 'none';
+    if (children instanceof DocumentFragment) {
+        children = [].slice.call(children);
+    }
+    children instanceof Array ?
+        children.forEach(item => {item.style.display = s;}) :
+        (children as HTMLElement).style.display = s;
+}
+
 export const showController: IShowController<any> = function (this: IControllerConstructor, bool) {
     
-    const react = transformToReaction(bool);
+    const react = transformToReaction<boolean>(bool);
     const constructor = this;
 
     return (...args) => {
@@ -39,13 +49,12 @@ export const showController: IShowController<any> = function (this: IControllerC
             exe () {
                 const builder = constructor.apply(null, args);
                 const {children} = getControllerDoms(builder);
-                react[subscribe](v => {
-                    const s = v ? '' : 'none';
-                    children instanceof Array ?
-                        children.forEach(item => {item.style.display = s;}) :
-                        children.style.display = s;
+                const v = react[subscribe](v => {
+                    setDisplay(children, v);
                 });
-                return parseHTMLElement(children);
+                const result = parseHTMLElement(children);
+                setDisplay(result as any, v);
+                return result;
             },
             type: 'show'
         };

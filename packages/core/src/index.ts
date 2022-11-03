@@ -18,6 +18,7 @@ export {
 } from './element/transform';
 
 export * from './builder/builder';
+export {html} from './builder/html';
 export {comp, IComponent, IComponentOptions} from './comp/comp';
 export {prop} from './comp/prop';
 export {event} from './comp/event';

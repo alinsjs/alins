@@ -12,8 +12,11 @@ import {IReactBinding, IReactBuilder} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common';
 import {ILifeBuilder, ILifes} from './life';
 import {mount} from '../mount';
+import {IHTMLBuilder} from './html';
 
-export type TBuilderArg = number | string | IReactBuilder | IEventBuilder | TChild | IBuildFunction | ILifeBuilder; // (IElementBuilder|IElementBuilder[])[];
+export type TBuilderArg = number | string | IReactBuilder |
+    IEventBuilder | TChild | IBuildFunction | ILifeBuilder |
+    IHTMLBuilder; // (IElementBuilder|IElementBuilder[])[];
 
 export type IBuildFunction = () => TBuilderArg[];
 export interface IBuilder extends IControllers, IBuilderConstructor {
@@ -85,6 +88,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                     elementOptions.pseudos?.push(item); break;
                 case 'life':
                     elementOptions.lifes[item.name] = item; break;
+                case 'html':
+                    elementOptions.html = item; break;
                 default: console.warn('unkonwn builder', item); break;
             }
         } else if (typeof item === 'function') {

@@ -73,8 +73,6 @@ export const forController: IForController = function (this: IBuilderConstructor
             if (typeof item === 'undefined') item = list[i];
             item[index] = indexReactive;
             const result = callback(item as any, indexReactive);
-            debugger;
-            console.log('11111111111111111');
             return Array.isArray(result) ? result : [result];
         };
         // console.log('callback_tostring', callback.toString());

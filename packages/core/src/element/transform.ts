@@ -27,6 +27,7 @@ import {
 import {IForBuilder} from '../controller/for';
 import {ILifes, IUpdatedCallback, LifeMountedCollector, mountLifes} from '../builder/life';
 import {appendFragment} from '../builder/dom-proxy';
+import {IHTMLBuilder} from 'src/builder/html';
 
 export type TElementChild = null | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
@@ -50,6 +51,7 @@ export interface IElement {
     styles: (IStyleBuilder | IStyleAtoms)[];
     pseudos: IPseudoBuilder[];
     lifes: ILifes;
+    html?: IHTMLBuilder;
 }
 
 export interface IElementBuilder extends IBuilderParameter {
@@ -104,6 +106,13 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
 
     const dom = document.createElement(config.tag);
 
+    let isHTMLEl = false;
+
+    if (config.html) {
+        isHTMLEl = true;
+        dom.innerHTML = config.html.exe((v) => {dom.innerHTML = v;}) + '';
+    }
+
     // memo.add(() => dom.cloneNode());
     // console.log('transformBuilderToDom', config);
     // if (!dom) dom = div.cloneNode() as HTMLElement;
@@ -112,7 +121,10 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     for (let i = 0; i < config.binding.length; i++) {
         const binding = config.binding[i];
         // 提取表达式中没有binding的属性 merge到config中
-        const domInfo = applyDomInfoReaction(dom, binding, config.lifes.updated?.exe() as IUpdatedCallback);
+        const domInfo = applyDomInfoReaction(
+            isHTMLEl,
+            dom, binding, config.lifes.updated?.exe() as IUpdatedCallback,
+        );
         mergeDomInfo(config, domInfo);
     }
     
@@ -135,7 +147,10 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.id) dom.id = config.id;
 
     if (config.children && config.children.length > 0) {
-        mountChildrenDoms(dom, config.children);
+        if (isHTMLEl)
+            console.warn('children is not supported in html builder');
+        else
+            mountChildrenDoms(dom, config.children);
 
         // memo.add((config: IElement) => {
         //     // todo 优化此部分逻辑
@@ -212,41 +227,45 @@ function isInputNode (node: HTMLElement | Text) {
 }
 
 function applyDomInfoReaction (
+    isHTMLEl: boolean,
     dom: HTMLElement, binding: IReactBinding, updated?: IUpdatedCallback
 ): IDomInfoData {
     const {template, reactions} = binding;
     const replacement = join(template, createReplacement);
+    
     // const
     const info = parseDomInfo(replacement);
 
     const data: IDomInfoData = {};
-
     if (info.textContent) {
-        const textContent = info.textContent;
-        const results = extractReplacement(textContent);
-        if (results) {
-            if (isInputNode(dom)) {
-                (dom as any).value = reactiveTemplate(textContent, reactions, (content, oldContent) => {
-                    (dom as any).value = content;
-                    updated?.({node: dom, type: 'value', value: content, prevValue: oldContent});
-                }, false);
-            } else {
-                const texts = textContent.split(ReplaceExp);
-                texts.forEach((text, i) => {
-                    if (text) dom.appendChild(document.createTextNode(text));
-                    if (!results[i]) return;
-                    const index = parseReplacementToNumber(results[i]);
-                    const reactionItem = reactions[index];
-                    if (!reactionItem) return;
-                    const reaction = transformToReaction(reactionItem);
-                    // ! 关键代码
-                    const node = document.createTextNode(
-                        reaction[subscribe]((v, v2) => {
-                            node.textContent = v;
-                            updated?.({node, type: 'text', value: v, prevValue: v2});
-                        })
-                    );
-                    dom.appendChild(node);
+        if (isHTMLEl) {
+            console.warn('text is not supported in html builder');
+        } else {
+            const textContent = info.textContent;
+            const results = extractReplacement(textContent);
+            if (results) {
+                if (isInputNode(dom)) {
+                    (dom as any).value = reactiveTemplate(textContent, reactions, (content, oldContent) => {
+                        (dom as any).value = content;
+                        updated?.({node: dom, type: 'value', value: content, prevValue: oldContent});
+                    }, false);
+                } else {
+                    const texts = textContent.split(ReplaceExp);
+                    texts.forEach((text, i) => {
+                        if (text) dom.appendChild(document.createTextNode(text));
+                        if (!results[i]) return;
+                        const index = parseReplacementToNumber(results[i]);
+                        const reactionItem = reactions[index];
+                        if (!reactionItem) return;
+                        const reaction = transformToReaction(reactionItem);
+                        // ! 关键代码
+                        const node = document.createTextNode(
+                            reaction[subscribe]((v, v2) => {
+                                node.textContent = v;
+                                updated?.({node, type: 'text', value: v, prevValue: v2});
+                            })
+                        );
+                        dom.appendChild(node);
                     // memo.add((config: IElement) => {
                     //     const {reactions} = config.binding as any;
                     //     const newDom = memo?.last;
@@ -258,10 +277,11 @@ function applyDomInfoReaction (
                     //     newDom.appendChild(node);
                     //     return newDom;
                     // });
-                });
+                    });
+                }
+            } else {
+                data.textContent = textContent;
             }
-        } else {
-            data.textContent = textContent;
         }
     }
 
@@ -334,6 +354,7 @@ export function createElement ({
     styles = [],
     pseudos = [],
     lifes = {},
+    html,
 }: IElementOptions): IElement {
     return {
         tag,
@@ -349,5 +370,6 @@ export function createElement ({
         styles,
         pseudos,
         lifes,
+        html,
     };
 }

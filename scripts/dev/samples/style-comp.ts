@@ -56,7 +56,7 @@ export function StyleDemo () {
 export function StyleComp () {
     createCss();
     const num = $(30);
-    (window as any).num = num;
+    (window as any)._style_comp_num = num;
     
     return [
         div('d-form.d-form',
@@ -79,7 +79,6 @@ export function StyleComp () {
             color: 'red',
             marginTop: $`${num}px`,
             fontSize: $`${() => num.value}px`
-            // animation: keyframe
         })),
         div('444', style`
             color: red;
