@@ -5,7 +5,7 @@
  */
 
 import {IJson, IBuilderParameter} from 'alins-utils/src/types/common.d';
-import {TChild} from '../element/transform';
+import {TChild} from '../builder/builder';
 
 export type TSlotFunction = (...args: any[]) => TChild;
 

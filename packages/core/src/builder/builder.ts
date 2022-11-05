@@ -133,11 +133,28 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 default: console.warn('unkonwn builder', item); break;
             }
         } else if (typeof item === 'function') {
-            const result = item();
-            if ((result as any).type === 'model') { // model
-                elementOptions.children.push((result as any).exe());
-            } else {
-                data.push(...result);
+            const result = item() as any;
+            const type = result.type;
+            // ! 对于函数的处理
+            switch (type) {
+                case 'builder':
+                case 'if':
+                case 'show':
+                case 'switch':
+                case 'for':
+                case 'comp':
+                    elementOptions.children.push(result as TChild); break;
+                case 'model':
+                    // todo comp 科里化的话也需要在这里加逻辑
+                    // 用于默认不带参数执行 input.model(num); = input.model(num)();
+                    elementOptions.children.push(result.exe()); break;
+                default: {
+                    if (result instanceof Array) {
+                        data.push(...result); // 返回是数组
+                    } else {
+                        data.push(result); // 其他类型如 input返回的dom元素
+                    }
+                };
             }
         }
     }

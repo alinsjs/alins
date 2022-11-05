@@ -25,6 +25,8 @@ import {CompController} from './samples/comp-controller';
 import {FuncBuilder} from './samples/func-as-builder';
 import {htmlComp} from './samples/html';
 import {initMount} from './samples/mount';
+import {CompParent} from './samples/comp';
+import './samples/slot-demo';
 const num = $(20);
 (window as any).numx =  num;
 const titleBg = $('#ddd');
@@ -50,7 +52,7 @@ const value2 = $(2);
 //     div('title font-size:', input.model(num, 'number')),
 // );
 
-div.show(() => value.value === 0)('test controller mount').mount();
+// div.show(() => value.value === 0)('test controller mount').mount();
 
 initMount();
 
@@ -58,6 +60,8 @@ mount(
     div('Hello World'),
     div('title font-size:', input.model(num, 'number')),
     div('title background:', input.model(titleBg)),
+    div('.title:comp Parent--------------'),
+    comp(CompParent),
     div('.title:comp HTML--------------'),
     comp(htmlComp),
     div('.title:comp Life--------------'),

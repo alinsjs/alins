@@ -10,6 +10,8 @@ import {
 } from './symbol';
 import {IBuilderParameter, IJson} from './common';
 
+// export type TSimpleValue = number|string|boolean|null|undefined;
+
 export interface IReactBase<T = any> {
   [index]?: IReactItem<number>;
   [forceUpdate](): void;
