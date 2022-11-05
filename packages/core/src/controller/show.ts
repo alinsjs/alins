@@ -10,10 +10,10 @@
  */
 
 import {subscribe, transformToReaction} from 'alins-reactive';
-import {IMountBuilderParameter} from 'alins-utils/src/types/common.d';
+import {IMountBuilderParameter} from '../element/transform';
 import {TIfArg} from './if';
 import {getControllerDoms, IControllerConstructor, IControllerDom, parseHTMLElement, TControllerArg, TControllerType} from './controller';
-import {mount} from '../mount';
+import {mountParentWithTChild} from '../mount';
 export interface IShowBuilder extends IMountBuilderParameter {
     exe(): IControllerDom;
     type: 'show';
@@ -58,7 +58,7 @@ export const showController: IShowController<any> = function (this: IControllerC
             },
             type: 'show',
             mount (parent = 'body') {
-                mount(parent, this);
+                mountParentWithTChild(parent, this);
             }
         };
     };

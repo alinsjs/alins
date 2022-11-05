@@ -17,7 +17,7 @@ import {
     parseReplacementToNumber, reactiveTemplate,
     ReplaceExp, subscribe, transformToReaction, join,
 } from 'alins-reactive';
-import {IJson, IMountBuilderParameter} from 'alins-utils/src/types/common.d';
+import {IBuilderParameter, IJson} from 'alins-utils/src/types/common.d';
 import {
     IReactBinding, TReactionItem
 } from 'alins-utils/src/types/react.d';
@@ -29,7 +29,7 @@ import {ILifes, IUpdatedCallback, LifeMountedCollector, mountLifes} from '../bui
 import {appendFragment} from '../builder/dom-proxy';
 import {IHTMLBuilder} from '../builder/html';
 
-export type TElementChild = null | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
+export type TElementChild = null | HTMLElement | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
 
 export type TChild = TElementChild |
     IStyleBuilder | IStyleAtoms | IPseudoBuilder |
@@ -57,6 +57,13 @@ export interface IElement {
 export interface IElementBuilder extends IMountBuilderParameter {
     type: 'builder'; // todo comp
     exe(): IElement;
+    _asParent(builders: TChild[]): void;
+}
+
+export type IMountParent = string | HTMLElement | IComponentBuilder | IElementBuilder;
+
+export interface IMountBuilderParameter extends IBuilderParameter {
+    mount(parent?: IMountParent): void;
 }
 
 

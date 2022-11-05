@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import {
-    button, IComponent, comp, prop,
+    button, IComponent, comp, prop, on,
     IComponentOptions, click, $, input, span,
 } from '../alins';
 
@@ -14,6 +14,7 @@ export const Count: IComponent = () => {
         span('输入count'),
         input.model(count, 'number'),
         comp(CountProps, prop({value: count})),
+        button('add', on('click')(() => {count.value++;})),
         button('add', click(() => {count.value++;})),
     ];
 };

@@ -14,6 +14,13 @@ export interface IEventBuilder extends IBuilderParameter {
     name: string;
 }
 
+export interface IEventConstructor {
+    (
+        listener: (...args: any[]) => void,
+        ...decorators: TEventDecorator[]
+    ): IEventBuilder;
+}
+
 // prevent：阻止默认事件（常用）；
 // stop：阻止事件冒泡（常用）；
 // once：事件只触发一次（常用）；
@@ -22,38 +29,42 @@ export interface IEventBuilder extends IBuilderParameter {
 type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self';
 
 export function on (
-    name: string,
-    listener: (...args: any[])=> void,
-    ...decorators: TEventDecorator[]
-): IEventBuilder {
-    const eventArgs: any[] = [];
-    return {
-        args (...args) {
-            eventArgs.push(...args);
-            return this;
-        },
-        exe (dom: HTMLElement) {
-            if (decorators.length === 0) {
-                dom.addEventListener(name, (e) => {
-                    listener.apply(dom, [...eventArgs, e]);
-                });
-            } else {
-                const is = (name: TEventDecorator) => decorators.includes(name);
-                const useCapture = is('capture');
-                const handle = (e: Event) => {
-                    if (is('self') && e.target !== dom) return;
-
-                    if (is('stop')) e.stopPropagation();
-                    if (is('prevent')) e.preventDefault();
-                    listener.apply(dom, [...eventArgs, e]);
-                    if (is('once')) dom.removeEventListener(name, handle, useCapture);
-                };
-                dom.addEventListener(name, handle, useCapture);
-            }
-        },
-        type: 'on',
-        name,
+    name: string
+): IEventConstructor {
+    return (
+        listener: (...args: [...any[], Event, HTMLElement][])=> void,
+        ...decorators: TEventDecorator[]
+    ) => {
+        const eventArgs: any[] = [];
+        return {
+            args (...args) {
+                eventArgs.push(...args);
+                return this;
+            },
+            exe (dom: HTMLElement) {
+                if (decorators.length === 0) {
+                    dom.addEventListener(name, (e) => {
+                        listener.apply(dom, [...eventArgs, e, dom]);
+                    });
+                } else {
+                    const is = (name: TEventDecorator) => decorators.includes(name);
+                    const useCapture = is('capture');
+                    const handle = (e: Event) => {
+                        if (is('self') && e.target !== dom) return;
+    
+                        if (is('stop')) e.stopPropagation();
+                        if (is('prevent')) e.preventDefault();
+                        listener.apply(dom, [...eventArgs, e]);
+                        if (is('once')) dom.removeEventListener(name, handle, useCapture);
+                    };
+                    dom.addEventListener(name, handle, useCapture);
+                }
+            },
+            type: 'on',
+            name,
+        };
     };
+
 }
 
 const MainEventNames = [
@@ -79,10 +90,10 @@ const EventNames = [
 export const events = (() => {
     const map: IJson<any> = {};
     EventNames.map(name => {
-        map[name] = (listener: (...args: any[])=> void) => on(name, listener);
+        map[name] = on(name);
     });
     return map as {
-        [name in (typeof EventNames)[number]]: (listener: (...args: any[])=> void) => IEventBuilder;
+        [name in (typeof EventNames)[number]]: IEventConstructor
     };
 })();
 

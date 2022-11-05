@@ -10,10 +10,10 @@
  */
 
 import {subscribe, transformToReaction} from 'alins-reactive';
-import {IMountBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
-import {mount} from '../mount';
+import {mountParentWithTChild} from '../mount';
 import {getControllerDoms, IControllerConstructor, IControllerDom, IControllerDoms, parseHTMLElement, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
+import {IMountBuilderParameter} from '../element/transform';
 
 export type TIfArg = IReactItem<boolean> | (()=>boolean);
 
@@ -132,7 +132,7 @@ export const ifController: IIfController<any> = function (this: IControllerConst
             },
             type: 'if',
             mount (parent = 'body') {
-                mount(parent, this);
+                mountParentWithTChild(parent, this);
             }
         } as IIfBuilder<any>;
     };

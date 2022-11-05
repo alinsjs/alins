@@ -6,13 +6,14 @@
 
 import {controllers, IControllers} from '../controller/controller';
 import {IEventBuilder} from '../event/on';
-import {createElement, IElement, IElementBuilder, IElementOptions, TChild} from '../element/transform';
+import {createElement, IElement, IElementBuilder, IElementOptions, IMountParent, TChild} from '../element/transform';
 import {countBindingValue} from 'alins-reactive';
 import {IReactBinding, IReactBuilder} from 'alins-utils/src/types/react.d';
 import {IJson} from 'alins-utils/src/types/common';
 import {ILifeBuilder, ILifes} from './life';
-import {mount} from '../mount';
+import {mountParentWithTChild} from '../mount';
 import {IHTMLBuilder} from './html';
+import {checkDefaultTextItem, getTagNameFromDomInfo} from '../parser/info-parser';
 
 export type TBuilderArg = number | string | IReactBuilder |
     IEventBuilder | TChild | IBuildFunction | ILifeBuilder |
@@ -20,15 +21,6 @@ export type TBuilderArg = number | string | IReactBuilder |
 
 export type IBuildFunction = () => TBuilderArg[];
 export interface IBuilder extends IControllers, IBuilderConstructor {
-    // todo controller
-}
-
-function getTagNameFromDomInfo (domInfo: string) {
-    if (domInfo[0] !== '/') return '';
-    for (let i = 1; i < domInfo.length; i++) {
-        if ('.#[:'.includes(domInfo[i])) return domInfo.substring(1, i);
-    }
-    return domInfo.substring(1);
 }
 
 /**
@@ -58,8 +50,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
             // dom info
             const tagName = getTagNameFromDomInfo(item);
             if (tagName) elementOptions.tag = tagName;
-            elementOptions.domInfo += item;
-        } else if (item instanceof Array) {
+            elementOptions.domInfo += checkDefaultTextItem(item);
+        } else if (item instanceof Array || item instanceof HTMLElement) {
             // append children
             elementOptions.children.push(item);
         } else if (typeof item === 'object' && item) {
@@ -112,7 +104,7 @@ export interface IBuilderConstructor extends IControllers {
 export function buildFactory (tag: string): IBuilderConstructor {
     return Object.assign(((...data: TBuilderArg[]) => {
         // todo exe add context
-        return createBaseBuilder(() => {
+        return createBaseBuilder(data, () => {
             return elementBuilder(tag, data);
         });
     }), controllers);
@@ -149,12 +141,15 @@ export const [
     input, label, ul, li, span, textarea, form, br, tbody
 ] = MainDomNames.map(name => doms[name]);
 
-function createBaseBuilder (exe: ()=> IElement): IElementBuilder {
+function createBaseBuilder (args: TBuilderArg[], exe: ()=> IElement): IElementBuilder {
     return {
         exe,
         type: 'builder',
-        mount (parent: string | HTMLElement = 'body') {
-            mount(parent, this);
+        mount (parent: IMountParent = 'body') {
+            mountParentWithTChild(parent, this);
+        },
+        _asParent (builders: TChild[]) {
+            args.push(...builders);
         }
     };
 }

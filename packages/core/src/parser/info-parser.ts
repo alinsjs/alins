@@ -28,11 +28,23 @@ export interface IDomInfoData {
 export const InfoKeys = ['className', 'attributes', 'id', 'textContent', 'tagName'] as const;
 export type TInfoType = typeof InfoKeys[number];
 
+export function checkDefaultTextItem (item: string) {
+    return  ('./#[:'.includes(item[0])) ? item : `:${item}`;
+}
+
+export function getTagNameFromDomInfo (domInfo: string) {
+    if (domInfo[0] !== '/') return '';
+    for (let i = 1; i < domInfo.length; i++) {
+        if ('.#[:'.includes(domInfo[i])) return domInfo.substring(1, i);
+    }
+    return domInfo.substring(1);
+}
+
 // (window as any).parseCount = 0;
 export function parseDomInfo (info: string): IDomInfoData {
     // (window as any).parseCount++;
-    if (!('./#[:'.includes(info[0]))) info = `:${info}`;
     const result: IDomInfoData = {textContent: ''};
+    info = checkDefaultTextItem(info);
 
     let scope: TInfoType | '' = '';
     let lastIndex = 0;

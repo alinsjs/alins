@@ -3,8 +3,16 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-03 09:33:48
+ * @LastEditTime: 2022-11-05 20:24:20
 -->
+
+# 0.0.8
+
+1. fix: div('/button', '我现在变成了一个button').mount("#jx-app"); 文本节点不渲染 的bug [done]
+2. feat: mount可以挂载到 其他节点或者 comp上  [dom]
+3. feat: 事件中访问 this dom [done]
+4. fix: On 函数设计有误 [done]
+
 # 0.0.7
 
 1. 增加controller mount功能

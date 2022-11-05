@@ -5,16 +5,15 @@
  */
 
 import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
-import {IElementBuilder} from '../element/transform';
+import {IElementBuilder, IMountBuilderParameter} from '../element/transform';
 import {
     createReactive, index, mergeReact, subscribe
 } from 'alins-reactive';
-import {IMountBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
 import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
 import {getControllerDoms, removeControllerDoms, TControllerBuilder, TControllerType} from './controller';
 import {insertBefore} from '../builder/dom-proxy';
-import {mount} from '../mount';
+import {mountParentWithTChild} from '../mount';
 
 // export interface IForController {
 //     <T>(
@@ -127,7 +126,7 @@ export const forController: IForController = function (this: IBuilderConstructor
             },
             type: 'for',
             mount (parent = 'body') {
-                mount(parent, this);
+                mountParentWithTChild(parent, this);
             }
         };
     };

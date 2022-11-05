@@ -526,7 +526,7 @@
               "content": "[value] 对一级对象赋值",
               "id": 1667310846500,
               "level": "danger",
-              "done": false
+              "done": true
             }
           },
           {
@@ -626,7 +626,9 @@
       1665835013054,
       1665494169984,
       1666088897525,
-      1665494213348
+      1665494213348,
+      1665982682369,
+      1665494195217
     ],
     "schema": "https://github.com/Saber2pr/vsc-ext-todolist/blob/master/src/api/type.ts#L3",
     "add_mode": "bottom",
