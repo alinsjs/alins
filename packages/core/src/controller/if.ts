@@ -13,7 +13,7 @@ import {subscribe, transformToReaction} from 'alins-reactive';
 import {IReactItem} from 'alins-utils/src/types/react.d';
 import {mountParentWithTChild} from '../mount';
 import {getControllerDoms, IControllerConstructor, IControllerDom, IControllerDoms, parseHTMLElement, replaceControllerDoms, TControllerArg, TControllerBuilder, TControllerType} from './controller';
-import {IMountBuilderParameter} from '../element/transform';
+import {IMountBuilderParameter} from '../builder/builder';
 
 export type TIfArg = IReactItem<boolean> | (()=>boolean);
 

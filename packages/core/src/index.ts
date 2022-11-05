@@ -15,7 +15,7 @@ export {mount} from './mount';
 
 export {
     IElement,
-} from './element/transform';
+} from './builder/builder';
 
 export * from './builder/builder';
 export {html} from './builder/html';

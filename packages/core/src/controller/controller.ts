@@ -9,9 +9,9 @@ import {forController, IForController} from './for';
 import {ifController, IIfController} from './if';
 import {IShowController, showController} from './show';
 import {ISwitchController, switchController} from './switch';
-import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
+import {IBuilderConstructor, IElementBuilder, TBuilderArg} from '../builder/builder';
 import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
-import {IElementBuilder, mountSingleChild, transformBuilderToDom} from '../element/transform';
+import {mountSingleChild, transformBuilderToDom} from '../element/transform';
 import {insertBefore, removeDom} from '../builder/dom-proxy';
 
 type INode = Node | HTMLElement;

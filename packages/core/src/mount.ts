@@ -4,7 +4,8 @@
  * @Description: Coding something
  */
 import {LifeMountedCollector} from './builder/life';
-import {TChild, mountChildrenDoms, IMountParent} from './element/transform';
+import {mountChildrenDoms} from './element/transform';
+import {TChild, IMountParent, TElementChild} from './builder/builder';
 
 export function mount (...builders: (string | Element | TChild)[]) {
     let parent: Element | string | null = builders[0] as any;
@@ -13,7 +14,7 @@ export function mount (...builders: (string | Element | TChild)[]) {
         if (!(parent instanceof Element)) throw new Error('Parent is not defined');
     }
     
-    if (parent instanceof HTMLElement) {builders.shift();}
+    if (parent instanceof Element) {builders.shift();}
     else parent = document.body;
     
     mountParentWithTChild(parent as HTMLElement, builders as TChild[]);
@@ -30,7 +31,7 @@ export function mountParentWithTChild (
         mountChildrenDoms(parent, builders);
         LifeMountedCollector.mountFinish();
     } else if (parent.type === 'builder' || parent.type === 'comp') {
-        parent._asParent(builders);
+        parent._asParent(builders as TElementChild[]);
     } else {
         throw new Error('Parent is illegal');
     }

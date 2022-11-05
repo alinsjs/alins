@@ -8,7 +8,7 @@ import {IJson} from 'alins-utils/src/types/common.d';
 import {IComputedItem} from 'alins-utils/src/types/react.d';
 import {mountParentWithTChild} from '../mount';
 import {compControllers, ICompControllers} from '../controller/controller';
-import {IMountBuilderParameter, TChild} from '../element/transform';
+import {IMountBuilderParameter, TElementChild} from '../builder/builder';
 import {IEvent, IEventFunc} from './event';
 import {IProp} from './prop';
 import {ISlot, TSlotElement, TSlotFunction} from './slot';
@@ -24,14 +24,14 @@ export interface IComponentOptions<T extends 'slot' | 'slots' = 'slot'> {
     slots: T extends 'slot' ? TSlotFunction : TSlotElement;
 }
 export interface IComponent<T extends 'slot' | 'slots' = 'slot'> {
-    (options: IComponentOptions<T>): TChild;
+    (options: IComponentOptions<T>): TElementChild;
 }
 
 export type TCompArg = string; // prop event slot
 export interface IComponentBuilder extends IMountBuilderParameter {
-    exe(): TChild;
+    exe(): TElementChild;
     type: 'comp';
-    _asParent(builders: TChild[]): void;
+    _asParent(builders: TElementChild[]): void;
 }
 export interface ICompConstructor extends ICompControllers<'comp'> {
     (...args: (IComponent | TCompBuilderArg)[]): IComponentBuilder;
@@ -43,7 +43,7 @@ export const comp: ICompConstructor = Object.assign(((...args: TCompBuilderArg[]
 
     // CompMap.set(el, comp);
 
-    const children: TChild[] = [];
+    const children: TElementChild[] = [];
 
     return {
         exe () {
@@ -82,7 +82,7 @@ export const comp: ICompConstructor = Object.assign(((...args: TCompBuilderArg[]
         mount (parent = 'body') {
             mountParentWithTChild(parent, this);
         },
-        _asParent (builders: TChild[]) {
+        _asParent (builders: TElementChild[]) {
             children.push(...builders);
         }
     } as IComponentBuilder;

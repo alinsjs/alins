@@ -10,7 +10,7 @@
  */
 
 import {subscribe, transformToReaction} from 'alins-reactive';
-import {IMountBuilderParameter} from '../element/transform';
+import {IMountBuilderParameter} from '../builder/builder';
 import {IReactItem} from 'alins-utils/src/types/react.d';
 import {mountParentWithTChild} from '../mount';
 import {

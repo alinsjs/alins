@@ -4,8 +4,15 @@
  * @Description: Coding something
  */
 
-import {$, comp, span, input, prop, div} from '../alins';
+import {$, comp, span, input, prop, style, div, IComponent} from '../alins';
 import {CountProps} from './count';
+
+// export const CompDemo: IComponent = () => {
+//     return [
+//         null,
+//         style({}),
+//     ];
+// }
 
 export function CompController () {
     const list = $([1, 2, 3]);

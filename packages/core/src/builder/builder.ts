@@ -6,14 +6,62 @@
 
 import {controllers, IControllers} from '../controller/controller';
 import {IEventBuilder} from '../event/on';
-import {createElement, IElement, IElementBuilder, IElementOptions, IMountParent, TChild} from '../element/transform';
+import {createElement} from '../element/transform';
 import {countBindingValue} from 'alins-reactive';
-import {IReactBinding, IReactBuilder} from 'alins-utils/src/types/react.d';
-import {IJson} from 'alins-utils/src/types/common';
+import {IReactBinding, IReactBuilder, TReactionItem} from 'alins-utils/src/types/react.d';
 import {ILifeBuilder, ILifes} from './life';
 import {mountParentWithTChild} from '../mount';
 import {IHTMLBuilder} from './html';
 import {checkDefaultTextItem, getTagNameFromDomInfo} from '../parser/info-parser';
+import {IComponentBuilder} from '../comp/comp';
+import {IModelBuilder} from '../controller/model';
+import {IIfBuilder} from '../controller/if';
+import {IShowBuilder} from '../controller/show';
+import {ISwitchBuilder} from '../controller/switch';
+import {IBuilderParameter, IJson} from 'alins-utils/src/types/common.d';
+import {
+    IStyleBuilder, IStyleAtoms, IPseudoBuilder,
+} from 'alins-utils/src/types/style.d';
+import {IForBuilder} from '../controller/for';
+
+export type TElementChild = null | HTMLElement | IElementBuilder | IComponentBuilder |
+    IForBuilder | IIfBuilder<any> | IShowBuilder |
+    IModelBuilder | ISwitchBuilder<any, any> | TElementChild[];
+
+export type TChild = TElementChild |
+    IStyleBuilder | IStyleAtoms | IPseudoBuilder | TChild[];
+
+export interface IElement {
+    tag: string;
+    className: string[];
+    id: string;
+    textContent: string;
+    attributes: IJson<string>;
+    children?: TChild[];
+    binding: IReactBinding[];
+    event: IEventBuilder[];
+    domInfo: string;
+    _if?: IIfBuilder<any>;
+    show?: TReactionItem;
+    styles: (IStyleBuilder | IStyleAtoms)[];
+    pseudos: IPseudoBuilder[];
+    lifes: ILifes;
+    html?: IHTMLBuilder;
+}
+
+export type IElementOptions = Partial<IElement>
+
+export interface IElementBuilder extends IMountBuilderParameter {
+    type: 'builder'; // todo comp
+    exe(): IElement;
+    _asParent(builders: TBuilderArg[]): void;
+}
+
+export type IMountParent = string | HTMLElement | IComponentBuilder | IElementBuilder;
+
+export interface IMountBuilderParameter extends IBuilderParameter {
+    mount(parent?: IMountParent): void;
+}
 
 export type TBuilderArg = number | string | IReactBuilder |
     IEventBuilder | TChild | IBuildFunction | ILifeBuilder |
@@ -31,7 +79,7 @@ export interface IBuilder extends IControllers, IBuilderConstructor {
 function elementBuilder (tag: string, data: TBuilderArg[]) {
     // console.log('elementBuilder', tag, data, JSON.stringify(data));
     const elementOptions: IElementOptions & {
-        children: TChild[],
+        children: TElementChild[],
         binding: IReactBinding[],
         lifes: ILifes,
     } = {
@@ -148,7 +196,7 @@ function createBaseBuilder (args: TBuilderArg[], exe: ()=> IElement): IElementBu
         mount (parent: IMountParent = 'body') {
             mountParentWithTChild(parent, this);
         },
-        _asParent (builders: TChild[]) {
+        _asParent (builders: TBuilderArg[]) {
             args.push(...builders);
         }
     };

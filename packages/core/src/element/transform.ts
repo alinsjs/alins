@@ -4,12 +4,6 @@
  * @Description: Coding something
  */
 
-import {IComponentBuilder} from '../comp/comp';
-import {IModelBuilder} from '../controller/model';
-import {IIfBuilder} from '../controller/if';
-import {IShowBuilder} from '../controller/show';
-import {ISwitchBuilder} from '../controller/switch';
-import {IEventBuilder} from '../event/on';
 // import {batchMountDom} from '../mount';
 import {IDomInfoData, parseDomInfo} from '../parser/info-parser';
 import {
@@ -17,54 +11,10 @@ import {
     parseReplacementToNumber, reactiveTemplate,
     ReplaceExp, subscribe, transformToReaction, join,
 } from 'alins-reactive';
-import {IBuilderParameter, IJson} from 'alins-utils/src/types/common.d';
-import {
-    IReactBinding, TReactionItem
-} from 'alins-utils/src/types/react.d';
-import {
-    IStyleBuilder, IStyleAtoms, IPseudoBuilder,
-} from 'alins-utils/src/types/style.d';
-import {IForBuilder} from '../controller/for';
-import {ILifes, IUpdatedCallback, LifeMountedCollector, mountLifes} from '../builder/life';
+import {IReactBinding} from 'alins-utils/src/types/react.d';
+import {IUpdatedCallback, LifeMountedCollector, mountLifes} from '../builder/life';
 import {appendFragment} from '../builder/dom-proxy';
-import {IHTMLBuilder} from '../builder/html';
-
-export type TElementChild = null | HTMLElement | IElementBuilder | IElementBuilder[] | IComponentBuilder | IComponentBuilder[];
-
-export type TChild = TElementChild |
-    IStyleBuilder | IStyleAtoms | IPseudoBuilder |
-    IForBuilder |
-    IIfBuilder<any> | IShowBuilder | IModelBuilder | ISwitchBuilder<any, any> | TChild[];
-
-export interface IElement {
-    tag: string;
-    className: string[];
-    id: string;
-    textContent: string;
-    attributes: IJson<string>;
-    children?: TChild[];
-    binding: IReactBinding[];
-    event: IEventBuilder[];
-    domInfo: string;
-    _if?: IIfBuilder<any>;
-    show?: TReactionItem;
-    styles: (IStyleBuilder | IStyleAtoms)[];
-    pseudos: IPseudoBuilder[];
-    lifes: ILifes;
-    html?: IHTMLBuilder;
-}
-
-export interface IElementBuilder extends IMountBuilderParameter {
-    type: 'builder'; // todo comp
-    exe(): IElement;
-    _asParent(builders: TChild[]): void;
-}
-
-export type IMountParent = string | HTMLElement | IComponentBuilder | IElementBuilder;
-
-export interface IMountBuilderParameter extends IBuilderParameter {
-    mount(parent?: IMountParent): void;
-}
+import {IElement, IElementBuilder, IElementOptions, TChild} from '../builder/builder';
 
 
 function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
@@ -343,8 +293,6 @@ function applyDomInfoReaction (
     return data;
     // console.log(info, dom, binding, replacement, reactions);
 }
-
-export type IElementOptions = Partial<IElement>
 
 export function createElement ({
     tag = '',

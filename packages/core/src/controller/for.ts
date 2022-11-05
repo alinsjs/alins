@@ -4,8 +4,10 @@
  * @Description: Coding something
  */
 
-import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
-import {IElementBuilder, IMountBuilderParameter} from '../element/transform';
+import {
+    IBuilderConstructor, TBuilderArg,
+    IElementBuilder, IMountBuilderParameter,
+} from '../builder/builder';
 import {
     createReactive, index, mergeReact, subscribe
 } from 'alins-reactive';
