@@ -14,7 +14,7 @@ import {IBuilderParameter, IJson} from './common';
 
 export interface IReactBase<T = any> {
   [index]?: IReactItem<number>;
-  [forceUpdate](): void;
+  [forceUpdate](old?: any, index?: number): void;
   [subscribe](fn: (v:T, old:T, index: number) => void):  T;
   [reactValue]: boolean;
   [getListeners](): Function[];

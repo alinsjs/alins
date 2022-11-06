@@ -19,6 +19,8 @@ import {
 // 2. change value 参数问题 getReactionPureValue
 // 3. switchListeners 深度遍历问题
 
+function getJson (data:any) { return data[json] ? data[json]() : data; };
+
 export function createProxy<T extends IJson> (
     originData: T,
     changeList: Function[] = [],
@@ -39,7 +41,7 @@ export function createProxy<T extends IJson> (
         // debugger;
         // console.log(newValue, oldValue);
         for (let i = 0; i < changeList.length; i++) {
-            changeList[i](newValue, oldValue, index);
+            changeList[i](getJson(newValue), getJson(oldValue), index);
         }
     };
 
@@ -49,8 +51,8 @@ export function createProxy<T extends IJson> (
             changeList.push(fn);
             return data;
         },
-        [forceUpdate] () {
-            triggerChange(data, data);
+        [forceUpdate] (old = data, index: number) {
+            triggerChange(data, old, index);
         },
         [reactValue]: false,
         [getListeners]: () => changeList,
@@ -96,16 +98,15 @@ export function createProxy<T extends IJson> (
 
             if (isSymbol) {
                 if (property === value) {
-                    // debugger;
+                    const old = data[json]();
                     // console.warn('不能对一级对象设置value属性');
                     if (isArray) {
                         // target.splice(0, target.length, ...v);
-                        // debugger;
                         for (let i = 0; i < v.length; i++) {
                             const old = target[i];
                             const newValue = reactiveProxyValue(v[i]);
                             newValue[index] = reactiveValue(i); // ! index
-                            if (old) mergeReact(old, newValue);
+                            if (old) mergeReact(old, newValue, i);
                             triggerChange(newValue, old, i);
                             target[i] = newValue;
                         }
@@ -134,6 +135,7 @@ export function createProxy<T extends IJson> (
                             target[k] = reaction;
                         }
                     }
+                    triggerChange(data[json](), old);
                     return true;
                 } else if (property === json) {
                     console.warn('json symbol 属性不可设置');

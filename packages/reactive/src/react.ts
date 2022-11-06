@@ -13,7 +13,7 @@ import {IStyleBuilder} from 'alins-utils/src/types/style';
 import {
     IReactBindingTemplate, IReactBuilder, IReactContext,
     IReactWrap, TReactionItem, IReactItem,
-    IReactObject, IReactBase, IComputedItem, TReactionValue,
+    IReactObject, IComputedItem, TReactionValue,
 } from 'alins-utils/src/types/react.d';
 import {createReplacement, createTemplateReplacement} from './binding';
 import {Compute, computed, subscribeReactBuilder} from './computed';
@@ -79,8 +79,8 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
             changeList.push(fn);
             return this.value;
         },
-        [forceUpdate] () {
-            changeList.forEach(fn => {fn(value, value);});
+        [forceUpdate] (old = value, index) {
+            changeList.forEach(fn => {fn(value, old, index);});
         },
         toJSON () {return isUndefined ? undefined : this.value;},
         [getListeners]: () => {
@@ -176,6 +176,7 @@ export function isReactSimpleValue (v: any) {
 export function mergeReact (
     oldReact: IReactObject<any>,
     newValue: any,
+    index?: number,
 ) {
     if (typeof newValue === 'function') return;
 
@@ -192,12 +193,7 @@ export function mergeReact (
     // }
     // {a: {b: 1, c: 2}, c: 2}, // 旧值
     // {a: {b: 2, d: 3}, d: 3} // 新值
-    if (isReactSimpleValue(newValue)) {
-        // const newReact = reactiveValue(newValue);
-        // setValue?.(newReact);
-        if (oldReact) mergeListeners(oldReact, newValue);
-        // debugger;
-    } else {
+    if (!isReactSimpleValue(newValue)) {
         const newKeys = Object.keys(newValue);
         // ! 对于对象 需要双向排重
         const oldTarget = oldReact as any;
@@ -207,7 +203,8 @@ export function mergeReact (
             const oldItem = oldTarget[k];
             const index = newKeys.indexOf(k);
             if (index !== -1) { // 旧值 新值中都有
-                mergeReact(oldItem, newValue[k]);
+                // 数组 index即为下标 对象也传但是无意义，这里不使用判断了
+                mergeReact(oldItem, newValue[k], index);
                 newKeys.splice(index, 1);
             } else { // 新值中没有
                 // todo 对于动态属性没有良好的支持
@@ -221,19 +218,22 @@ export function mergeReact (
             oldTarget[key] = reactiveProxyValue(newValue[key]);
         }
     }
+    if (oldReact) mergeListeners(oldReact, newValue, index);
+    else newValue[forceUpdate](undefined, index);
 
 }
 
 export function mergeListeners (
-    oldReact: IReactBase<any>, // 被覆盖的值
-    newReact: IReactBase<any>, // 新值
+    oldReact: IReactItem | IReactObject, // 被覆盖的值
+    newReact: IReactItem | IReactObject, // 新值
+    index?: number,
 ) {
     // console.count('mergeListeners');
     const arr = oldReact[getListeners]();
     if (arr.length > 0) {
         newReact[getListeners]().push(...arr);
         // newReact[replaceListeners](arr);
-        newReact[forceUpdate](); // 被覆盖的数据触发更新
+        newReact[forceUpdate](getReactionValue(oldReact), index); // 被覆盖的数据触发更新
     }
 }
 
@@ -252,7 +252,6 @@ export function isReaction (v: any): boolean {
 // }
 
 export function getReactionPureValue (data: any) {
-    debugger;
     return isReaction(data) ? JSON.parse(JSON.stringify(data)) : data;
 }
 
