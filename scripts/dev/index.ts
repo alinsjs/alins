@@ -27,6 +27,7 @@ import {htmlComp} from './samples/html';
 import {initMount} from './samples/mount';
 import {CompParent} from './samples/comp';
 import './samples/slot-demo';
+import './samples/react';
 const num = $(20);
 (window as any).numx =  num;
 const titleBg = $('#ddd');

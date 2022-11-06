@@ -7,3 +7,7 @@
 export * from 'packages/core/src/index';
 // 消除version重复
 export * from '../../packages/style/src/index';
+
+import * as Alins from 'packages/core/src/index';
+
+window.Alins = Alins;

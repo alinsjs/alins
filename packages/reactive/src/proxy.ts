@@ -19,7 +19,7 @@ import {
 // 2. change value 参数问题 getReactionPureValue
 // 3. switchListeners 深度遍历问题
 
-function getJson (data:any) { return data[json] ? data[json]() : data; };
+function getJson (data:any) { return data?.[json] ? data[json]() : data; };
 
 export function createProxy<T extends IJson> (
     originData: T,
@@ -135,7 +135,7 @@ export function createProxy<T extends IJson> (
                             target[k] = reaction;
                         }
                     }
-                    triggerChange(data[json](), old);
+                    // triggerChange(data[json](), old);
                     return true;
                 } else if (property === json) {
                     console.warn('json symbol 属性不可设置');
