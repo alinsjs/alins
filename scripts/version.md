@@ -3,7 +3,7 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-05 21:04:53
+ * @LastEditTime: 2022-11-07 09:27:11
 -->
 
 ## 0.0.8
@@ -12,6 +12,9 @@
 2. feat: mount可以挂载到 其他节点或者 comp上
 3. feat: 事件中访问 this dom 
 4. fix: On 函数设计有误 
+5. fix: 对于arg传入函数出现的bug fix [done]
+6. fix: object reactive subscrube [done]
+9. fix: 数组重新赋值之后属性丢失，下标引用绑定丢失 [done]
 
 ## 0.0.7
 

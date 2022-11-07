@@ -49,12 +49,11 @@ const value1 = $(1);
 const value2 = $(2);
 (window as any).valuex = value;
 
-// mount(
-//     div('title font-size:', input.model(num, 'number')),
-// );
+mount(
+    div('title font-size:', input.model(num, 'number')),
+);
 
-// div.show(() => value.value === 0)('test controller mount').mount();
-
+div.show(() => value.value === 0)('test controller mount').mount();
 initMount();
 
 mount(

@@ -16,6 +16,7 @@ interface IItem {
 export function todoList () {
     const edit = $('');
     const list = $<IItem[]>([]);
+    window.xxx = list;
     const addItem = () => {
         list.push({content: edit.value, done: false});
         edit.value = '';
@@ -35,7 +36,7 @@ export function todoList () {
         input.model(edit),
         button('提交', click(addItem)),
         div('.todo-list',
-            div.for(list)((item, index) => $`${() => index.value + 1}:${item.content}`),
+            // div.for(list)((item, index) => $`${() => index.value + 1}:${item.content}`),
             div.for(list)((item, index) => [
                 itemStyle(item),
                 $`${() => index.value + 1}:${item.content}`,

@@ -86,6 +86,7 @@ export const forController: IForController = function (this: IBuilderConstructor
         }
         const p = list as any as IReactObject<any>;
         p[subscribe]((newValue, oldValue, i) => {
+            if (typeof i !== 'number') return;
             // v: reaction
             const oldIndex = list.indexOf(newValue);
             // console.warn('oldIndex=', oldIndex, '-oldValue=', oldValue?.value, '-new index', i, '-new Value', newValue?.value);

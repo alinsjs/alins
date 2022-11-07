@@ -178,6 +178,7 @@ export function mergeReact (
     newValue: any,
     index?: number,
 ) {
+    if (typeof oldReact === 'undefined') return;
     if (typeof newValue === 'function') return;
 
     // const target = toReact as any;

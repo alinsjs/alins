@@ -3,21 +3,23 @@
  * @Date: 2022-11-06 10:49:47
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-06 11:12:20
+ * @LastEditTime: 2022-11-07 07:55:52
  */
-import {$, subscribe, div, click, button} from '../alins';
+import {$, subscribe, value, click, button, json} from '../alins';
 const obj = $({a: 1, b: [1, 2]}); // 我们使用别名
 
 obj[subscribe]((newValue, old) => {
-    console.log(`subscribe: ${JSON.stringify(newValue)} ${JSON.stringify(old)}`);
+    console.log(`subscribe: `, newValue, old);
 });
 obj.a[subscribe]((newValue, old) => {
-    console.trace(`av subscribe: ${newValue} ${old}`);
+    console.log(`av subscribe: `, newValue, old);
 });
 obj.b[subscribe]((newValue, old) => {
-    console.trace(`bv subscribe:`, newValue, old);
+    console.log(`bv subscribe:`, newValue, old);
 });
 
-window.reactObj = obj;
+button('test react', click(() => {
+    obj[value] = {a: 2, b: [2, 3]};
+})).mount();
 
 // reactObj[Alins.value] = {a:2,b:[2,3]}

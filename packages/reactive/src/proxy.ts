@@ -19,7 +19,7 @@ import {
 // 2. change value 参数问题 getReactionPureValue
 // 3. switchListeners 深度遍历问题
 
-function getJson (data:any) { return data?.[json] ? data[json]() : data; };
+// function getJson (data:any) { return data?.[json] ? data[json]() : data; };
 
 export function createProxy<T extends IJson> (
     originData: T,
@@ -41,7 +41,9 @@ export function createProxy<T extends IJson> (
         // debugger;
         // console.log(newValue, oldValue);
         for (let i = 0; i < changeList.length; i++) {
-            changeList[i](getJson(newValue), getJson(oldValue), index);
+            changeList[i]((newValue), (oldValue), index);
+            // todo
+            // changeList[i](getJson(newValue), getJson(oldValue), index);
         }
     };
 
@@ -101,8 +103,9 @@ export function createProxy<T extends IJson> (
                     const old = data[json]();
                     // console.warn('不能对一级对象设置value属性');
                     if (isArray) {
+                        const vLen = typeof v === 'undefined' ? 0 : v.length;
                         // target.splice(0, target.length, ...v);
-                        for (let i = 0; i < v.length; i++) {
+                        for (let i = 0; i < vLen; i++) {
                             const old = target[i];
                             const newValue = reactiveProxyValue(v[i]);
                             newValue[index] = reactiveValue(i); // ! index
@@ -110,32 +113,35 @@ export function createProxy<T extends IJson> (
                             triggerChange(newValue, old, i);
                             target[i] = newValue;
                         }
-                        if (target.length > v.length) {
-                            const arr = target.splice(v.length, target.length - v.length);
+                        if (target.length > vLen) {
+                            const arr = target.splice(vLen, target.length - vLen);
                             for (let i = 0; i < arr.length; i++) {
-                                triggerChange(undefined, arr[i], i + v.length);
+                                triggerChange(undefined, arr[i], i + vLen);
                             }
                         }
                     } else {
                         if (isReaction(v)) {
                             v = v[json]();
                         }
+                        const isUndf = typeof v === 'undefined';
                         for (const k in target) {
-                            if (!(k in v)) {
+                            if (isUndf || !(k in v)) {
                                 const old = target[k];
                                 delete target[k];
                                 old[old[reactValue] ? 'value' : value] = undefined;
                                 triggerChange(undefined, old);
                             }
                         }
-                        for (const k in v) {
-                            const old = target[k];
-                            const reaction = reactiveProxyValue(v[k]);
-                            mergeReact(old, reaction);
-                            target[k] = reaction;
+                        if (!isUndf) {
+                            for (const k in v) {
+                                const old = target[k];
+                                const reaction = reactiveProxyValue(v[k]);
+                                mergeReact(old, reaction);
+                                target[k] = reaction;
+                            }
                         }
                     }
-                    // triggerChange(data[json](), old);
+                    triggerChange(data[json](), old);
                     return true;
                 } else if (property === json) {
                     console.warn('json symbol 属性不可设置');
