@@ -147,10 +147,12 @@ export function mountChildrenDoms (
 }
 
 export function mountSingleChild (
-    item: TChild,
+    item: TChild | (() => TChild),
 ): DocumentFragment {
     const frag = document.createDocumentFragment();
-    if (item instanceof Array) {
+    if (typeof item === 'function') {
+        return mountSingleChild(item());
+    } else if (item instanceof Array) {
         for (const child of item) {
             frag.appendChild(mountSingleChild(child));
         }

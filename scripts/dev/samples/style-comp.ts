@@ -5,8 +5,25 @@
  */
 import {
     div, $, css, style, computed, pseudo,
-    button, hover, click, input, cls
+    button, hover, click, input, cls, after, span
 } from '../alins';
+
+const num = $(30);
+
+const hoverEle = hover(
+    'color: #f44;', // 字符串
+    style({fontSize: num}), // StyleBuiler
+    style.paddingLeft(num).relative().left(num), // 原子样式
+    $`padding-top: ${num}px;` // 响应式字符串
+);
+
+const afterEle = after(style.content('"after element"').color('#4f4'));
+
+div(
+    span('修改num: '),
+    input.model(num, 'number'),
+    div('Mouse hover me', hoverEle, afterEle),
+).mount();
 
 function createCss () {
     const num = $(30);

@@ -28,8 +28,8 @@ import {FuncBuilder} from './samples/func-as-builder';
 import {htmlComp} from './samples/html';
 import {initMount} from './samples/mount';
 import {CompParent} from './samples/comp';
-import './samples/slot-demo';
-import './samples/react';
+// import './samples/slot-demo';
+// import './samples/react';
 const num = $(20);
 (window as any).numx =  num;
 const titleBg = $('#ddd');
@@ -58,6 +58,10 @@ const msg = $('Hello msg');
 
 mount(
     div('title font-size:',
+        () => [
+            div('111111'),
+            div('111111222')
+        ],
         input.model(num, 'number')),
     div(msg),
     // () => div('111111'),

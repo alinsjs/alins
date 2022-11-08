@@ -67,7 +67,7 @@ export type TBuilderArg = IReactItem<any> | IComputedItem<any> | number | string
     IEventBuilder | TChild | IBuildFunction | ILifeBuilder |
     IHTMLBuilder; // (IElementBuilder|IElementBuilder[])[];
 
-export type IBuildFunction = () => TBuilderArg[];
+export type IBuildFunction = () => TBuilderArg|TBuilderArg[];
 export interface IBuilder extends IControllers, IBuilderConstructor {
 }
 
@@ -157,11 +157,13 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                     // 用于默认不带参数执行 input.model(num); = input.model(num)();
                     elementOptions.children.push(result.exe()); break;
                 default: {
+                    // ! 填充在参数数组里 重新循环
                     if (result instanceof Array) {
-                        data.push(...result); // 返回是数组
+                        data.splice(i, 1, ...result);
                     } else {
-                        data.push(result); // 其他类型如 input返回的dom元素
+                        data.splice(i, 1, result);
                     }
+                    i--;
                 };
             }
         }

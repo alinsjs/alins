@@ -83,8 +83,9 @@ export function parseSingleCssItem (item: ICssBase, reactions: TReactionItem[]) 
     } else  if (typeof item === 'object') { // style(...)
         if (item.type === 'react') {
             const result = item.exe({type: 'style'});
+            const start = reactions.length;
             reactions.push(...result.reactions);
-            return createTemplateReplacement(result.template, reactions.length);
+            return createTemplateReplacement(result.template, start);
         } else {
             const {scopeReactions, scopeTemplate} = item.generate(reactions.length);
             reactions.push(...scopeReactions);
