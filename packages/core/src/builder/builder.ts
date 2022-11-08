@@ -8,7 +8,7 @@ import {controllers, IControllers} from '../controller/controller';
 import {IEventBuilder} from '../event/on';
 import {createElement} from '../element/transform';
 import {countBindingValue} from 'alins-reactive';
-import {IReactBinding, IReactBuilder, TReactionItem} from 'alins-utils/src/types/react.d';
+import {IComputedItem, IReactBinding, IReactBuilder, IReactItem, TReactionItem} from 'alins-utils/src/types/react.d';
 import {ILifeBuilder, ILifes} from './life';
 import {mountParentWithTChild} from '../mount';
 import {IHTMLBuilder} from './html';
@@ -63,7 +63,7 @@ export interface IMountBuilderParameter extends IBuilderParameter {
     mount(parent?: IMountParent): void;
 }
 
-export type TBuilderArg = number | string | IReactBuilder |
+export type TBuilderArg = IReactItem<any> | IComputedItem<any> | number | string | IReactBuilder |
     IEventBuilder | TChild | IBuildFunction | ILifeBuilder |
     IHTMLBuilder; // (IElementBuilder|IElementBuilder[])[];
 
@@ -104,6 +104,14 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
             elementOptions.children.push(item);
         } else if (typeof item === 'object' && item) {
             switch (item.type) {
+                case 'reaction':
+                    // 对于单独传入的 reaction， 构造一个binding
+                    elementOptions.binding.push({
+                        template: ['', ''],
+                        reactions: [item],
+                        context: {type: 'dom-info'},
+                    });
+                    break;
                 case 'react':
                     const binding = item.exe({type: 'dom-info'});
                     if (binding.template[0][0] === '/') {

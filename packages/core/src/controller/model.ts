@@ -4,15 +4,15 @@
  * @Description: model controller
  */
 
-import {IBuilderConstructor, TBuilderArg} from '../builder/builder';
+import {IBuilderConstructor, IMountBuilderParameter, IMountParent, TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
-import {IBuilderParameter} from 'alins-utils/src/types/common.d';
 import {IReactItem} from 'alins-utils/src/types/react.d';
 import {transformBuilderToDom} from '../element/transform';
+import {mountParentWithTChild} from '../mount';
 
 export type TModelArg<T> = IReactItem<T> | (()=>T);
 
-export interface IModelBuilder extends IBuilderParameter {
+export interface IModelBuilder extends IMountBuilderParameter {
     exe(): HTMLElement;
     type: 'model';
 }
@@ -78,10 +78,16 @@ export const modelController: IModelController = function (this: IBuilderConstru
                 });
                 return dom;
             },
-            type: 'model'
+            type: 'model',
+            mount (parent: IMountParent = 'body') {
+                mountParentWithTChild(parent, this.exe());
+            }
         };
     };
     result.exe = () => result().exe();
+    result.mount = (parent: IMountParent = 'body') => {
+        mountParentWithTChild(parent, result().exe());
+    },
     result.type = 'model';
     return result;
 };

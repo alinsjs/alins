@@ -59,6 +59,7 @@ export function createReactive<T> (data: T): IReactWrap<T> {
 export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> {
     let changeList: Function[] = [];
     return {
+        type: 'reaction',
         isUndefined () {
             return typeof value === 'undefined' || isUndefined;
         },

@@ -26,6 +26,7 @@ export interface IReactItem<T = any> extends IReactBase<T>{
   value: T;
   isUndefined(): boolean;
   toJSON: ()=> T | undefined; // ! 重写value的toJSON方法
+  type: 'reaction'
 }
 
 export type TComputedFunc<T = any> = (...args: any[]) => T;

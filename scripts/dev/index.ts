@@ -1,3 +1,5 @@
+
+
 /*
  * @Author: tackchen
  * @Date: 2022-07-11 17:17:54
@@ -42,15 +44,23 @@ css('.title')(
     `
 ).mount();
 
+// const msg = $('xxxx');
+// div(msg).mount();
+
+
 const list = $([1, 2, 3]);
 const add = (item: IReactItem, e: Event) => {item.value++; console.log(e);};
 const value = $(0);
 const value1 = $(1);
 const value2 = $(2);
+const msg = $('Hello msg');
 (window as any).valuex = value;
 
 mount(
-    div('title font-size:', input.model(num, 'number')),
+    div('title font-size:',
+        input.model(num, 'number')),
+    div(msg),
+    // () => div('111111'),
 );
 
 div.show(() => value.value === 0)('test controller mount').mount();

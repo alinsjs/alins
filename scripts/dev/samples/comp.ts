@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 23:25:08
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-05 23:34:52
+ * @LastEditTime: 2022-11-08 09:05:36
  */
 
 import {div, comp, prop} from '../alins';
