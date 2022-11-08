@@ -5,7 +5,7 @@
 -->
 
 <p align="center">
-    <img src='https://shiyix.cn/alins.png' width='100px'/>
+    <img src='https://alinsjs.github.io/docs.png' width='100px'/>
 </p> 
 
 <p align="center">
@@ -41,7 +41,7 @@
 
 ### 🚀 [Alins](https://github.com/alinsjs/alins): `Al`l-`in`-j`s` web ui框架，无 jsx/template/vdom/css/html
 
-**[English](https://github.com/alinsjs/alins/blob/master/README.md) | [文档](https://alinsjs.github.io/docs) | [更新日志](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [反馈错误/缺漏](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [留言板](https://theajack.github.io/message-board/?app=alins)**
+**[English](https://github.com/alinsjs/alins/blob/master/README.md) | [文档](https://alinsjs.github.io/docs) | [在线使用](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/todo-list.js) | [更新日志](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [反馈错误/缺漏](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [留言板](https://theajack.github.io/message-board/?app=alins)**
 
 ## 0 快速开始
 
@@ -75,7 +75,7 @@ div('Hello World!').mount();
 6. 单向数据流 + 双向绑定
 7. 良好的ts支持
 
-更多详细功能请参考[在线文档](https://shiyix.cn/alins)
+更多详细功能请参考[在线文档](https://alinsjs.github.io/docs)
 
 ## 2. 实例程序
 

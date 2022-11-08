@@ -5,7 +5,7 @@
 -->
 
 <p align="center">
-    <img src='https://shiyix.cn/alins.png' width='100px'/>
+    <img src='https://alinsjs.github.io/docs.png' width='100px'/>
 </p> 
 
 <p align="center">
@@ -78,7 +78,7 @@ div('Hello World!').mount();
 6. One-way data flow + two-way binding
 7. Good TS support
 
-For more detailed functions, please refer to [Online Documentation](https://shiyix.cn/alins)
+For more detailed functions, please refer to [Online Documentation](https://alinsjs.github.io/docs)
 
 ## 2. Samples
 
