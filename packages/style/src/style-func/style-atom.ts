@@ -8,9 +8,9 @@
 import {
     countBindingValue,
 } from 'alins-reactive';
-import {IReactBuilder, IReactItem} from 'alins-utils/src/types/react.d';
-import {IJson} from 'alins-utils/src/types/common.d';
-import {IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI} from 'alins-utils/src/types/style.d';
+import {IReactBuilder, IReactItem} from 'alins-utils';
+import {IJson} from 'alins-utils';
+import {IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI} from 'alins-utils';
 import {OnlyNumberAttrs, style} from '../style';
 import {createComposeValue} from './style-compose';
 import {createFixedValue} from './style-fixed';

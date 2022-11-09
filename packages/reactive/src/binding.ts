@@ -4,8 +4,8 @@
  * @Description: Coding something
  */
 
-import {IJson} from 'alins-utils/src/types/common.d';
-import {TReactionItem} from 'alins-utils/src/types/react.d';
+import {IJson} from 'alins-utils';
+import {TReactionItem} from 'alins-utils';
 import {join, subscribe} from 'alins-utils';
 import {transformToReaction} from './react';
 

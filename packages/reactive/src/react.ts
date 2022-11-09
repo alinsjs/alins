@@ -14,7 +14,7 @@ import {
     IReactBindingTemplate, IReactBuilder, IReactContext,
     IReactWrap, TReactionItem, IReactItem,
     IReactObject, IComputedItem, TReactionValue,
-} from 'alins-utils/src/types/react.d';
+} from 'alins-utils';
 import {createReplacement, createTemplateReplacement} from './binding';
 import {Compute, computed, subscribeReactBuilder} from './computed';
 import {createProxy} from './proxy';

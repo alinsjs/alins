@@ -5,7 +5,7 @@
  */
 // export type TEventName = keyof HTMLElementEventMap;
 
-import {IBuilderParameter, IJson} from 'alins-utils/src/types/common.d';
+import {IBuilderParameter, IJson} from 'alins-utils';
 
 export interface IEventBuilder extends IBuilderParameter {
     args(...args: any[]): IEventBuilder;

@@ -3,7 +3,7 @@
  * @Date: 2022-10-18 10:11:33
  * @Description: Coding something
  */
-import {IReactItem, IComputedItem} from 'alins-utils/src/types/react.d';
+import {IReactItem, IComputedItem} from 'alins-utils';
 import {subscribe} from 'alins-utils';
 import {computed, TComputedBuilder} from './computed';
 

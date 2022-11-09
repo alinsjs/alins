@@ -11,7 +11,7 @@ import {
 import {
     createReactive, index, mergeReact, subscribe
 } from 'alins-reactive';
-import {IReactObject, IReactWrap, IReactItem} from 'alins-utils/src/types/react.d';
+import {IReactObject, IReactWrap, IReactItem} from 'alins-utils';
 import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
 import {getControllerDoms, removeControllerDoms, TControllerBuilder, TControllerType} from './controller';
 import {insertBefore} from '../builder/dom-proxy';

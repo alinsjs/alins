@@ -6,7 +6,7 @@
 
 import {IBuilderConstructor, IMountBuilderParameter, IMountParent, TBuilderArg} from '../builder/builder';
 import {subscribe, transformToReaction} from 'alins-reactive';
-import {IReactItem} from 'alins-utils/src/types/react.d';
+import {IReactItem} from 'alins-utils';
 import {transformBuilderToDom} from '../element/transform';
 import {mountParentWithTChild} from '../mount';
 

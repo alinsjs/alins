@@ -4,9 +4,9 @@
  * @Description: Coding something
  */
 
-import {IJson, IBuilderParameter} from 'alins-utils/src/types/common.d';
+import {IJson, IBuilderParameter} from 'alins-utils';
 import {computed, isReaction} from 'alins-reactive';
-import {IComputedItem, TReactionItem} from 'alins-utils/src/types/react.d';
+import {IComputedItem, TReactionItem} from 'alins-utils';
 
 export interface IProp extends IBuilderParameter {
     type: 'prop';

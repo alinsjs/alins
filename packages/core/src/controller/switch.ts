@@ -11,7 +11,7 @@
 
 import {subscribe, transformToReaction} from 'alins-reactive';
 import {IMountBuilderParameter} from '../builder/builder';
-import {IReactItem} from 'alins-utils/src/types/react.d';
+import {IReactItem} from 'alins-utils';
 import {mountParentWithTChild} from '../mount';
 import {
     getControllerDoms, IControllerConstructor, IControllerDom, IControllerDoms, parseHTMLElement, replaceControllerDoms,

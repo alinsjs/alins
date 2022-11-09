@@ -8,9 +8,9 @@ import {
     isStringTemplateArray, splitTwoPart, createTemplateReplacement, reactiveTemplate,
     ReplaceExp, computed, countBindingValue, exeReactionValue, parseReactionValue
 } from 'alins-reactive';
-import {TReactionItem, TReactionValue} from 'alins-utils/src/types/react.d';
-import {IJson} from 'alins-utils/src/types/common.d';
-import {IStyleAtoms, IStyleBuilder} from 'alins-utils/src/types/style.d';
+import {TReactionItem, TReactionValue} from 'alins-utils';
+import {IJson} from 'alins-utils';
+import {IStyleAtoms, IStyleBuilder} from 'alins-utils';
 import {DefaultUint, StyleAtoms} from './style-func/style-atom';
 import {compateKVStyle, compateStaticStyle} from './style-func/style-compatiable';
 

@@ -11,7 +11,7 @@ import {
     parseReplacementToNumber, reactiveTemplate,
     ReplaceExp, subscribe, transformToReaction, join,
 } from 'alins-reactive';
-import {IReactBinding} from 'alins-utils/src/types/react.d';
+import {IReactBinding} from 'alins-utils';
 import {IUpdatedCallback, LifeMountedCollector, mountLifes} from '../builder/life';
 import {appendFragment} from '../builder/dom-proxy';
 import {IElement, IElementBuilder, IElementOptions, TChild} from '../builder/builder';

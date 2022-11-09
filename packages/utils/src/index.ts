@@ -6,3 +6,7 @@
 export * from './utils';
 export * from './types/symbol';
 export {version} from '../package.json';
+
+export * from './types/common.d';
+export * from './types/react.d';
+export * from './types/style.d';

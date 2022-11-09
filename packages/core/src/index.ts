@@ -29,6 +29,6 @@ export {
     react, computed, watch, createProxy, $,
 } from 'alins-reactive';
 
-export {IReactItem, IReactObject, IReactWrap, IComputedItem} from 'alins-utils/src/types/react.d';
+export {IReactItem, IReactObject, IReactWrap, IComputedItem} from 'alins-utils';
 
 export {version} from '../package.json';

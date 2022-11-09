@@ -11,7 +11,7 @@ import {
     countBindingValue, isSimpleValue,
 } from './react';
 
-import {IComputedItem, IReactItem, TComputedFunc, IReactBuilder, TReactContextType, IReactBindingTemplate} from 'alins-utils/src/types/react.d';
+import {IComputedItem, IReactItem, TComputedFunc, IReactBuilder, TReactContextType, IReactBindingTemplate} from 'alins-utils';
 
 export interface TComputedObject<T> {
     get(): T;

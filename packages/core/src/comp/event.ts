@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {IJson, IBuilderParameter} from 'alins-utils/src/types/common.d';
+import {IJson, IBuilderParameter} from 'alins-utils';
 
 export type IEventFunc = (...args: any[]) => void;
 

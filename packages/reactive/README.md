@@ -42,9 +42,7 @@
 
 ### 🚀 [Alins](https://github.com/alinsjs/alins): `Al`l-`in`-j`s` web ui Framework，No jsx/template/vdom/css/html
 
-**[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Docs](https://alinsjs.github.io/docs) | [VersionLog](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [FeedBacl](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [MessageBoard](https://theajack.github.io/message-board/?app=alins)**
-
-**Documentation is under development [alins/docs](https://github.com/alinsjs/docs)**
+**[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Docs](https://alinsjs.github.io/docs) | [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/todo-list.js) | [VersionLog](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [FeedBacl](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [MessageBoard](https://theajack.github.io/message-board/?app=alins)**
 
 ## 0 Quick Start
 

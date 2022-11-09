@@ -14,7 +14,7 @@
  */
 
 import {split} from 'alins-utils';
-import {IJson} from 'alins-utils/src/types/common.d';
+import {IJson} from 'alins-utils';
 
 export interface IDomInfoData {
     className?: string[];

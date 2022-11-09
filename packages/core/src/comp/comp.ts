@@ -4,8 +4,8 @@
  * @Description: Coding something
  */
 
-import {IJson} from 'alins-utils/src/types/common.d';
-import {IComputedItem} from 'alins-utils/src/types/react.d';
+import {IJson} from 'alins-utils';
+import {IComputedItem} from 'alins-utils';
 import {mountParentWithTChild} from '../mount';
 import {compControllers, ICompControllers} from '../controller/controller';
 import {IMountBuilderParameter, TElementChild} from '../builder/builder';
