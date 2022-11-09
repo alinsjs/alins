@@ -3,9 +3,13 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-09 01:36:21
+ * @LastEditTime: 2022-11-09 22:23:17
 -->
 
+## 0.0.10 
+
+1. 修复ts声明文件引用错误问题
+   
 ## 0.0.9
 
 1. input builder & moduelReturn 支持 mount [done]
