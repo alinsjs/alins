@@ -9,6 +9,13 @@
     "scripts": {
         "build": "node ../../scripts/build/build.js utils"
     },
+    "keywords": [
+      "alins",
+      "all-in-js",
+      "alins-style",
+      "css-in-js",
+      "web-ui-framework"
+    ],
     "license": "MIT",
     "type": "module",
     "publishConfig": {
