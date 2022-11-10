@@ -4,7 +4,7 @@
  * @Description: 固定样式组合
  */
 
-import {INoneArgsAtoms} from 'alins-utils/src/types/style';
+import {INoneArgsAtoms} from 'alins-utils';
 
 export function createFixedValue (): {
   [prop in keyof INoneArgsAtoms]: object

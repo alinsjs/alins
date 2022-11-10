@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {IBuilderParameter} from 'alins-utils/src/types/common';
+import {IBuilderParameter} from 'alins-utils';
 import {onDomEvent} from './dom-proxy';
 
 export const LifeMountedCollector: {

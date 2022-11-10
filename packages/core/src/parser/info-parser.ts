@@ -13,8 +13,7 @@
  * }
  */
 
-import {split} from 'alins-utils';
-import {IJson} from 'alins-utils';
+import {splitTwoPart, IJson} from 'alins-utils';
 
 export interface IDomInfoData {
     className?: string[];
@@ -67,7 +66,7 @@ export function parseDomInfo (info: string): IDomInfoData {
             case 'id': result.id = value; break;
             case 'attributes': {
                 if (!result.attributes) result.attributes = {};
-                const [key, kv] = split(value, '=');
+                const [key, kv] = splitTwoPart(value, '=');
                 result.attributes[key] = kv;
             }; break;
             case 'textContent': {

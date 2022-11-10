@@ -3,8 +3,7 @@
  * @Date: 2022-10-18 10:11:33
  * @Description: Coding something
  */
-import {IReactItem, IComputedItem} from 'alins-utils';
-import {subscribe} from 'alins-utils';
+import {IReactItem, IComputedItem, subscribe} from 'alins-utils';
 import {computed, TComputedBuilder} from './computed';
 
 export type TWatchCallback<T> = (v: T, old: T) => void;

@@ -4,8 +4,7 @@
  * @Description: Coding something
  */
 
-import {IReactBuilder, TReactionItem} from 'alins-utils';
-import {IStyleAtoms, IStyleBuilder} from 'alins-utils';
+import {IReactBuilder, TReactionItem, IStyleAtoms, IStyleBuilder} from 'alins-utils';
 import {createTemplateReplacement, reactiveTemplate} from 'alins-reactive';
 import {insertStyle} from './utils';
 

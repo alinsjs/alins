@@ -6,10 +6,9 @@
 
 import {
     forceUpdate, subscribe, reactValue,
-    value, getListeners, json, index, replaceListeners
+    value, getListeners, json, index, replaceListeners,
+    IJson, IReactObject
 } from 'alins-utils';
-import {IJson} from 'alins-utils';
-import {IReactObject} from 'alins-utils';
 import {
     reactiveValue,  isReaction,
     getReactionPureValue, mergeReact, reactiveProxyValue

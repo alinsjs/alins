@@ -6,8 +6,7 @@
  * @LastEditTime: 2022-11-03 08:49:35
  */
 import {exeReactionValue} from 'alins-reactive';
-import {IBuilderParameter} from 'alins-utils/src/types/common';
-import {TReactionValue} from 'alins-utils/src/types/react';
+import {IBuilderParameter, TReactionValue} from 'alins-utils';
 
 export type THTMLArg = TReactionValue<number|string>
 

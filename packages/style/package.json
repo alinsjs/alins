@@ -10,11 +10,11 @@
         "build": "node ../../scripts/build/build.js style"
     },
     "keywords": [
-      "alins",
-      "all-in-js",
-      "alins-style",
-      "css-in-js",
-      "web-ui-framework"
+        "alins",
+        "all-in-js",
+        "alins-style",
+        "css-in-js",
+        "web-ui-framework"
     ],
     "license": "MIT",
     "type": "module",

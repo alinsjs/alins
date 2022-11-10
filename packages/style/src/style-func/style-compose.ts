@@ -5,9 +5,7 @@
  */
 
 import {$, reactionValueToItem} from 'alins-reactive';
-import {IJson} from 'alins-utils/src/types/common';
-import {IReactBuilder, TReactionItem, TReactionValue} from 'alins-utils/src/types/react';
-import {IComposeStyle} from 'alins-utils/src/types/style';
+import {IJson, IReactBuilder, TReactionItem, TReactionValue, IComposeStyle} from 'alins-utils';
 
 export function createComposeValue (): {
   [prop in keyof IComposeStyle]: (...args: TReactionValue<string|number>[]) => IJson<TReactionItem|IReactBuilder>

@@ -8,7 +8,10 @@ import {controllers, IControllers} from '../controller/controller';
 import {IEventBuilder} from '../event/on';
 import {createElement} from '../element/transform';
 import {countBindingValue} from 'alins-reactive';
-import {IComputedItem, IReactBinding, IReactBuilder, IReactItem, TReactionItem} from 'alins-utils';
+import {
+    IComputedItem, IReactBinding, IReactBuilder, IReactItem, TReactionItem,
+    IBuilderParameter, IJson, IStyleBuilder, IStyleAtoms, IPseudoBuilder,
+} from 'alins-utils';
 import {ILifeBuilder, ILifes} from './life';
 import {mountParentWithTChild} from '../mount';
 import {IHTMLBuilder} from './html';
@@ -18,10 +21,6 @@ import {IModelBuilder} from '../controller/model';
 import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
 import {ISwitchBuilder} from '../controller/switch';
-import {IBuilderParameter, IJson} from 'alins-utils';
-import {
-    IStyleBuilder, IStyleAtoms, IPseudoBuilder,
-} from 'alins-utils';
 import {IForBuilder} from '../controller/for';
 
 export type TElementChild = null | HTMLElement | IElementBuilder | IComponentBuilder |

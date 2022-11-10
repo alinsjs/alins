@@ -15,8 +15,8 @@
 // import {style} from './style';
 
 // import {reactiveTemplate, parseReactionValue} from 'alins-reactive';
-// import {TReactionItem, TReactionValue} from 'alins-utils/src/types/react';
-// import {IMediaBuilder} from 'alins-utils/src/types/style';
+// import {TReactionItem, TReactionValue} from 'alins-utils';
+// import {IMediaBuilder} from 'alins-utils';
 // import {ICssBase, insertStyle} from './css';
 // import {DataAlinsDom, getAlinsDomId} from './utils';
 

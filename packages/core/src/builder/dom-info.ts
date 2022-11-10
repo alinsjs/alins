@@ -5,8 +5,7 @@
  */
 
 import {$} from 'alins-reactive';
-import {IJson} from 'alins-utils/src/types/common';
-import {IReactBuilder, TReactionItem} from 'alins-utils/src/types/react';
+import {IJson, IReactBuilder, TReactionItem} from 'alins-utils';
 
 function commonCompose<T> () {
     const templateArray: string[] = [];

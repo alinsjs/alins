@@ -4,9 +4,7 @@
  * @Description: Coding something
  */
 
-import {IJson} from 'alins-utils';
-import {TReactionItem} from 'alins-utils';
-import {join, subscribe} from 'alins-utils';
+import {IJson, TReactionItem, join, subscribe} from 'alins-utils';
 import {transformToReaction} from './react';
 
 export const ReplaceExp = /\$\$\d+\$\$/;

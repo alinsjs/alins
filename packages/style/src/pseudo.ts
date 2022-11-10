@@ -5,8 +5,7 @@
  */
 
 import {reactiveTemplate, parseReactionValue} from 'alins-reactive';
-import {TReactionItem, TReactionValue} from 'alins-utils/src/types/react';
-import {IPseudoBuilder} from 'alins-utils/src/types/style';
+import {TReactionItem, TReactionValue, IPseudoBuilder} from 'alins-utils';
 import {ICssBase, parseSingleCssItem} from './css';
 import {createCssPool, DataAlinsDom, getAlinsDomId, insertStyle} from './utils';
 

@@ -4,7 +4,7 @@
  * @Description: css 兼容写法
  */
 
-import {IJson} from 'alins-utils/src/types/common';
+import {IJson} from 'alins-utils';
 
 // 需要兼容的css属性
 const CompatibleStyleNames = [

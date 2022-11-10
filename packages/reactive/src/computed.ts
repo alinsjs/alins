@@ -6,12 +6,11 @@
 
 import {
     forceUpdate, getListeners,  reactValue, subscribe,
+    IComputedItem, IReactItem, TComputedFunc, IReactBuilder, TReactContextType, IReactBindingTemplate
 } from 'alins-utils';
 import {
     countBindingValue, isSimpleValue,
 } from './react';
-
-import {IComputedItem, IReactItem, TComputedFunc, IReactBuilder, TReactContextType, IReactBindingTemplate} from 'alins-utils';
 
 export interface TComputedObject<T> {
     get(): T;

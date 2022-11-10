@@ -6,11 +6,8 @@
 
 import {
     isStringTemplateArray, join,
-    subscribe, forceUpdate, value, reactValue, getListeners, replaceListeners, json
-} from 'alins-utils';
-import {IJson} from 'alins-utils/src/types/common';
-import {IStyleBuilder} from 'alins-utils/src/types/style';
-import {
+    subscribe, forceUpdate, value, reactValue, getListeners, replaceListeners, json,
+    IJson, IStyleBuilder,
     IReactBindingTemplate, IReactBuilder, IReactContext,
     IReactWrap, TReactionItem, IReactItem,
     IReactObject, IComputedItem, TReactionValue,
