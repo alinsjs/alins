@@ -62,11 +62,13 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
 
     const dom = document.createElement(config.tag);
 
-    let isHTMLEl = false;
+    let isHTMLFilled = true;
 
     if (config.html) {
-        isHTMLEl = true;
+        isHTMLFilled = true;
         dom.innerHTML = config.html.exe((v) => {dom.innerHTML = v;}) + '';
+    } else if (config.text) {
+        config.text.exe(dom, isInputNode(dom),);
     }
 
     // memo.add(() => dom.cloneNode());
@@ -78,7 +80,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
         const binding = config.binding[i];
         // 提取表达式中没有binding的属性 merge到config中
         const domInfo = applyDomInfoReaction(
-            isHTMLEl,
+            isHTMLFilled,
             dom, binding, config.lifes.updated?.exe() as IUpdatedCallback,
         );
         mergeDomInfo(config, domInfo);
@@ -87,6 +89,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.domInfo) mergeDomInfo(config, parseDomInfo(config.domInfo));
 
     if (config.textContent) {
+        dom.appendChild(document.createTextNode(config.textContent));
         setNodeText(dom, config.textContent);
         // memo.add(() => {
         //     const dom = (memo?.last);
@@ -103,7 +106,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.id) dom.id = config.id;
 
     if (config.children && config.children.length > 0) {
-        if (isHTMLEl)
+        if (isHTMLFilled && config.html)
             console.warn('children is not supported in html builder');
         else
             mountChildrenDoms(dom, config.children);
@@ -176,8 +179,11 @@ export function mountSingleChild (
 }
 
 function setNodeText (node: HTMLElement | Text, v: string) {
-    if (isInputNode(node)) (node as any).value = v;
-    else node.textContent = v;
+    if (isInputNode(node)) {
+        (node as any).value = v;
+    } else {
+        node.appendChild(document.createTextNode(v));
+    }
 }
 
 function isInputNode (node: HTMLElement | Text) {
@@ -185,7 +191,7 @@ function isInputNode (node: HTMLElement | Text) {
 }
 
 function applyDomInfoReaction (
-    isHTMLEl: boolean,
+    isHTMLFilled: boolean,
     dom: HTMLElement, binding: IReactBinding, updated?: IUpdatedCallback
 ): IDomInfoData {
     const {template, reactions} = binding;
@@ -196,8 +202,8 @@ function applyDomInfoReaction (
 
     const data: IDomInfoData = {};
     if (info.textContent) {
-        if (isHTMLEl) {
-            console.warn('text is not supported in html builder');
+        if (isHTMLFilled) {
+            console.warn('text is not supported in html or text builder');
         } else {
             const textContent = info.textContent;
             const results = extractReplacement(textContent);
@@ -311,6 +317,7 @@ export function createElement ({
     pseudos = [],
     lifes = {},
     html,
+    text,
 }: IElementOptions): IElement {
     return {
         tag,
@@ -327,5 +334,6 @@ export function createElement ({
         pseudos,
         lifes,
         html,
+        text,
     };
 }

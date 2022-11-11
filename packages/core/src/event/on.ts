@@ -7,6 +7,8 @@
 
 import {IBuilderParameter, IJson} from 'alins-utils';
 
+type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self';
+
 export interface IEventBuilder extends IBuilderParameter {
     args(...args: any[]): IEventBuilder;
     exe(dom: HTMLElement): void;
@@ -14,11 +16,19 @@ export interface IEventBuilder extends IBuilderParameter {
     name: string;
 }
 
+export interface IOnListener {
+    (...args: any[]): void,
+    // ? 没办法指定后面类型 不生效
+    // (...args: [...any[], Event, HTMLElement]): void,
+}
+
 export interface IEventConstructor {
     (
-        listener: (...args: any[]) => void,
+        listener: IOnListener,
         ...decorators: TEventDecorator[]
     ): IEventBuilder;
+    stop: IEventBuilder;
+    prevent: IEventBuilder;
 }
 
 // prevent：阻止默认事件（常用）；
@@ -26,46 +36,7 @@ export interface IEventConstructor {
 // once：事件只触发一次（常用）；
 // capture：使用事件的捕获模式；
 // self：只有event.target是当前操作的元素时才触发事件；
-type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self';
 
-export function on (
-    name: string
-): IEventConstructor {
-    return (
-        listener: (...args: [...any[], Event, HTMLElement][])=> void,
-        ...decorators: TEventDecorator[]
-    ) => {
-        const eventArgs: any[] = [];
-        return {
-            args (...args) {
-                eventArgs.push(...args);
-                return this;
-            },
-            exe (dom: HTMLElement) {
-                if (decorators.length === 0) {
-                    dom.addEventListener(name, (e) => {
-                        listener.apply(dom, [...eventArgs, e, dom]);
-                    });
-                } else {
-                    const is = (name: TEventDecorator) => decorators.includes(name);
-                    const useCapture = is('capture');
-                    const handle = (e: Event) => {
-                        if (is('self') && e.target !== dom) return;
-    
-                        if (is('stop')) e.stopPropagation();
-                        if (is('prevent')) e.preventDefault();
-                        listener.apply(dom, [...eventArgs, e]);
-                        if (is('once')) dom.removeEventListener(name, handle, useCapture);
-                    };
-                    dom.addEventListener(name, handle, useCapture);
-                }
-            },
-            type: 'on',
-            name,
-        };
-    };
-
-}
 
 const MainEventNames = [
     'click', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseover', 'mouseup',
@@ -86,6 +57,55 @@ const EventNames = [
     'resize', 'scroll', 'select', 'selectionchange', 'selectstart', 'submit', 'suspend', 'timeupdate',
     'toggle', 'touchcancel',
 ] as const;
+
+type TEventNames = typeof EventNames[number];
+
+function createEventBuilder (name: TEventNames, listener: IOnListener|null, decorators: TEventDecorator[]) {
+    const eventArgs: any[] = [];
+    return {
+        args (...args) {
+            eventArgs.push(...args);
+            return this;
+        },
+        exe (dom: HTMLElement) {
+            if (decorators.length === 0) {
+                if (listener)
+                    dom.addEventListener(name, (e) => {
+                        listener.apply(dom, [...eventArgs, e, dom]);
+                    });
+            } else {
+                const is = (name: TEventDecorator) => decorators.includes(name);
+                const useCapture = is('capture');
+                const handle = (e: Event) => {
+                    if (is('self') && e.target !== dom) return;
+
+                    if (is('stop')) e.stopPropagation();
+                    if (is('prevent')) e.preventDefault();
+                    if (listener)listener.apply(dom, [...eventArgs, e]);
+                    if (is('once')) dom.removeEventListener(name, handle, useCapture);
+                };
+                dom.addEventListener(name, handle, useCapture);
+            }
+        },
+        type: 'on',
+        name,
+    } as IEventBuilder;
+}
+
+export function on (
+    name: TEventNames
+): IEventConstructor {
+    return Object.assign((
+        listener: IOnListener,
+        ...decorators: TEventDecorator[]
+    ) => {
+        return createEventBuilder(name, listener, decorators);
+    }, {
+        prevent: createEventBuilder(name, null, ['prevent']),
+        stop: createEventBuilder(name, null, ['stop']),
+    });
+
+}
 
 export const events = (() => {
     const map: IJson<any> = {};

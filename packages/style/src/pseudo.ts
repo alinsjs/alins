@@ -5,8 +5,8 @@
  */
 
 import {reactiveTemplate, parseReactionValue} from 'alins-reactive';
-import {TReactionItem, TReactionValue, IPseudoBuilder} from 'alins-utils';
-import {ICssBase, parseSingleCssItem} from './css';
+import {TReactionItem, TReactionValue, IPseudoBuilder, IStyleComponent} from 'alins-utils';
+import {parseSingleCssItem} from './css';
 import {createCssPool, DataAlinsDom, getAlinsDomId, insertStyle} from './utils';
 
 const PseudoEle = [
@@ -30,7 +30,7 @@ const ArgPseudo = ['dir', 'where', 'has', 'host', 'host-context', 'is', 'lang', 
 
 type TPseudoName = (typeof NoArgPseudo)[number] | (typeof ArgPseudo)[number];
 
-type IPseudoClass = (...args: ICssBase[]) => IPseudoBuilder;
+type IPseudoClass = (...args: IStyleComponent[]) => IPseudoBuilder;
 
 export interface IPseudoConstructor {
   (name: TPseudoName, arg?: TReactionValue<string|number>): IPseudoClass;
@@ -39,7 +39,7 @@ export interface IPseudoConstructor {
 const PseudoPool = createCssPool();
 
 export const pseudo: IPseudoConstructor = (name, arg) => {
-    return (...args: ICssBase[]) => {
+    return (...args: IStyleComponent[]) => {
         let template = '';
         const reactions: TReactionItem[] = [];
         

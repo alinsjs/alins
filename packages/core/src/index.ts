@@ -4,6 +4,7 @@
  * @Description: Coding something
  */
 
+
 export {value, subscribe, forceUpdate, index, json, getListeners} from 'alins-utils';
 
 export {attr, cls} from './builder/dom-info';
@@ -19,6 +20,7 @@ export {
 
 export * from './builder/builder';
 export {html} from './builder/html';
+export {text} from './builder/text';
 export {comp, IComponent, IComponentOptions} from './comp/comp';
 export {prop} from './comp/prop';
 export {event} from './comp/event';

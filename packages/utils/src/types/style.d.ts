@@ -5,7 +5,11 @@
  */
 
 import {IBuilderParameter, IJson} from './common.d';
-import {TComputedFunc, TReactionItem, TReactionValue} from './react.d';
+import {IReactBuilder, TComputedFunc, TReactionItem, TReactionValue} from './react.d';
+
+export type IStyleComponent = string | IStyleBuilder | IStyleAtoms | IReactBuilder;
+
+export type IStyleComponentArray = IStyleComponent | IStyleComponentArray[];
 
 export interface IStyleBuilder extends IBuilderParameter{
   exe(parent: HTMLElement): void;
@@ -14,7 +18,6 @@ export interface IStyleBuilder extends IBuilderParameter{
   generate(start: number): {scopeTemplate: string, scopeReactions: TReactionItem[]};
   react(): TComputedFunc<string>;
   type: 'style';
-
 }
 
 export type TUnit = 'px' | '%' | 'rm' | 'vh' | 'vw' | 'em' | 'rem' | 'in' | 'cm' | 'mm' | 'ex' | 'pt' | 'pc';
@@ -56,7 +59,11 @@ export interface IComposeStyle {
   cursorUrl: (...args: TReactionValue<string|number>[]) => IStyleAtoms;
 }
 
-export interface IStyleArgsAtoms {
+export interface IAtomsTool {
+  join: (...styles: IStyleComponent[]) => IStyleAtoms;
+}
+
+export interface IStyleArgsAtoms extends IAtomsTool {
   // ([a-zA-Z]*?)(: [a-zA-Z<>]*?;\n) => '$1', 正则
   // number style
   paddingTop: TNumberStyle;
@@ -155,10 +162,13 @@ export interface IStyleArgsAtoms {
   color: TColorStyle;
   backgroundColor: TColorStyle;
   borderColor: TColorStyle;
+
+  
 }
 
 export interface IStyleAtoms extends IStyleArgsAtoms, INoneArgsAtoms, IComposeStyle, IStyleBuilder{
-  result: IJson<string | (()=>string)>;
+  _result: IJson<string | (()=>string)>;
+  _styles: IStyleComponent[];
 }
 export interface IPseudoBuilder extends IBuilderParameter {
   type: 'pseudo',

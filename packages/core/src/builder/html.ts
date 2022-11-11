@@ -11,7 +11,7 @@ import {IBuilderParameter, TReactionValue} from 'alins-utils';
 export type THTMLArg = TReactionValue<number|string>
 
 export interface IHTMLBuilder extends IBuilderParameter {
-  exe(onchange: (v: string) => void): void;
+  exe(onchange: (v: string) => void): string|number;
   type: 'html',
 }
 

@@ -8,7 +8,7 @@ import {
     isStringTemplateArray, splitTwoPart, createTemplateReplacement, reactiveTemplate,
     ReplaceExp, computed, countBindingValue, exeReactionValue, parseReactionValue
 } from 'alins-reactive';
-import {TReactionItem, TReactionValue, IJson, IStyleAtoms, IStyleBuilder} from 'alins-utils';
+import {TReactionItem, TReactionValue, IJson, IStyleAtoms, IStyleBuilder, IReactBuilder} from 'alins-utils';
 import {DefaultUint, StyleAtoms} from './style-func/style-atom';
 import {compateKVStyle, compateStaticStyle} from './style-func/style-compatiable';
 
@@ -16,13 +16,14 @@ type TStyleJsonValue = IJson<TReactionValue<string|number>>
 export interface IStyleConstructor extends IStyleAtoms{
     (json: TStyleJsonValue): IStyleBuilder;
     (ts: TemplateStringsArray, ...reactions: TReactionItem[]): IStyleBuilder;
+    (item: IReactBuilder): IStyleBuilder;
     (style: string): IStyleBuilder;
 }
 
 export const OnlyNumberAttrs = ['zIndex', 'opacity', 'flex', 'flexGrow', 'flexShrink'];
 
 export const style: IStyleConstructor = Object.assign((
-    a1: TStyleJsonValue | TemplateStringsArray | string,
+    a1: TStyleJsonValue | TemplateStringsArray | string | IReactBuilder,
     ...reactions: TReactionItem[]
 ) => {
     return {
@@ -40,9 +41,14 @@ export const style: IStyleConstructor = Object.assign((
                     scopeTemplate += createTemplateReplacement(template, start);
                     scopeReactions.push(...reactions);
                 }
+            } else if ((a1 as any).type === 'react') {
+                // 支持builder
+                a1 = a1 as IReactBuilder;
+                const {template, reactions} = a1.exe({type: 'style'});
+                scopeTemplate += createTemplateReplacement(template, start);
+                reactions.push(...reactions);
             } else if (typeof a1 === 'object' || a1 !== null) { // json
                 for (const key in a1) {
-
                     const {reactions, template} = parseReactionValue(
                         (a1 as TStyleJsonValue)[key],
                         scopeReactions.length + start,
@@ -51,7 +57,6 @@ export const style: IStyleConstructor = Object.assign((
                             computed(() => reaction.value + DefaultUint) :
                             reaction
                     );
-
                     if (reactions.length > 0) scopeReactions.push(...reactions);
                     scopeTemplate += `${transformStyleAttr(key)}:${template};`;
                 }
@@ -75,11 +80,13 @@ export const style: IStyleConstructor = Object.assign((
                 if (reactions.length === 0) {// 没有响应数据
                     newStyle += template[0]; // 静态style
                 } else {
-                    const templateRep = createTemplateReplacement(template);
-                    const [styles, reactStyles] = parseStyleTemplateToObject(templateRep);
-                    newStyle += styles;
-                    newStyle += reactiveStyle(dom.style as any, reactStyles, reactions);
+                    newStyle = exeBindingStyle(template, reactions, dom.style, newStyle);
                 }
+            } else if ((a1 as any).type === 'react') {
+                // 支持builder
+                a1 = a1 as IReactBuilder;
+                const {template, reactions} = a1.exe({type: 'style'});
+                newStyle = exeBindingStyle(template, reactions, dom.style, newStyle);
             } else if (typeof a1 === 'object' || a1 !== null) { // json
                 const style = dom.style as any as IJson<string>;
                 for (const key in a1) {
@@ -109,6 +116,19 @@ export const style: IStyleConstructor = Object.assign((
         type: 'style' as 'style',
     };
 }, StyleAtoms);
+
+function exeBindingStyle (
+    template: string[],
+    reactions: TReactionItem[],
+    style: IJson,
+    newStyle: string,
+) {
+    const templateRep = createTemplateReplacement(template);
+    const [styles, reactStyles] = parseStyleTemplateToObject(templateRep);
+    newStyle += styles;
+    newStyle += reactiveStyle(style, reactStyles, reactions);
+    return newStyle;
+}
 
 export function transformStyleAttr (name: string) {
     return name.replace(/[A-Z]/g, i => '-' + i.toLowerCase());

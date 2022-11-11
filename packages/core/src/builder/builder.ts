@@ -22,6 +22,7 @@ import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
 import {ISwitchBuilder} from '../controller/switch';
 import {IForBuilder} from '../controller/for';
+import {ITextBuilder} from './text';
 
 export type TElementChild = null | HTMLElement | IElementBuilder | IComponentBuilder |
     IForBuilder | IIfBuilder<any> | IShowBuilder |
@@ -46,6 +47,7 @@ export interface IElement {
     pseudos: IPseudoBuilder[];
     lifes: ILifes;
     html?: IHTMLBuilder;
+    text?: ITextBuilder;
 }
 
 export type IElementOptions = Partial<IElement>
@@ -64,7 +66,7 @@ export interface IMountBuilderParameter extends IBuilderParameter {
 
 export type TBuilderArg = IReactItem<any> | IComputedItem<any> | number | string | IReactBuilder |
     IEventBuilder | TChild | IBuildFunction | ILifeBuilder |
-    IHTMLBuilder; // (IElementBuilder|IElementBuilder[])[];
+    IHTMLBuilder | ITextBuilder; // (IElementBuilder|IElementBuilder[])[];
 
 export type IBuildFunction = () => TBuilderArg|TBuilderArg[];
 export interface IBuilder extends IControllers, IBuilderConstructor {
@@ -137,6 +139,8 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                     elementOptions.lifes[item.name] = item; break;
                 case 'html':
                     elementOptions.html = item; break;
+                case 'text':
+                    elementOptions.text = item; break;
                 default: console.warn('unkonwn builder', item); break;
             }
         } else if (typeof item === 'function') {

@@ -8,7 +8,8 @@
 import {
     countBindingValue,
 } from 'alins-reactive';
-import {IReactBuilder, IReactItem, IJson, IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI} from 'alins-utils';
+import {IReactBuilder, IReactItem, IJson, IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI, IStyleComponent, IAtomsTool} from 'alins-utils';
+import {parseSingleCssItem} from 'src/css';
 import {OnlyNumberAttrs, style} from '../style';
 import {createComposeValue} from './style-compose';
 import {createFixedValue} from './style-fixed';
@@ -38,23 +39,47 @@ export const StyleAtoms = (() => {
 
     const AtomsBase: IJson<any> = {
         generate (start = 0) {
-            return style(this.result).generate(start);
+            const data = style(this._result).generate(start);
+            if (this._styles.length === 0) {
+                return data;
+            }
+            (this._styles as IStyleComponent[]).forEach(item => {
+                data.scopeTemplate += parseSingleCssItem(
+                    item,
+                    data.scopeReactions,
+                );
+            });
+            return data;
         },
         exe (dom: HTMLElement) {
-            return style(this.result).exe(dom);
+            if (this._styles.length > 0) {
+                // todo v0.0.11 处理 React逻辑
+            }
+            return style(this._result).exe(dom);
+        },
+        join (...styles: IStyleComponent[]) {
+            this._styles.push(...styles);
+            return this;
         },
         type: 'style',
     };
-    const Atoms: IJson<TAtomFunc> = {};
+    const Atoms: IJson<TAtomFunc> & IAtomsTool = {
+        join (...styles: IStyleComponent[]) {
+            return Object.assign({_result: {}, _styles: [...styles]}, AtomsBase) as any;
+        }
+    };
     const setAtomValue = (name: string) => {
         Atoms[name] = (...args) => {
-            return Object.assign({result: {}}, AtomsBase)[name](...args);
+            // ! 第一个链式调用 会生成一个空的 result
+            // 后续的链式调用都是往这个 result 上加
+            // 到最后mount的时候 挂这个result
+            return Object.assign({_result: {}, _styles: []}, AtomsBase)[name](...args);
         };
     };
 
     StyleNames.forEach(name => {
         AtomsBase[name] = function (this: IStyleAtoms, ...args: any[]) {
-            this.result[name] = transformAtomStyleValue.apply(null, [name, ...args]);
+            this._result[name] = transformAtomStyleValue.apply(null, [name, ...args]);
             return this;
         };
         setAtomValue(name);
@@ -63,7 +88,7 @@ export const StyleAtoms = (() => {
     const FixedValue = createFixedValue();
     Object.keys(FixedValue).forEach(name => {
         AtomsBase[name] = function (this: IStyleAtoms) {
-            Object.assign(this.result, (FixedValue as any)[name]);
+            Object.assign(this._result, (FixedValue as any)[name]);
             return this;
         };
         setAtomValue(name);
@@ -72,11 +97,13 @@ export const StyleAtoms = (() => {
     const ComposeValue = createComposeValue();
     Object.keys(ComposeValue).forEach(name => {
         AtomsBase[name] = function (this: IStyleAtoms, ...args: any[]) {
-            Object.assign(this.result, (ComposeValue as any)[name](...args));
+            Object.assign(this._result, (ComposeValue as any)[name](...args));
             return this;
         };
     });
+
     return Atoms as any as IStyleAtoms;
+
 })();
 
 function transformAtomStyleValue (

@@ -75,7 +75,7 @@ function reactiveComputed<T> (
         },
         [subscribe] (fn) {
             changeList.push(fn);
-            return this.value;
+            return value;
         },
         [forceUpdate] () {
             const old = value;

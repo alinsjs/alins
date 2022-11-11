@@ -4,16 +4,12 @@
  * @Description: Coding something
  */
 
-import {IReactBuilder, TReactionItem, IStyleAtoms, IStyleBuilder} from 'alins-utils';
+import {TReactionItem, IStyleComponent, IStyleComponentArray} from 'alins-utils';
 import {createTemplateReplacement, reactiveTemplate} from 'alins-reactive';
 import {insertStyle} from './utils';
 
-export type ICssBase = string | IStyleBuilder | IStyleAtoms | IReactBuilder;
-
-type ICssCBArg = ICssBase | ICssCBArg[];
-
 export interface ICssCallback {
-    (...args: ICssCBArg[]): {
+    (...args: IStyleComponentArray[]): {
         reactiveStyle(setStyle: (v:string) => void): void;
         mount(selector?: string | HTMLElement): void;
     };
@@ -23,7 +19,7 @@ export interface ICssConstructor {
     (selector?: string): ICssCallback;
 }
 export const css: ICssConstructor = (selector: string = '') => {
-    return (...args: ICssCBArg[]) => {
+    return (...args: IStyleComponentArray[]) => {
         const reactiveStyle = (setStyle: (v:string)=>void) => {
             const {template, reactions} = buildCssFragment(selector, args);
             if (reactions.length > 0) { // 有响应数据需要渲染
@@ -48,7 +44,7 @@ export const css: ICssConstructor = (selector: string = '') => {
 
 function buildCssFragment (
     selector: string,
-    args: ICssCBArg[],
+    args: IStyleComponentArray[],
     path = '',
     reactions: TReactionItem[] = []
 ): {
@@ -76,7 +72,7 @@ function buildCssFragment (
     };
 }
 
-export function parseSingleCssItem (item: ICssBase, reactions: TReactionItem[]) {
+export function parseSingleCssItem (item: IStyleComponent, reactions: TReactionItem[]) {
     if (typeof item === 'string') {
         return item + ';'; // css 静态样式
     } else  if (typeof item === 'object') { // style(...)
