@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {$, button, div, span, input, click} from '../alins';
+import {$, button, div, span, input, click, comp} from '../alins';
 
 export function Controller () {
 
@@ -20,6 +20,9 @@ export function Controller () {
             .else($`/div:${num}`),
         div('input----'),
         input.model(num, 'number')(),
+        div('show----'),
+        div.show(() => num.value > 0)('show comp'),
+        comp(() => div('comp show')).show(() => num.value > 0)(),
         div('if2----'),
         span.if(() => num.value > 1)($`/div:if-${num}`)
             .elif(() => num.value < 0)($`/div:elif-${num}`),

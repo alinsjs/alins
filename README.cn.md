@@ -41,7 +41,7 @@
 
 ### 🚀 [Alins](https://github.com/alinsjs/alins): `Al`l-`in`-j`s` web ui框架，无 jsx/template/vdom/css/html
 
-**[English](https://github.com/alinsjs/alins/blob/master/README.md) | [文档](https://alinsjs.github.io/docs) | [更新日志](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [反馈错误/缺漏](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [留言板](https://theajack.github.io/message-board/?app=alins)**
+**[English](https://github.com/alinsjs/alins/blob/master/README.md) | [文档](https://alinsjs.github.io/docs-cn) | [更新日志](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [反馈错误/缺漏](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [留言板](https://theajack.github.io/message-board/?app=alins)**
 
 ## 0 快速开始
 

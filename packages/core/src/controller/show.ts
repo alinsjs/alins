@@ -32,7 +32,7 @@ export interface IShowController<K extends TControllerType = 'builder'> {
 function setDisplay (children: DocumentFragment | HTMLElement | HTMLElement[], v: boolean) {
     const s = v ? '' : 'none';
     if (children instanceof DocumentFragment) {
-        children = [].slice.call(children);
+        children = [].slice.call(children.children);
     }
     children instanceof Array ?
         children.forEach(item => {item.style.display = s;}) :

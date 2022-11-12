@@ -44,8 +44,6 @@
 
 **[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Docs](https://alinsjs.github.io/docs) | [VersionLog](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [FeedBacl](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [MessageBoard](https://theajack.github.io/message-board/?app=alins)**
 
-**Documentation is under development [alins/docs](https://github.com/alinsjs/docs)**
-
 ## 0 Quick Start
 
 ### 0.1 npm

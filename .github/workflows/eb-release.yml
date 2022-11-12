@@ -59,7 +59,7 @@ jobs:
             git add .
             git commit -m "feat: Version ${{ steps.version.outputs.version }} Build"
             npx lerna publish from-package --yes
-            npm run init:monorepo -- ${{ steps.version.outputs.version }}
+            npm run init:mono -- ${{ steps.version.outputs.version }}
             git add .
             git commit -m "feat: Version ${{ steps.version.outputs.version }} Publish"
             git push origin master
