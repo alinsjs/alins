@@ -1,7 +1,8 @@
 'use strict';
 import {
     div, click, table, span, h1, button,
-    $, dom, td, tr, a, comp, value, json
+    $, dom, td, tr, a, comp, value, json,
+    css, style
 } from '../../../alins';
 import {buildData} from './data';
 // const {div, click, table, span, cls, h1, button, $, dom, td, tr, a, comp} = window.Alins;
@@ -9,6 +10,8 @@ import {buildData} from './data';
 import * as Alins from '../../../alins';
 
 (window).Alins = Alins;
+
+css('.danger')(style.backgroundColor('#eee')).mount();
 
 // const value = window.__alins_value;
 
@@ -29,7 +32,7 @@ function setRows (update = []) {
 }
 
 function add () {
-    rows.push.apply(rows, buildData(1000));
+    rows.push.apply(rows, buildData(20));
 }
   
 function remove (id) {
@@ -44,7 +47,7 @@ function select (id) {
 }
 
 function run () {
-    setRows(buildData());
+    setRows(buildData(20));
     selected.value = -1;
 }
   

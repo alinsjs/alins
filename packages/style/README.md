@@ -70,6 +70,8 @@ div('Hello World!').mount();
 
 ## 1. Features
 
+Alins is an All in js web ui framework, which is highly flexible. You can use js/ts code to combine your dom/css/state into a web application like building blocks. At the same time, Alins is highly responsive to both dom and css
+
 1. No vdom, the listening data is accurately modified to dom/textNode, and the dom node is reused
 2. Alins-style CSS-in-JS scheme, atomic properties/building block combinations/style response changes
 3. Good componentization support

@@ -6,7 +6,7 @@
 
 import {
     forceUpdate, getListeners,  reactValue, subscribe,
-    IComputedItem, IReactItem, TComputedFunc, IReactBuilder, TReactContextType, IReactBindingTemplate
+    IComputedItem, IReactItem, TComputedFunc, IReactBuilder, TReactContextType, IReactBindingTemplate, replaceValue
 } from 'alins-utils';
 import {
     countBindingValue, isSimpleValue,
@@ -46,8 +46,9 @@ export const computed: IComputed = (target) => {
     // debugger;
 
     const react = reactiveComputed(get, set, value) as IReactItem;
-    reacts.forEach(item => item[subscribe](() => {
-        react[forceUpdate]();
+    reacts.forEach(item => item[subscribe]((v, old, index) => {
+        item[replaceValue](v); // ! 需要把依赖的react数据修改一下，不然存在闭包引用的是旧数据的问题
+        react[forceUpdate](old, index);
     }));
     return react;
 };
@@ -72,6 +73,10 @@ function reactiveComputed<T> (
                 return;
             }
             set(v, this.value);
+        },
+        [replaceValue] (v: T) {
+            if (v === value) return;
+            if (set) set(v, value);
         },
         [subscribe] (fn) {
             changeList.push(fn);

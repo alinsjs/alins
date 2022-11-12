@@ -67,6 +67,8 @@ div('Hello World!').mount();
 
 ## 1. 特性
 
+Alins 是一个 All-in-js web ui 框架，具有非常高的灵活性，使用 js/ts 代码想组合积木一样将您的 dom/css/state 组合成一个 web 应用，同时对于dom和css都具有极高的响应式能力
+
 1. 无vdom，监听数据精准修改到dom/textNode，dom节点复用
 2. alins-style css-in-js方案，原子属性/积木式组合/样式响应变更
 3. 良好的组件化支持

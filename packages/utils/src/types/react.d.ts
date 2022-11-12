@@ -6,7 +6,7 @@
 
 import {
     index, forceUpdate, subscribe, reactValue, getListeners,
-    value, json
+    value, json, replaceValue
 } from './symbol';
 import {IBuilderParameter, IJson} from './common';
 
@@ -25,6 +25,7 @@ export interface IReactItem<T = any> extends IReactBase<T>{
   value: T;
   isUndefined(): boolean;
   toJSON: ()=> T | undefined; // ! 重写value的toJSON方法
+  [replaceValue](v: T): void;
   type: 'reaction'
 }
 
@@ -46,7 +47,7 @@ export interface IReactObject<T = any> extends IReactBase<T> {
   // ! 由于封装了一层，所以赋值时ts类型系统会报错，故使用IJson
   // ! 牺牲了 value和json返回值的类型
   get [value](): IJson;
-  set [value](v:any);
+  set [value](v: IJson);
 }
 
 /*
@@ -58,13 +59,12 @@ export interface IReactObject<T = any> extends IReactBase<T> {
 */
 type TParseBoolean<T> = T extends object|string|undefined|symbol|number|Function ? T: boolean;
 
-type IReactJson<T> = T extends Array<infer K> ? (
-  Array<IReactWrap<K>>
-): ({
-  [prop in (keyof T)]: IReactWrap<T[prop]>;
-} & IJson) // ! & IJson 为了绑定的时候不报类型错误
-
 export type IReactWrap<T> = T extends object ? (IReactJson<T> & IReactObject<T>) : IReactItem<TParseBoolean<T>>;
+
+type IReactJson<T> = {
+  [prop in (keyof T)]: IReactWrap<T[prop]>;
+} & IJson; // ! & IJson 为了绑定的时候不报类型错误
+
 
 export type TOnChangeFunc = (content: string, oldContent: string) => void;
 
@@ -97,4 +97,26 @@ export interface IReactBuilder extends IBuilderParameter {
   modTemplate(mod: (v: string) => string, i?: number): void;
   isEmpty(): boolean;
   templateValue(): string;
+}
+
+type Unpacked<T> = T extends (infer R)[] ? R : T;
+
+declare global {
+
+    // ! 这些声明是为了 赋值不报错
+
+    // const a=$({b:{v:1}}); a.b = {v:2}
+    // 但是会牺牲 a.b[value] 或者 a.b[json]() 的返回值类型
+    // for ts declaration
+    interface Array<T> extends IReactObject<T>{
+    }
+    interface String extends IReactItem<string> {}
+    interface Number extends IReactItem<number> {}
+    interface Boolean extends IReactItem<boolean> {}
+    // type IHackReactObject = {
+    //     [prop in any]: any;
+    // }
+
+    interface Object extends IReactObject<any>{
+    }
 }

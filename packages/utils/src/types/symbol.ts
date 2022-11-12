@@ -11,3 +11,4 @@ export const value = Symbol('v');
 export const reactValue = Symbol('rv');
 export const getListeners = Symbol('l');
 export const json = Symbol('j');
+export const replaceValue = Symbol('rpv');

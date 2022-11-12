@@ -10,7 +10,7 @@ import {
     IJson, IStyleBuilder,
     IReactBindingTemplate, IReactBuilder, IReactContext,
     IReactWrap, TReactionItem, IReactItem,
-    IReactObject, IComputedItem, TReactionValue,
+    IReactObject, IComputedItem, TReactionValue, replaceValue,
 } from 'alins-utils';
 import {createReplacement, createTemplateReplacement} from './binding';
 import {Compute, computed, subscribeReactBuilder} from './computed';
@@ -64,10 +64,14 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
             Compute.add?.(this);
             return value;
         },
+        [replaceValue] (v: T) {
+            if (v === value) return;
+            value = v;
+        },
         set value (v: any) {
+            if (v === value) return;
             if (isUndefined) isUndefined = false;
             if (v instanceof Array) v = v.join('\n');
-            if (v === value) return;
             const old = value;
             value = v;
             changeList.forEach(fn => {fn(v, old);});
@@ -327,17 +331,6 @@ export function reactionValueToItem (value: TReactionValue<string|number>): TRea
     } else {
         // 当json值是TReactionItem
         return value as TReactionItem<number | string>;
-    }
-}
-
-declare global {
-    // for ts declaration
-    // interface Array<T> extends IReactObject<T>{
-    // }
-    interface String extends IReactItem<string> {}
-    interface Number extends IReactItem<number> {}
-    interface Boolean extends IReactItem<boolean> {}
-    interface Object extends IReactObject<any>{
     }
 }
 

@@ -3,7 +3,7 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-12 07:28:29
+ * @LastEditTime: 2022-11-12 13:48:56
 -->
 
 ## v0.0.11
@@ -21,6 +21,7 @@ feat: 1.声明提示优化 TType & {[prop: string]: any;} [done]
 feat: 2. 通过重载支持string和枚举共存 [done]
 fix: style 多数据绑定中绑定报错的问题 [done]
 feat: model 支持通过识别 type=number来增加number修饰符 [done]
+fix: 修复对象类型和computed组合使用时 闭包对象数值不更新问题 [done]
 
 ## 0.0.10 
 

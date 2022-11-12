@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-11 12:18:10
+ * @LastEditTime: 2022-11-12 13:51:02
 -->
 
 fix: 对于arg传入函数出现的bug fix [done]
@@ -31,3 +31,8 @@ feat: 1.声明提示优化 TType & {[prop: string]: any;} [done]
 feat: 2. 通过重载支持string和枚举共存 [done]
 fix: style 多数据绑定中绑定报错的问题 [done]
 feat: model 支持通过识别 type=number来增加number修饰符 [done]
+fix: 修复对象类型和computed组合使用时 闭包对象数值不更新问题 [done]
+
+## v0.0.12 todo
+
+for 大列表性能优化 考虑使用memo + shallowProxy
