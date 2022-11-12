@@ -13,7 +13,7 @@ export const Count: IComponent = () => {
     return [
         span('输入count'),
         input.model(count, 'number'),
-        comp(CountProps, prop({value: count})),
+        comp(CountProps)(prop({value: count})),
         button('add', on('click')(() => {count.value++;})),
         button('add', click(() => {count.value++;})),
     ];

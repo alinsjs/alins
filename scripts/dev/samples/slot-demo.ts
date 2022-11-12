@@ -10,15 +10,15 @@ const Child = ({slots}) => {
     return div('Child', slots);
 };
 const Parent = () => [
-    comp(Child, slot(div('I am a slot'))),
-    comp(Child, slot(() => div('I am a function slot'))), // function as slot
+    comp(Child)(slot(div('I am a slot'))),
+    comp(Child)(slot(() => div('I am a function slot'))), // function as slot
 ];
 comp(Parent).mount();
 
 
 const Child2 = ({slots}) => div('Child', slots.slotA, slots.slotB);
 const Parent2 = () => [
-    comp(Child2, slot({
+    comp(Child2)(slot({
         slotA: div('I am a slot'),
         slotB: () => div('I am a function slot'),
     })),

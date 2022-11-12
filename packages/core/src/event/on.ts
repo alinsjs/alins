@@ -17,7 +17,10 @@ export interface IEventBuilder extends IBuilderParameter {
 }
 
 export interface IOnListener {
-    (...args: any[]): void,
+    // (e: Event): void,
+    // (e: Event, dom: HTMLElement): void,
+    // (dom: HTMLElement): void,
+    (...args: (Event|HTMLElement|any)[]): void,
     // ? 没办法指定后面类型 不生效
     // (...args: [...any[], Event, HTMLElement]): void,
 }
@@ -60,7 +63,7 @@ const EventNames = [
 
 type TEventNames = typeof EventNames[number];
 
-function createEventBuilder (name: TEventNames, listener: IOnListener|null, decorators: TEventDecorator[]) {
+function createEventBuilder (name: TEventNames | string, listener: IOnListener|null, decorators: TEventDecorator[]) {
     const eventArgs: any[] = [];
     return {
         args (...args) {
@@ -92,8 +95,10 @@ function createEventBuilder (name: TEventNames, listener: IOnListener|null, deco
     } as IEventBuilder;
 }
 
+export function on (name: TEventNames): IEventConstructor;
+export function on (name: string): IEventConstructor;
 export function on (
-    name: TEventNames
+    name: TEventNames | string
 ): IEventConstructor {
     return Object.assign((
         listener: IOnListener,

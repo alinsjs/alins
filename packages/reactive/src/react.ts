@@ -6,7 +6,7 @@
 
 import {
     isStringTemplateArray, join,
-    subscribe, forceUpdate, value, reactValue, getListeners, replaceListeners, json,
+    subscribe, forceUpdate, value, reactValue, getListeners, json,
     IJson, IStyleBuilder,
     IReactBindingTemplate, IReactBuilder, IReactContext,
     IReactWrap, TReactionItem, IReactItem,
@@ -54,7 +54,7 @@ export function createReactive<T> (data: T): IReactWrap<T> {
 }
 
 export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> {
-    let changeList: Function[] = [];
+    const changeList: Function[] = [];
     return {
         type: 'reaction',
         isUndefined () {
@@ -85,19 +85,20 @@ export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> 
             // console.count('getListeners');
             return changeList;
         },
-        [replaceListeners]: (list: Function[]) => {changeList = list;},
         [json] () {return value;}
     };
 }
-// 初始化响应数据
-export function react<T>(data: T): IReactWrap<T>;
-// const v: boolean = false;
-// const d = react(v as boolean);
 
+// ! 重载顺序不能更改
 // 生成响应数据绑定
 export function react(ts: TemplateStringsArray, ...reactions: (TReactionItem|IStyleBuilder)[]): IReactBuilder;
+// 初始化响应数据
+export function react<T>(data: T): IReactWrap<T>;
 // es6兼容写法
 export function react(data: string, ...reactions: (TReactionItem | string)[]): IReactBuilder;
+
+// const v: boolean = false;
+// const d = react(v as boolean);
 
 export function react<T> (
     data: TemplateStringsArray | T | string,
@@ -231,7 +232,6 @@ export function mergeListeners (
     const arr = oldReact[getListeners]();
     if (arr.length > 0) {
         newReact[getListeners]().push(...arr);
-        // newReact[replaceListeners](arr);
         newReact[forceUpdate](getReactionValue(oldReact), index); // 被覆盖的数据触发更新
     }
 }

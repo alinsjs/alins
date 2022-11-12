@@ -52,7 +52,7 @@ export function Parent () {
     return div('.parent',
         'Hello World',
         span('content'),
-        comp(HelloWorld, prop({
+        comp(HelloWorld)(prop({
             value: '11',
         }), event({
             test: () => console.log('test event')

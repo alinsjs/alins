@@ -62,7 +62,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
 
     const dom = document.createElement(config.tag);
 
-    let isHTMLFilled = true;
+    let isHTMLFilled = false;
 
     if (config.html) {
         isHTMLFilled = true;
@@ -89,7 +89,6 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.domInfo) mergeDomInfo(config, parseDomInfo(config.domInfo));
 
     if (config.textContent) {
-        dom.appendChild(document.createTextNode(config.textContent));
         setNodeText(dom, config.textContent);
         // memo.add(() => {
         //     const dom = (memo?.last);

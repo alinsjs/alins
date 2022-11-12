@@ -8,11 +8,10 @@ import {
     isStringTemplateArray, splitTwoPart, createTemplateReplacement, reactiveTemplate,
     ReplaceExp, computed, countBindingValue, exeReactionValue, parseReactionValue
 } from 'alins-reactive';
-import {TReactionItem, TReactionValue, IJson, IStyleAtoms, IStyleBuilder, IReactBuilder} from 'alins-utils';
+import {TReactionItem, TStyleJsonValue, IJson, IStyleAtoms, IStyleBuilder, IReactBuilder} from 'alins-utils';
 import {DefaultUint, StyleAtoms} from './style-func/style-atom';
 import {compateKVStyle, compateStaticStyle} from './style-func/style-compatiable';
 
-type TStyleJsonValue = IJson<TReactionValue<string|number>>
 export interface IStyleConstructor extends IStyleAtoms{
     (json: TStyleJsonValue): IStyleBuilder;
     (ts: TemplateStringsArray, ...reactions: TReactionItem[]): IStyleBuilder;
@@ -32,20 +31,24 @@ export const style: IStyleConstructor = Object.assign((
             let scopeTemplate = '';
             const scopeReactions: TReactionItem[] = [];
             if (typeof a1 === 'string') { // style('')
-                scopeTemplate += a1; // 静态style
+                scopeTemplate += parseStyleTemplateToObject<string>(a1, true); // 静态style
             } else if (isStringTemplateArray(a1)) { // style``
                 const template = a1 as any as string[]; // 静态style
                 if (reactions.length === 0) {
-                    scopeTemplate += template[0]; // 没有响应数据
+                    scopeTemplate += parseStyleTemplateToObject<string>(template[0], true); // 没有响应数据
                 } else {
-                    scopeTemplate += createTemplateReplacement(template, start);
+                    scopeTemplate += parseStyleTemplateToObject<string>(
+                        createTemplateReplacement(template, start), true
+                    );
                     scopeReactions.push(...reactions);
                 }
             } else if ((a1 as any).type === 'react') {
                 // 支持builder
                 a1 = a1 as IReactBuilder;
                 const {template, reactions} = a1.exe({type: 'style'});
-                scopeTemplate += createTemplateReplacement(template, start);
+                scopeTemplate += parseStyleTemplateToObject<string>(
+                    createTemplateReplacement(template, start), true
+                );
                 reactions.push(...reactions);
             } else if (typeof a1 === 'object' || a1 !== null) { // json
                 for (const key in a1) {
@@ -72,9 +75,9 @@ export const style: IStyleConstructor = Object.assign((
         },
         exe (dom: HTMLElement) {
             const beforeStyle = dom.getAttribute('style') || '';
-            let newStyle = beforeStyle;
+            let newStyle = '';
             if (typeof a1 === 'string') {
-                newStyle += a1; // 静态style
+                newStyle += parseStyleTemplateToObject<string>(a1, true); // 静态style
             } else if (isStringTemplateArray(a1)) {
                 const template = a1 as any as string[]; // 静态style
                 if (reactions.length === 0) {// 没有响应数据
@@ -99,7 +102,7 @@ export const style: IStyleConstructor = Object.assign((
             } else {
                 console.warn('Invalid style arguments');
             }
-            dom.setAttribute('style', compateStaticStyle(newStyle));
+            dom.setAttribute('style', beforeStyle + compateStaticStyle(newStyle));
         },
         mount (dom: HTMLElement|string) {
             if (typeof dom === 'string') dom = document.querySelector(dom) as HTMLElement;
@@ -130,11 +133,11 @@ function exeBindingStyle (
     return newStyle;
 }
 
-export function transformStyleAttr (name: string) {
+function transformStyleAttr (name: string) {
     return name.replace(/[A-Z]/g, i => '-' + i.toLowerCase());
 }
 
-export function transformStyleValue (key: string, v: string|number) {
+function transformStyleValue (key: string, v: string|number) {
     return v + (needDefaultUnit(key, v) ? DefaultUint : '');
 }
 
@@ -143,7 +146,10 @@ function needDefaultUnit (k: string, v: any) {
 }
 
 // aaa; aaa$$0$$;
-function parseStyleTemplateToObject (templateRep: string): [string, IJson<string>] {
+export function parseStyleTemplateToObject<T extends (string | [string, IJson<string>]) = [string, IJson<string>]> (
+    templateRep: string, ignoreReplacement = false
+): T {
+    if (!templateRep) return templateRep as T;
     const lines = templateRep.split(/[;\n]/);
     let styles: string = '';
     const reactStyles: IJson<string> = {};
@@ -154,13 +160,13 @@ function parseStyleTemplateToObject (templateRep: string): [string, IJson<string
         const [key, value] = splitTwoPart(line, ':');
         if (!value) continue;
         const styleKey = transformStyleAttr(key);
-        if (ReplaceExp.test(line)) {
+        if (ReplaceExp.test(line) && !ignoreReplacement) {
             reactStyles[key] = value;
         } else {
             styles += `${styleKey}:${value};`;
         }
     }
-    return [styles, reactStyles];
+    return (ignoreReplacement ? styles : [styles, reactStyles]) as T;
 }
 
 function reactiveStyle (style: IJson<string>, styles: IJson<string>, reactions: TReactionItem[]) {

@@ -7,6 +7,8 @@
 import {TReactionItem, IStyleComponent, IStyleComponentArray} from 'alins-utils';
 import {createTemplateReplacement, reactiveTemplate} from 'alins-reactive';
 import {insertStyle} from './utils';
+import {parseStyleTemplateToObject} from './style';
+import {compateStaticStyle} from './style-func/style-compatiable';
 
 export interface ICssCallback {
     (...args: IStyleComponentArray[]): {
@@ -65,6 +67,7 @@ function buildCssFragment (
             currentStyle += parseSingleCssItem(item, reactions);
         }
     }
+    currentStyle = compateStaticStyle(currentStyle);
 
     return {
         template: !!selectorPath ? `${selectorPath}{${currentStyle}}${childStyles}` : `${currentStyle}${childStyles}`,
@@ -73,21 +76,22 @@ function buildCssFragment (
 }
 
 export function parseSingleCssItem (item: IStyleComponent, reactions: TReactionItem[]) {
+    let styleStr = '';
     if (typeof item === 'string') {
-        return item + ';'; // css 静态样式
+        styleStr = item; // css 静态样式
     } else  if (typeof item === 'object') { // style(...)
         if (item.type === 'react') {
             const result = item.exe({type: 'style'});
             const start = reactions.length;
             reactions.push(...result.reactions);
-            return createTemplateReplacement(result.template, start);
+            styleStr = createTemplateReplacement(result.template, start);
         } else {
             const {scopeReactions, scopeTemplate} = item.generate(reactions.length);
             reactions.push(...scopeReactions);
-            return scopeTemplate;
+            styleStr = scopeTemplate;
         }
     }
-    return '';
+    return parseStyleTemplateToObject<string>(styleStr, true);
 }
 
 function concatSelectorPath (path: string, name: string) {

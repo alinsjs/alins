@@ -76,6 +76,7 @@ export const modelController: IModelController = function (this: IBuilderConstru
                     if (!isComposite)
                         triggerChange(getValue());
                 });
+                if (dom.getAttribute('type') === 'number') decorators.push('number');
                 return dom;
             },
             type: 'model',

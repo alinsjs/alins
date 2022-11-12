@@ -24,7 +24,7 @@ export type TUnit = 'px' | '%' | 'rm' | 'vh' | 'vw' | 'em' | 'rem' | 'in' | 'cm'
 
 export type TI = 'i';
 
-type TStyleValue<T = number | string> = TReactionValue<T>;
+export type TStyleValue<T = number | string> = TReactionValue<T>;
 
 type TCssCommonValue = 'inherit' | 'initial' | 'unset' | 'revert' | 'none' | 'auto';
 
@@ -59,11 +59,13 @@ export interface IComposeStyle {
   cursorUrl: (...args: TReactionValue<string|number>[]) => IStyleAtoms;
 }
 
+export type TStyleJsonValue = {[key in keyof IStyleArgsAtomsBase]?: TReactionValue<string|number>} & IJson<TReactionValue<string|number>>
+
 export interface IAtomsTool {
-  join: (...styles: IStyleComponent[]) => IStyleAtoms;
+  join: (...styles: (IStyleComponent|TStyleJsonValue)[]) => IStyleAtoms;
 }
 
-export interface IStyleArgsAtoms extends IAtomsTool {
+export interface IStyleArgsAtomsBase {
   // ([a-zA-Z]*?)(: [a-zA-Z<>]*?;\n) => '$1', 正则
   // number style
   paddingTop: TNumberStyle;
@@ -105,7 +107,7 @@ export interface IStyleArgsAtoms extends IAtomsTool {
   position: TStringStyle<TPosition>;
   alignItems: TStringStyle<'stretch'|'center'|'flex-start'|'flex-end'|'baseline'|TCssCommonValue>;
   justifyContent: TStringStyle<'flex-start'|'flex-end'|'center'|'space-between'|'space-evenly'|'space-around'|TCssCommonValue>;
-  display: TStringStyle<'none'|'block'|'inline'|'inline-block'|'list-item'|'run-in'|'compact'|'marker'|'table'|'inline-table'|'table-row-group'|'table-header-group'|'table-footer-group'|'table-row'|'table-column-group'|'table-column'|'table-cell'|'table-caption'|TCssCommonValue>;
+  display: TStringStyle<'none'|'flex'|'block'|'inline'|'inline-block'|'list-item'|'run-in'|'compact'|'marker'|'table'|'inline-table'|'table-row-group'|'table-header-group'|'table-footer-group'|'table-row'|'table-column-group'|'table-column'|'table-cell'|'table-caption'|TCssCommonValue>;
   alignContent: TStringStyle<'stretch'|'center'|'flex-start'|'flex-end'|'space-between'|'space-around'|TCssCommonValue>;
   backgroundAttachment: TStringStyle<'scroll'|'fixed'|'local'|TCssCommonValue>;
   backgroundBlendMode: TStringStyle<'normal'|'multiply'|'screen'|'overlay'|'darken'|'lighten'|'color-dodge'|'saturation'|'color'|'luminosity'|TCssCommonValue>;
@@ -162,9 +164,9 @@ export interface IStyleArgsAtoms extends IAtomsTool {
   color: TColorStyle;
   backgroundColor: TColorStyle;
   borderColor: TColorStyle;
-
-  
 }
+
+export interface IStyleArgsAtoms extends IStyleArgsAtomsBase, IAtomsTool {}
 
 export interface IStyleAtoms extends IStyleArgsAtoms, INoneArgsAtoms, IComposeStyle, IStyleBuilder{
   _result: IJson<string | (()=>string)>;

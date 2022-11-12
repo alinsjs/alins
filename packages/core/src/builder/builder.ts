@@ -26,7 +26,7 @@ import {ITextBuilder} from './text';
 
 export type TElementChild = null | HTMLElement | IElementBuilder | IComponentBuilder |
     IForBuilder | IIfBuilder<any> | IShowBuilder |
-    IModelBuilder | ISwitchBuilder<any, any> | TElementChild[];
+    IModelBuilder | ISwitchBuilder<any, any> | (()=>TElementChild) | TElementChild[];
 
 export type TChild = TElementChild |
     IStyleBuilder | IStyleAtoms | IPseudoBuilder | TChild[];
@@ -83,6 +83,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         children: TElementChild[],
         binding: IReactBinding[],
         lifes: ILifes,
+        textContent: string,
     } = {
         tag,
         children: [],
@@ -92,10 +93,13 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         pseudos: [],
         domInfo: '',
         lifes: {},
+        textContent: ''
     };
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
-        if (typeof item === 'string') {
+        if (typeof item === 'number') {
+            elementOptions.textContent += item;
+        } else if (typeof item === 'string') {
             // dom info
             const tagName = getTagNameFromDomInfo(item);
             if (tagName) elementOptions.tag = tagName;
@@ -175,21 +179,6 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
 };
 
 
-export interface IBuilderConstructor extends IControllers {
-    (...args: TBuilderArg[]): IElementBuilder;
-}
-
-export function buildFactory (tag: string): IBuilderConstructor {
-    return Object.assign(((...data: TBuilderArg[]) => {
-        // todo exe add context
-        return createBaseBuilder(data, () => {
-            return elementBuilder(tag, data);
-        });
-    }), controllers);
-}
-
-export const dom = buildFactory;
-
 const MainDomNames = [
     'a', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'button', 'canvas', 'code', 'pre', 'table', 'th', 'td', 'tr', 'video', 'audio',
     'ol', 'select', 'option', 'p', 'i', 'iframe', 'img', 'input', 'label', 'ul', 'li', 'span', 'textarea', 'form', 'br', 'tbody'
@@ -202,6 +191,27 @@ const DomNames = [
     'object', 'progress', 'section', 'slot', 'small', 'strong', 'sub', 'summary', 'sup', 'template',
     'title', 'var',
 ] as const;
+
+export type TDomName = typeof DomNames[number];
+
+export interface IBuilderConstructor extends IControllers {
+    (...args: TBuilderArg[]): IElementBuilder;
+}
+
+// ! 通过重载实现 枚举和字符串同时存在
+export function buildFactory (tag: TDomName): IBuilderConstructor;
+export function buildFactory (tag: string): IBuilderConstructor;
+export function buildFactory (tag: TDomName | string): IBuilderConstructor {
+    return Object.assign(((...data: TBuilderArg[]) => {
+        // todo exe add context
+        return createBaseBuilder(data, () => {
+            return elementBuilder(tag, data);
+        });
+    }), controllers);
+}
+
+export const dom = buildFactory;
+
 
 export const doms = (() => {
     const map: IJson<any> = {};

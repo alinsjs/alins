@@ -3,8 +3,24 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-09 22:23:17
+ * @LastEditTime: 2022-11-12 07:28:29
 -->
+
+## v0.0.11
+
+feat: comp 科里化 comp(Hello)() [done]
+fix: 文本中 . [] # / 不显示 : / [] 字符串冲突问题 [done] 使用text方法
+fix: alins-utils ts 声明文件问题 [done]
+fix: subscribe return value; [done]
+feat: atomStyle 新增 join 方法 [done]
+fix: 事件声明 不起作用 [done]
+feat: click.stop 简化写法 [done]
+del: splitTwoPart 函数重复 [done]
+fix: 修复兼容属性重复补全问题 [done]
+feat: 1.声明提示优化 TType & {[prop: string]: any;} [done]
+feat: 2. 通过重载支持string和枚举共存 [done]
+fix: style 多数据绑定中绑定报错的问题 [done]
+feat: model 支持通过识别 type=number来增加number修饰符 [done]
 
 ## 0.0.10 
 

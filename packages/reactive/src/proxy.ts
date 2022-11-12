@@ -6,7 +6,7 @@
 
 import {
     forceUpdate, subscribe, reactValue,
-    value, getListeners, json, index, replaceListeners,
+    value, getListeners, json, index,
     IJson, IReactObject
 } from 'alins-utils';
 import {
@@ -57,7 +57,6 @@ export function createProxy<T extends IJson> (
         },
         [reactValue]: false,
         [getListeners]: () => changeList,
-        [replaceListeners]: (list: Function[]) => {changeList = list;},
         [json]: () => {
             return getReactionPureValue(data);
         }

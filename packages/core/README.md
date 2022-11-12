@@ -42,7 +42,9 @@
 
 ### 🚀 [Alins](https://github.com/alinsjs/alins): `Al`l-`in`-j`s` web ui Framework，No jsx/template/vdom/css/html
 
-**[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Docs](https://alinsjs.github.io/docs) | [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/todo-list.js) | [VersionLog](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [FeedBacl](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [MessageBoard](https://theajack.github.io/message-board/?app=alins)**
+**[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Docs](https://alinsjs.github.io/docs) | [VersionLog](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [FeedBacl](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [MessageBoard](https://theajack.github.io/message-board/?app=alins)**
+
+**Documentation is under development [alins/docs](https://github.com/alinsjs/docs)**
 
 ## 0 Quick Start
 
@@ -76,7 +78,7 @@ div('Hello World!').mount();
 6. One-way data flow + two-way binding
 7. Good TS support
 
-For more detailed functions, please refer to [Online Documentation](https://alinsjs.github.io/docs)
+For more detailed functions, please refer to [Online Documentation](https://shiyix.cn/alins)
 
 ## 2. Samples
 
@@ -108,7 +110,7 @@ export function Count () {
     return [
         span('input count'),
         input.model(count, 'number'),
-        comp(CountProps, prop({value: count})),
+        comp(CountProps)(prop({value: count})),
         button('add', click(() => {count.value++;})),
     ];
 };

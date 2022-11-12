@@ -10,7 +10,7 @@ import {ifController, IIfController} from './if';
 import {IShowController, showController} from './show';
 import {ISwitchController, switchController} from './switch';
 import {IBuilderConstructor, IElementBuilder, TBuilderArg} from '../builder/builder';
-import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
+import {ICompControlConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
 import {mountSingleChild, transformBuilderToDom} from '../element/transform';
 import {insertBefore, removeDom} from '../builder/dom-proxy';
 
@@ -20,7 +20,7 @@ export type IControllerDoms = INode | HTMLElement[]
 
 export type TControllerBuilder = IElementBuilder | IComponentBuilder;
 
-export type IControllerConstructor = IBuilderConstructor | ICompConstructor;
+export type IControllerConstructor = IBuilderConstructor | ICompControlConstructor;
 
 export type TControllerType = 'comp' | 'builder';
 

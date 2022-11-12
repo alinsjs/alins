@@ -6,7 +6,7 @@
 
 import {
     index, forceUpdate, subscribe, reactValue, getListeners,
-    value, json, replaceListeners
+    value, json
 } from './symbol';
 import {IBuilderParameter, IJson} from './common';
 
@@ -18,7 +18,6 @@ export interface IReactBase<T = any> {
   [subscribe](fn: (v:T, old:T, index: number) => void):  T;
   [reactValue]: boolean;
   [getListeners](): Function[];
-  [replaceListeners](list: Function[]): void;
   [json] (): T;
 }
 
@@ -48,7 +47,6 @@ export interface IReactObject<T = any> extends IReactBase<T> {
   // ! 牺牲了 value和json返回值的类型
   get [value](): IJson;
   set [value](v:any);
-  [json](): T;
 }
 
 /*

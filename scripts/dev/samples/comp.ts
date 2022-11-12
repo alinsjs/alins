@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 23:25:08
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-08 22:25:38
+ * @LastEditTime: 2022-11-12 09:06:26
  */
 
 import {div, comp, prop} from '../alins';
@@ -24,8 +24,8 @@ div(
 ).mount();
 
 export const CompParent = () => [
-    comp(Child, prop({name: '1'})),
-    comp(Child, prop({name: '2'})),
+    comp(Child)(prop({name: '1'})),
+    comp(Child)(prop({name: '2'})),
     div('CompParent children'),
     () => div('22222'),
     () => [

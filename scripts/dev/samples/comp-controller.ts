@@ -14,6 +14,8 @@ import {CountProps} from './count';
 //     ];
 // }
 
+const cc = comp(CountProps);
+
 export function CompController () {
     const list = $([1, 2, 3]);
     const num = $(-1);
@@ -21,25 +23,25 @@ export function CompController () {
     const value1 = $(1);
     const value2 = $(2);
     // const array = $([1, 2]);
+    window.__num = num;
     return [
         span('修改num:'),
-        input.model(num, 'number'),
+        input.model(num)('[type=number]'),
         div('comp for demo:'),
-        comp.for(list)((item) => [
-            CountProps,
+        cc.for(list)((item) => [
             prop({value: item})
         ]),
         div('comp if demo:'),
-        comp.if(() => num.value > 1)(CountProps, prop({value}))
-            .elif(() => num.value < 0)(CountProps, prop({value: value1}))
-            .else(CountProps, prop({value: value2})),
+        cc.if(() => num.value > 1)(prop({value}))
+            .elif(() => num.value < 0)(prop({value: value1}))
+            .else(prop({value: value2})),
         div('comp switch demo:'),
-        comp.switch(num)
-            .case(0)(CountProps, prop({value: value}))
-            .case(1)(CountProps, prop({value: value1}))
-            .case(2)(CountProps, prop({value: value2})),
+        cc.switch(num)
+            .case(0)(prop({value: value}))
+            .case(1)(prop({value: value1}))
+            .case(2)(prop({value: value2})),
         div('comp show demo:'),
-        comp.show(() => num.value > 1)(CountProps, prop({value: value})),
+        cc.show(() => num.value > 1)(prop({value: value})),
     ];
 }
 

@@ -15,8 +15,8 @@ export function FuncBuilder () {
         const count = react(1);
         return [
             button('add', (click(() => count.value ++))),
-            comp(CountProps, prop({value: count})),
-            comp(CountProps, prop({value: count})),
+            comp(CountProps)(prop({value: count})),
+            comp(CountProps)(prop({value: count})),
         ];
     });
 }
