@@ -2,8 +2,8 @@
     "name": "alins-style",
     "version": "0.0.12",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "dist/alins-style.esm.js",
-    "typings": "dist/alins-style.d.ts",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
