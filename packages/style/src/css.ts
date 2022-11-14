@@ -4,10 +4,10 @@
  * @Description: Coding something
  */
 
-import {TReactionItem, IStyleComponent, IStyleComponentArray} from 'alins-utils';
+import {TReactionItem, IStyleComponent, IStyleComponentArray, IReactBuilder, IStyleBuilder, TStyleJsonValue} from 'alins-utils';
 import {createTemplateReplacement, reactiveTemplate} from 'alins-reactive';
 import {insertStyle} from './utils';
-import {parseStyleTemplateToObject} from './style';
+import {parseStyleTemplateToObject, style} from './style';
 import {compateStaticStyle} from './style-func/style-compatiable';
 
 export interface ICssCallback {
@@ -79,14 +79,17 @@ export function parseSingleCssItem (item: IStyleComponent, reactions: TReactionI
     let styleStr = '';
     if (typeof item === 'string') {
         styleStr = item; // css 静态样式
-    } else  if (typeof item === 'object') { // style(...)
+    } else if (typeof item === 'object') { // style(...)
         if (item.type === 'react') {
-            const result = item.exe({type: 'style'});
+            const result = (item as IReactBuilder).exe({type: 'style'});
             const start = reactions.length;
             reactions.push(...result.reactions);
             styleStr = createTemplateReplacement(result.template, start);
         } else {
-            const {scopeReactions, scopeTemplate} = item.generate(reactions.length);
+            if (item.type !== 'style') { // TStyleJsonValue
+                item = style(item as TStyleJsonValue);
+            }
+            const {scopeReactions, scopeTemplate} = (item as IStyleBuilder).generate(reactions.length);
             reactions.push(...scopeReactions);
             styleStr = scopeTemplate;
         }

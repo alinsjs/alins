@@ -12,3 +12,5 @@ export {
     StyleAtoms,
     react, $
 } from '../../packages/style/src/index';
+
+export {useAdoptedStyle} from '../../packages/style/src/utils';

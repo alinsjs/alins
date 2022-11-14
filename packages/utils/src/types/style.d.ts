@@ -7,7 +7,7 @@
 import {IBuilderParameter, IJson} from './common.d';
 import {IReactBuilder, TComputedFunc, TReactionItem, TReactionValue} from './react.d';
 
-export type IStyleComponent = string | IStyleBuilder | IStyleAtoms | IReactBuilder;
+export type IStyleComponent = string | IStyleBuilder | IStyleAtoms | IReactBuilder | TStyleJsonValue;
 
 export type IStyleComponentArray = IStyleComponent | IStyleComponentArray[];
 
@@ -57,12 +57,6 @@ export interface INoneArgsAtoms {
 
 export interface IComposeStyle {
   cursorUrl: (...args: TReactionValue<string|number>[]) => IStyleAtoms;
-}
-
-export type TStyleJsonValue = {[key in keyof IStyleArgsAtomsBase]?: TReactionValue<string|number>} & IJson<TReactionValue<string|number>>
-
-export interface IAtomsTool {
-  join: (...styles: (IStyleComponent|TStyleJsonValue)[]) => IStyleAtoms;
 }
 
 export interface IStyleArgsAtomsBase {
@@ -164,6 +158,21 @@ export interface IStyleArgsAtomsBase {
   color: TColorStyle;
   backgroundColor: TColorStyle;
   borderColor: TColorStyle;
+}
+
+export type TStyleJsonValue = {
+  [key in keyof IStyleArgsAtomsBase]?:
+    (IStyleArgsAtomsBase[key] extends TStringStyle<infer K> ? K : string|number) |
+      IReactBuilder |
+      TReactionItem<string|number>
+} & IJson<TReactionValue<string|number>>
+
+export interface IAtomsTool {
+  join: (...styles: (IStyleComponent|TStyleJsonValue)[]) => IStyleAtoms;
+}
+
+export interface IAtomsTool {
+  join: (...styles: (IStyleComponent|TStyleJsonValue)[]) => IStyleAtoms;
 }
 
 export interface IStyleArgsAtoms extends IStyleArgsAtomsBase, IAtomsTool {}

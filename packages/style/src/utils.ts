@@ -40,13 +40,22 @@ export function createCssPool () {
 // export const DefaultCssPool = createCssPool();
 
 // ! 调试时关闭CSSStyleSheet
-const supporteAdoptedStyle = false;
-// const supporteAdoptedStyle = typeof (window.document as any).adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
+// const isUsingAdoptedStyle = false;
+const supportAdoptedStyle = (window.document as any).adoptedStyleSheets !== 'undefined' && !!window.CSSStyleSheet;
+let isUsingAdoptedStyle = supportAdoptedStyle;
+
+export function useAdoptedStyle (bool = true) {
+    if (bool && !supportAdoptedStyle) {
+        console.warn('AdoptedStyle is not supported in your browser');
+        return;
+    }
+    isUsingAdoptedStyle = bool;
+}
 
 export function insertStyle (parent?: HTMLElement | null) {
     if (parent) {
         return insertHTMLStyle(parent);
-    } else if (supporteAdoptedStyle) {
+    } else if (isUsingAdoptedStyle) {
         const style = new CSSStyleSheet();
         
         (window.document as any).adoptedStyleSheets.push(style);

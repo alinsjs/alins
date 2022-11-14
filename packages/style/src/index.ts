@@ -10,5 +10,5 @@ export {StyleAtoms} from './style-func/style-atom';
 export {react, $} from 'alins-reactive';
 export {value, subscribe, forceUpdate, index, json} from 'alins-utils';
 export {version} from '../package.json';
-
+export {useAdoptedStyle} from './utils';
 // ! 需要同步修改 style-all-cdn.ts 因为不同 export * 有命名冲突

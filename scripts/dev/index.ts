@@ -5,7 +5,9 @@
  * @Date: 2022-07-11 17:17:54
  * @Description: Coding something
  */
-import './samples/bugs';
+
+import './samples/v0.0.13';
+// import './samples/bugs';
 // import './samples/computed-bug';
 
 // import './samples/v0.0.11';
