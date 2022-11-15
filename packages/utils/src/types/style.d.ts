@@ -107,7 +107,7 @@ export interface IStyleArgsAtomsBase {
   backgroundBlendMode: TStringStyle<'normal'|'multiply'|'screen'|'overlay'|'darken'|'lighten'|'color-dodge'|'saturation'|'color'|'luminosity'|TCssCommonValue>;
   backgroundClip: TStringStyle<'border-box'|'padding-box'|'content-box'|TCssCommonValue>;
   backgroundOrigin: TStringStyle<'border-box'|'padding-box'|'content-box'|TCssCommonValue>;
-  backgroundRepeat: TStringStyle<'repea'|'repeat-x'|'repeat-y'|'no-repeat'|TCssCommonValue>;
+  backgroundRepeat: TStringStyle<'repeat'|'repeat-x'|'repeat-y'|'no-repeat'|TCssCommonValue>;
   boxSizing: TStringStyle<'content-box'|'border-box'|'inherit'>;
   clear: TStringStyle<'left'|'right'|'both'|'none'|'inherit'>;
   textAlign: TStringStyle<'auto'|'left'|'right'|'center'|'justify'|'start'|'end'|TCssCommonValue>;
