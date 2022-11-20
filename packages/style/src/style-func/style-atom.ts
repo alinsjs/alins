@@ -8,7 +8,7 @@
 import {
     countBindingValue,
 } from 'alins-reactive';
-import {IReactBuilder, IReactItem, IJson, IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI, IStyleComponent, IAtomsTool} from 'alins-utils';
+import {IReactBuilder, IReactItem, IJson, IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI, IStyleComponent, IAtomsTool, IStyleBuilder, TStyleJsonValue} from 'alins-utils';
 import {parseSingleCssItem} from '../css';
 import {OnlyNumberAttrs, style} from '../style';
 import {createComposeValue} from './style-compose';
@@ -26,7 +26,7 @@ export const StyleAtoms = (() => {
         // none arg style
         'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'fontSize', 'lineHeight', 'top', 'left', 'bottom', 'right', 'borderRadius', 'textIndent',
         // TNumberAutoStyle
-        'width', 'maxWidth', 'height', 'maxHeight', 'flexBasis',
+        'width', 'maxWidth', 'minWidth', 'height', 'maxHeight', 'minHeight', 'flexBasis',
         // pure number style
         'opacity', 'zIndex', 'flex', 'flexGrow', 'flexShrink',        // fournumber style
         'margin', 'padding',
@@ -57,9 +57,9 @@ export const StyleAtoms = (() => {
                     if (typeof item === 'string' || (item).type === 'react') {
                         style(item as any).exe(dom);
                     } else if (item.type === 'style') {
-                        item.exe(dom);
+                        (item as IStyleBuilder).exe(dom);
                     } else if (typeof item === 'object') {
-                        style(item).exe(dom);
+                        style(item as TStyleJsonValue).exe(dom);
                     }
                 });
             }

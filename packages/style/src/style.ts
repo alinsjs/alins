@@ -21,7 +21,8 @@ export interface IStyleConstructor extends IStyleAtoms{
 
 export const OnlyNumberAttrs = ['zIndex', 'opacity', 'flex', 'flexGrow', 'flexShrink'];
 
-export const style: IStyleConstructor = Object.assign((
+// ! & {[prop: string]: any} 为了 ts 声明引用时不报属性不存在的错误
+export const style: IStyleConstructor & {[prop: string]: any} = Object.assign((
     a1: TStyleJsonValue | TemplateStringsArray | string | IReactBuilder,
     ...reactions: TReactionItem[]
 ) => {

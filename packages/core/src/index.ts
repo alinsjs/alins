@@ -21,10 +21,11 @@ export {
 export * from './builder/builder';
 export {html} from './builder/html';
 export {text} from './builder/text';
-export {comp, IComponent, IComponentOptions} from './comp/comp';
-export {prop} from './comp/prop';
-export {event} from './comp/event';
-export {slot} from './comp/slot';
+export {comp, IComponent, IComponentOptions, IComponentBuilder} from './comp/comp';
+export {prop, IProp} from './comp/prop';
+export {event, IEvent} from './comp/event';
+export {slot, ISlot} from './comp/slot';
+export {compControllers} from './controller/controller';
 export * from './event/on';
 
 export {

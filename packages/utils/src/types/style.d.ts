@@ -81,8 +81,10 @@ export interface IStyleArgsAtomsBase {
 
   width: TNumberAutoStyle;
   maxWidth: TNumberAutoStyle;
+  minWidth: TNumberAutoStyle;
   height: TNumberAutoStyle;
   maxHeight: TNumberAutoStyle;
+  minHeight: TNumberAutoStyle;
   flexBasis: TNumberAutoStyle;
 
   // pure number style
