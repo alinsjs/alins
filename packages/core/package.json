@@ -1,9 +1,9 @@
 {
     "name": "alins",
-    "version": "0.0.12",
+    "version": "0.0.13",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins.esm.js",
+    "typings": "dist/alins.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -19,8 +19,8 @@
     "license": "MIT",
     "type": "module",
     "dependencies": {
-        "alins-reactive": "^0.0.12",
-        "alins-utils": "^0.0.12"
+        "alins-reactive": "^0.0.13",
+        "alins-utils": "^0.0.13"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
