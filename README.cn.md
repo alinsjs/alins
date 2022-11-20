@@ -81,6 +81,10 @@ Alins 是一个 All-in-js web ui 框架，具有非常高的灵活性，使用 j
 
 ## 2. 实例程序
 
+### 2.0 基于Alins的应用
+
+[Webos](https://theajack.github.io/webos)
+
 ### 2.1. 计数器 [在线使用](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/count.js)
 
 ```js
