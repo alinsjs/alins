@@ -5,6 +5,15 @@
  * @LastEditors: chenzhongsheng
  * @LastEditTime: 2022-11-12 16:28:28
 -->
+## v0.0.13-v0.0.14
+
+1. feat: style: supporteAdoptedStyle 支持配置打开或者关闭 [done]
+2. feat: css函数支持传入 json，且有支持提示 [done]
+3. feat: style枚举属性 提示 [done]
+4. fix: 原子属性缺少 minWidth minHeight [done]
+5. fix: 补全ts声明
+
+
 ## v0.0.12
 
 1. feat: 修复 组件 + show同时使用时初始化渲染问题 [done]

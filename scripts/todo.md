@@ -3,16 +3,12 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-20 17:41:23
+ * @LastEditTime: 2022-11-20 18:59:23
 -->
 
-## v0.0.13 done
+## v0.0.15
 
-feat: style: supporteAdoptedStyle 支持配置打开或者关闭 [done]
-feat: css函数支持传入 json，且有支持提示 [done]
-feat: style枚举属性 提示 [done]
-fix: 原子属性缺少 minWidth minHeight [done]
-fix: 补全ts声明
+移除多余的log
 
 ## TodoList
 

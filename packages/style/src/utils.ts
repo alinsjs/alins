@@ -59,7 +59,7 @@ export function insertStyle (parent?: HTMLElement | null) {
         const style = new CSSStyleSheet();
         
         (window.document as any).adoptedStyleSheets.push(style);
-        return (v: string) => {console.log(v); (style as any).replace(v);};
+        return (v: string) => {(style as any).replace(v);};
     } else {
         return insertHTMLStyle(document.head);
     }
