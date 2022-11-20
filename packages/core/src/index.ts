@@ -25,7 +25,7 @@ export {comp, IComponent, IComponentOptions, IComponentBuilder} from './comp/com
 export {prop, IProp} from './comp/prop';
 export {event, IEvent} from './comp/event';
 export {slot, ISlot} from './comp/slot';
-export {compControllers} from './controller/controller';
+export {compControllers, ICompControllers} from './controller/controller';
 export * from './event/on';
 
 export {
