@@ -9,7 +9,7 @@ import {
     IElementBuilder, IMountBuilderParameter,
 } from '../builder/builder';
 import {
-    createReactive, index, mergeReact, subscribe
+    createReactive, index, subscribe
 } from 'alins-reactive';
 import {IReactObject, IReactWrap, IReactItem} from 'alins-utils';
 import {ICompConstructor, IComponentBuilder, TCompBuilderArg} from '../comp/comp';
@@ -103,7 +103,9 @@ export const forController: IForController = function (this: IBuilderConstructor
                     const builder: TControllerBuilder = this.apply(null, makeBuilder(i, newValue));
                     const oldDom = doms[i];
                     if (oldDom) {
-                        mergeReact(oldValue, newValue);
+                        // console.log('mergeReact4');
+                        // ! 此处已经在 proxy中做了merge了
+                        // mergeReact(oldValue, newValue);
                     } else {
                         const {dom, children} = getControllerDoms(builder);
                         doms[i] = children;

@@ -107,7 +107,10 @@ export function createProxy<T extends IJson> (
                             const old = target[i];
                             const newValue = reactiveProxyValue(v[i]);
                             newValue[index] = reactiveValue(i); // ! index
-                            if (old) mergeReact(old, newValue, i);
+                            if (old) {
+                                // console.trace('mergeReact5');
+                                mergeReact(old, newValue, i);
+                            }
                             triggerChange(newValue, old, i);
                             target[i] = newValue;
                         }
@@ -134,6 +137,7 @@ export function createProxy<T extends IJson> (
                             for (const k in v) {
                                 const old = target[k];
                                 const reaction = reactiveProxyValue(v[k]);
+                                // console.log('mergeReact1');
                                 mergeReact(old, reaction);
                                 target[k] = reaction;
                             }
@@ -171,6 +175,7 @@ export function createProxy<T extends IJson> (
                         const index = parseIndex();
                         triggerChange(v, target[index], index);
                     } else {
+                        // console.log('mergeReact2');
                         mergeReact(oldValue, v);
                     }
                 }

@@ -232,7 +232,7 @@ export function mergeListeners (
     newReact: IReactItem | IReactObject, // 新值
     index?: number,
 ) {
-    // console.count('mergeListeners');
+    // console.trace('mergeListeners');
     const arr = oldReact[getListeners]();
     if (arr.length > 0) {
         newReact[getListeners]().push(...arr);

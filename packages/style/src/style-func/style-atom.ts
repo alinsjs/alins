@@ -8,7 +8,7 @@
 import {
     countBindingValue,
 } from 'alins-reactive';
-import {IReactBuilder, IReactItem, IJson, IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI, IStyleComponent, IAtomsTool, IStyleBuilder, TStyleJsonValue} from 'alins-utils';
+import {IReactBuilder, IReactItem, IJson, IStyleAtoms, IStyleArgsAtoms, TStyleValue, TUnit, TI, IStyleComponent, IAtomsTool, IStyleBuilder, TStyleJsonValue, IStyleArgsAtomsBase} from 'alins-utils';
 import {parseSingleCssItem} from '../css';
 import {OnlyNumberAttrs, style} from '../style';
 import {createComposeValue} from './style-compose';
@@ -73,7 +73,7 @@ export const StyleAtoms = (() => {
     };
     const Atoms: IJson<TAtomFunc> & IAtomsTool = {
         join (...styles: IStyleComponent[]) {
-            return Object.assign({_result: {}, _styles: [...styles]}, AtomsBase) as any;
+            return Object.assign(createStyleAtomsObject([...styles]), AtomsBase) as any;
         }
     };
     const setAtomValue = (name: string) => {
@@ -81,7 +81,7 @@ export const StyleAtoms = (() => {
             // ! 第一个链式调用 会生成一个空的 result
             // 后续的链式调用都是往这个 result 上加
             // 到最后mount的时候 挂这个result
-            return Object.assign({_result: {}, _styles: []}, AtomsBase)[name](...args);
+            return Object.assign(createStyleAtomsObject([]), AtomsBase)[name](...args);
         };
     };
 
@@ -111,8 +111,17 @@ export const StyleAtoms = (() => {
     });
 
     return Atoms as any as IStyleAtoms;
-
 })();
+
+function createStyleAtomsObject (styles: IStyleComponent[]) {
+    return {
+        get (key: keyof IStyleArgsAtomsBase) {
+            return (this._result as any)[key] as string;
+        },
+        _result: {},
+        _styles: [...styles]
+    };
+}
 
 function transformAtomStyleValue (
     key: string,  v: TStyleValue, unit?: TUnit|TI|'', i?: TI

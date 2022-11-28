@@ -113,9 +113,9 @@ export interface IStyleArgsAtomsBase {
   boxSizing: TStringStyle<'content-box'|'border-box'|'inherit'>;
   clear: TStringStyle<'left'|'right'|'both'|'none'|'inherit'>;
   textAlign: TStringStyle<'auto'|'left'|'right'|'center'|'justify'|'start'|'end'|TCssCommonValue>;
-  wordWrap: TStringStyle<'normal'|'break-word'>;
+  wordWrap: TStringStyle<'normal'|'break-word'|'break-all'>;
   whiteSpace: TStringStyle<'normal'|'pre'|'nowrap'|'pre-wrap'|'pre-line'|'inherit'>;
-  wordBreak: TStringStyle<'normal'|'break-all'|'keep-all'>;
+  wordBreak: TStringStyle<'normal'|'break-word'|'break-all'|'keep-all'>;
   wordSpacing: TStringStyle<'normal'|'length'|'inherit'>;
   verticalAlign: TStringStyle<'baseline'|'sub'|'super'|'top'|'text-top'|'middle'|'bottom'|'text-bottom'|'length'|'%'|'inherit'>;
   fontStyle: TStringStyle<'normal'|'italic'|'oblique'|'inherit'>;
@@ -177,7 +177,9 @@ export interface IAtomsTool {
   join: (...styles: (IStyleComponent|TStyleJsonValue)[]) => IStyleAtoms;
 }
 
-export interface IStyleArgsAtoms extends IStyleArgsAtomsBase, IAtomsTool {}
+export interface IStyleArgsAtoms extends IStyleArgsAtomsBase, IAtomsTool {
+  get(key: keyof IStyleArgsAtomsBase): string;
+}
 
 export interface IStyleAtoms extends IStyleArgsAtoms, INoneArgsAtoms, IComposeStyle, IStyleBuilder{
   _result: IJson<string | (()=>string)>;

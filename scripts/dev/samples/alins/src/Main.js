@@ -11,6 +11,8 @@ import * as Alins from '../../../alins';
 
 (window).Alins = Alins;
 
+const baseNum = 1000;
+
 css('.danger')(style.backgroundColor('#eee')).mount();
 
 // const value = window.__alins_value;
@@ -32,7 +34,7 @@ function setRows (update = []) {
 }
 
 function add () {
-    rows.push.apply(rows, buildData(20));
+    rows.push.apply(rows, buildData(baseNum));
 }
   
 function remove (id) {
@@ -47,7 +49,7 @@ function select (id) {
 }
 
 function run () {
-    setRows(buildData(20));
+    setRows(buildData(baseNum));
     selected.value = -1;
 }
   
@@ -59,7 +61,7 @@ function update () {
 }
   
 function runLots () {
-    setRows(buildData(2000));
+    setRows(buildData(baseNum * 10));
     selected.value = -1;
 }
   

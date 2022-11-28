@@ -43,7 +43,6 @@ export const computed: IComputed = (target) => {
     Compute.add = (item: IReactItem) => { reacts.push(item); };
     const value = get();
     Compute.add = null;
-    // debugger;
 
     const react = reactiveComputed(get, set, value) as IReactItem;
     reacts.forEach(item => item[subscribe]((v, old, index) => {
