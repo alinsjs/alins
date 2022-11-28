@@ -3,8 +3,19 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-12 16:28:28
+ * @LastEditTime: 2022-11-28 18:05:10
 -->
+## v0.0.15
+
+fix: wordWrap break-all [done]
+fix: wordBreak break-word [done]
+移除多余的log [feat]
+fix: 删除多余的mergereact [fix]
+feat: 原子样式增加 get方法，支持 获取属性值 ._reslut.color ... [done]
+feat: 控制器支持 computed
+feat: 支持对数组length 进行动态监听
+
+
 ## v0.0.13-v0.0.14
 
 1. feat: style: supporteAdoptedStyle 支持配置打开或者关闭 [done]

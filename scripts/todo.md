@@ -3,18 +3,8 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-28 09:03:53
+ * @LastEditTime: 2022-11-28 18:05:14
 -->
-
-## v0.0.15
-
-fix: wordWrap break-all [done]
-fix: wordBreak break-word [done]
-移除多余的log [feat]
-fix: 删除多余的mergereact [fix]
-feat: 原子样式支持 获取属性值 ._reslut.color ... [done]
-feat: 控制器支持 computed
-feat: 支持对数组length 进行动态监听
 
 ## TodoList
 
@@ -40,8 +30,10 @@ fix:
 
 feat: emment 使用函数或特殊标记控制 默认字符串和数字 使用 text逻辑
 feat: css 动画 规则
+
 feat: for 大列表性能优化 考虑使用memo + shallowProxy
 feat: list = [] 之后内存没有被回收
+
 feat: 原子样式 组合样式 扩充
 feat: 状态管理
 feat: 路由
