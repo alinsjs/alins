@@ -109,6 +109,7 @@ declare global {
     // 但是会牺牲 a.b[value] 或者 a.b[json]() 的返回值类型
     // for ts declaration
     interface Array<T> extends IReactObject<T>{
+      _length: IReactItem<number>;
     }
     interface String extends IReactItem<string> {}
     interface Number extends IReactItem<number> {}

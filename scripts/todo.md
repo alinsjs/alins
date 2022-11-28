@@ -14,6 +14,7 @@ fix: wordBreak break-word [done]
 fix: 删除多余的mergereact [fix]
 feat: 原子样式支持 获取属性值 ._reslut.color ... [done]
 feat: 控制器支持 computed
+feat: 支持对数组length 进行动态监听
 
 ## TodoList
 

@@ -9,9 +9,10 @@ import {
     value, getListeners, json, index,
     IJson, IReactObject
 } from 'alins-utils';
+import {Compute} from './computed';
 import {
     reactiveValue,  isReaction,
-    getReactionPureValue, mergeReact, reactiveProxyValue
+    getReactionPureValue, mergeReact, reactiveProxyValue, react
 } from './react';
 
 // 1. emptyValue // 使用 isUndefined 函数解决
@@ -27,7 +28,11 @@ export function createProxy<T extends IJson> (
 
     const data = originData as any;
 
+
     if (typeof data === 'object') {
+        if (Array.isArray(data)) {
+            data._length = react(data.length);
+        }
         for (const key in data) {
             if (key === 'toJSON') break;
             data[key] = reactiveProxyValue(data[key]);
@@ -66,11 +71,17 @@ export function createProxy<T extends IJson> (
         get (target: IJson, property, receiver) {
             if (property === value) return getReactionPureValue(data);
             const type = typeof data[property];
-            if (!(Array.isArray(target) && (property === 'length' || type === 'function'))) {
-                if (type === 'undefined' && property !== 'toJSON') {
-                    data[property] = reactiveValue('', true);
+            if (!(Array.isArray(target))) {
+                if (property === 'length' || type === 'function') {
+                    if (type === 'undefined' && property !== 'toJSON') {
+                        data[property] = reactiveValue('', true);
+                    }
                 }
+            } else {
+                if (property === 'length')
+                    Compute.add?.(data._length);
             }
+            
             return Reflect.get(target, property, receiver);
             // const result = Reflect.get(target, property, receiver);
             // if (result[reactValue] === false) return result[value];
@@ -85,7 +96,10 @@ export function createProxy<T extends IJson> (
                 return Reflect.set(target, property, v, receiver);
             };
             if (isArray) {
-                if (property === 'length') return set();// 数组的length属性
+                if (property === 'length') {
+                    data._length.value = v;
+                    return set();// 数组的length属性
+                }
                 const oldIndex = target.indexOf(v);
                 if (oldIndex !== -1) { // 数组类型的内部元素位置变更
                     // todo 监听
@@ -101,6 +115,7 @@ export function createProxy<T extends IJson> (
                     const old = data[json]();
                     // console.warn('不能对一级对象设置value属性');
                     if (isArray) {
+                        const oldLen = data.length;
                         const vLen = typeof v === 'undefined' ? 0 : v.length;
                         // target.splice(0, target.length, ...v);
                         for (let i = 0; i < vLen; i++) {
@@ -120,6 +135,8 @@ export function createProxy<T extends IJson> (
                                 triggerChange(undefined, arr[i], i + vLen);
                             }
                         }
+                        if (oldLen !== vLen)
+                            data._length.value = vLen;
                     } else {
                         if (isReaction(v)) {
                             v = v[json]();
