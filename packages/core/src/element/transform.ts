@@ -67,8 +67,6 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     if (config.html) {
         isHTMLFilled = true;
         dom.innerHTML = config.html.exe((v) => {dom.innerHTML = v;}) + '';
-    } else if (config.text) {
-        config.text.exe(dom, isInputNode(dom),);
     }
 
     // memo.add(() => dom.cloneNode());
@@ -141,11 +139,21 @@ export function mountChildrenDoms (
     parent: HTMLElement,
     children: TChild[]
 ) {
-    const frag = document.createDocumentFragment();
-    for (const item of children) {
-        frag.appendChild(mountSingleChild(item));
+    const isInput = isInputNode(parent);
+    if (isInput) {
+        for (const item of children) {
+            // @ts-ignore
+            if (item?.type === 'text')
+                item.exe(parent, true);
+        }
+    } else {
+        const frag = document.createDocumentFragment();
+        for (const item of children) {
+            frag.appendChild(mountSingleChild(item));
+        }
+        appendFragment(parent, frag);
     }
-    appendFragment(parent, frag);
+
 }
 
 export function mountSingleChild (
@@ -172,6 +180,8 @@ export function mountSingleChild (
             case 'show':
             case 'model':
                 frag.appendChild(item.exe()); break;
+            case 'text':
+                frag.appendChild(item.exeTextNode()); break;
         }
     }
     return frag;
@@ -316,7 +326,6 @@ export function createElement ({
     pseudos = [],
     lifes = {},
     html,
-    text,
 }: IElementOptions): IElement {
     return {
         tag,
@@ -333,6 +342,5 @@ export function createElement ({
         pseudos,
         lifes,
         html,
-        text,
     };
 }

@@ -98,10 +98,13 @@ export function parseSingleCssItem (item: IStyleComponent, reactions: TReactionI
 }
 
 function concatSelectorPath (path: string, name: string) {
-    if (!path && !name) return '';
-    if (name[0] === '&') {
-        return `${path}${name.substring(1)}`;
-    } else {
-        return `${path} ${name}`;
-    }
+    return name.split(',').map(single => {
+        single = single.trim();
+        if (!path && !single) return '';
+        if (single[0] === '&') {
+            return `${path}${single.substring(1)}`;
+        } else {
+            return `${path} ${single}`.trim();
+        }
+    }).join(',');
 }

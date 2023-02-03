@@ -1,6 +1,7 @@
 // import './samples/memory-leak';
 
-import './samples/v0.0.15';
+// import './samples/v0.0.15';
+import './samples/v0.0.16';
 
 // import './samples/v0.0.13';
 // import './samples/bugs';

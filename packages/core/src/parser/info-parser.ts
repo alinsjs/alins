@@ -28,7 +28,25 @@ export const InfoKeys = ['className', 'attributes', 'id', 'textContent', 'tagNam
 export type TInfoType = typeof InfoKeys[number];
 
 export function checkDefaultTextItem (item: string) {
-    return  ('./#[:'.includes(item[0])) ? item : `:${item}`;
+    item = item.trim();
+    return ('./#[:'.includes(item[0])) ? item : `:${item}`;
+}
+
+const ExtractTextReg = /(:(.*?))([\.\/#\[:]|$)/g;
+
+export function extractText (content: string) {
+    const result = content.matchAll(ExtractTextReg);
+    let text = '';
+    let done = false;
+    do {
+        const next = result.next();
+        done = next.done ?? true;
+        if (next.value) {
+            content = content.replace(next.value[1], '');
+            text += next.value[2] || '';
+        }
+    } while (!done);
+    return {text, content};
 }
 
 export function getTagNameFromDomInfo (domInfo: string) {

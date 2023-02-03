@@ -3,7 +3,7 @@
  * @Date: 2022-11-12 19:15:26
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-02-03 09:40:04
+ * @LastEditTime: 2023-02-03 11:31:17
  */
 
 import {
@@ -22,28 +22,28 @@ const win = window as any;
 // }
 // getColorTest();
 
-// function textAndElementOrder () {
-//     div(span('web-os'), text(' made by '), span('theajack')).mount();
-// }
-// textAndElementOrder();
+function textAndElementOrder () {
+    // , span('theajack')
+    div(span('web-os'), text(' made by '), text('11')).mount();
+}
+textAndElementOrder();
 
 
-// 数组length监听问题
-
-const list = $([1]);
-// const obj = $({a: 1});
-// const bool = $(true);
-
-const len = computed(() => {
-    console.log('computed len', list.length, list[0]);
-    return list.length === 0;
-});
-
-div.show(len)('11111').mount();
-
-// list.push(1);
+// 数组length监听问题 fixed
+// function lengthComputed () {
+//     const list = $([1]);
+//     win.l = list;
+//     // const obj = $({a: 1});
+//     // const bool = $(true);
+    
+//     const len = computed(() => list.length === 0);
+//     div.show(len)('11111').mount();
+//     win.list = list;
 // list.splice(0, 1);
+// list.push(1);
 
+// }
+// lengthComputed();
 
 // passed
 // function testComputedWidthController () {
@@ -62,3 +62,15 @@ div.show(len)('11111').mount();
 //     num.value ++; num.value = 2;
 // }
 
+// passed
+// function recycleList () {
+
+//     const arr = new Array(1000);
+//     arr.fill(1);
+    
+//     const list = $(arr);
+//     win.rl = list;
+
+//     // rl[value] = [];
+// }
+// recycleList()

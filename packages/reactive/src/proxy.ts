@@ -82,7 +82,6 @@ export function createProxy<T extends IJson> (
                     Compute.add?.(data._length);
                 }
             }
-            if (property === 'length') debugger;
             return Reflect.get(target, property, receiver);
             // const result = Reflect.get(target, property, receiver);
             // if (result[reactValue] === false) return result[value];
@@ -98,8 +97,9 @@ export function createProxy<T extends IJson> (
             };
             if (isArray) {
                 if (property === 'length') {
+                    const result = set(); // ! set 要先做 不然 length还是上一次的值
                     data._length.value = v;
-                    return set();// 数组的length属性
+                    return result;// 数组的length属性
                 }
                 const oldIndex = target.indexOf(v);
                 if (oldIndex !== -1) { // 数组类型的内部元素位置变更

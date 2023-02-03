@@ -15,17 +15,17 @@ import {
 import {ILifeBuilder, ILifes} from './life';
 import {mountParentWithTChild} from '../mount';
 import {IHTMLBuilder} from './html';
-import {checkDefaultTextItem, getTagNameFromDomInfo} from '../parser/info-parser';
+import {checkDefaultTextItem, extractText, getTagNameFromDomInfo} from '../parser/info-parser';
 import {IComponentBuilder} from '../comp/comp';
 import {IModelBuilder} from '../controller/model';
 import {IIfBuilder} from '../controller/if';
 import {IShowBuilder} from '../controller/show';
 import {ISwitchBuilder} from '../controller/switch';
 import {IForBuilder} from '../controller/for';
-import {ITextBuilder} from './text';
+import {ITextBuilder, text} from './text';
 
 export type TElementChild = null | HTMLElement | IElementBuilder | IComponentBuilder |
-    IForBuilder | IIfBuilder<any> | IShowBuilder |
+    IForBuilder | IIfBuilder<any> | IShowBuilder | ITextBuilder |
     IModelBuilder | ISwitchBuilder<any, any> | (()=>TElementChild) | TElementChild[];
 
 export type TChild = TElementChild |
@@ -47,7 +47,6 @@ export interface IElement {
     pseudos: IPseudoBuilder[];
     lifes: ILifes;
     html?: IHTMLBuilder;
-    text?: ITextBuilder;
 }
 
 export type IElementOptions = Partial<IElement>
@@ -98,12 +97,15 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
         if (typeof item === 'number') {
-            elementOptions.textContent += item;
+            elementOptions.children.push(text(item));
         } else if (typeof item === 'string') {
             // dom info
             const tagName = getTagNameFromDomInfo(item);
             if (tagName) elementOptions.tag = tagName;
-            elementOptions.domInfo += checkDefaultTextItem(item);
+            const content = checkDefaultTextItem(item);
+            const result = extractText(content);
+            elementOptions.domInfo += result.content;
+            if (result.text) elementOptions.children.push(text(result.text));
         } else if (item instanceof Array || item instanceof HTMLElement) {
             // append children
             elementOptions.children.push(item);
@@ -132,6 +134,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'switch':
                 case 'for':
                 case 'comp':
+                case 'text':
                     elementOptions.children.push(item); break;
                 case 'on':
                     elementOptions.event?.push(item); break;
@@ -143,8 +146,6 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                     elementOptions.lifes[item.name] = item; break;
                 case 'html':
                     elementOptions.html = item; break;
-                case 'text':
-                    elementOptions.text = item; break;
                 default: console.warn('unkonwn builder', item); break;
             }
         } else if (typeof item === 'function') {

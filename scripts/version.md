@@ -2,9 +2,15 @@
  * @Author: chenzhongsheng
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
- * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-28 18:05:10
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-02-03 12:27:36
 -->
+## v0.0.16
+
+1. fix: 数组length问题
+2. css样式支持多个一起写 css('.aa')(['.a1,.a2', style.color(111)])
+3. 支持 text builder 数字 和文本 顺序一致 div(span('web-os'), ' :22.cc:44 ', text(' made by '), '33', text('11')).mount();
+
 ## v0.0.15
 
 fix: wordWrap break-all [done]
@@ -15,10 +21,9 @@ feat: 原子样式增加 get方法，支持 获取属性值 ._reslut.color ... [
 feat: 控制器支持 computed
 feat: 支持对数组length 进行动态监听
 
-
 ## v0.0.13-v0.0.14
 
-1. feat: style: supporteAdoptedStyle 支持配置打开或者关闭 [done]
+1. feat: style: supporteAdoptedStyle 支持配置打开或者关闭 useAdoptedStyle [done]
 2. feat: css函数支持传入 json，且有支持提示 [done]
 3. feat: style枚举属性 提示 [done]
 4. fix: 原子属性缺少 minWidth minHeight [done]
