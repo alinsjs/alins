@@ -5,6 +5,11 @@
  * @LastEditors: Please set LastEditors
  * @LastEditTime: 2023-02-03 12:27:36
 -->
+## v0.0.17
+
+1. 修复text中的空格问题
+2. 零宽断言兼容处理
+
 ## v0.0.16
 
 1. fix: 数组length问题

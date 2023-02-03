@@ -3,8 +3,13 @@
  * @Date: 2022-10-30 02:42:04
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-02-03 23:34:46
+ * @LastEditTime: 2023-02-04 00:03:48
 -->
+## v0.0.17
+
+1. Fix the space problem in text
+2. Zero-width assertion compatible processing
+   
 ## v0.0.16
 
 1. fix: array length problem
