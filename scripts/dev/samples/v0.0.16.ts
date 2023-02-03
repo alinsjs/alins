@@ -3,7 +3,7 @@
  * @Date: 2022-11-12 19:15:26
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-02-03 12:25:50
+ * @LastEditTime: 2023-02-04 00:02:15
  */
 
 import {
@@ -16,11 +16,11 @@ import {
 const win = window as any;
 
 // passed
-// function textAndElementOrder () {
-//     // , span('theajack')
-//     div(span('web-os'), ' :22.cc:44 ', text(' made by '), '33', text('11')).mount();
-// }
-// textAndElementOrder();
+function textAndElementOrder () {
+    // , span('theajack')
+    div(span('web-os'), ' :22 .cc:44', text('made by '), '33', text('11')).mount();
+}
+textAndElementOrder();
 
 // 数组length监听问题 fixed
 // function lengthComputed () {

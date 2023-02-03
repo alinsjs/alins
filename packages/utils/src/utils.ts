@@ -34,3 +34,8 @@ export function splitTwoPart (str: string, sep: string) {
     if (index === -1) return [str, ''];
     return [str.substring(0, index).trim(), str.substring(index + 1).trim()];
 }
+
+export const isSafari = (() => {
+    const ua = navigator.userAgent;
+    return /Safari/.test(ua) && !/Chrome/.test(ua);
+})();
