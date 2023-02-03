@@ -2,9 +2,33 @@
  * @Author: chenzhongsheng
  * @Date: 2022-10-30 02:42:04
  * @Description: Coding something
- * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-12 15:57:01
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-02-03 23:34:46
 -->
+## v0.0.16
+
+1. fix: array length problem
+2.css Styles support multiple CSS ('.aa') (['.a1,.a2', style.color(111)])
+3. Support text builder numbers and text in the same order div(span('web-os'), ' :22.cc:44 ', text(' made by '), '33', text('11')).mount();
+
+## v0.0.15
+
+fix: wordWrap break-all [done]
+fix: wordBreak break-word [done]
+Remove excess log [feat]
+fix: Remove redundant mergereact [fix]
+feat: atomic style added get method, support for getting property values ._reslut.color ... [done]
+feat: The controller supports computed
+feat: Supports dynamic listening of array lengths
+
+## v0.0.13-v0.0.14
+
+1. feat: style: supporteAdoptedStyle supports configuring to turn useAdoptedStyle [done] on or off
+2. feat: CSS functions support passing in json, and there is a support prompt [done]
+3. feat: style enumeration attribute hint [done]
+4. fix: Atomic attribute missing minWidth minHeight [done]
+5. FIX: Complete the TS statement
+   
 ## v0.0.12
 
 1. feature: fix the problem of initializing rendering when components+show are used together [done]
