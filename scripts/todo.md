@@ -2,14 +2,14 @@
  * @Author: chenzhongsheng
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
- * @LastEditors: chenzhongsheng
- * @LastEditTime: 2022-11-28 18:05:14
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-02-03 08:31:46
 -->
 
 ## TodoList
 
-fix: 顺序问题 div(a('web-os'), ' made by ', a('theajack'))
-fix: .show(() => list.length > 0) (webos input-item 中)
+- [x] fix: 顺序问题 div(a('web-os'), ' made by ', a('theajack'))
+- [x] fix: .show(() => list.length > 0) (webos input-item 中)
         div.show(Hint.enabled)(
             style.color('#777').marginTop(5),
             span.show(() => !!Hint.text.value)(text($`Hint: ${Hint.text}`)),
@@ -23,7 +23,7 @@ fix: .show(() => list.length > 0) (webos input-item 中)
         ),
 
 
-fix: 
+- [x] fix: 
         const result = !!name ? (info.filter(item => item.commandName === name) || []) : info;
         div.for(result) 会引起报错
 

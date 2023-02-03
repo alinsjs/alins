@@ -30,12 +30,12 @@ export function createProxy<T extends IJson> (
 
 
     if (typeof data === 'object') {
-        if (Array.isArray(data)) {
-            data._length = react(data.length);
-        }
         for (const key in data) {
             if (key === 'toJSON') break;
             data[key] = reactiveProxyValue(data[key]);
+        }
+        if (Array.isArray(data)) {
+            data._length = react(data.length);
         }
     }
 
@@ -78,10 +78,11 @@ export function createProxy<T extends IJson> (
                     }
                 }
             } else {
-                if (property === 'length')
+                if (property === 'length') {
                     Compute.add?.(data._length);
+                }
             }
-            
+            if (property === 'length') debugger;
             return Reflect.get(target, property, receiver);
             // const result = Reflect.get(target, property, receiver);
             // if (result[reactValue] === false) return result[value];

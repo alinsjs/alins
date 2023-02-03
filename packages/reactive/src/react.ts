@@ -55,6 +55,7 @@ export function createReactive<T> (data: T): IReactWrap<T> {
 
 export function reactiveValue<T> (value: T, isUndefined = false): IReactItem<T> {
     const changeList: Function[] = [];
+    console.log(value);
     return {
         type: 'reaction',
         isUndefined () {

@@ -40,12 +40,16 @@ export const computed: IComputed = (target) => {
 
     // ! 依赖收集
     const reacts: IReactItem[] = [];
-    Compute.add = (item: IReactItem) => { reacts.push(item); };
+    Compute.add = (item: IReactItem) => {
+        reacts.push(item);
+    };
+    
     const value = get();
     Compute.add = null;
 
     const react = reactiveComputed(get, set, value) as IReactItem;
     reacts.forEach(item => item[subscribe]((v, old, index) => {
+        console.log('trigger', item, item.value, react[getListeners](), react.value);
         item[replaceValue](v); // ! 需要把依赖的react数据修改一下，不然存在闭包引用的是旧数据的问题
         react[forceUpdate](old, index);
     }));
