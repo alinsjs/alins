@@ -3,15 +3,15 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-02-07 23:54:10
+ * @LastEditTime: 2023-02-07 23:57:41
 -->
-## v0.0.17
+## v0.0.18
 
 1. 修复text中的空格问题
 2. 零宽断言兼容处理
 3. 重构domInfo逻辑 彻底修复node reaction-node dom builder的显示顺序问题
 
-## v0.0.16
+## v0.0.16 - v0.0.17
 
 1. fix: 数组length问题
 2. css样式支持多个一起写 css('.aa')(['.a1,.a2', style.color(111)])
