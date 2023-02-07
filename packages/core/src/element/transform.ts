@@ -15,7 +15,7 @@ import {IReactBinding} from 'alins-utils';
 import {IUpdatedCallback, LifeMountedCollector, mountLifes} from '../builder/life';
 import {appendFragment} from '../builder/dom-proxy';
 import {IElement, IElementBuilder, IElementOptions, mergeDomInfo, TChild} from '../builder/builder';
-import {text} from 'src/builder/text';
+import {text} from '../builder/text';
 
 
 // const map: Map<string, TFPMemo> = new Map();
@@ -67,7 +67,7 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
             config.lifes.updated?.exe() as IUpdatedCallback,
         );
         if (children.length > 0)
-            config.children[binding.index] = children;
+            config.children[binding.index ?? config.children.length] = children;
         mergeDomInfo(config, domInfo);
     }
     
