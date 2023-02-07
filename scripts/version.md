@@ -3,12 +3,13 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-02-03 12:27:36
+ * @LastEditTime: 2023-02-07 23:54:10
 -->
 ## v0.0.17
 
 1. 修复text中的空格问题
 2. 零宽断言兼容处理
+3. 重构domInfo逻辑 彻底修复node reaction-node dom builder的显示顺序问题
 
 ## v0.0.16
 

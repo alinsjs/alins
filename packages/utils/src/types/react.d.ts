@@ -71,6 +71,8 @@ export type TOnChangeFunc = (content: string, oldContent: string) => void;
 export interface IReactBindingTemplate<T=any> {
   template: string[], // TemplateStringsArray
   reactions: (TReactionItem<T>)[], // | any[], // ? 为了绑定的时候不报类型错误
+
+  index: number;
 }
 export interface IReactBindingTemplateFactory<T=any> {
   add(d: IReactBindingTemplate<T>): void;

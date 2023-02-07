@@ -13,7 +13,7 @@
  * }
  */
 
-import {splitTwoPart, IJson, isSafari} from 'alins-utils';
+import {splitTwoPart, IJson} from 'alins-utils';
 
 export interface IDomInfoData {
     className?: string[];
@@ -33,44 +33,48 @@ export function checkDefaultTextItem (item: string) {
     return (SplitStr.includes(item[0])) ? item : `:${item}`;
 }
 
-const ExtractTextReg = /(:(.*?))(?=([\.\/#\[:]|$))/g;
+// const ExtractTextReg = /(:(.*?))(?=([\.\/#\[:]|$))/g;
 
-export function extractText (content: string) {
-    if (!isSafari) {
-        const result = content.matchAll(ExtractTextReg);
-        let text = '';
-        let done = false;
-        do {
-            const next = result.next();
-            done = next.done ?? true;
-            if (next.value) {
-                content = content.replace(next.value[1], '');
-                text += next.value[2] || '';
-            }
-        } while (!done);
-        return {text, content};
-    } else {
-        // 兼容 safari 不支持零宽断言
-        let text = '';
-        let result = '';
-        let inText = false;
-        for (let i = 0; i < content.length; i++) {
-            const s = content[i];
-            if (SplitStr.includes(s)) {
-                if (s === ':') {
-                    inText = true;
-                } else {
-                    inText = false;
-                    result += s;
-                }
-            } else {
-                if (inText) text += s;
-                else result += s;
-            }
-        }
-        return {text, content: result};
-    }
-}
+// export function extractText (content: string) {
+//     if (!isSafari) {
+//         const result = content.replace(/\[.*?\]/g, '').matchAll(ExtractTextReg);
+//         let text = '';
+//         let done = false;
+//         do {
+//             const next = result.next();
+//             done = next.done ?? true;
+//             if (next.value) {
+//                 content = content.replace(next.value[1], '');
+//                 text += next.value[2] || '';
+//             }
+//         } while (!done);
+//         return {text, content};
+//     } else {
+//         // 兼容 safari 不支持零宽断言
+//         let text = '';
+//         let result = '';
+//         let inText = false;
+//         let inAttr = false;
+//         for (let i = 0; i < content.length; i++) {
+//             const s = content[i];
+//             if (SplitStr.includes(s)) {
+//                 if (s === ':') {
+//                     inText = true;
+//                     if (inAttr) result += s;
+//                 } else {
+//                     if (s === '[') inAttr = true;
+//                     else if (s === ']') inAttr = false;
+//                     inText = false;
+//                     result += s;
+//                 }
+//             } else {
+//                 if (inText) text += s;
+//                 else result += s;
+//             }
+//         }
+//         return {text, content: result};
+//     }
+// }
 
 export function getTagNameFromDomInfo (domInfo: string) {
     if (domInfo[0] !== '/') return '';
