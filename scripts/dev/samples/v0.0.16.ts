@@ -3,7 +3,7 @@
  * @Date: 2022-11-12 19:15:26
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-02-04 00:02:15
+ * @LastEditTime: 2023-02-07 23:52:48
  */
 
 import {
@@ -18,7 +18,10 @@ const win = window as any;
 // passed
 function textAndElementOrder () {
     // , span('theajack')
-    div(span('web-os'), ' :22 .cc:44', text('made by '), '33', text('11')).mount();
+    //
+    const tt = $('--');
+    win.tt = tt;
+    div(span('web-os'), ':22 .cc:44[a=ht://a]', $`:55${tt}`, text('made by '), '33', text('11')).mount();
 }
 textAndElementOrder();
 

@@ -14,25 +14,9 @@ import {
 import {IReactBinding} from 'alins-utils';
 import {IUpdatedCallback, LifeMountedCollector, mountLifes} from '../builder/life';
 import {appendFragment} from '../builder/dom-proxy';
-import {IElement, IElementBuilder, IElementOptions, TChild} from '../builder/builder';
+import {IElement, IElementBuilder, IElementOptions, mergeDomInfo, TChild} from '../builder/builder';
+import {text} from '../builder/text';
 
-
-function mergeDomInfo (config: IElement, domInfo: IDomInfoData) {
-    // // merge instead of assign
-    // InfoKeys.forEach(key => {
-    //     if (!domInfo[key]) return;
-    //     if (typeof domInfo[key] === 'string') (config[key] as string) += domInfo[key];
-    //     else if (domInfo[key] instanceof Array)
-    //         (config[key] as string[]).push(...(domInfo[key] as string[]));
-    //     else if (typeof domInfo[key] === 'object') Object.assign(config[key], domInfo[key]);
-    // });
-
-    // 优化性能
-    if (domInfo.className) config.className.push(...domInfo.className);
-    if (domInfo.attributes) Object.assign(config.attributes, domInfo.attributes);
-    if (domInfo.id) config.id = domInfo.id;
-    if (domInfo.textContent) config.textContent += domInfo.textContent;
-}
 
 // const map: Map<string, TFPMemo> = new Map();
 // const cloneNodeCount = 0;
@@ -77,14 +61,17 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     for (let i = 0; i < config.binding.length; i++) {
         const binding = config.binding[i];
         // 提取表达式中没有binding的属性 merge到config中
-        const domInfo = applyDomInfoReaction(
+        const {domInfo, children} = applyDomInfoReaction(
             isHTMLFilled,
-            dom, binding, config.lifes.updated?.exe() as IUpdatedCallback,
+            dom, binding,
+            config.lifes.updated?.exe() as IUpdatedCallback,
         );
+        if (children.length > 0)
+            config.children[binding.index ?? config.children.length] = children;
         mergeDomInfo(config, domInfo);
     }
     
-    if (config.domInfo) mergeDomInfo(config, parseDomInfo(config.domInfo));
+    if (config.domInfo) mergeDomInfo(config, config.domInfo);
 
     if (config.textContent) {
         setNodeText(dom, config.textContent);
@@ -166,7 +153,7 @@ export function mountSingleChild (
         for (const child of item) {
             frag.appendChild(mountSingleChild(child));
         }
-    } else if (item instanceof HTMLElement) {
+    } else if (item instanceof HTMLElement || item instanceof Text) {
         frag.appendChild(item);
     } else if (item) {
         switch (item.type) {
@@ -201,8 +188,11 @@ function isInputNode (node: HTMLElement | Text) {
 
 function applyDomInfoReaction (
     isHTMLFilled: boolean,
-    dom: HTMLElement, binding: IReactBinding, updated?: IUpdatedCallback
-): IDomInfoData {
+    dom: HTMLElement,
+    binding: IReactBinding,
+    updated?: IUpdatedCallback
+): {domInfo: IDomInfoData, children: TChild[]} {
+    const children: TChild[] = [];
     const {template, reactions} = binding;
     const replacement = join(template, createReplacement);
     
@@ -225,7 +215,9 @@ function applyDomInfoReaction (
                 } else {
                     const texts = textContent.split(ReplaceExp);
                     texts.forEach((text, i) => {
-                        if (text) dom.appendChild(document.createTextNode(text));
+                        if (text) {
+                            children.push(document.createTextNode(text));
+                        }
                         if (!results[i]) return;
                         const index = parseReplacementToNumber(results[i]);
                         const reactionItem = reactions[index];
@@ -238,7 +230,7 @@ function applyDomInfoReaction (
                                 updated?.({node, type: 'text', value: v, prevValue: v2});
                             })
                         );
-                        dom.appendChild(node);
+                        children.push(node);
                     // memo.add((config: IElement) => {
                     //     const {reactions} = config.binding as any;
                     //     const newDom = memo?.last;
@@ -253,7 +245,8 @@ function applyDomInfoReaction (
                     });
                 }
             } else {
-                data.textContent = textContent;
+                children.push(text(textContent));
+                // data.textContent = textContent;
             }
         }
     }
@@ -307,7 +300,7 @@ function applyDomInfoReaction (
         dom.id = id;
     }
 
-    return data;
+    return {domInfo: data, children};
     // console.log(info, dom, binding, replacement, reactions);
 }
 
@@ -317,9 +310,9 @@ export function createElement ({
     id = '',
     textContent = '',
     attributes = {},
-    children,
+    children = [],
     binding = [],
-    domInfo = '',
+    domInfo = {},
     event = [],
     _if,
     styles = [],

@@ -15,7 +15,7 @@ import {
 import {ILifeBuilder, ILifes} from './life';
 import {mountParentWithTChild} from '../mount';
 import {IHTMLBuilder} from './html';
-import {checkDefaultTextItem, extractText, getTagNameFromDomInfo} from '../parser/info-parser';
+import {checkDefaultTextItem, getTagNameFromDomInfo, IDomInfoData, parseDomInfo} from '../parser/info-parser';
 import {IComponentBuilder} from '../comp/comp';
 import {IModelBuilder} from '../controller/model';
 import {IIfBuilder} from '../controller/if';
@@ -24,7 +24,7 @@ import {ISwitchBuilder} from '../controller/switch';
 import {IForBuilder} from '../controller/for';
 import {ITextBuilder, text} from './text';
 
-export type TElementChild = null | HTMLElement | IElementBuilder | IComponentBuilder |
+export type TElementChild = null | HTMLElement | Text | IElementBuilder | IComponentBuilder |
     IForBuilder | IIfBuilder<any> | IShowBuilder | ITextBuilder |
     IModelBuilder | ISwitchBuilder<any, any> | (()=>TElementChild) | TElementChild[];
 
@@ -37,10 +37,10 @@ export interface IElement {
     id: string;
     textContent: string;
     attributes: IJson<string>;
-    children?: TChild[];
+    children: TChild[];
     binding: IReactBinding[];
     event: IEventBuilder[];
-    domInfo: string;
+    domInfo: IDomInfoData;
     _if?: IIfBuilder<any>;
     show?: TReactionItem;
     styles: (IStyleBuilder | IStyleAtoms)[];
@@ -83,6 +83,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         binding: IReactBinding[],
         lifes: ILifes,
         textContent: string,
+        domInfo: IJson,
     } = {
         tag,
         children: [],
@@ -90,42 +91,58 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
         binding: [],
         styles: [],
         pseudos: [],
-        domInfo: '',
+        domInfo: {},
         lifes: {},
         textContent: ''
     };
+    const {children, binding} = elementOptions;
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
         if (typeof item === 'number') {
-            elementOptions.children.push(text(item));
+            children.push(text(item));
         } else if (typeof item === 'string') {
             // dom info
             const tagName = getTagNameFromDomInfo(item);
             if (tagName) elementOptions.tag = tagName;
             const content = checkDefaultTextItem(item);
-            const result = extractText(content);
-            elementOptions.domInfo += result.content;
-            if (result.text) elementOptions.children.push(text(result.text));
-        } else if (item instanceof Array || item instanceof HTMLElement) {
+            const domInfo = parseDomInfo(content);
+            if (domInfo.textContent) {
+                children.push(text(domInfo.textContent));
+                delete domInfo.textContent;
+            }
+
+            mergeDomInfo(elementOptions.domInfo, domInfo);
+            
+            // const result = extractText(content);
+            // console.log(parseDomInfo(content));
+            // todo 这里就解析掉 domInfo
+            
+        } else if (item instanceof Array ||
+            item instanceof HTMLElement ||
+            item instanceof Text) {
             // append children
-            elementOptions.children.push(item);
+            children.push(item);
         } else if (typeof item === 'object' && item) {
             switch (item.type) {
                 case 'reaction':
                     // 对于单独传入的 reaction， 构造一个binding
-                    elementOptions.binding.push({
+                    binding.push({
                         template: ['', ''],
                         reactions: [item],
                         context: {type: 'dom-info'},
+                        index: children.length,
                     });
+                    children.push(null);
                     break;
                 case 'react':
-                    const binding = item.exe({type: 'dom-info'});
-                    if (binding.template[0][0] === '/') {
-                        const domInfo = countBindingValue(binding);
+                    const bind = item.exe({type: 'dom-info'});
+                    if (bind.template[0][0] === '/') {
+                        const domInfo = countBindingValue(bind);
                         elementOptions.tag = getTagNameFromDomInfo(domInfo);
                     }
-                    elementOptions.binding.push(binding); // todo maybe other binding
+                    bind.index = children.length;
+                    binding.push(bind); // todo maybe other binding
+                    children.push(null);
                     break;
                 case 'builder':
                 case 'if':
@@ -135,7 +152,7 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'for':
                 case 'comp':
                 case 'text':
-                    elementOptions.children.push(item); break;
+                    children.push(item); break;
                 case 'on':
                     elementOptions.event?.push(item); break;
                 case 'style':
@@ -159,11 +176,11 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
                 case 'switch':
                 case 'for':
                 case 'comp':
-                    elementOptions.children.push(result as TChild); break;
+                    children.push(result as TChild); break;
                 case 'model':
                     // todo comp 科里化的话也需要在这里加逻辑
                     // 用于默认不带参数执行 input.model(num); = input.model(num)();
-                    elementOptions.children.push(result.exe()); break;
+                    children.push(result.exe()); break;
                 default: {
                     // ! 填充在参数数组里 重新循环
                     if (result instanceof Array) {
@@ -179,6 +196,31 @@ function elementBuilder (tag: string, data: TBuilderArg[]) {
     return createElement(elementOptions);
 };
 
+export function mergeDomInfo (config: IDomInfoData, domInfo: IDomInfoData) {
+    // // merge instead of assign
+    // InfoKeys.forEach(key => {
+    //     if (!domInfo[key]) return;
+    //     if (typeof domInfo[key] === 'string') (config[key] as string) += domInfo[key];
+    //     else if (domInfo[key] instanceof Array)
+    //         (config[key] as string[]).push(...(domInfo[key] as string[]));
+    //     else if (typeof domInfo[key] === 'object') Object.assign(config[key], domInfo[key]);
+    // });
+
+    // 优化性能
+    if (domInfo.className) {
+        if (!config.className) config.className = [];
+        config.className.push(...domInfo.className);
+    }
+    if (domInfo.attributes) {
+        if (!config.attributes) config.attributes = {};
+        Object.assign(config.attributes, domInfo.attributes);
+    }
+    if (domInfo.id) config.id = domInfo.id;
+    if (domInfo.textContent) {
+        if (!config.textContent) config.textContent = '';
+        config.textContent += domInfo.textContent;
+    }
+}
 
 const MainDomNames = [
     'a', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'button', 'canvas', 'code', 'pre', 'table', 'th', 'td', 'tr', 'video', 'audio',
