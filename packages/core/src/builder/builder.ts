@@ -213,7 +213,6 @@ export function buildFactory (tag: TDomName | string): IBuilderConstructor {
 
 export const dom = buildFactory;
 
-
 export const doms = (() => {
     const map: IJson<any> = {};
     DomNames.map(name => {

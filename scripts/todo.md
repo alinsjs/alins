@@ -3,11 +3,19 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-02-03 11:32:14
+ * @LastEditTime: 2023-03-23 22:34:37
 -->
 
 ## TodoList
 
+- [ ] comp.for(Comp)((item, index)=>[prop({...item})]) // ts 报错
+- [ ] comp.for(Comp)((item, index)=>[prop({item})]) // 当item是一个object时不支持
+- [ ] IReactWrap 作为默认 ts 类型
+- [ ] .box-back,.box-close, ['&:hover'] 没有两个都分配到
+- [ ] IReactWrap 类型推倒
+- [ ] right: $`${() => isMin.value ? 0 : 500}`, 不支持
+- [ ] div 方法 参数传 dom元素会报错
+- [x] 修复 comp.for 必须要带参数的bug
 - [x] fix: .show(() => list.length > 0) (webos input-item 中)
         div.show(Hint.enabled)(
             style.color('#777').marginTop(5),
@@ -21,7 +29,7 @@
             )
         ),
 - [x] feat: list = [] 之后内存没有被回收
-- [ ] fix: 顺序问题 div(a('web-os'), ' made by ', a('theajack'))
+- [x] fix: 顺序问题 div(a('web-os'), ' made by ', a('theajack'))
 
 
 - [x] fix: 

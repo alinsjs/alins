@@ -50,7 +50,7 @@ export interface IForBuilder extends IMountBuilderParameter{
 
 export interface IForController<K extends TControllerType = 'builder'> {
     <T>(list: IReactWrap<T>[]):
-        ((fn: IForCallback<K, T>) => IForBuilder);
+        ((fn?: IForCallback<K, T>) => IForBuilder);
 }
 
 export type TForControllerArg<K extends TControllerType> = K extends 'builder' ?
@@ -64,7 +64,7 @@ export const forController: IForController = function (this: IBuilderConstructor
     // return (fn) => list.map((item, index) => this.call(null, ...fn(item, index)));
     // console.count('forController');
     // console.log('forController', list);
-    return (callback) => {
+    return (callback = () => []) => {
         const mountNode = document.createComment('');
         const doms: (HTMLElement|HTMLElement[])[] = [];
         const builders: (IElementBuilder|IComponentBuilder)[] = [];

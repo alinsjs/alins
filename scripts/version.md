@@ -3,8 +3,14 @@
  * @Date: 2022-11-03 09:30:54
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-02-03 12:27:36
+ * @LastEditTime: 2023-03-14 09:05:54
 -->
+
+## v0.0.19 doing
+
+1. 支持for控制器不传callback
+2. 导出 IReactWrap, IReactObject 与 IReactItem 不导出 或使用 _ 标注
+
 ## v0.0.17
 
 1. 修复text中的空格问题

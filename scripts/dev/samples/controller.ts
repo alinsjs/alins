@@ -4,13 +4,15 @@
  * @Description: Coding something
  */
 
-import {$, button, div, span, input, click, comp} from '../alins';
+import {$, button, div, span, input, click, comp, style} from '../alins';
+
 
 export function Controller () {
 
     const num = $(-1);
-    // const array = $([1, 2]);
+    const array = $([1, 2]);
     const add = () => {num.value++;};
+    debugger;
     return div(
         $`number=${num}`,
         button('+1', click(add)),
@@ -29,8 +31,8 @@ export function Controller () {
         div('switch----'),
         div.switch(num)
             .case(1)($`:case1-${num}`)
-            .case(2)($`:case2-${num}`)
-            // .default($`default-${num}`)
+            .case(2)($`:case2-${num}`),
+        // .default($`default-${num}`)
             
         // comp.if(() => num.value > 1)(hello)
         //     .else('/div:111'),
@@ -38,10 +40,18 @@ export function Controller () {
         // comp.switch(num)
         //     .case(1)(hello)
         //     .case(2)(hello),
-        // comp.for(array)(hello),
+        comp(hello).for(array)(),
+        div.for($([1, 2]))()
     );
 }
 
-// function hello () {
-//     return div('hello');
-// }
+function hello () {
+    return div('hello');
+}
+
+Controller().mount();
+
+style({
+    'alignContent': '',
+    'aa': 1
+});

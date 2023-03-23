@@ -1,7 +1,8 @@
 // import './samples/memory-leak';
 
 // import './samples/v0.0.15';
-import './samples/v0.0.16';
+// import './samples/v0.0.16';
+
 
 // import './samples/v0.0.13';
 // import './samples/bugs';
@@ -23,7 +24,10 @@ import './samples/v0.0.16';
 // import {Style2, StyleAtom} from './samples/style-comp2';
 // import {Count2} from './samples/counter2';
 // import {renderObject} from './samples/render-obj';
-// import {Controller} from './samples/controller';
+import './samples/controller';
+
+// console.log(Controller);
+
 // import {onlyUseStyle} from './samples/style-only';
 // import {Life} from './samples/life';
 // import {CompController} from './samples/comp-controller';
