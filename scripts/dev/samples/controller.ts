@@ -6,7 +6,6 @@
 
 import {$, button, div, span, input, click, comp, style} from '../alins';
 
-
 export function Controller () {
 
     const num = $(-1);
@@ -28,6 +27,10 @@ export function Controller () {
         div('if2----'),
         span.if(() => num.value > 1)($`/div:if-${num}`)
             .elif(() => num.value < 0)($`/div:elif-${num}`),
+        span.if(num > 1, $`/div:if-${num}`)
+            .elif('num < 0', $`/div:elif-${num}`),
+        num.valueOf() > 1,
+        num > 1,
         div('switch----'),
         div.switch(num)
             .case(1)($`:case1-${num}`)
