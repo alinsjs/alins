@@ -24,6 +24,7 @@
     },
     "include": [
         "packages/*/src/**/*",
+        "packages/*/v1/**/*",
         ".eslintrc.js",
         "babel.config.js",
         "scripts/**/*",
