@@ -25,7 +25,7 @@ interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {
   [type]: T;
 }
 
-export interface IRefData<T> extends IProxyBase<AlinsType.Ref> {
+export interface IRefData<T=any> extends IProxyBase<AlinsType.Ref> {
   value: T;
 }
 

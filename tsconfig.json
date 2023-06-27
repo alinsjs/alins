@@ -28,7 +28,8 @@
         ".eslintrc.js",
         "babel.config.js",
         "scripts/**/*",
-        "src/**/*"
+        "src/**/*",
+        "global.d.ts"
     ],
     "exclude": [
         "./node_modules"

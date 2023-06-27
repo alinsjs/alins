@@ -60,14 +60,139 @@ function HelloWorld () {
 function forDemo () {
     const list = [1, 2, 3];
   
-    const children = [];
+    const children = list.map(item => {
+        return div();
+    });
 
-    for (const i in list) {
-        children.push(div(i));
+    return div({children});
+
+    
+    const children = list.map(() => {
+        return '';
+    });
+
+    return div({
+        children
+    });
+}
+
+function for2Demo () {
+    const list = [1, 2, 3];
+  
+    let children = [];
+    for (const item of list) {
+        children.push(div());
     }
 
     return div({children});
+
+    
+    const children = list.map(() => {
+        return '';
+    });
+
+    return div({
+        children
+    });
 }
+function ifDemo () {
+    const list = true;
+  
+    if (list) {
+        return div({children});
+    }
+    return div({children});
+}
+
+function ifDemo () {
+    const list = true;
+
+    if (list) {
+        a = 1;
+    }
+
+    if (list) {
+        return div();
+    }
+    return div();
+
+    div({
+        children: [
+            list ? div() : div
+        ]
+    });
+
+    return $if(list).then(() => {
+        return div();
+    }).else(() => {
+        return div();
+    });
+}
+
+function switchDemo () {
+    const data = true;
+    switch (data) {
+        case 1: return div();
+        case 2: return div();
+        default: return div();
+    }
+
+    return $switch(data).case(1, () => {
+
+    }).case(2, () => {
+        
+    }).default(() => {
+
+    });
+}
+
+function main () {
+
+    const data = true;
+
+    return $switch(data).case(1, () => {
+
+    }).case(2, () => {
+        
+    }).default(() => {
+
+    });
+
+
+    const data = [1, 2, 3];
+  
+    const children = list.map(item => {
+        return div();
+    });
+
+    const data = true;
+
+
+    (() => {
+
+    })();
+    data ? div() : (
+        a ? div() : div()
+    );
+
+    return $if(list, () => {
+        return div();
+    }).elseif(a, () => {
+        return div();
+    });
+
+    return $if(list).then(() => {
+        return div();
+    }).elseif(a).then(() => {
+        return div();
+    });
+}
+
+dom({
+    $tag: '',
+    value: data,
+});
+
 function forDemo2 () {
     const list = [1, 2, 3];
     return div({

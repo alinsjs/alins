@@ -28,7 +28,6 @@ export function react<T extends IJson> (
     if (isStringTemplateArray(data)) {
         // console.log(data, reactions);
         return createBinding(data as any as string[], reactions);
-    } else {
-        return createProxy<T>(wrapReactive(data) as T);
     }
+    return createProxy<T>(wrapReactive(data) as T);
 }

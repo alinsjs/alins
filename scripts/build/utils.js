@@ -81,10 +81,10 @@ function initSinglePackageInfo (dir, isDev = false) {
     fs.copyFileSync(resolveRootPath('LICENSE'), resolvePacakgePath(`${dir}/LICENSE`));
     fs.copyFileSync(resolveRootPath('scripts/helper/.npmignore'), resolvePacakgePath(`${dir}/.npmignore`));
 
-    const tsconfig = require(resolveRootPath('tsconfig.json'));
-    tsconfig.include = ['src/**/*'];
-    tsconfig.compilerOptions.rootDir = '../..';
-    writeJsonIntoFile(tsconfig, resolvePacakgePath(`${dir}/tsconfig.json`));
+    // const tsconfig = require(resolveRootPath('tsconfig.json'));
+    // tsconfig.include = ['src/**/*'];
+    // tsconfig.compilerOptions.rootDir = '../..';
+    // writeJsonIntoFile(tsconfig, resolvePacakgePath(`${dir}/tsconfig.json`));
 }
 
 function writeJsonIntoFile (package, filePath) {

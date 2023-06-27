@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {util, IProxyData} from 'alins-utils';
+import {util, IRefData} from 'alins-utils';
 import {observe, createProxy, wrapReactive} from './proxy';
 
 export interface IComputedObject<T> {
@@ -12,18 +12,20 @@ export interface IComputedObject<T> {
     set?: ((v: T, old: T, path: string) => void);
 }
 
-export function computed<T> (target:(()=>T)|IComputedObject<T>): IProxyData<T> {
+// ! computed 都为ref，且都是shallow
+export function computed<T> (target:(()=>T)|IComputedObject<T>): IRefData<T> {
     const isFunc = typeof target === 'function';
     const get = isFunc ? target : target.get;
     const set = isFunc ? null : (target as IComputedObject<T>).set;
 
-    let proxy: IProxyData<T>;
+    let proxy: IRefData<T>;
 
     // eslint-disable-next-line prefer-const
     proxy = observe(() => {
-        return createProxy(wrapReactive(get()), {set, get});
+        return createProxy(wrapReactive(get(), true), {set, get});
     }, () => {
-        proxy[util].forceWrite(wrapReactive(get()));
+        // ! 每次都需要重新get以下 因为可能代码逻辑分支有变化导致出现了没有收集到的依赖
+        proxy[util].forceWrite(wrapReactive(get(), true));
     });
     // console.log(proxy);
     return proxy;

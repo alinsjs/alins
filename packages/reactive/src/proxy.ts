@@ -14,7 +14,7 @@ import {
 let currentFn: any = null;
 
 export function observe (fn: ()=>any, listener = fn) {
-    console.log('Start observe', fn, listener);
+    // if (__DEBUG__) console.log('Start observe', fn, listener);
     currentFn = listener;
     const v = fn();
     currentFn = null;
@@ -29,8 +29,8 @@ export function isProxy (data: any): boolean {
     return !!data?.[util];
 }
 
-export function wrapReactive (data: any) {
-    if (!data || typeof data !== 'object') {
+export function wrapReactive (data: any, force = false) {
+    if (force || !data || typeof data !== 'object') {
         return {value: data, [type]: AlinsType.Ref};
     }
     data[type] = AlinsType.Proxy;
@@ -94,33 +94,35 @@ export function createProxy<T extends IJson> (data: T, {
             if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
                 // ! 收集依赖
                 if (currentFn) {
-                    console.log('收集依赖', property);
+                    // if (__DEBUG__) console.log('收集依赖', property);
                     lns[property]?.add(currentFn) || (lns[property] = new Set([currentFn]));
-                    console.log('收集依赖222', lns[property]);
+                    // if (__DEBUG__) console.log('收集依赖222', lns[property]);
                     // ! 当在依赖搜集时 返回缓存的值
                     return Reflect.get(target, property, receiver);
                 }
-                console.log('Proxy.get', target, property);
+                // if (__DEBUG__) console.log('Proxy.get', target, property);
                 if (get) return get();
             }
             return Reflect.get(target, property, receiver);
         },
         set (target: IJson, property, v, receiver) {
-            const origin = target[property];
-            if (set === null) {
-                console.warn('Computed 不可设置');
-                return true;
-            } else if (set) {
-                set(v, origin, `${path}.${property as string}`);
-                return true;
+            if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
+                // if (__DEBUG__) console.log('Proxy.set', target, property, v);
+                const origin = target[property];
+                
+                if (v === origin) return true;
+                if (set === null) { console.warn('Computed 不可设置'); return true;}
+                if (set) { set(v, origin, `${path}.${property as string}`); return true; }
+
+                if (v && typeof v === 'object' && !shallow) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
+                    v = createProxy(v, {lns: origin[util].lns, shallow, path: `${path}.${property as string}`});
+                }
+                const value = Reflect.set(target, property, v, receiver);
+                // ! 执行依赖
+                triggerChange(property as string, v, origin);
+                return value;
             }
-            if (v && typeof v === 'object' && !shallow) { // 非shallow时 赋值需要createProxy并且将listener透传下去
-                v = createProxy(v, {lns: origin[util].lns, shallow, path: `${path}.${property as string}`});
-            }
-            const value = Reflect.set(target, property, v, receiver);
-            // ! 执行依赖
-            triggerChange(property as string, v, origin);
-            return value;
+            return Reflect.set(target, property, v, receiver);
         },
         deleteProperty (target: IJson, property) {
             console.log('deleteProperty', target, property);

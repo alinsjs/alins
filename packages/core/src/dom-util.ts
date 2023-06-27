@@ -50,7 +50,7 @@ export function reactiveBindingEnable (
     const value: IBindingReaction = isEnableObject ? (arg as IBindingReactionEnableObj).value : arg as IBindingReaction;
 
     if (isEnableObject) {
-        onenable(watch((arg as IBindingReactionEnableObj).enable, onenable));
+        onenable(watch((arg as IBindingReactionEnableObj).enable, onenable as any).value);
     }
 
     return reactiveBinding(value, onchange);
@@ -72,32 +72,30 @@ export function reactiveClass (
 ): string {
     if (!isRef(arg) && typeof arg === 'object') {
         arg = arg as IJson<IBindingReaction>;
-
         let list: Set<string>;
-
         const map: IJson<boolean> = {};
-
         if (arg.$value) {
             const value = reactiveBinding(arg.$value, (v) => {
-                onchange('', v.split(' ').filter(name => map[name] !== false).join(' '));
+                const set: Set<string> = new Set([]);
+                for (const k in map) {
+                    if (map[k] === true) set.add(k);
+                }
+                v.split(' ').forEach((name) => {
+                    if (map[name] !== false) set.add(name);
+                });
+                onchange('', Array.from(set).join(' '));
             });
-            list = new Set<string>(value.split(''));
+            list = new Set<string>(value.split(' '));
             delete arg.$value;
         } else {
             list = new Set<string>([]);
         }
-
         for (const k in arg) {
-            const v = arg[k];
-            if (!!reactiveBinding(v, (v) => {
+            list[(map[k] = !!reactiveBinding(arg[k], (v) => {
                 // @ts-ignore
                 map[k] = v;
                 onchange(k, v);
-            })) {
-                list.add(k);
-            } else {
-                list.delete(k);
-            }
+            })) ? 'add' : 'delete'](k);
         }
         return Array.from(list).join(' ');
     } else {

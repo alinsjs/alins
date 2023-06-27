@@ -2,14 +2,18 @@ import {react} from 'packages/reactive/src/react';
 import {observe} from 'packages/reactive/src/proxy';
 import {computed} from 'packages/reactive/src/computed';
 import {watch} from 'packages/reactive/src/watch';
-import {div} from 'packages/core/v1/dom-builder';
-import {IElement} from 'packages/core/v1/renderer';
+import {div} from 'packages/core/src/dom-builder';
+import {IElement} from 'packages/core/src/renderer';
 import {util} from 'packages/utils/src';
+import {startTestMain} from '../test/index';
+
+startTestMain();
+
+const $ = react;
 
 const w = window as any;
 const addEnv = (data: any) => {Object.assign(w, data);};
 addEnv({observe, util});
-
 
 function testDom () {
     const data = react('111');
@@ -25,16 +29,18 @@ function testDom () {
                 div({}),
             ]}),
         ],
+        a: 11,
+        b: $`${data}`,
         class: {
             $value: react`${data2}`,
             a: () => data.value === '111',
             b: true,
         }
     }).mount(document.body as IElement);
-    addEnv({testDom: {data}});
+    addEnv({testDom: {data, data2}});
 }
 
-testDom();
+// testDom();
 
 function testMain () {
     const data = react({a: 1, b: 2, c: []});
@@ -61,7 +67,7 @@ function testMain () {
         cset[util].lns,
     );
 
-    Object.assign(w, {main: {data, observe, c, c2, cset, utils}});
+    Object.assign(w, {main: {data, observe, c, c2, cset, util}});
 }
 
 // testMain();

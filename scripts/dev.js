@@ -40,6 +40,10 @@ build({
     //   __FEATURE_OPTIONS_API__: 'true',
     //   __FEATURE_PROD_DEVTOOLS__: 'false',
     // },
+    define: {
+        __DEBUG__: 'false',
+        __DEV__: 'true',
+    },
     plugins: [
         yamlPlugin(),
         dtsPlugin(),

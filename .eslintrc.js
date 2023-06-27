@@ -42,6 +42,7 @@ module.exports = {
         'console': true,
         'require': true,
         'module': true,
+        __DEBUG__: true,
     },
     'rules': {
     // 'no-var': "error",

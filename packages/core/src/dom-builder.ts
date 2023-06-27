@@ -20,6 +20,13 @@ export type IAttributeNames = 'accesskey'|'alt'|'async'|'autoplay'|'checked'|
     'muted'|'controls'|'loop'|'border'|'cellspacing'|'cellpadding'|
     'rowspan'|'colspan';
 
+// type IClassReaction = {
+//     [a in string]: a extends '$value' ? IBindingReaction : IBindingRef<boolean>;
+// }
+type IClassReaction = {
+    $value?: IBindingReaction
+} & IJson<IBindingRef<boolean>|IBindingReaction>
+
 export type IDomOptions = {
   // event
   [prop in IEventNames]?: (e: Event) => void;
@@ -30,7 +37,7 @@ export type IDomOptions = {
   $html?: IBindingReaction;
   $child?: IChildren;
   $life?: any; // todo
-  class?: IBindingReaction | (IJson<IBindingRef<boolean>> & {$value?: IBindingReaction});
+  class?: IBindingReaction | IClassReaction;
 } & {
     [prop in string]: any;
 }
@@ -61,7 +68,7 @@ function transformOptionsToDom (opt: IDomOptions): IElement {
 
     for (const k in opt) {
         const v = opt[k];
-        if (typeof v === 'function') {
+        if (typeof v === 'function' && v[type] !== AlinsType.BindResult) {
             addEvent(el, k, v);
         } else if (k === 'class') {
             el.className = reactiveClass(v, (key, value) => {
@@ -70,11 +77,14 @@ function transformOptionsToDom (opt: IDomOptions): IElement {
                 else !!value ? el.classList.add(key) : el.classList.remove(key);
             });
         } else {
-            el.setAttribute(k, reactiveBindingEnable(v, (v) => {
+            const value = reactiveBindingEnable(v, (v) => {
                 el.setAttribute(k, v);
             }, (bool) => {
                 bool ? el.setAttribute(k, v) : el.removeAttribute(k);
-            }));
+            });
+            // debugger;
+            console.warn('reactiveBindingEnable', k, value);
+            el.setAttribute(k, value);
         }
     }
     return el;
