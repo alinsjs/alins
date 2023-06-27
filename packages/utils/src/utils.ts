@@ -3,7 +3,6 @@
  * @Date: 2022-10-11 16:54:25
  * @Description: Coding something
  */
-
 export function join (array: string[], fn: string[] | ((index: number)=>string)) {
     let str = '';
     for (let i = 0; i < array.length - 1; i++) {
@@ -27,6 +26,10 @@ export function getFuncArgs (fn: Function) {
 
 export function isStringTemplateArray (data: any) {
     return data instanceof Array && (data as any).raw instanceof Array;
+}
+
+export function isObject (data: any) {
+    return data && typeof data === 'object';
 }
 
 export function splitTwoPart (str: string, sep: string) {

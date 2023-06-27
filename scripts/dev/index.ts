@@ -1,3 +1,139 @@
+import {react} from 'packages/reactive/src/react';
+import {observe} from 'packages/reactive/src/proxy';
+import {computed} from 'packages/reactive/src/computed';
+import {watch} from 'packages/reactive/src/watch';
+import {div} from 'packages/core/v1/dom-builder';
+import {IElement} from 'packages/core/v1/renderer';
+import {util} from 'packages/utils/src';
+
+const w = window as any;
+const addEnv = (data: any) => {Object.assign(w, data);};
+addEnv({observe, util});
+
+
+function testDom () {
+    const data = react('111');
+    const data2 = react('xx');
+    const a = computed(() => data.value + '22');
+    div({
+        $child: [
+            data,
+            a,
+            div({$child: [
+                data,
+                a,
+                div({}),
+            ]}),
+        ],
+        class: {
+            $value: react`${data2}`,
+            a: () => data.value === '111',
+            b: true,
+        }
+    }).mount(document.body as IElement);
+    addEnv({testDom: {data}});
+}
+
+testDom();
+
+function testMain () {
+    const data = react({a: 1, b: 2, c: []});
+
+    const c = computed(() => data.a + 1);
+    const c2 = computed(() => c.value + 1);
+    const cset = computed({
+        get: () => ({x: c.value + 1}),
+        set: (v, ov, path) => {console.log('cset::', v, ov, path);}
+    });
+
+    observe(() => {console.log('c.value', c.value, c2.value, cset.x);});
+
+    console.log(
+        data[util].lns,
+        c[util].lns,
+        c2[util].lns,
+        cset[util].lns,
+    );
+    console.log(
+        data[util].lns,
+        c[util].lns,
+        c2[util].lns,
+        cset[util].lns,
+    );
+
+    Object.assign(w, {main: {data, observe, c, c2, cset, utils}});
+}
+
+// testMain();
+
+// observe(() => {console.log('c.value', c.value);});
+
+// Object.assign(w, {data, c});
+
+function test2 () {
+    const a = react({value: 1});
+    const b = react({value: 2});
+    const c = react({value: 3});
+    const com = computed(() => { return a.value === 1 ? b.value : c.value; });
+    // const com = computed(() => { return b.value; });
+
+    b.value = 22;
+    console.log(c[util].lns);
+    console.assert(com.value === b.value);
+    a.value = 2;
+    console.log(c[util].lns);
+    console.assert(com.value === c.value);
+    c.value = 11;
+    console.log(c[util].lns, c.value);
+    console.assert(com.value === c.value);
+    Object.assign(w, {test2: {a, b, c, com}});
+}
+
+// test2();
+
+function testWatch () {
+
+    const a = react(1);
+    // const b = react(2);
+    // const c = react(2);
+
+    // const com = computed(() => { return a.value === 1 ? b.value : c.value; });
+    // const fn = () => com.value + 1;
+    // const com2 = computed(() => { return fn(); });
+
+    // watch(com2, (a) => {
+    //     console.log('1111111', a);
+    // });
+    const b = react({a: {b: 1}});
+    const r2 = watch(b, (a, b, c) => {
+        console.log('222222', a, b, c);
+    });
+    const res = watch(() => {
+        console.log('watch start');
+        return a.value + 1;
+    }, (a, b, c) => {
+        console.log('222222', a, b, c);
+    });
+    const r3 = watch(() => {
+        console.log('watch start');
+        return b.a.b;
+    }, (a, b, c) => {
+        console.log('r33333333', a, b, c);
+    });
+    // const data = react({a: {b: 2}});
+    // watch(() => data.a.b, (a, b, c) => {
+    //     console.log('222222', a, b, c);
+    // });
+    Object.assign(w, {testWatch: {a, b, w: res, r3}});
+}
+
+// testWatch();
+
+// observe(()=>console.warn('c0=',data.c[0]));
+// observe(()=>console.warn(data.c.length === 0));
+// data.c=[]
+// data.c.push(1)
+
 // import './samples/memory-leak';
 
 // import './samples/v0.0.15';
@@ -24,7 +160,7 @@
 // import {Style2, StyleAtom} from './samples/style-comp2';
 // import {Count2} from './samples/counter2';
 // import {renderObject} from './samples/render-obj';
-import './samples/controller';
+// import './samples/controller';
 
 // console.log(Controller);
 

@@ -1,81 +1,63 @@
 /*
- * @Author: tackchen
- * @Date: 2022-10-12 14:22:03
+ * @Author: chenzhongsheng
+ * @Date: 2023-06-26 14:23:09
  * @Description: Coding something
  */
 
-import {IJson, TReactionItem, join, subscribe} from 'alins-utils';
-import {transformToReaction} from './react';
+import {isProxy} from './proxy';
+import {AlinsType, IRefData, ISimpleValue, join, type} from 'alins-utils';
+import {watch} from './watch';
 
-export const ReplaceExp = /\$\$\d+\$\$/;
-export const ReplaceExpG = /\$\$\d+\$\$/g;
+export const binding = Symbol('b');
 
-const ReplacementMap: string[] = [];
-const ReplacementMapReverse: IJson<number> = {};
+export type IBindingChange = (nv: string, ov: string)=>void;
 
-export function createReplacement (i: number) {
-    if (ReplacementMap[i]) return ReplacementMap[i];
-    const str = `$$${i}$$`;
-    ReplacementMap[i] = str;
-    ReplacementMapReverse[str] = i;
-    return str;
+
+export interface IReactBindingResult {
+    (onchange: IBindingChange): string;
+    [binding]: true;
 }
 
-function createReplacementArray (length: number) {
-    if (length <= 0) return [];
-    const arr = [];
-    for (let i = 0; i < length; i++)
-        arr.push(createReplacement(i));
-    return arr;
-}
+export type IBindingReaction<T = any> = IRefData<T>|(()=>T)|IReactBindingResult|ISimpleValue;
 
-export function parseReplacementToNumber (replacement: string): number {
-    return ReplacementMapReverse[replacement] || parseInt(replacement.replace(/\$\$/g, ''));
-}
+export type IBindingRef<T=any> = IRefData<T>|(()=>T)|T;
 
-export function extractReplacement (str: string): null | string[] {
-    const results = str.match(ReplaceExpG);
-    if (!results) return null;
-    return results;
-}
-
-export function createTemplateReplacement (template: string[], start = 0) {
-    return join(template, (i) => createReplacement(i + start));
-}
-
-// 传入模板和reaction callback传回每次更新渲染的新值
-// template = 'aaa$$0$$aaa'
-// 初次会返回首次渲染的值
-export function reactiveTemplate (
-    template: string | (string[]),
-    reactions: TReactionItem[],
-    callback: (
-        content: string,
-        oldContent: string,
-    ) => void,
-    needOldContent = false,
-): string {
-    const isArray = template instanceof Array;
-    if (reactions.length > 0) {
-        const results = isArray ? createReplacementArray(reactions.length) : extractReplacement(template);
-        if (results) {
-            const texts = isArray ? template : template.split(ReplaceExp);
-            const filler: string[] = results.map((item, i) => {
-                const index = parseReplacementToNumber(item);
-                const reaction = transformToReaction(reactions[index]);
-                return reaction[subscribe]((value) => {
-                    const oldContent = needOldContent ? join(texts, filler) : '';
-                    filler[i] = value;
-                    const newContent = join(texts, filler);
-                    callback(newContent, oldContent);
-                    
-                    // const oldClass = join(texts, filler);
-                    // filler[i] = value;
-                    // dom.classList.replace(oldClass, join(texts, filler));
-                });
-            });
-            return join(texts, filler);
+export function createBinding (
+    template: string[],
+    ...reactions: (IRefData<any>|(()=>any)|any)[]
+): string|IReactBindingResult {
+    for (let i = 0; i < reactions.length; i++) {
+        const reaction = reactions[i];
+        if (!isProxy(reaction) && typeof reaction !== 'function') {
+            template[i] = `${template[i]}${reaction}${template[i + 1]}`;
+            template.splice(i + 1, 1);
+            reactions.splice(i, 1);
+            i--;
         }
     }
-    return isArray ? template.join('') : template;
+    console.log(template, reactions);
+    if (reactions.length === 0) {
+        return template[0];
+    }
+    const fn = (onchange: IBindingChange) => {
+        let prevStr = '';
+        let values: string[] = [];
+        values = reactions.map((reaction, index) => {
+            watch(reaction, (nv: any) => {
+                values[index] = nv;
+                const v = join(template, values);
+                onchange(v, prevStr);
+                prevStr = v;
+            }, false);
+            return typeof reaction === 'function' ? reaction() : reaction.value;
+        });
+        return join(template, values);
+    };
+    // @ts-ignore
+    fn[type] = AlinsType.BindResult;
+    return fn as IReactBindingResult;
+}
+
+export function isBindingResult (fn: any) {
+    return fn[type] === AlinsType.BindResult;
 }

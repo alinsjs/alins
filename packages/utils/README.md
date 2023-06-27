@@ -5,7 +5,7 @@
 -->
 
 <p align="center">
-    <img src='https://shiyix.cn/alins.png' width='100px'/>
+    <img src='https://shiyix.cn/images/alins.png' width='100px'/>
 </p> 
 
 <p align="center">

@@ -4,7 +4,6 @@
  * @Description: Coding something
  */
 
-import {type} from 'os';
 import {IElement} from './renderer';
 
 /*
@@ -22,28 +21,20 @@ type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self';
 // capture：使用事件的捕获模式；
 // self：只有event.target是当前操作的元素时才触发事件；
 
-
-const MainEventNames = [
-    'click', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseover', 'mouseup',
-    'touchend', 'touchmove', 'touchstart', 'wheel', 'input', 'change'
-] as const;
-
-const EventNames = [
-    ...MainEventNames,
-    'fullscreenchange', 'fullscreenerror', 'copy', 'cut', 'paste', 'abort', 'auxclick',
-    'beforeinput', 'blur', 'canplay', 'canplaythrough', 'close',
-    'compositionend', 'compositionstart', 'compositionupdate', 'contextmenu',
-    'cuechange', 'dblclick', 'drag', 'dragend', 'dragenter', 'dragleave', 'dragover',
-    'dragstart', 'drop', 'durationchange', 'emptied', 'ended', 'error', 'focus', 'focusin',
-    'focusout', 'formdata', 'gotpointercapture', 'invalid', 'keydown', 'keypress',
-    'keyup', 'load', 'loadeddata', 'loadedmetadata', 'loadstart', 'lostpointercapture',
-    'mouseout', 'pause', 'play', 'playing', 'pointercancel', 'pointerdown', 'pointerenter', 'pointerleave',
-    'pointermove', 'pointerout', 'pointerover', 'pointerup', 'progress', 'ratechange', 'reset',
-    'resize', 'scroll', 'select', 'selectionchange', 'selectstart', 'submit', 'suspend', 'timeupdate',
-    'toggle', 'touchcancel',
-] as const;
-
-export type IEventNames = typeof EventNames[number];
+export type IEventNames =
+    'click'| 'mousedown'| 'mouseenter'| 'mouseleave'| 'mousemove'| 'mouseover'| 'mouseup'|
+    'touchend'| 'touchmove'| 'touchstart'| 'wheel'| 'input'| 'change'|
+    'fullscreenchange'| 'fullscreenerror'| 'copy'| 'cut'| 'paste'| 'abort'| 'auxclick'|
+    'beforeinput'| 'blur'| 'canplay'| 'canplaythrough'| 'close'|
+    'compositionend'| 'compositionstart'| 'compositionupdate'| 'contextmenu'|
+    'cuechange'| 'dblclick'| 'drag'| 'dragend'| 'dragenter'| 'dragleave'| 'dragover'|
+    'dragstart'| 'drop'| 'durationchange'| 'emptied'| 'ended'| 'error'| 'focus'| 'focusin'|
+    'focusout'| 'formdata'| 'gotpointercapture'| 'invalid'| 'keydown'| 'keypress'|
+    'keyup'| 'load'| 'loadeddata'| 'loadedmetadata'| 'loadstart'| 'lostpointercapture'|
+    'mouseout'| 'pause'| 'play'| 'playing'| 'pointercancel'| 'pointerdown'| 'pointerenter'| 'pointerleave'|
+    'pointermove'| 'pointerout'| 'pointerover'| 'pointerup'| 'progress'| 'ratechange'| 'reset'|
+    'resize'| 'scroll'| 'select'| 'selectionchange'| 'selectstart'| 'submit'| 'suspend'| 'timeupdate'|
+    'toggle'| 'touchcancel';
 
 export type IEvent = ((e: Event)=>any) | {
   listener: (e: Event)=>any;

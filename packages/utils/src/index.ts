@@ -10,3 +10,4 @@ export {version} from '../package.json';
 export * from './types/common.d';
 export * from './types/react.d';
 export * from './types/style.d';
+export * from './types/enum';

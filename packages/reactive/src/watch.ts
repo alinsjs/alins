@@ -1,19 +1,19 @@
 /*
- * @Author: tackchen
- * @Date: 2022-10-18 10:11:33
+ * @Author: chenzhongsheng
+ * @Date: 2023-06-26 15:31:14
  * @Description: Coding something
  */
-import {IReactItem, IComputedItem, subscribe} from 'alins-utils';
-import {computed, TComputedBuilder} from './computed';
-
-export type TWatchCallback<T> = (v: T, old: T) => void;
+import {IProxyListener, IProxyData, utils} from './proxy';
+import {computed} from './computed';
 
 export function watch<T> (
-    target: IReactItem<T> | IComputedItem<T> | TComputedBuilder<T>,
-    cb: TWatchCallback<T>
-): void {
-    if (!(target as any)[subscribe]) {
-        target = computed(target as TComputedBuilder<T>);
+    target: (()=>T)|(IProxyData<T>),
+    cb: IProxyListener,
+    deep = true,
+): IProxyData<T> {
+    if (typeof target === 'function') {
+        target = computed(target);
     }
-    target[subscribe](cb);
+    target[util].subscribe(cb, deep);
+    return target;
 };

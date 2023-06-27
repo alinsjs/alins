@@ -19,7 +19,7 @@ function HelloWorld () {
             onclick: () => {msg.value = 'xx';},
             $life: {},
             $html: '',
-            $children: [
+            $child: [
 
             ]
         }, [

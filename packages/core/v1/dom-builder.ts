@@ -3,51 +3,36 @@
  * @Date: 2023-06-25 22:31:56
  * @Description: Coding something
  */
-import {TReactionValue} from 'packages/utils/src';
 import {addEvent, IEventNames} from './event';
-import {html} from './html';
 import {IElement, Renderer} from './renderer';
-import {exeReactionValue} from 'alins-reactive';
+import {
+    IElementLike, reactiveBinding, IBindingReactionEnable, reactiveBindingEnable,
+    reactiveClass, IElementBuilder, IChildren, isElementLike
+} from './dom-util';
+import {AlinsType, IJson, type} from 'alins-utils';
+import {IBindingReaction, IBindingRef} from 'alins-reactive';
 
-const AttributeNames = [
-    'accesskey', 'alt', 'async', 'autoplay', 'checked', 'class',
-    'color', 'cols', 'dir', 'disabled', 'enctype', 'formnovalidate',
-    'height', 'hidden', 'id', 'lang', 'maxlength', 'name', 'nonce',
-    'readonly', 'required', 'size', 'src', 'style', 'summary', 'tabindex',
-    'target', 'title', 'type', 'value', 'href', 'selected', 'poster',
-    'muted', 'controls', 'loop', 'border', 'cellspacing', 'cellpadding',
-    'rowspan', 'colspan'
-] as const;
-
-export type IAttributeNames = (typeof AttributeNames)[number];
-
-export type IDomReactionValue = TReactionValue<number|string>;
+export type IAttributeNames = 'accesskey'|'alt'|'async'|'autoplay'|'checked'|
+    'color'|'cols'|'dir'|'disabled'|'enctype'|'formnovalidate'|
+    'height'|'hidden'|'id'|'lang'|'maxlength'|'name'|'nonce'|
+    'readonly'|'required'|'size'|'src'|'style'|'summary'|'tabindex'|
+    'target'|'title'|'type'|'value'|'href'|'selected'|'poster'|
+    'muted'|'controls'|'loop'|'border'|'cellspacing'|'cellpadding'|
+    'rowspan'|'colspan';
 
 export type IDomOptions = {
   // event
   [prop in IEventNames]?: (e: Event) => void;
 } & {
-  [prop2 in IAttributeNames]?: IDomReactionValue|boolean;
+    [prop2 in IAttributeNames]?: IBindingReactionEnable;
 } & {
   $tag?: string;
-  $html?: IDomReactionValue;
-  $child?: IElementLike[];
-  $life?: any;
+  $html?: IBindingReaction;
+  $child?: IChildren;
+  $life?: any; // todo
+  class?: IBindingReaction | (IJson<IBindingRef<boolean>> & {$value?: IBindingReaction});
 } & {
-  [prop in string]?: string|number|boolean;
-}
-
-export type IElementLike = IElement|IElementBuilder;
-
-export interface IElementBuilder {
-  _isBuilder: true;
-  _dom: IElement|null;
-  mount(parent: IElementLike): void;
-  appendChild(parent: IElementLike): void;
-}
-
-function reactiveContent (reaction: IDomReactionValue, onchange: (v:string)=>void) {
-    return exeReactionValue(reaction, (v) => {onchange(v + '');}) + '';
+    [prop in string]: any;
 }
 
 function transformOptionsToDom (opt: IDomOptions): IElement {
@@ -55,11 +40,18 @@ function transformOptionsToDom (opt: IDomOptions): IElement {
     delete opt.$tag;
 
     if (opt.$html) {
-        el.innerHTML = reactiveContent(opt.$html, (v) => {el.innerHTML = v;});
+        el.innerHTML = reactiveBinding(opt.$html, (v) => {el.innerHTML = v;});
         delete opt.$html;
         delete opt.$child;
     } else if (opt.$child) {
-        // todo
+        transformChildren(opt.$child, item => {
+            if (item[type] === AlinsType.ElementBuilder) {
+                item.mount(el);
+            } else {
+                el.appendChild(item);
+            }
+        });
+        delete opt.$child;
     }
 
     if (opt.$life) {
@@ -72,10 +64,16 @@ function transformOptionsToDom (opt: IDomOptions): IElement {
         if (typeof v === 'function') {
             addEvent(el, k, v);
         } else if (k === 'class') {
-          
+            el.className = reactiveClass(v, (key, value) => {
+                console.log(key, value);
+                if (!key) el.className = value;
+                else !!value ? el.classList.add(key) : el.classList.remove(key);
+            });
         } else {
-            el.setAttribute(k, reactiveContent(v, (v) => {
+            el.setAttribute(k, reactiveBindingEnable(v, (v) => {
                 el.setAttribute(k, v);
+            }, (bool) => {
+                bool ? el.setAttribute(k, v) : el.removeAttribute(k);
             }));
         }
     }
@@ -89,30 +87,63 @@ export function domFactory (name: string) {
     };
 }
 
-export function dom (options: IDomOptions): IElementBuilder {
+export const div = domFactory('div');
+
+function isChildren (child: any) {
+    return typeof child !== 'object' ||
+        (child instanceof Array) ||
+        (child instanceof Element) ||
+        child instanceof Node ||
+        !!child[type];
+}
+
+export function dom (arg: IDomOptions|IChildren): IElementBuilder {
+    const options = ((isChildren(arg)) ?
+        {$child: arg} :
+        arg)  as IDomOptions;
     const domElement: IElementBuilder = {
-        _isBuilder: true,
+        [type]: AlinsType.ElementBuilder,
         _dom: null,
-        mount (parent: IElementLike) {
-            if (parent._isBuilder) {
+        mount (parent: IElement|IElementBuilder) {
+            if (parent[type] === AlinsType.ElementBuilder) {
                 parent.appendChild(domElement);
             } else {
                 this._dom = transformOptionsToDom(options);
-                parent.appendChild(this._dom);
+                (parent).appendChild(this._dom);
             }
         },
         appendChild (child: IElementLike) {
-            if (child._isBuilder) {
+            if (child[type] === AlinsType.ElementBuilder) {
                 child.mount(this._dom || this);
             } else { // dom 元素
                 if (this._dom) {
                     this._dom.appendChild(child);
                 } else {
                     if (!options.$child) options.$child = [];
+                    else if (!(options.$child instanceof Array)) options.$child = [options.$child];
                     options.$child.push(child);
                 }
             }
         }
     };
     return domElement;
+}
+
+export function transformChildren (children: IChildren, each: (el: IElementLike)=>void) {
+    if (!(children instanceof Array)) {
+        children = [children];
+    }
+
+    children.forEach((item: any) => {
+        let el: any = null;
+        if (isElementLike(item)) {
+            el = item;
+        } else {
+            el = Renderer.createTextNode(reactiveBinding(item, (v) => {
+                el.textContent = v;
+            }));
+        }
+        console.log('children.forEach', el);
+        each(el);
+    });
 }
