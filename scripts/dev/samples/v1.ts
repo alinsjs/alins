@@ -20,13 +20,11 @@ function HelloWorld () {
             $life: {},
             $html: '',
             $child: [
-
+                span({click: () => {msg.value = 'xx';}}, [
+                    div({})
+                ])
             ]
-        }, [
-            span({click: () => {msg.value = 'xx';}}, [
-                div({})
-            ])
-        ]);
+        });
     }
     return null;
 }

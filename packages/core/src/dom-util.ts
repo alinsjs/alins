@@ -22,7 +22,7 @@ export interface IElementBuilder {
 
 export type IElementLike = ITextNode|IElement|IElementBuilder;
 
-type IChild = IElementLike|IBindingReaction|null
+type IChild = IElementLike|IBindingReaction|null|IChild[];
 
 export type IChildren = IChild[]|IChild;
 

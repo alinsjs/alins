@@ -144,12 +144,17 @@ export function transformChildren (children: IChildren, each: (el: IElementLike)
         children = [children];
     }
 
-    children.forEach((item: any) => {
+    children.forEach((item) => {
+        if (!item) return;
+        if (item instanceof Array) {
+            transformChildren(item, each);
+            return;
+        }
         let el: any = null;
         if (isElementLike(item)) {
             el = item;
         } else {
-            el = Renderer.createTextNode(reactiveBinding(item, (v) => {
+            el = Renderer.createTextNode(reactiveBinding(item as IBindingReaction, (v) => {
                 el.textContent = v;
             }));
         }
