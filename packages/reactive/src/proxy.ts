@@ -12,10 +12,16 @@ import {
 } from 'alins-utils';
 
 let currentFn: any = null;
+let depReactive = false; // 当前表达式是否依赖响应数据
 
-export function observe (fn: ()=>any, listener = fn) {
+export function isDepReactive () {
+    return depReactive;
+}
+
+export function observe (fn: ()=>any, listener: IProxyListener = fn) {
     // if (__DEBUG__) console.log('Start observe', fn, listener);
     currentFn = listener;
+    depReactive = false;
     const v = fn();
     currentFn = null;
     return v;
@@ -94,6 +100,7 @@ export function createProxy<T extends IJson> (data: T, {
             if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
                 // ! 收集依赖
                 if (currentFn) {
+                    if (!depReactive) depReactive = true;
                     // if (__DEBUG__) console.log('收集依赖', property);
                     lns[property]?.add(currentFn) || (lns[property] = new Set([currentFn]));
                     // if (__DEBUG__) console.log('收集依赖222', lns[property]);

@@ -6,6 +6,7 @@
 import {startTest} from 'easy-test-lib';
 import reactive from './cases/reactive';
 
+
 export function startTestMain () {
     startTest({
         cases: [

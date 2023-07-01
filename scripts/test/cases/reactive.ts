@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-06-27 18:13:37
+ * @LastEditTime: 2023-07-01 22:52:45
  */
 
 import {react, observe, computed, watch, IReactBindingResult} from 'packages/reactive';
@@ -106,5 +106,25 @@ export default [
             return list;
         },
         expect: ['1-1-3', '1-1-3', '2-1-4', '2-1-4', '2-3-6']
+    },
+    {
+        name: 'computed 分支逻辑',
+        test () {
+            const list:any[] = [];
+            const bool = react(true);
+            const a = react(1);
+            const b = react(2);
+            const c = computed(() => bool.value ? a.value : b.value);
+            list.push(c.value);
+            a.value = 11;
+            list.push(c.value);
+            bool.value = false;
+            list.push(c.value);
+            b.value = 22;
+            list.push(c.value);
+            return list;
+        },
+        expect: [1, 11, 2, 22]
+
     }
 ];
