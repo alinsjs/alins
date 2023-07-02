@@ -52,8 +52,8 @@ export function createUtils (data: any, lns: IProxyListenerMap, path: string): I
             triggerChange(k, v[k], data[k]);
         Object.assign(data, v);
     };
-    const subscribe = (ln: IProxyListener, deep: boolean = true) => {
-        console.log('subscribe', Object.keys(lns));
+    const subscribe = (ln: IProxyListener<any>, deep: boolean = true) => {
+        console.trace('subscribe', Object.keys(lns));
         for (const k in data) {
             lns[k]?.add(ln) || (lns[k] = new Set([ln]));
             if (deep && isProxy(data[k])) {

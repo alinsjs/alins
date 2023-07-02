@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-01 22:52:45
+ * @LastEditTime: 2023-07-01 22:56:13
  */
 
 import {react, observe, computed, watch, IReactBindingResult} from 'packages/reactive';
@@ -65,7 +65,6 @@ export default [
             const b = react(2);
             // const b = react({a: 1});
             const c1 = computed(() => a.value + b.value + 1);
-
             const list:any[] = [];
 
             watch(() => {

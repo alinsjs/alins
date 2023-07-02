@@ -9,12 +9,13 @@ import {
     isProxy, isRef, watch, IBindingReaction
 } from 'alins-reactive';
 import {AlinsType, IJson, IRefData, type} from 'alins-utils';
+import {IIfReturn} from './controller/if';
 import {IElement, ITextNode} from './renderer';
 
 
 export interface IElementBuilder {
   [type]: AlinsType.ElementBuilder;
-  _dom: IElement|null;
+  dom: ()=>IElement;
   mount(parent: IElementLike): void;
   appendChild(parent: IElementLike): void;
 }
@@ -22,7 +23,7 @@ export interface IElementBuilder {
 
 export type IElementLike = ITextNode|IElement|IElementBuilder;
 
-type IChild = IElementLike|IBindingReaction|null|IChild[];
+type IChild = IIfReturn|{value:any}|IElementLike|IBindingReaction|null|IChild[];
 
 export type IChildren = IChild[]|IChild;
 

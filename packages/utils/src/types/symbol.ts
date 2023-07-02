@@ -5,3 +5,4 @@
  */
 export const type = Symbol('t');
 export const util = Symbol('u');
+export const child = Symbol('c');

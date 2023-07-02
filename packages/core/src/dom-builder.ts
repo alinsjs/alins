@@ -9,7 +9,7 @@ import {
     IElementLike, reactiveBinding, IBindingReactionEnable, reactiveBindingEnable,
     reactiveClass, IElementBuilder, IChildren, isElementLike
 } from './dom-util';
-import {AlinsType, IJson, type} from 'alins-utils';
+import {AlinsType, child, IJson, type} from 'alins-utils';
 import {IBindingReaction, IBindingRef} from 'alins-reactive';
 
 export type IAttributeNames = 'accesskey'|'alt'|'async'|'autoplay'|'checked'|
@@ -51,13 +51,7 @@ function transformOptionsToDom (opt: IDomOptions): IElement {
         delete opt.$html;
         delete opt.$child;
     } else if (opt.$child) {
-        transformChildren(opt.$child, item => {
-            if (item[type] === AlinsType.ElementBuilder) {
-                item.mount(el);
-            } else {
-                el.appendChild(item);
-            }
-        });
+        appendChildren(el, opt.$child);
         delete opt.$child;
     }
 
@@ -107,37 +101,51 @@ function isChildren (child: any) {
         !!child[type];
 }
 
+function isDomBuilder (node: IElementLike) {
+    return node[type] === AlinsType.ElementBuilder;
+}
+
 export function dom (arg: IDomOptions|IChildren): IElementBuilder {
     const options = ((isChildren(arg)) ?
         {$child: arg} :
         arg)  as IDomOptions;
-    const domElement: IElementBuilder = {
+    let _dom: IElement;
+    const builder: IElementBuilder = {
         [type]: AlinsType.ElementBuilder,
-        _dom: null,
+        dom () {
+            if (!_dom) return _dom = transformOptionsToDom(options);
+            return _dom;
+        },
         mount (parent: IElement|IElementBuilder) {
-            if (parent[type] === AlinsType.ElementBuilder) {
-                parent.appendChild(domElement);
-            } else {
-                this._dom = transformOptionsToDom(options);
-                (parent).appendChild(this._dom);
-            }
+            // @ts-ignore
+            parent.appendChild(isDomBuilder(parent) ? builder : builder.dom());
         },
         appendChild (child: IElementLike) {
-            if (child[type] === AlinsType.ElementBuilder) {
-                child.mount(this._dom || this);
-            } else { // dom 元素
-                if (this._dom) {
-                    this._dom.appendChild(child);
-                } else {
-                    if (!options.$child) options.$child = [];
-                    else if (!(options.$child instanceof Array)) options.$child = [options.$child];
-                    options.$child.push(child);
-                }
+            if (_dom) {
+                // @ts-ignore
+                _dom.appendChild(isDomBuilder(child) ? child.dom() : child);
+            } else {
+                // builder append builder
+                const c = options.$child;
+                if (!c) options.$child = [child];
+                else if (c instanceof Array) c.push(child);
+                else options.$child = [c, child];
             }
         }
     };
-    return domElement;
+    return builder;
 }
+
+export function appendChildren (parent: IElement|IElementBuilder, children: IChildren) {
+    transformChildren(children, item => {
+        if (item[type] === AlinsType.ElementBuilder) {
+            item.mount(parent);
+        } else {
+            parent.appendChild(item);
+        }
+    });
+}
+
 
 export function transformChildren (children: IChildren, each: (el: IElementLike)=>void) {
     if (!(children instanceof Array)) {
@@ -146,6 +154,11 @@ export function transformChildren (children: IChildren, each: (el: IElementLike)
 
     children.forEach((item) => {
         if (!item) return;
+        if (Renderer.isOriginElement(item)) return each(item as any);
+        if ((item as any)[child]) {
+            // @ts-ignore
+            item = item[child]();
+        }
         if (item instanceof Array) {
             transformChildren(item, each);
             return;
@@ -161,4 +174,27 @@ export function transformChildren (children: IChildren, each: (el: IElementLike)
         console.log('children.forEach', el);
         each(el);
     });
+}
+
+export function singleChild (item: IChildren) {
+    if (!item) return;
+    if (Renderer.isOriginElement(item)) return item as any;
+    if ((item as any)[child]) {
+        // @ts-ignore
+        item = item[child]();
+    }
+    if (item instanceof Array) {
+        transformChildren(item, each);
+        return;
+    }
+    let el: any = null;
+    if (isElementLike(item)) {
+        el = item;
+    } else {
+        el = Renderer.createTextNode(reactiveBinding(item as IBindingReaction, (v) => {
+            el.textContent = v;
+        }));
+    }
+    console.log('children.forEach', el);
+    each(el);
 }

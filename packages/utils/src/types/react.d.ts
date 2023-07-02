@@ -17,7 +17,7 @@ export interface IProxyUtils {
   lns: IProxyListenerMap;
   triggerChange: (property: string, nv: any, old?: any) => void;
   forceWrite: (v: any) => void;
-  subscribe: (ln: IProxyListener, deep?: boolean) => void;
+  subscribe: (ln: IProxyListener<any>, deep?: boolean) => void;
 }
 
 interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {
@@ -35,7 +35,7 @@ export type IProxyData<
     K = T extends object ? (T & IProxyBase<AlinsType.Proxy>) : IRefData<T>
 > = K;
 
-export type IProxyListener = IOnChange;
+export type IProxyListener<T> = IOnChange<T>;
 export type IProxyListenerMap = IJson<Set<IOnChange>>;
 
 

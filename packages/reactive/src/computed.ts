@@ -30,6 +30,8 @@ export function computed<T> (target:(()=>T)|IComputedObject<T>): IRefData<T>|{va
         proxy = createProxy(wrapReactive(value, true), {set, get});
         return proxy;
     }
+    // ! 此处是为了兼容编译时将未知类型的import常量进行表达式计算时进行的统一computed处理的开销
+    // 也可以优化 computed静态类型的开销 如 computed(()=>1+1)
     return {value};
 
     // // eslint-disable-next-line prefer-const

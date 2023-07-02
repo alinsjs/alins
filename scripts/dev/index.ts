@@ -6,6 +6,7 @@ import {div} from 'packages/core/src/dom-builder';
 import {IElement} from 'packages/core/src/renderer';
 import {util} from 'packages/utils/src';
 import {startTestMain} from '../test/index';
+import {$if} from 'packages/core/src/controller/if';
 
 startTestMain();
 
@@ -41,6 +42,32 @@ function testDom () {
 }
 
 // testDom();
+
+function testIf () {
+    const a = react(1);
+    const b = react(2);
+
+    addEnv({testIf: {a, b}});
+
+    return $if(() => a.value === 1, () => {
+        return div({$child: ['1111']});
+    }).elif(() => a.value === 2, () => {
+        return $if(() => b.value === 1, () => {
+            return div({$child: ['111xxx']});
+        }).elif(() => b.value === 2, () => {
+            return div({$child: ['222xx']});
+        // }).else(() => {
+        //     return div({$child: ['3333']});
+        });
+    // }).else(() => {
+    //     return div({$child: ['3333']});
+    });
+
+}
+
+div({
+    $child: testIf(),
+}).mount(document.body);
 
 function testMain () {
     const data = react({a: 1, b: 2, c: []});

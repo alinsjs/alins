@@ -19,6 +19,10 @@ export interface IElement {
     add(name: string): void;
     remove(name: string): void;
   }
+  insertBefore<T extends IElement>(node: T, child: IElement | null): T;
+  remove(): void;
+  get parentElement(): IElement;
+  get nextSibling(): IElement;
   get className(): string;
   set className(value: string);
   get innerHTML(): string;
@@ -44,5 +48,14 @@ export const Renderer = {
         // @ts-ignore
         el[type] = AlinsType.TextNode;
         return el as ITextNode;
+    },
+    createEmptyMountNode (): IElement {
+        return document.createComment('') as any;
+    },
+    createDocumentFragment (): IElement {
+        return document.createDocumentFragment() as any;
+    },
+    isOriginElement (el: any) {
+        return el instanceof Node;
     }
 };
