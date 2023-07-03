@@ -8,35 +8,61 @@ import {IWatchTarget} from 'packages/reactive/src';
 import {IChildren} from '../dom-util';
 import {IElement, Renderer} from '../renderer';
 import {IWatchRefTarget, watch, watchRef} from 'packages/reactive/src/watch';
-import {child} from '../../../utils/src/types/symbol';
+import {child, type} from '../../../utils/src/types/symbol';
 import {appendChildren, transformChildren} from '../dom-builder';
+import {AlinsType} from 'packages/utils/src';
+
+const clearParentCache = Symbol('');
+const parent = Symbol('');
 
 export interface IIfReturn {
+  [type]: AlinsType.If;
   [child]: (fromElse?: boolean)=>IChildren,
+  [parent]?: IIfReturn;
+  [clearParentCache]?: ()=>void;
   elif(data: IWatchRefTarget<boolean>, call: ()=>IChildren): IIfReturn;
   else(call: ()=>IChildren): IChildren;
 }
+let ifIndex = 0;
+
+const empty = Symbol('h');
 
 export function $if (data: IWatchRefTarget<boolean>, call: ()=>IChildren) {
+    const id = ifIndex++;
     const startNode = Renderer.createEmptyMountNode();
     const endNode = Renderer.createEmptyMountNode();
-    const empty = Symbol('h');
     const children: IChildren[] = [startNode, empty as any, endNode];
 
-    const nodeGetter: (()=>IChildren)[] = [];
+    const nodeGetter: ((force?: boolean)=>IChildren)[] = [];
 
-    const switchNode = (index: number) => {
-        if (startNode.parentElement) {
+    // let nodeCache: IChildren[] = [];
+
+    // eslint-disable-next-line prefer-const
+    let ifReturn: IIfReturn;
+
+    const switchNode = (i: number) => {
+        console.log('switch node', i);
+        const parentEle = startNode.parentElement;
+        if (!parentEle) {
+            // 清除父if元素缓存
+            console.log('clearParentCache', id, i);
+            let p = ifReturn;
+            // p[clearParentCache]?.();
+            while (p) {
+                console.log('while', id, i);
+                p[clearParentCache]?.();
+                // @ts-ignore
+                p = p[parent];
+            }
+        } else {
             // dom 元素可见时
             while (startNode.nextSibling !== endNode) {
                 startNode.nextSibling.remove();
             }
-            const cnode = nodeGetter[index]();
+            const cnode = nodeGetter[i]();
             const node = Renderer.createDocumentFragment();
             appendChildren(node as any, cnode);
-            startNode.parentElement.insertBefore(node as any, endNode);
-        } else {
-            // todo
+            parentEle.insertBefore(node as any, endNode);
         }
     };
 
@@ -57,9 +83,37 @@ export function $if (data: IWatchRefTarget<boolean>, call: ()=>IChildren) {
     const refs: IWatchRefTarget<boolean>[] = [];
     const acceptIf = (data: IWatchRefTarget<boolean>|null, call: ()=>IChildren) => {
         const i = index ++;
-        let node: IChildren; // 缓存node
+        let node: IChildren|undefined; // 缓存node 提升性能
         const getter = () => {
-            if (typeof node === 'undefined') node = call();
+            console.log(`getter: ifId=${id}`, i, node, call);
+            if (typeof node === 'undefined') {
+                node = call();
+                console.log('set cache', id, i);
+
+                if (node?.[type] === AlinsType.If) {
+                    // todo
+                    console.log(node?.[parent]);
+                    debugger;
+                }
+
+                // @ts-ignore
+                if (node?.[type] === AlinsType.If && !(node as IIfReturn)[clearParentCache]) {
+                    // 当子元素是if时
+                    console.log('子元素是if', id, i);
+                    // ! 子元素清除父元素cache
+                    (node as IIfReturn)[clearParentCache] = () => {
+                        console.log('refresh cache', id, i);
+                        node = undefined;
+                    };
+                    // @ts-ignore
+                    (node as IIfReturn)[parent] = ifReturn;
+                    // ifReturn[parent]?.[clearParentCache]?.();
+                }
+            } else {
+                console.log('use cache', id, i);
+
+
+            }
             return node;
         };
         nodeGetter[i] = getter;
@@ -71,7 +125,7 @@ export function $if (data: IWatchRefTarget<boolean>, call: ()=>IChildren) {
             if (typeof data === 'function' ? data() : data.value) {
                 children[1] = nodeGetter[i]();
             }
-        } else {
+        } else { // else处理
             // @ts-ignore
             if (children[1] === empty) {
                 children[1] = getter();
@@ -83,7 +137,8 @@ export function $if (data: IWatchRefTarget<boolean>, call: ()=>IChildren) {
 
     acceptIf(data, call);
 
-    const ifReturn: IIfReturn = {
+    ifReturn = {
+        [type]: AlinsType.If,
         [child] (fromElse = false) {
             // @ts-ignore
             watch(() => (

@@ -32,7 +32,8 @@ export function isRef (data: any): boolean {
 }
 
 export function isProxy (data: any): boolean {
-    return !!data?.[util];
+    const t = data?.[type];
+    return t === AlinsType.Proxy || t === AlinsType.Ref;
 }
 
 export function wrapReactive (data: any, force = false) {
@@ -53,7 +54,7 @@ export function createUtils (data: any, lns: IProxyListenerMap, path: string): I
         Object.assign(data, v);
     };
     const subscribe = (ln: IProxyListener<any>, deep: boolean = true) => {
-        console.trace('subscribe', Object.keys(lns));
+        // console.trace('subscribe', Object.keys(lns));
         for (const k in data) {
             lns[k]?.add(ln) || (lns[k] = new Set([ln]));
             if (deep && isProxy(data[k])) {

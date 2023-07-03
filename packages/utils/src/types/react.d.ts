@@ -35,7 +35,7 @@ export type IProxyData<
     K = T extends object ? (T & IProxyBase<AlinsType.Proxy>) : IRefData<T>
 > = K;
 
-export type IProxyListener<T> = IOnChange<T>;
+export type IProxyListener<T = any> = IOnChange<T>;
 export type IProxyListenerMap = IJson<Set<IOnChange>>;
 
 

@@ -5,12 +5,14 @@
  */
 import {startTest} from 'easy-test-lib';
 import reactive from './cases/reactive';
+import ifCase from './cases/if';
 
 
 export function startTestMain () {
     startTest({
         cases: [
-            ...reactive,
+            // ...reactive,
+            ...ifCase,
         ],
         onTestComplete ({passed, results, time}) {
             console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);

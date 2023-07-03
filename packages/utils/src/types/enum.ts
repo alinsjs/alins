@@ -11,4 +11,5 @@ export enum AlinsType {
   Proxy,
   Ref,
   BindResult,
+  If,
 }

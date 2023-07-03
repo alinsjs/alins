@@ -27,7 +27,7 @@ type IClassReaction = {
     $value?: IBindingReaction
 } & IJson<IBindingRef<boolean>|IBindingReaction>
 
-export type IDomOptions = {
+export type IDomOptions<T = IChildren[]> = {
   // event
   [prop in IEventNames]?: (e: Event) => void;
 } & {
@@ -35,7 +35,7 @@ export type IDomOptions = {
 } & {
   $tag?: string;
   $html?: IBindingReaction;
-  $child?: IChildren;
+  $child?: T;
   $life?: any; // todo
   class?: IBindingReaction | IClassReaction;
 } & {
@@ -46,6 +46,7 @@ function transformOptionsToDom (opt: IDomOptions): IElement {
     const el = Renderer.createElement(opt.$tag || 'div');
     delete opt.$tag;
 
+    // 元素内容处理
     if (opt.$html) {
         el.innerHTML = reactiveBinding(opt.$html, (v) => {el.innerHTML = v;});
         delete opt.$html;
@@ -55,11 +56,13 @@ function transformOptionsToDom (opt: IDomOptions): IElement {
         delete opt.$child;
     }
 
+    // 生命周期
     if (opt.$life) {
         // todo
         delete opt.$life;
     }
 
+    // 属性处理
     for (const k in opt) {
         const v = opt[k];
         if (typeof v === 'function' && v[type] !== AlinsType.BindResult) {
@@ -84,31 +87,12 @@ function transformOptionsToDom (opt: IDomOptions): IElement {
     return el;
 }
 
-export function domFactory (name: string) {
-    return (options: IDomOptions): IElementBuilder => {
-        options.$tag = name;
-        return dom(options);
-    };
-}
-
-export const div = domFactory('div');
-
-function isChildren (child: any) {
-    return typeof child !== 'object' ||
-        (child instanceof Array) ||
-        (child instanceof Element) ||
-        child instanceof Node ||
-        !!child[type];
-}
-
 function isDomBuilder (node: IElementLike) {
     return node[type] === AlinsType.ElementBuilder;
 }
 
-export function dom (arg: IDomOptions|IChildren): IElementBuilder {
-    const options = ((isChildren(arg)) ?
-        {$child: arg} :
-        arg)  as IDomOptions;
+// dom({})
+export function builder (options: IDomOptions): IElementBuilder {
     let _dom: IElement;
     const builder: IElementBuilder = {
         [type]: AlinsType.ElementBuilder,
@@ -136,7 +120,8 @@ export function dom (arg: IDomOptions|IChildren): IElementBuilder {
     return builder;
 }
 
-export function appendChildren (parent: IElement|IElementBuilder, children: IChildren) {
+export function appendChildren (parent: IElement|IElementBuilder, children: IChildren|IChildren[]) {
+    if (!Array.isArray(children)) children = [children];
     transformChildren(children, item => {
         if (item[type] === AlinsType.ElementBuilder) {
             item.mount(parent);
@@ -146,22 +131,19 @@ export function appendChildren (parent: IElement|IElementBuilder, children: IChi
     });
 }
 
-
-export function transformChildren (children: IChildren, each: (el: IElementLike)=>void) {
-    if (!(children instanceof Array)) {
-        children = [children];
-    }
-
-    children.forEach((item) => {
-        if (!item) return;
-        if (Renderer.isOriginElement(item)) return each(item as any);
+export function transformChildren (children: IChildren[], each: (el: IElementLike)=>void) {
+    for (let item of children) {
+        if (!item) continue;
+        if (Renderer.isOriginElement(item)) {
+            each(item as any); continue;
+        }
         if ((item as any)[child]) {
             // @ts-ignore
             item = item[child]();
         }
         if (item instanceof Array) {
             transformChildren(item, each);
-            return;
+            continue;
         }
         let el: any = null;
         if (isElementLike(item)) {
@@ -173,28 +155,5 @@ export function transformChildren (children: IChildren, each: (el: IElementLike)
         }
         console.log('children.forEach', el);
         each(el);
-    });
-}
-
-export function singleChild (item: IChildren) {
-    if (!item) return;
-    if (Renderer.isOriginElement(item)) return item as any;
-    if ((item as any)[child]) {
-        // @ts-ignore
-        item = item[child]();
-    }
-    if (item instanceof Array) {
-        transformChildren(item, each);
-        return;
-    }
-    let el: any = null;
-    if (isElementLike(item)) {
-        el = item;
-    } else {
-        el = Renderer.createTextNode(reactiveBinding(item as IBindingReaction, (v) => {
-            el.textContent = v;
-        }));
-    }
-    console.log('children.forEach', el);
-    each(el);
+    };
 }

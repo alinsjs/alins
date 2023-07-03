@@ -2,7 +2,7 @@ import {react} from 'packages/reactive/src/react';
 import {observe} from 'packages/reactive/src/proxy';
 import {computed} from 'packages/reactive/src/computed';
 import {watch} from 'packages/reactive/src/watch';
-import {div} from 'packages/core/src/dom-builder';
+import {div} from 'packages/core/src/dom-factory';
 import {IElement} from 'packages/core/src/renderer';
 import {util} from 'packages/utils/src';
 import {startTestMain} from '../test/index';
@@ -38,6 +38,7 @@ function testDom () {
             b: true,
         }
     }).mount(document.body as IElement);
+
     addEnv({testDom: {data, data2}});
 }
 
@@ -45,17 +46,39 @@ function testDom () {
 
 function testIf () {
     const a = react(1);
-    const b = react(2);
+    const b = react(1);
+    const c = react(1);
 
-    addEnv({testIf: {a, b}});
+    const test = () => {
+        const t = 500;
+        console.warn('a.value = 2;');
+        a.value = 2;
+        setTimeout(() => {
+            console.warn('a.value = 1;');
+            a.value = 1;
+            setTimeout(() => {
+                console.warn('b.value = 2;');
+                b.value = 2;
+                setTimeout(() => {
+                    console.warn('a.value = 2;');
+                    a.value = 2;
+                }, t);
+            }, t);
+        }, t);
+    };
+    addEnv({testIf: {a, b, c, test}});
 
     return $if(() => a.value === 1, () => {
-        return div({$child: ['1111']});
+        return div({$child: ['a1']});
     }).elif(() => a.value === 2, () => {
         return $if(() => b.value === 1, () => {
-            return div({$child: ['111xxx']});
+            return div({$child: ['b1']});
         }).elif(() => b.value === 2, () => {
-            return div({$child: ['222xx']});
+            return $if(() => c.value === 1, () => {
+                return div({$child: ['c1']});
+            }).elif(() => c.value === 2, () => {
+                return div({$child: ['c2']});
+            });
         // }).else(() => {
         //     return div({$child: ['3333']});
         });
@@ -65,9 +88,9 @@ function testIf () {
 
 }
 
-div({
-    $child: testIf(),
-}).mount(document.body);
+// div({
+//     $child: testIf(),
+// }).mount(document.body);
 
 function testMain () {
     const data = react({a: 1, b: 2, c: []});
