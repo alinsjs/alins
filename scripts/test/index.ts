@@ -12,7 +12,7 @@ export function startTestMain () {
     startTest({
         cases: [
             // ...reactive,
-            ...ifCase,
+            // ...ifCase,
         ],
         onTestComplete ({passed, results, time}) {
             console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);

@@ -24,6 +24,60 @@ function HelloWorld () {
   </div>
 }
 
+function hh(){
+  let div = null;
+  if(a){
+    return <div>11</div>;
+  }else{
+    div = <div>22</div>;
+  }
+
+  console.log(11);
+
+  return <div>{div}</div>
+}
+
+function hh(){
+  let div = null;
+  const r = $if(a, ()=>{
+    return div(11);
+  }).else(()=>{
+    div = div(22);
+  })
+  if(r) return r;
+
+  console.log(11);
+
+  return <div>{div}</div>
+}
+
+function hh(){
+  let div = null;
+  switch(a){
+    case 1: div = <div>11</div>; break;
+    case 2: div = <div>22</div>; break;
+  }
+
+  console.log(11);
+
+  return <div>{div}</div>
+}
+
+function hh(){
+  let div = null;
+  $switch(a).case(1, ()=>{
+    div = <div>11</div>;
+  }).case(2)
+  switch(a){
+    case 1: div = div('11'); break;
+    case 2: div = div('11'); break;
+  }
+
+  console.log(11);
+
+  return <div></div>
+}
+
 function HelloWorld2 () {
   let className = '11';
   const list = [1, 2, 3];

@@ -12,4 +12,5 @@ export enum AlinsType {
   Ref,
   BindResult,
   If,
+  Switch,
 }

@@ -4,25 +4,34 @@
  * @Description: Coding something
  */
 
+import {IWatchTarget} from 'packages/reactive/src';
 import {IChildren} from '../dom-util';
-import {Renderer} from '../renderer';
-import {IWatchRefTarget, watch} from 'packages/reactive/src/watch';
+import {IElement, Renderer} from '../renderer';
+import {IWatchRefTarget, watch, watchRef} from 'packages/reactive/src/watch';
 import {child, type} from '../../../utils/src/types/symbol';
-import {appendChildren} from '../dom-builder';
-import {AlinsType} from 'packages/utils/src';
+import {appendChildren, transformChildren} from '../dom-builder';
+import {AlinsType, util} from 'packages/utils/src';
 
-// todo 增加cache缓存
+const clearNodeCache = Symbol('');
+const parent = Symbol('');
 
 export interface IIfReturn {
-  [type]: AlinsType,
+  [type]: AlinsType.If;
   [child]: (fromElse?: boolean)=>IChildren,
+  [parent]?: IIfReturn;
+  [clearNodeCache]: (()=>void)[];
+  // [util]: {
+  //   parent?: IIfReturn;
+  // },
   elif(data: IWatchRefTarget<boolean>, call: ()=>IChildren): IIfReturn;
   else(call: ()=>IChildren): IChildren;
 }
+let ifIndex = 0;
 
 const empty = Symbol('h');
 
-export function $if (data: IWatchRefTarget<boolean>, call: ()=>IChildren): IIfReturn {
+export function $if (data: IWatchRefTarget<boolean>, call: ()=>IChildren) {
+    const id = ifIndex++;
     const startNode = Renderer.createEmptyMountNode();
     const endNode = Renderer.createEmptyMountNode();
     const children: IChildren[] = [startNode, empty as any, endNode];
@@ -51,7 +60,10 @@ export function $if (data: IWatchRefTarget<boolean>, call: ()=>IChildren): IIfRe
     const switchNode = (i: number) => {
         console.log('switch node', i);
         const parentEle = startNode.parentElement;
-        if (parentEle) {
+        if (!parentEle) {
+            // 清除父if元素缓存
+            console.log('clearNodeCache', id, i);
+        } else {
             // dom 元素可见时
             while (startNode.nextSibling !== endNode) {
                 startNode.nextSibling.remove();
@@ -83,8 +95,19 @@ export function $if (data: IWatchRefTarget<boolean>, call: ()=>IChildren): IIfRe
             watch(() => (
                 refs.map(item => typeof item === 'function' ? item() : item.value)
             ), onDataChange, false);
-            if (!fromElse) calls.push(() => null); // else 默认没有
+            if (!fromElse) {
+                calls.push(() => null); // else 默认没有
+            }
             return children;
+            // const array = watch(() => (
+            //     refs.map(item => typeof item === 'function' ? item() : item.value)
+            // ), onDataChange, false)[0];
+
+            // onDataChange(array);
+            // debugger;
+            // if (!fromElse) {
+            // }
+            // return [startNode, endNode];
         },
         elif (data: IWatchRefTarget<boolean>, call: ()=>IChildren) {
             acceptIf(data, call);
