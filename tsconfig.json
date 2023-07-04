@@ -9,7 +9,7 @@
         "allowJs": true,
         "noUnusedLocals": true,
         "strictNullChecks": true,
-        "noImplicitAny": true,
+        // "noImplicitAny": true,
         "noImplicitThis": true,
         "experimentalDecorators": true,
         "resolveJsonModule": true,
@@ -20,7 +20,8 @@
         "types": ["node"],
         "rootDir": ".",
         "noEmit": false,
-        "paths": {}
+        "paths": {},
+        "noImplicitAny": false,
     },
     "include": [
         "packages/*/src/**/*",

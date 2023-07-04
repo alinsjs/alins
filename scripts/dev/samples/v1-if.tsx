@@ -5,6 +5,38 @@
  */
 let React: any, $: any ,span: any,_jsx: any, react: any;
 
+function dynamic(){
+
+  let a = 1;
+  if(a === 1){
+    const s = Date.now();
+    a = 2;
+    return <div>{s}</div>
+  }
+  return <div>{a}</div>
+}
+
+function dynamic(){
+  const c = createContext();
+
+  let a = c.$(1);
+  const dom = c.if(()=>(a.value === 1), ()=>{
+    const s = Date.now();
+    a.value = 2;
+    return <div>{s}</div>
+  }).end();
+  if(dom) return dom;
+  
+  return <div>{a}</div>
+}
+
+function App(){
+  return <div>
+    <dynamic></dynamic>
+  </div>
+}
+
+
 function hh(){
   let dom = null;
   let a = 1;
@@ -21,7 +53,13 @@ function hh(){
     }else if(a === 3){
       dom = <div>{3}</div>;
     }else{
-      return <div>{333}</div>;
+      const data = await aa();
+      let v = '';
+      if(data.success){
+        v = data.info;
+      }
+      const s = Date.now();
+      return <div>{111}{v}{s}</div>;
     }
     return <div></div>
   }
@@ -30,35 +68,114 @@ function hh(){
   return <div>{dom}</div>
 }
 
-const domHolder = ()=>{};
+const createContext = ()=>{};
+
+async function hh(){
+  const data = await aa();
+  const data2 = Date.now() + 1000;
+  let v = '';
+  if(data === 1){
+    v = data;
+    return; //  => return null;
+  }else{
+    v = data2;
+  }
+  
+  return <div>{v}</div>
+}
+
+async function hh(){
+  let v = '';
+  let data;
+  if(v === 1){
+    data = await aa();
+  }
+  return <div>{data}</div>
+}
+async function hh(){
+  let v = '';
+  let data = react('');
+  if(v === 1){
+    const r = c.dynamic(async ()=>{
+      data.value = await aa();
+    }, false)
+  }
+  return <div>{data}</div>
+}
+async function hh(){
+  const data = await aa();
+  return <div>{data}</div>
+}
+async function hh(){
+  let c = createContext();
+  const r = c.dynamic(async ()=>{
+    const data = await aa();
+    return <div>{data}</div>
+  }, 1)
+  return r;
+}
 
 function hh(){
-  let h = domHolder();
+  let c = createContext();
+  
+  return c.dynamic((async ()=>{
+    const data = await aa();
+    const data2 = Date.now() + 1000;
+    let v = '';
+    if(data === 1){
+      v = data;
+    }else{
+      v = data2;
+    }
+    return <div>{v}</div>
+  }))
+}
+
+function hh(){
+  return <div>11</div>
+}
+
+
+function hh(){
+  let c = createContext();
   let dom = h.dom(null);
   let a = 1;
   a = 0;
 
+  var a = setTimeout(()=>{
+    if(){
+      // ...
+    }
+  }, 1000)
+
   if(window.aaa){
-    return h. (<div>{a}</div>);
+    return (<div>{a}</div>);
   }
 
-  const data = h.if(()=>a.value === 1, ()=>{
+  const data = c.if(()=>a.value === 1, ()=>{
     return <div>{111}</div>;
   }).elif(a === 2, ()=>{
-    const data = h.if((()=>a.value > 4), ()=>{
-
+    const data = c.if((()=>a.value > 4), ()=>{
       dom.update(()=><div>{222}</div>, 1);
     }).elif(()=>a.value===3, ()=>{
       dom.update(()=><div>{3}</div>, 2);
-    }).else(()=>{
-      return <div>{111}</div>;
+    }).else(async ()=>{
+      return c.dynamic(async (node)=>{
+        const data = await aa();
+        let v = '';
+        if(data.success){
+          v = data.info;
+        }
+        const s = Date.now();
+        return <div>{111}{v}{s}</div>;
+      })
     }).end();
     if(data) return data;
 
     return <div></div>
   })
   if(data) return data;
-  return h.default(()=><div>{dom}</div>);
+  return c.default(()=><div>{dom}</div>);
 }
 
 hh() // => dom
@@ -97,27 +214,76 @@ function hh(){
     case 1: dom = <div>{111}</div>;
     case 2: dom = <div>{111}</div>;break;
     case 3: 
-    case 4: return <div>{111}</div>;break;
+    case 4: 
+      const data = new Date();
+      return <div>{111}{data.toString()}</div>;break;
     default: break;
   }
+
   return <div>{333}</div>
 }
 function hh(){
+  let h = domHolder();
   let div = null;
 
-  const data = h.switch(a)
-    .case(1, () => { dom.update(<div>{111}</div>);}, false)
-    .case(2, () => {dom.update(<div>{111}</div>);}, )
-    .case(3, null, false)
-    .case(4, ()=>{return <div>{111}</div>});
-    .default(()=>{
-      return h.update(<div>{3333}</div>)
-    })
-  if(data) return data;
+  return h.switch(a, {
+    '1': ()=>{
+      dom = <div>{111}</div>;
+    },
+    '2': ()=>{
+      dom = <div>{111}</div>;
+      return h.break;
+    },
+    '3': ()=>{}
+    '4': () => {
+      const data = new Date();
+      return <div>{111}{data.toString()}</div>;
+    },
+    ['default']: ()=>{
+      return h.break;
+    }
+  }).end(()=>{
+    return <div>{333}</div>
+  })
 
-  return h.default(null);
 }
 
+function ff(){
+  let a = 1;
+  let b = 2;
+  let dom = null;
+  if(a === 1){
+    return <div>{a}</div>
+  }else if(a > 2){
+    switch(b){
+      case 3: dom = <div>{b}</div>;break;
+      default: break;
+    }
+  }
+  a = 2;
+  b = 3;
+  return <div>{a}{dom}</div>
+}
+function ff(){
+  let a = 1;
+  let b = 2;
+  let dom = null;
+  if(a === 1){
+    return <div>{a}</div>
+  }else if(a > 2){
+    switch(b){
+      case 3: dom = <div>{b}</div>;break;
+      default: break;
+    }
+  }
+  a = 2;
+  b = 3;
+  return <div>{a}{dom}</div>
+}
+
+function hh(){
+  return <div>{333}</div>
+}
 function hh(){
   return <div>{333}</div>
 }

@@ -6,9 +6,16 @@
 
 import {AlinsType, type} from 'alins-utils';
 
+export type IFragment = DocumentFragment;
+
+export type ITrueElement = IElement | ITextNode | IFragment;
+// 广义元素
+export type IGeneralElement = ITrueElement | null;
+
+
 export interface IElement {
   [type]?: AlinsType.Element;
-  appendChild(child: IElement|ITextNode): void;
+  appendChild(child: ITrueElement): void;
   // target stopPropagation preventDefault
   addEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
   removeEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
@@ -19,7 +26,7 @@ export interface IElement {
     add(name: string): void;
     remove(name: string): void;
   }
-  insertBefore<T extends IElement>(node: T, child: IElement | null): T;
+  insertBefore<T extends ITrueElement>(node: T, child: IElement | null): T;
   remove(): void;
   get parentElement(): IElement;
   get nextSibling(): IElement;
@@ -41,7 +48,7 @@ export const Renderer = {
         const el = document.createElement(tag);
         // @ts-ignore
         el[type] = AlinsType.Element;
-        return el as IElement;
+        return el as any as IElement;
     },
     createTextNode (text: string) {
         const el = document.createTextNode(text);
@@ -52,10 +59,16 @@ export const Renderer = {
     createEmptyMountNode (): IElement {
         return document.createComment('') as any;
     },
-    createDocumentFragment (): IElement {
-        return document.createDocumentFragment() as any;
+    createDocumentFragment (): IFragment {
+        return document.createDocumentFragment();
+    },
+    isFragment (el: any): boolean {
+        return el instanceof DocumentFragment;
     },
     isOriginElement (el: any) {
         return el instanceof Node;
+    },
+    isElement (el: any) {
+        return this.isFragment(el) || this.isOriginElement(el);
     }
 };
