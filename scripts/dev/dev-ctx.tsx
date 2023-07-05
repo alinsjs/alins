@@ -35,22 +35,123 @@ function mainOrigin(){
     }
     return <div>222</div>
 }
+function mainOrigin2(){
+    let a = 'a';
+    let b = 'b';
+    win.a = a;
+    win.b = b;
+    if(a === 'aa') {
+        b = 'bb';
+    }
+    return <div>{b}</div>
+
+
+}
+function mainOrigin3(){
+    let a = 'a';
+    let b = 'b';
+    win.a = a;
+    win.b = b;
+    if(a === 'aa') {
+        b = 'bb';
+    }
+    return <div>{b}</div>
+}
+
+function mainOrigin4(){
+    let a = 'a';
+    let b = 'b';
+    let c = 'c';
+    win.a = a;
+    win.b = b;
+    if(a === 'aa') {
+        b = 'bb';
+        switch(c){
+            case 'b1': return <div>b1</div>;
+            case 'b2': b = 'xxx'; break;
+        }
+        return <div>aa</div>;
+    }
+    return <div>{b}</div>
+}
+
 
 function main () {
 
-    var a=1;
 
     const ctx = createContext();
-    let str = ctx.$('11');
-    win.str = str;
-    return ctx.if(() => str.value === '11', () => {
-        str.value = '22';
-        console.log(111)
-        return null;
-    }).else(() => {
-        console.log(222)
-        return <div>222</div>;
-    });
+    let a = ctx.$('a');
+    let b = ctx.$('b');
+    let c = ctx.$('c');
+    win.a = a;
+    win.b = b;
+    win.c = c;
+    return ctx.if(()=>a.value === 'aa', () => {
+        b.value = 'bb';
+        return ctx.switch(c, [{
+            value: 'b1',
+            call: ()=><div>b1</div>,
+        },{
+            value: 'b2',
+            call: ()=>{b.value = 'xxx'},
+            brk: true
+        }]).end(()=>{
+            return <div>aa</div>;
+        })
+    }).else(()=>{
+        return <div>{b}</div>
+    })
+
+    // const ctx = createContext();
+    // let a = ctx.$('a');
+    // let b = ctx.$('b');
+    // win.a = a;
+    // win.b = b;
+    // return ctx.switch(a, [
+    //     {
+    //         value: 'a1',
+    //         call(){b.value = 'a1'},
+    //     },{
+    //         value: 'a2',
+    //         call(){b.value = 'a2'},
+    //         brk: true,
+    //     },{
+    //         value: 'a3',
+    //         call(){b.value = 'a333';return <h>{b}</h>},
+    //     },{
+    //         value: 'a4',
+    //         call(){b.value = 'a4'},
+    //     },{
+    //         call(){b.value = 'default';},
+    //     }
+    // ]).end(()=>{
+    //     return <div>{b}</div>
+    // });
+
+    // const ctx = createContext();
+    // let a = ctx.$('a');
+    // let b = ctx.$('b');
+    // win.a = a;
+    // win.b = b;
+    // ctx.if(() => a.value === 'aa', () => {
+    //     console.log('b.value == bb');
+    //     b.value = 'bb';
+    // }).end();
+    // return <div>{b}</div>
+
+    // var a=1;
+
+    // const ctx = createContext();
+    // let str = ctx.$('11');
+    // win.str = str;
+    // return ctx.if(() => str.value === '11', () => {
+    //     str.value = '22';
+    //     console.log(111)
+    //     return <></div>;
+    // }).else(() => {
+    //     console.log(222)
+    //     return <div>222</div>;
+    // });
 
 
     // const data = ctx.dynamic(async () => {

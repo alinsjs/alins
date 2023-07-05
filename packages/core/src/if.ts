@@ -20,8 +20,10 @@ export interface IIfReturn {
 
 export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfReturn {
     const calls: IReturnCall[] = [];
+
     const switchNode = (i: number) => {
-        util.anchor.replaceContent(util.cache.get(calls[i]));
+        const dom = util.cache.call(calls[i]);
+        util.anchor.replaceContent(dom);
     };
     const onDataChange = (bs: boolean[]) => {
         console.log('onDataChange', bs);
@@ -35,11 +37,13 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     const acceptIf = (ref: IIfTarget, call: IReturnCall) => {
         const id = index ++;
         calls[id] = call;
-        const ele = util.cache.call(call);
         refs[id] = ref;
         if (returnEle === empty) {
             const value = typeof ref === 'function' ? ref() : ref.value;
-            if (value) returnEle = ele;
+            if (value) {
+                const dom = util.cache.call(call);
+                if (dom) returnEle = dom;
+            }
         }
     };
     acceptIf(ref, call);
@@ -59,7 +63,10 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
             ), onDataChange, false);
             // @ts-ignore ! 回收refs内存
             // refs = null;
-            return util.anchor.replaceContent(returnEle);
+            if (returnEle !== empty) {
+                return util.anchor.replaceContent(returnEle);
+            }
+            return null;
         }
     };
     return result;

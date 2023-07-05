@@ -226,7 +226,8 @@ function hh(){
   let h = domHolder();
   let div = null;
 
-  return h.switch(a, {
+  // todo json 使用empty
+  return h.switch(a, [{
     '1': ()=>{
       dom = <div>{111}</div>;
     },
@@ -234,15 +235,14 @@ function hh(){
       dom = <div>{111}</div>;
       return h.break;
     },
-    '3': ()=>{}
+    '3': ()=>{},
     '4': () => {
       const data = new Date();
       return <div>{111}{data.toString()}</div>;
     },
     ['default']: ()=>{
       return h.break;
-    }
-  }).end(()=>{
+    }]).end(()=>{
     return <div>{333}</div>
   })
 
@@ -331,6 +331,13 @@ function hh(){
   let h = domHolder();
   let list = [];
   let children = h.dom([]);
+
+  for(let i of list){
+    if(i === 3) return <div>{i}</div>
+    children.push(<div>{i}</div>)
+  }
+
+  return h.for(list, )
 
   if(h.for(list, (item, index)=>{
     const data = h.if(()=>i.value === 3, ()=>{

@@ -7,9 +7,8 @@
 import {react} from 'packages/reactive/src';
 import {IIfTarget, _if} from './if';
 import {computed} from 'alins-reactive';
-import {_switch} from './switch';
+import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
 import {_for} from './for';
-import {isJSXElement, transformOptionsToElement} from './element/element';
 import {IAsyncReturnCall, ICtxUtil, IReturnCall} from './type';
 import {createDomCtx} from './dom';
 import {createAnchor, createCallCache} from './ctx-util';
@@ -29,7 +28,7 @@ export function createContext () {
         $: react,
         co: computed,
         if: (cond: IIfTarget, call: IReturnCall) => _if(cond, call, util),
-        switch: _switch,
+        switch: (cond: ISwitchTarget, list: ISwitchCaseList) => _switch(cond, list, util),
         for: _for,
         dom: createDomCtx,
         // ! 处理 await 代码

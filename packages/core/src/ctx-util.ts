@@ -5,7 +5,7 @@
  */
 
 
-import {IGeneralElement, ITextNode, ITrueElement, Renderer} from './element/renderer';
+import {ITextNode, ITrueElement, Renderer} from './element/renderer';
 import {IElement} from './element/renderer';
 import {IAsyncReturnCall, IReturnCall} from './type';
 import {createEmptyJson} from './utils';
@@ -16,7 +16,7 @@ firstElement => anchor 之前为组件的所有dom
 
 function getFirstElement (element: ITrueElement) {
     // @ts-ignore
-    return (Renderer.isFragment(element) ? element.children[0] : element) || null;
+    return (Renderer.isFragment(element) ? (element.children[0]) : element);
 }
 
 
@@ -24,33 +24,27 @@ export function createAnchor () {
     let end: IElement|null = null;
     let start: IElement|null = null;
 
-    const checkElement = (element: IGeneralElement) => {
-        if (element === null) {
-            start = end;
-            return false;
-        }
-        return true;
-    };
-
-    const initFirstMount = (element: IGeneralElement) => {
+    const initFirstMount = (element: ITrueElement) => {
         end = Renderer.createEmptyMountNode();
-        if (!checkElement(element)) return end;
-        start = getFirstElement(element);
+        start = getFirstElement(element) || end;
 
         if (Renderer.isFragment(element)) {
+            // @ts-ignore
             element.appendChild(end);
             return element;
         }
         const d = Renderer.createDocumentFragment();
+        // @ts-ignore
         d.appendChild(element);
+        // @ts-ignore
         d.appendChild(end);
         return d;
     };
 
     return {
         // 往当前组件替换dom元素
-        replaceContent (element: IGeneralElement) {
-            debugger;
+        replaceContent (element?: ITrueElement) {
+            if (!element) return;
             if (!end || !start) { // 初次使用
                 return initFirstMount(element);
             }
@@ -61,9 +55,8 @@ export function createAnchor () {
                 }
                 cursor.remove();
             }
-            if (!checkElement(element)) return end;
             // @ts-ignore
-            start = getFirstElement(element);
+            start = getFirstElement(element) || end;
             end.parentElement.insertBefore(element, end);
             return element;
         }
@@ -72,7 +65,7 @@ export function createAnchor () {
 
 export type ICtxAnchor = ReturnType<typeof createAnchor>
 
-const DEFAULT_CACHE_KEY = createEmptyJson();
+// const DEFAULT_CACHE_KEY = createEmptyJson();
 
 function transformElementToCache (element: ITrueElement): (IElement|ITextNode)[] {
     if (Renderer.isFragment(element)) {
@@ -104,26 +97,26 @@ export function createCallCache () {
         // ! 调用某个函数，缓存其结果
         // @ts-ignore
         call (fn: IReturnCall|IAsyncReturnCall, realGenerator: IReturnCall = fn) {
+            const item = map.get(fn);
+            if (item) return transformCacheToElement(item);
             currentCall = fn;
             const element = realGenerator();
             currentCall = null;
+            if (typeof element === 'undefined') return;
             // 有可能存在void的情况
             if (Renderer.isElement(element)) {
                 map.set(fn, transformElementToCache(element));
                 return element;
             }
-            // throw new Error('动态条件分支中不允许返回非元素类型');
+            // todo 对于 return; 的处理
+            throw new Error('动态条件分支中不允许返回非元素类型');
         },
         getCurrentCall () {
             return currentCall;
         },
-        cacheDefault (el: ITrueElement) {
-            map.set(DEFAULT_CACHE_KEY, transformElementToCache(el));
-        },
-        get (fn: IReturnCall): ITrueElement {
-            const 
-            return transformCacheToElement(map.get(fn));
-        },
+        // cacheDefault (el: ITrueElement) {
+        //     map.set(DEFAULT_CACHE_KEY, transformElementToCache(el));
+        // },
     };
 }
 export type ICallCache = ReturnType<typeof createCallCache>

@@ -8,8 +8,8 @@
 import {ICallCache, ICtxAnchor} from './ctx-util';
 import {ITrueElement} from './element/renderer';
 
-export type IReturnCall = () => ITrueElement;
-export type IAsyncReturnCall = () => Promise<ITrueElement>;
+export type IReturnCall = () => ITrueElement|void;
+export type IAsyncReturnCall = () => Promise<ITrueElement|void>;
 
 export interface ICtxUtil {
     cache: ICallCache;
