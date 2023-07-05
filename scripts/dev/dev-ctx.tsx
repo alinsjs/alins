@@ -2,6 +2,8 @@
 
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
+import {react} from 'packages/reactive/src';
+import {watch} from 'packages/reactive/src';
 
 /*
  * @Author: chenzhongsheng
@@ -10,6 +12,8 @@ import {createContext} from 'packages/core/src/context';
  */
 
 
+window.react = react;
+window.watch = watch;
 const win = window as any;
 
 const delay = (time = 3000) => {
@@ -27,80 +31,86 @@ function xxx () {
     }
 }
 
-function mainOrigin(){
+function mainOrigin () {
     let str = '11';
-    if(str === '11') {
+    if (str === '11') {
         str = '22';
-        return <div>111</div>
+        return <div>111</div>;
     }
-    return <div>222</div>
+    return <div>222</div>;
 }
-function mainOrigin2(){
-    let a = 'a';
+function mainOrigin2 () {
+    const a = 'a';
     let b = 'b';
     win.a = a;
     win.b = b;
-    if(a === 'aa') {
+    if (a === 'aa') {
         b = 'bb';
     }
-    return <div>{b}</div>
+    return <div>{b}</div>;
 
 
 }
-function mainOrigin3(){
-    let a = 'a';
+function mainOrigin3 () {
+    const a = 'a';
     let b = 'b';
     win.a = a;
     win.b = b;
-    if(a === 'aa') {
+    if (a === 'aa') {
         b = 'bb';
     }
-    return <div>{b}</div>
+    return <div>{b}</div>;
 }
 
-function mainOrigin4(){
-    let a = 'a';
+function mainOrigin4 () {
+    const a = 'a';
     let b = 'b';
-    let c = 'c';
+    const c = 'c';
     win.a = a;
     win.b = b;
-    if(a === 'aa') {
+    if (a === 'aa') {
         b = 'bb';
-        switch(c){
+        switch (c) {
             case 'b1': return <div>b1</div>;
             case 'b2': b = 'xxx'; break;
         }
         return <div>aa</div>;
     }
-    return <div>{b}</div>
+    return b === 'b' ? <div>{b}</div> : <h1>{b}2</h1>;
 }
 
-
+// TODO 有bug 
+/**
+ a.value = 'a1'
+b.value = 'bb'
+a.value = 'a2'
+ */
 function main () {
-
-
     const ctx = createContext();
-    let a = ctx.$('a');
-    let b = ctx.$('b');
-    let c = ctx.$('c');
+    const a = ctx.$('a2');
+    const b = ctx.$('b');
+    const c = ctx.$('c');
     win.a = a;
     win.b = b;
     win.c = c;
-    return ctx.if(()=>a.value === 'aa', () => {
-        b.value = 'bb';
+    win.ctx = ctx;
+    return ctx.if(() => a.value === 'a1', () => {
+        // b.value = 'bb'; // ! todo 这里打开有bug
         return ctx.switch(c, [{
-            value: 'b1',
-            call: ()=><div>b1</div>,
-        },{
-            value: 'b2',
-            call: ()=>{b.value = 'xxx'},
+            value: 'c1',
+            call: () => <div>c1</div>,
+        }, {
+            value: 'c2',
+            call: () => {b.value = 'c2';},
             brk: true
-        }]).end(()=>{
-            return <div>aa</div>;
-        })
-    }).else(()=>{
-        return <div>{b}</div>
-    })
+        }]).end(() => {
+            return  <div>c-end</div>;
+        });
+    }).else(() => {
+        return ctx.if(()=>b.value === 'b', ()=><div>b1</div>)
+            .else(()=><h1>b2</h1>);
+        // return <div>{b}</div>
+    });
 
     // const ctx = createContext();
     // let a = ctx.$('a');

@@ -11,37 +11,51 @@ import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
 import {_for} from './for';
 import {IAsyncReturnCall, ICtxUtil, IReturnCall} from './type';
 import {createDomCtx} from './dom';
-import {createAnchor, createCallCache} from './ctx-util';
+import {createAnchor, createBranchLink, createCallCache} from './ctx-util';
 import {ITrueElement, Renderer} from './element/renderer';
+import {IBranchTarget} from './ctx-util';
 
 
 export function createContext () {
     const anchor = createAnchor();
     const cache = createCallCache();
 
+    const branch = createBranchLink(cache);
+
     const util: ICtxUtil = {
         anchor,
         cache,
+        branch,
     };
 
     const ctx = {
+        util,
         $: react,
         co: computed,
-        if: (cond: IIfTarget, call: IReturnCall) => _if(cond, call, util),
+        if: (cond: IIfTarget, call: IReturnCall) => {
+            return _if(cond, call, util);
+        },
         switch: (cond: ISwitchTarget, list: ISwitchCaseList) => _switch(cond, list, util),
         for: _for,
         dom: createDomCtx,
         // ! 处理 await 代码
         dynamic (call: IAsyncReturnCall, isReturnEl = true) {
             // todo
+            let target: IBranchTarget;
             call().then((res: ITrueElement|any) => {
                 if (Renderer.isElement(res) && isReturnEl) {
-                    util.anchor.replaceContent(res);
+                    if (target.isVisible()) {
+                        anchor.replaceContent(res);
+                    } else {
+                        cache.modifyCache(call, res);
+                    }
                 }
             });
             if (isReturnEl) {
+                target = branch.next(call as any, true);
                 const cacheCall = () => Renderer.createEmptyMountNode();
-                const res = cache.call(call, cacheCall) as ITrueElement;
+                const res = cache.call(target, cacheCall) as ITrueElement;
+                branch.back();
                 return anchor.replaceContent(res);
             }
         }

@@ -18,6 +18,7 @@ export interface IProxyUtils {
   triggerChange: (property: string, nv: any, old?: any) => void;
   forceWrite: (v: any) => void;
   subscribe: (ln: IProxyListener<any>, deep?: boolean) => void;
+  isArray: boolean;
 }
 
 interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {

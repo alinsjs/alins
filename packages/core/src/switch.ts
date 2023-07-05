@@ -6,6 +6,7 @@
 
 import {IWatchRefTarget, watch} from 'packages/reactive/src';
 import {ISimpleValue} from 'packages/utils/src';
+import {IBranchTarget} from './ctx-util';
 import {ITrueElement} from './element/renderer';
 import {ICtxUtil, IReturnCall} from './type';
 
@@ -38,17 +39,27 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
 
     let endCall: IReturnCall;
 
+    const branchMap = new WeakMap<IReturnCall, IBranchTarget>();
+
     let result: SwitchResult = SwitchResult.Init;
 
-    const execSingle = ({call, brk}: ISwitchCase, returnEl?: (el?: ITrueElement)=>void) => {
+    let returnEl: any = null;
+
+    const execSingle = ({call, brk}: ISwitchCase, isInit: boolean) => {
         if (!call) {
             result = brk ? SwitchResult.Break : SwitchResult.Continue;
             return !!brk;
         }
-        const dom = util.cache.call(call);
+        const branch = branchMap.get(call);
+        if (!branch) throw new Error('empty branch');
+        const current = branch.current();
+        const dom = util.cache.call(branch);
         if (dom) {
-            const el = util.anchor.replaceContent(dom);
-            if (returnEl) returnEl(el);
+            if (isInit) {
+                returnEl = util.anchor.replaceContent(dom);
+            } else {
+                if (branch.isVisible(current)) util.anchor.replaceContent(dom);
+            }
             result = SwitchResult.Return;
             return true;
         }
@@ -56,36 +67,55 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         return !!brk;
     };
 
-    const run = (value: any, returnEl?: (el?: ITrueElement)=>void) => {
+
+    const run = (value: any, isInit = false) => {
+        console.warn('switch run');
         let macthed: boolean = false;
         result = SwitchResult.Init;
+        let first = true;
         for (const item of caseList) {
+            if (isInit && item.call) {
+                // ! 首次run初始化分支
+                debugger;
+                branchMap.set(item.call, util.branch.next(item.call, first));
+                if (first) first = false;
+            }
             if (macthed) {
-                if (execSingle(item, returnEl)) break;
+                if (execSingle(item, isInit)) break;
             } else {
                 if (item.value === value || typeof item.value === 'undefined') { // 命中或走default
                     macthed = true;
-                    if (execSingle(item, returnEl)) break;
+                    if (execSingle(item, isInit)) break;
                 }
             }
         }
+
+        if (isInit) {
+            branchMap.set(endCall, util.branch.next(endCall, !first));
+            util.branch.back();
+        }
+
         // @ts-ignore
         if (result !== SwitchResult.Return) { // 不是return;
-            const dom = util.cache.call(endCall);
-            const el = util.anchor.replaceContent(dom);
-            if (returnEl) returnEl(el);
+            const branch = branchMap.get(endCall) as IBranchTarget;
+            const current = branch.current();
+            const dom = util.cache.call(branch);
+            if (isInit) {
+                returnEl = util.anchor.replaceContent(dom);
+            } else {
+                if (branch.isVisible(current)) util.anchor.replaceContent(dom);
+            }
         }
     };
 
     return {
         end (call: IReturnCall): ITrueElement {
             endCall = call;
-            let returnEl: ITrueElement;
-            run(watch(target, (value) => {
+            console.warn('switch end');
+            const init = watch(target, (value) => {
                 run(value);
-            }).value, el => {
-                if (el) returnEl = el;
             });
+            run(init.value, true);
             // @ts-ignore
             return returnEl;
         }

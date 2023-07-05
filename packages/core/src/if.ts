@@ -10,6 +10,7 @@ import {
 } from './type';
 import {IGeneralElement, ITrueElement} from './element/renderer';
 import {empty} from 'packages/utils/src';
+import {IBranchTarget} from './ctx-util';
 
 export type IIfTarget = IWatchRefTarget<boolean>;
 export interface IIfReturn {
@@ -19,14 +20,17 @@ export interface IIfReturn {
 }
 
 export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfReturn {
-    const calls: IReturnCall[] = [];
+    const branchs: IBranchTarget[] = [];
+    console.log(branchs);
 
     const switchNode = (i: number) => {
-        const dom = util.cache.call(calls[i]);
-        util.anchor.replaceContent(dom);
+        const branch = branchs[i];
+        const current = branch.current();
+        const dom = util.cache.call(branch);
+        if (branch.isVisible(current)) util.anchor.replaceContent(dom);
     };
     const onDataChange = (bs: boolean[]) => {
-        console.log('onDataChange', bs);
+        console.warn('if onDataChange', bs);
         for (let i = 0; i < bs.length; i++) {
             if (bs[i]) return switchNode(i);
         }
@@ -34,19 +38,20 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     let index = 0;
     let returnEle: ITrueElement|(typeof empty) = empty;
     const refs: IIfTarget[] = [];
-    const acceptIf = (ref: IIfTarget, call: IReturnCall) => {
+    const acceptIf = (ref: IIfTarget, call: IReturnCall, init = false) => {
         const id = index ++;
-        calls[id] = call;
+        console.warn('accept if', id);
+        branchs[id] = util.branch.next(call, init);
         refs[id] = ref;
         if (returnEle === empty) {
             const value = typeof ref === 'function' ? ref() : ref.value;
             if (value) {
-                const dom = util.cache.call(call);
+                const dom = util.cache.call(branchs[id]);
                 if (dom) returnEle = dom;
             }
         }
     };
-    acceptIf(ref, call);
+    acceptIf(ref, call, true);
     const result: IIfReturn = {
         elif (ref, call) {
             acceptIf(ref, call);
@@ -55,9 +60,11 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         else (call) {
             // else 永远为true
             acceptIf(() => true, call);
+            console.log('if else');
             return this.end();
         },
         end () {
+            console.warn('if end', refs);
             watch<boolean[]>(() => (
                 refs.map(item => typeof item === 'function' ? item() : item.value)
             ), onDataChange, false);
@@ -66,6 +73,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
             if (returnEle !== empty) {
                 return util.anchor.replaceContent(returnEle);
             }
+            util.branch.back();
             return null;
         }
     };

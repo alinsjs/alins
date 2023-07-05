@@ -67,7 +67,12 @@ export function createUtils (data: any, lns: IProxyListenerMap, path: string): I
         triggerChange,
         forceWrite,
         subscribe,
+        isArray: Array.isArray(data),
     };
+}
+
+export function arrayProxy () {
+    
 }
 
 export function createProxy<T extends IJson> (data: T, {
@@ -94,7 +99,9 @@ export function createProxy<T extends IJson> (data: T, {
     }
 
     // @ts-ignore
-    const {triggerChange} = data[util] = createUtils(data, lns, path);
+    const {
+        triggerChange, isArray
+    } = data[util] = createUtils(data, lns, path);
 
     return new Proxy(data, {
         get (target: IJson, property, receiver) {
@@ -115,7 +122,7 @@ export function createProxy<T extends IJson> (data: T, {
         },
         set (target: IJson, property, v, receiver) {
             if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
-                // if (__DEBUG__) console.log('Proxy.set', target, property, v);
+                console.log('Proxy.set', target, property, v);
                 const origin = target[property];
                 
                 if (v === origin) return true;
