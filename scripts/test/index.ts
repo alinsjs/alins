@@ -7,6 +7,7 @@ import {startTest} from 'easy-test-lib';
 import reactive from './cases/reactive';
 import dom from './cases/dom';
 import ifCase from './cases/if';
+import asyncCase from './cases/async';
 
 function startTestMain () {
     startTest({
@@ -14,6 +15,7 @@ function startTestMain () {
             ...dom,
             ...reactive,
             ...ifCase,
+            ...asyncCase,
         ],
         onTestComplete ({passed, results, time}) {
             console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);

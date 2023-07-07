@@ -27,9 +27,9 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
 
     let branchMap: WeakMap<IBranchTarget, 1>|null = null;
 
-    const createTarget = (call: IReturnCall, anchor: ICtxAnchor, isNext = false): IBranchTarget => {
+    const createTarget = (call: IReturnCall, anchor: ICtxAnchor, forward = false): IBranchTarget => {
         const last = stack.length === 0 ? Root : stack[stack.length - 1];
-        const parent = (isNext ? last?.parent : last) as IBranchTarget|null;
+        const parent = (forward ? last : last?.parent) as IBranchTarget|null;
         return {
             id: id++,
             call,
@@ -64,7 +64,8 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                         console.warn('isVisible result false1');
                         break;
                     }
-                    cache.clearCache(parent.call); // 清除不可见分支的缓存
+                    // todo ! 是否需要
+                    // cache.clearCache(parent.call); // 清除不可见分支的缓存
                     parent = parent.parent;
                 }
                 console.warn('isVisible result false2');
@@ -82,8 +83,10 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
     };
 
     return {
+        // forward 表示是否要向下一层
         next (call: IReturnCall, anchor: ICtxAnchor, forward = false) {
-            const target = createTarget(call, anchor, !forward);
+            const target = createTarget(call, anchor, forward);
+            debugger;
             forward ? stack.push(target) : stack[stack.length - 1] = target;
             console.warn(`【target:${target.id}】`, target.call.toString());
             if (!window.bs) window.bs = {};

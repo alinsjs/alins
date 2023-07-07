@@ -96,7 +96,7 @@ async function hh(){
   let v = '';
   let data = react('');
   if(v === 1){
-    const r = c.dynamic(async ()=>{
+    const r = c.async(async ()=>{
       data.value = await aa();
     }, false)
   }
@@ -108,7 +108,7 @@ async function hh(){
 }
 async function hh(){
   let c = createContext();
-  const r = c.dynamic(async ()=>{
+  const r = c.async(async ()=>{
     const data = await aa();
     return <div>{data}</div>
   }, 1)
@@ -118,7 +118,7 @@ async function hh(){
 function hh(){
   let c = createContext();
   
-  return c.dynamic((async ()=>{
+  return c.async((async ()=>{
     const data = await aa();
     const data2 = Date.now() + 1000;
     let v = '';
@@ -160,7 +160,7 @@ function hh(){
     }).elif(()=>a.value===3, ()=>{
       dom.update(()=><div>{3}</div>, 2);
     }).else(async ()=>{
-      return c.dynamic(async (node)=>{
+      return c.async(async (node)=>{
         const data = await aa();
         let v = '';
         if(data.success){

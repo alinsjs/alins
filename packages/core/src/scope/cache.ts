@@ -42,6 +42,7 @@ export function createCallCache () {
         // ! 调用某个函数，缓存其结果
         // @ts-ignore
         call (branch: IBranchTarget, realGenerator?: IReturnCall) {
+            debugger;
             branch.visit();
             const fn = branch.call;
             const item = map.get(fn);
@@ -70,6 +71,9 @@ export function createCallCache () {
         // },
         clearCache (fn: IReturnCall) {
             map.delete(fn);
+        },
+        _get (fn: any) {
+            return map.get(fn);
         }
     };
 }

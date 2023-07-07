@@ -3,20 +3,19 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-07 20:44:29
+ * @LastEditTime: 2023-07-07 22:31:17
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
+import {createTestBase} from '../test-util';
 
 const w = window as any;
 w.React = React;
 const addEnv = (data: any) => {Object.assign(w, data);};
 
+
 const if3Base = () => {
-    const list: any[] = [];
-    const ctx = createContext();
-    const data = ctx.$({a: 1, b: 1, c: 1});
-    const container = document.createElement('div');
+    const {list, ctx, data, container, collect, str} = createTestBase();
     /*
         const dom = <div>
             {
@@ -60,9 +59,8 @@ const if3Base = () => {
         }
     </div>;
     container.appendChild(dom);
-    document.body.appendChild(container);
 
-    return {container, data, list, collect: () => {list.push(container.innerText);}};
+    return {container, data, list, collect, str};
 };
 
 export default [
@@ -158,7 +156,7 @@ export default [
             collect();
             return result;
         },
-        expect: ['0\n11', 'else', 'else', '0\n22', 'else', 'else', '0\n11']
+        expect: ['011', 'else', 'else', '022', 'else', 'else', '011']
     },
     {
         name: '三层嵌套if-1',
@@ -196,6 +194,7 @@ export default [
             collect();
             data.a = 2;
             collect();
+            // @ts-ignore
             window.data = data;
             return list;
         },
@@ -203,143 +202,4 @@ export default [
     },
 
 
-    // {
-    //     name: '两层嵌套if',
-    //     // disabled: false,
-    //     test () {
-
-    //         const result: any[] = [];
-
-    //         const a = react(1);
-    //         const b = react(1);
-    //         const container = document.createElement('div');
-    //         div({
-    //             id: 'test1',
-    //             $child: [
-    //                 $if(() => a.value === 1, () => {
-    //                     return div({$child: ['a1']});
-    //                 }).elif(() => a.value === 2, () => {
-    //                     return $if(() => b.value === 1, () => {
-    //                         return div({$child: ['b1']});
-    //                     }).elif(() => b.value === 2, () => {
-    //                         return div({$child: ['b2']});
-    //                     });
-    //                 })
-    //             ]
-    //         }).mount(container);
-    //         result.push(container.innerText);
-    //         a.value = 2;
-    //         result.push(container.innerText);
-    //         b.value = 2;
-    //         result.push(container.innerText);
-    //         b.value = 1;
-    //         a.value = 1;
-    //         result.push(container.innerText);
-    //         b.value = 2;
-    //         a.value = 2;
-    //         result.push(container.innerText);
-    //         return result;
-    //     },
-    //     expect: ['a1', 'b1', 'b2', 'a1', 'b2']
-    // },
-    // {
-    //     name: '两层嵌套if-2',
-    //     // disabled: false,
-    //     test () {
-
-    //         const result: any[] = [];
-
-    //         const a = react(1);
-    //         const b = react(1);
-    //         const container = document.createElement('div');
-    //         div({
-    //             id: 'test1',
-    //             $child: [
-    //                 $if(() => a.value === 1, () => {
-    //                     return div({$child: ['a1']});
-    //                 }).elif(() => a.value === 2, () => {
-    //                     return $if(() => b.value === 1, () => {
-    //                         return div({$child: ['b1']});
-    //                     }).elif(() => b.value === 2, () => {
-    //                         return div({$child: ['b2']});
-    //                     }).elif(() => b.value === 3, () => {
-    //                         return div({$child: ['b3']});
-    //                     });
-    //                 })
-    //             ]
-    //         }).mount(container);
-    //         result.push(container.innerText);
-    //         console.log('1----------------------------------------------');
-    //         a.value = 2;
-    //         result.push(container.innerText);
-    //         console.log('2----------------------------------------------');
-    //         b.value = 2;
-    //         result.push(container.innerText);
-    //         console.log('3----------------------------------------------');
-    //         a.value = 1;
-    //         result.push(container.innerText);
-    //         console.log('4----------------------------------------------');
-    //         a.value = 2;
-    //         result.push(container.innerText);
-    //         // console.log('5----------------------------------------------');
-    //         // b.value = 3;
-    //         // result.push(container.innerText);
-    //         // console.log('6----------------------------------------------');
-    //         // a.value = 1;
-    //         // result.push(container.innerText);
-    //         // console.log('7----------------------------------------------');
-    //         // a.value = 2;
-    //         // result.push(container.innerText);
-    //         return result;
-    //     },
-    //     expect: ['a1', 'b1', 'b2', 'a1', 'b2']
-    // },
-    // {
-    //     name: '三层嵌套if',
-    //     // disabled: false,
-    //     test () {
-
-    //         const result: any[] = [];
-
-    //         const {data: testIf, container} = ifBase();
-
-    //         testIf.a.value = 2;
-    //         testIf.b.value = 2;
-    //         testIf.b.value = 1;
-    //         testIf.c.value = 2;
-    //         testIf.b.value = 2;
-    //         result.push(container.innerText);
-
-    //         addEnv({testIf});
-    //         return result;
-    //     },
-    //     expect: ['c2']
-    // },
-    // {
-    //     name: '三层嵌套if2',
-    //     // disabled: false,
-    //     test () {
-
-    //         const result: any[] = [];
-
-    //         const {data: testIf, container} = ifBase();
-
-    //         testIf.a.value = 2;
-    //         testIf.b.value = 2;
-    //         testIf.c.value = 2;
-            
-    //         testIf.a.value = 1;
-    //         testIf.a.value = 2;
-
-    //         result.push(container.innerText);
-
-    //         console.log(container.innerText);
-
-    //         document.body.appendChild(container);
-
-    //         addEnv({testIf, container});
-    //         return result;
-    //     },
-    //     expect: ['c2']
-    // },
 ];

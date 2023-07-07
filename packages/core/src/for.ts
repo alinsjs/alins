@@ -1,4 +1,5 @@
 import {IProxyData} from 'packages/utils/src';
+import {IGeneralElement} from './element/renderer';
 
 /*
  * @Author: chenzhongsheng
@@ -6,6 +7,11 @@ import {IProxyData} from 'packages/utils/src';
  * @Description: Coding something
  */
 export function _for () {
+    
+}
+
+export function createForSingleItem (item: any, index: number, call: ()=>IGeneralElement) {
+    
     
 }
 

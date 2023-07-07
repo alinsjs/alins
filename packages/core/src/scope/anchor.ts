@@ -59,7 +59,7 @@ export function createAnchor (cache: ICallCache) {
         replaceBranch (branch: IBranchTarget) {
             console.log(start);
             // branch.parent
-            const current = branch.current();
+            const current = branch.current(); // ! 缓存一下当前branch， call之后会被覆盖
             const dom = cache.call(branch);
             // if (!window.bs) window.bs = {};
             // for (const k in window.bs) {
@@ -113,7 +113,7 @@ export function createAnchor (cache: ICallCache) {
             let parent = branch?.parent;
             while (parent && parent.anchor.start() === start) {
                 parent.anchor.setStart(newStart);
-                cache.modifyCache(parent.call, newEle);
+                if (parent.call) cache.modifyCache(parent.call, newEle);
                 parent = parent.parent;
             }
             start = newStart;

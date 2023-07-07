@@ -27,11 +27,13 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
 
     const switchNode = (i: number) => {
         const branch = branchs[i];
+        debugger;
         const dom = anchor.replaceBranch(branch);
         console.warn('switch node', i, dom);
     };
     const onDataChange = (bs: boolean[]) => {
         console.warn('if onDataChange', bs);
+        debugger;
         for (let i = 0; i < bs.length; i++) {
             if (bs[i]) return switchNode(i);
         }
@@ -83,3 +85,37 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     };
     return result;
 }
+
+// function aa () {
+//     const data = await aa();
+    
+//     a.a = data;
+    
+//     return xxx;
+
+//     return c.async(async () => {
+//         const data = await aa();
+//         a.a = data;
+//         return xxx;
+//     });
+// }
+
+// function aa () {
+//     if (a === 1) {
+//         const data = await aa();
+//         a.a = data;
+//     }
+
+//     return xxx;
+
+//     return c.if(a===1, ()=>{
+//         const el = c.async(async () => {
+//             const data = await aa();
+//             a.a = data;
+//             return xxx;
+//         });
+//         if(el) return el;
+//     }).else(()={
+//         return xxx;
+//     })
+// }

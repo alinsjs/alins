@@ -164,7 +164,7 @@ function main () {
     // });
 
 
-    // const data = ctx.dynamic(async () => {
+    // const data = ctx.async(async () => {
     //     await delay();
     //     str.value = '111';
     //     return <div>{str}</div>;

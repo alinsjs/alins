@@ -12,10 +12,10 @@ import {_for} from './for';
 import {IAsyncReturnCall, ICtxUtil, IReturnCall} from './type';
 import {createDomCtx} from './dom';
 // import {createAnchor, createBranchLink, createCallCache} from './ctx-util';
-import {ITrueElement, Renderer} from './element/renderer';
 import {createAnchor} from './scope/anchor';
 import {createCallCache} from './scope/cache';
-import {createBranchLink, IBranchTarget} from './scope/branch';
+import {createBranchLink} from './scope/branch';
+import {createAsyncScope} from './scope/async';
 
 export function createContext () {
     const cache = createCallCache();
@@ -40,27 +40,8 @@ export function createContext () {
         for: _for,
         dom: createDomCtx,
         // ! 处理 await 代码
-        dynamic (call: IAsyncReturnCall, isReturnEl = true) {
-            // todo
-            let target: IBranchTarget;
-            call().then((res: ITrueElement|any) => {
-                if (Renderer.isElement(res) && isReturnEl) {
-                    if (target.isVisible()) {
-                        anchor.replaceContent(res, target);
-                    } else {
-                        cache.modifyCache(call, res);
-                    }
-                }
-            });
-            if (isReturnEl) {
-                target = branch.next(call as any, anchor, true);
-                const cacheCall = () => Renderer.createEmptyMountNode();
-                const res = cache.call(target, cacheCall) as ITrueElement;
-                branch.back();
-                // ! 首次不需要branch
-                return anchor.replaceContent(res);
-            }
-        }
+        // isReturnEl 表示 await 语句块中是否有return语句
+        async: (call: IAsyncReturnCall, isReturnEl = true) => createAsyncScope(call, isReturnEl, util)
     };
     return ctx;
 }
