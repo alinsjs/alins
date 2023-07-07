@@ -6,7 +6,7 @@
 
 import {IWatchRefTarget, watch} from 'packages/reactive/src';
 import {ISimpleValue} from 'packages/utils/src';
-import {IBranchTarget} from './ctx-util';
+import {IBranchTarget} from './scope/branch';
 import {ITrueElement} from './element/renderer';
 import {ICtxUtil, IReturnCall} from './type';
 
@@ -58,7 +58,9 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
             if (isInit) {
                 returnEl = util.anchor.replaceContent(dom);
             } else {
-                if (branch.isVisible(current)) util.anchor.replaceContent(dom);
+                if (branch.isVisible(current)) {
+                    util.anchor.replaceContent(dom);
+                };
             }
             result = SwitchResult.Return;
             return true;

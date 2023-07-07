@@ -3,22 +3,17 @@
  * @Date: 2023-06-25 22:31:56
  * @Description: Coding something
  */
-import {addEvent, IEventNames} from './event';
-import {IElement, IFragment, IGeneralElement, ITrueElement, Renderer} from './renderer';
+import {addEvent, isEventAttr, IEventNames} from './event';
+import {IElement, IFragment, ITrueElement, Renderer} from './renderer';
 import {
     reactiveBinding, IBindingReactionEnable, reactiveBindingEnable,
     reactiveClass, IChildren,
 } from './dom-util';
-import {AlinsType, IJson, type} from 'alins-utils';
+import {IJson} from 'alins-utils';
 import {IBindingReaction, IBindingRef} from 'alins-reactive';
+import {IAttributes} from './jsx';
 
-export type IAttributeNames = 'accesskey'|'alt'|'async'|'autoplay'|'checked'|
-    'color'|'cols'|'dir'|'disabled'|'enctype'|'formnovalidate'|
-    'height'|'hidden'|'id'|'lang'|'maxlength'|'name'|'nonce'|
-    'readonly'|'required'|'size'|'src'|'style'|'summary'|'tabindex'|
-    'target'|'title'|'type'|'value'|'href'|'selected'|'poster'|
-    'muted'|'controls'|'loop'|'border'|'cellspacing'|'cellpadding'|
-    'rowspan'|'colspan';
+export type IAttributeNames = keyof IAttributes;
 
 // type IClassReaction = {
 //     [a in string]: a extends '$value' ? IBindingReaction : IBindingRef<boolean>;
@@ -73,32 +68,35 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         //     // todo
         //     delete opt.$life;
         // }
-
-        for (const k in opt.attributes) {
-            const v = opt[k];
-            if (typeof v === 'function' && v[type] !== AlinsType.BindResult) {
-                // @ts-ignore
-                addEvent(el, k, v);
-            } else if (k === 'class') {
-                // @ts-ignore
-                el.className = reactiveClass(v, (key, value) => {
-                    el = el as IElement;
-                    console.log(key, value);
-                    if (!key) el.className = value;
-                    else !!value ? el.classList.add(key) : el.classList.remove(key);
-                });
-            } else {
-                const value = reactiveBindingEnable(v, (v) => {
-                    el = el as IElement;
-                    el.setAttribute(k, v);
-                }, (bool) => {
-                    el = el as IElement;
-                    bool ? el.setAttribute(k, v) : el.removeAttribute(k);
-                });
-                // debugger;
-                console.warn('reactiveBindingEnable', k, value);
-                // @ts-ignore
-                el.setAttribute(k, value);
+        if (isDom) {
+            for (const k in opt.attributes) {
+                const v = opt.attributes[k];
+                if (isEventAttr(el as IElement, k, v)) {
+                    addEvent(el as IElement, k, v);
+                    continue;
+                }
+    
+                if (k === 'class') {
+                    // @ts-ignore
+                    el.className = reactiveClass(v, (key, value) => {
+                        el = el as IElement;
+                        console.log(key, value);
+                        if (!key) el.className = value;
+                        else !!value ? el.classList.add(key) : el.classList.remove(key);
+                    });
+                } else {
+                    const value = reactiveBindingEnable(v, (v) => {
+                        el = el as IElement;
+                        el.setAttribute(k, v);
+                    }, (bool) => {
+                        el = el as IElement;
+                        bool ? el.setAttribute(k, v) : el.removeAttribute(k);
+                    });
+                    // debugger;
+                    console.warn('reactiveBindingEnable', k, value);
+                    // @ts-ignore
+                    el.setAttribute(k, value);
+                }
             }
         }
     }
@@ -108,6 +106,11 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
 export function appendChildren (parent: IElement|IFragment, children: (IChildren|IJSXDomOptions)[]) {
     for (const item of children) {
         if (!item) continue;
+
+        if (Renderer.isElement(item)) {
+            parent.appendChild(item as any);
+            continue;
+        }
 
         let options: any = null;
         if (isJSXElement(item)) {
@@ -128,7 +131,12 @@ export function isJSXElement (item: any) {
 }
 
 export const JSX = {
-    createElement (tag: string, attributes: any, ...children: any[]): ITrueElement {
+    createElement (tag: string|((options: IJSXDomOptions)=>ITrueElement), attributes: any, ...children: any[]): ITrueElement {
+        if (typeof tag === 'function') {
+            const result: IJSXDomOptions = {attributes, children, jsx: true};
+            console.log('createComponent', result);
+            return tag(result);
+        }
         const result: IJSXDomOptions = {tag, attributes, children, jsx: true};
         console.log('createElement', result);
         return transformOptionsToElement(result);

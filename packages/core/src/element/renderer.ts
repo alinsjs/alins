@@ -8,10 +8,10 @@ import {AlinsType, type} from 'alins-utils';
 
 export type IFragment = DocumentFragment;
 
-export type ITrueElement = IElement | ITextNode | IFragment;
+// eslint-disable-next-line no-undef
+export type ITrueElement = JSX.Element | IElement | ITextNode | IFragment;
 // 广义元素
 export type IGeneralElement = ITrueElement | null;
-
 
 export interface IElement {
   [type]?: AlinsType.Element;

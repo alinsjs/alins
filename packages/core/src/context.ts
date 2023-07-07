@@ -11,10 +11,11 @@ import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
 import {_for} from './for';
 import {IAsyncReturnCall, ICtxUtil, IReturnCall} from './type';
 import {createDomCtx} from './dom';
-import {createAnchor, createBranchLink, createCallCache} from './ctx-util';
+// import {createAnchor, createBranchLink, createCallCache} from './ctx-util';
 import {ITrueElement, Renderer} from './element/renderer';
-import {IBranchTarget} from './ctx-util';
-
+import {createAnchor} from './scope/anchor';
+import {createCallCache} from './scope/cache';
+import {createBranchLink, IBranchTarget} from './scope/branch';
 
 export function createContext () {
     const anchor = createAnchor();

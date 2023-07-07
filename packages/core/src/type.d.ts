@@ -5,10 +5,13 @@
  */
 
   
-import {IBranchLink, ICallCache, ICtxAnchor} from './ctx-util';
+import {IBranchLink} from './scope/branch';
+import {ICtxAnchor} from './scope/anchor';
+import {ICallCache} from './scope/cache';
 import {ITrueElement} from './element/renderer';
 
-export type IReturnCall = () => ITrueElement|void;
+// eslint-disable-next-line no-undef
+export type IReturnCall = () => JSX.Element|null|ITrueElement|void;
 export type IAsyncReturnCall = () => Promise<ITrueElement|void>;
 
 export interface ICtxUtil {

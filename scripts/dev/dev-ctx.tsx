@@ -79,7 +79,7 @@ function mainOrigin4 () {
     return b === 'b' ? <div>{b}</div> : <h1>{b}2</h1>;
 }
 
-// TODO 有bug 
+// TODO 有bug
 /**
  a.value = 'a1'
 b.value = 'bb'
@@ -107,8 +107,8 @@ function main () {
             return  <div>c-end</div>;
         });
     }).else(() => {
-        return ctx.if(()=>b.value === 'b', ()=><div>b1</div>)
-            .else(()=><h1>b2</h1>);
+        return ctx.if(() => b.value === 'b', () => <div>b1</div>)
+            .else(() => <h1>b2</h1>);
         // return <div>{b}</div>
     });
 

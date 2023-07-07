@@ -62,5 +62,5 @@ export function createBinding (
 }
 
 export function isBindingResult (fn: any) {
-    return fn[type] === AlinsType.BindResult;
+    return fn?.[type] === AlinsType.BindResult;
 }

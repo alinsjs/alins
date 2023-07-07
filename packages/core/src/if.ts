@@ -8,9 +8,9 @@ import {IWatchRefTarget, watch} from 'packages/reactive/src/watch';
 import {
     IReturnCall, ICtxUtil
 } from './type';
-import {IGeneralElement, ITrueElement} from './element/renderer';
+import {IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {empty} from 'packages/utils/src';
-import {IBranchTarget} from './ctx-util';
+import {IBranchTarget} from './scope/branch';
 
 export type IIfTarget = IWatchRefTarget<boolean>;
 export interface IIfReturn {
@@ -27,7 +27,10 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         const branch = branchs[i];
         const current = branch.current();
         const dom = util.cache.call(branch);
-        if (branch.isVisible(current)) util.anchor.replaceContent(dom);
+        console.warn('switch node', i, dom);
+        if (branch.isVisible(current)) {
+            util.anchor.replaceContent(dom);
+        };
     };
     const onDataChange = (bs: boolean[]) => {
         console.warn('if onDataChange', bs);
@@ -74,7 +77,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
                 return util.anchor.replaceContent(returnEle);
             }
             util.branch.back();
-            return null;
+            return Renderer.createDocumentFragment();
         }
     };
     return result;

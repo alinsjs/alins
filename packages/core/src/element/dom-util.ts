@@ -61,7 +61,11 @@ export function reactiveBinding (bind: IBindingReaction, onchange: IBindingChang
     if (typeof bind === 'function' || isRef(bind)) {
         return watch(bind, onchange).value;
     }
-    return typeof bind === 'string' ? bind : bind.toString();
+    try {
+        return typeof bind === 'string' ? bind : bind.toString();
+    } catch (e) {
+        debugger;
+    }
 }
 
 export function reactiveClass (

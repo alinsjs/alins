@@ -11,8 +11,15 @@ const vuePlugin = require('esbuild-plugin-vue3');
 
 const outfile = resolve(__dirname, './dev/bundle.js');
 
+const env = process.argv[2] || 'dev';
+
+const Entry = ({
+    dev: './dev/dev-ctx.tsx',
+    test: './test/index.ts'
+})[env];
+
 build({
-    entryPoints: [resolve(__dirname, './dev/dev-ctx.tsx')],
+    entryPoints: [resolve(__dirname, Entry)],
     // entryPoints: [resolve(__dirname, './dev/index.ts')],
     // entryPoints: [resolve(__dirname, './dev/samples/alins/src/Main.js')],
     outfile,
