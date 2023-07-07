@@ -11,8 +11,8 @@ import ifCase from './cases/if';
 function startTestMain () {
     startTest({
         cases: [
-            // ...dom,
-            // ...reactive,
+            ...dom,
+            ...reactive,
             ...ifCase,
         ],
         onTestComplete ({passed, results, time}) {

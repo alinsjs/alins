@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-07 08:12:45
+ * @LastEditTime: 2023-07-07 10:35:31
  */
 
 import {JSX as React} from 'packages/core/src/element/element';
@@ -34,8 +34,8 @@ function createBaseEnv () {
     };
 }
 
-function a({props}){
-    return <div></div>
+function a ({props}) {
+    return <div></div>;
 }
 
 export default [
@@ -106,14 +106,14 @@ export default [
             const data = react({a: 'a'});
             const dom = <div
                 onclick={() => data.a = 'aaa'}
-                class={$`${()=>data.a}-plus`}
-            >{()=>data.a}
+                class={$`${() => data.a}-plus`}
+            >{() => data.a}
             </div>;
             append(dom);
-            addResult(dom.className)
+            addResult(dom.className);
             data.a = 'aa';
             addResult(dom.className);
-            dom.click()
+            dom.click();
             addResult(dom.className);
             return getResult();
         },
@@ -126,7 +126,7 @@ export default [
             const {collect, append, getResult} = createBaseEnv();
             const a = react(1);
             const dom = <div
-                onclick={{listener: () => a.value++, once: true}} 
+                onclick={{listener: () => a.value++, once: true}}
                 // todo 待补充其他修饰符
             >{a}
             </div>;

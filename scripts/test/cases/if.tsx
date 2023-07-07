@@ -3,11 +3,10 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-07 09:46:10
+ * @LastEditTime: 2023-07-07 20:44:29
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
-import {assert} from 'easy-test-lib';
 
 const w = window as any;
 w.React = React;
@@ -16,7 +15,7 @@ const addEnv = (data: any) => {Object.assign(w, data);};
 const if3Base = () => {
     const list: any[] = [];
     const ctx = createContext();
-    const data = ctx.$({a: 1,b: 1,c: 1});
+    const data = ctx.$({a: 1, b: 1, c: 1});
     const container = document.createElement('div');
     /*
         const dom = <div>
@@ -38,10 +37,10 @@ const if3Base = () => {
                 }
             }
         </div>
-     */  
+     */
     const dom = <div
         id={'test1'}
-    >  
+    >
         {
             ctx.if(() => data.a === 1, () => {
                 return <div>{'a1'}</div>;
@@ -50,26 +49,26 @@ const if3Base = () => {
                     return <div>{'b1'}</div>;
                 }).elif(() => data.b === 2, () => {
                     return <div>
-                    {ctx.if(() => data.c === 1, () => {
-                        return <div>{'c1'}</div>;
-                    }).elif(() => data.c === 2, () => {
-                        return <div>{'c2'}</div>;
-                    }).end()}
-                    </div>
+                        {ctx.if(() => data.c === 1, () => {
+                            return <div>{'c1'}</div>;
+                        }).elif(() => data.c === 2, () => {
+                            return <div>{'c2'}</div>;
+                        }).end()}
+                    </div>;
                 }).end();
             }).end()
         }
-    </div>
+    </div>;
     container.appendChild(dom);
     document.body.appendChild(container);
 
-    return {container, data, list, collect: ()=>{list.push(container.innerText)}};
+    return {container, data, list, collect: () => {list.push(container.innerText);}};
 };
 
 export default [
     {
         name: '基础if-else',
-        disabled: true,
+        disabled: false,
         test () {
             const result: any[] = [];
             const container = document.createElement('div');
@@ -113,43 +112,59 @@ export default [
             const collect = () => result.push(container.innerText);
             const append = dom => container.appendChild(dom);
             // const Child = () => <div>child</div>;
-            const dom = (() => {
-                const ctx = createContext();
-                const str = ctx.$('1');
-                const str2 = ctx.$('2');
-                w.str = str;
-                w.str2 = str2;
-                return ctx.if(() => str.value === '1', () => {
+            
+            const ctx = createContext();
+            const str = ctx.$('1');
+            const str2 = ctx.$('1');
+            /**
+                if(str === '1'){
                     return <div>
                         <span>00</span>
                         {
-                            ctx.if(() => str2.value === '2', () => <div>11</div>)
-                            .else(()=><div>22</div>)
+                            (()=>{
+                                if(str2.value === '2'){
+                                    return <div>11</div>
+                                }
+                                return <div>22</div>;
+                            })()
                         }
                     </div>
-                }).else(() => {
-                    return <div>else</div>;
-                });
-            })();
+                }
+                 */
+            const dom = ctx.if(() => str.value === '1', () => {
+                return <div>
+                    <span>0</span>
+                    {
+                        ctx.if(() => str2.value === '1', () => <div>11</div>)
+                            .else(() => <div>22</div>)
+                    }
+                </div>;
+            }).else(() => {
+                return <div>else</div>;
+            });
             append(dom);
             collect();
-            w.str.value = '2';
+            str.value = '2';
             collect();
-            w.str2.value = 's22';
+            str2.value = '2';
             collect();
-            w.str.value = '1';
+            str.value = '1';
             collect();
-            // todo bug if嵌套parent返回时 整个替换有问题
-            // str.value = '2' => else ! '2' => 00 else
+            str.value = '2';
+            collect();
+            str2.value = '1';
+            collect();
+            str.value = '1';
+            collect();
             return result;
         },
-        expect: ['1s2', 'else', 'else', '1s22']
+        expect: ['0\n11', 'else', 'else', '0\n22', 'else', 'else', '0\n11']
     },
     {
         name: '三层嵌套if-1',
-        disabled: true,
-        test(){
-            const { data, collect, list } = if3Base();
+        disabled: false,
+        test () {
+            const {data, collect, list} = if3Base();
             collect();
             data.a = 2;
             collect();
@@ -167,9 +182,9 @@ export default [
     },
     {
         name: '三层嵌套if-2',
-        disabled: true,
-        test(){
-            const { data, collect, list } = if3Base();
+        disabled: false,
+        test () {
+            const {data, collect, list} = if3Base();
             collect();
             data.a = 2;
             collect();
@@ -181,6 +196,7 @@ export default [
             collect();
             data.a = 2;
             collect();
+            window.data = data;
             return list;
         },
         expect: ['a1', 'b1', 'c1', 'c2', 'a1', 'c2']
@@ -189,7 +205,7 @@ export default [
 
     // {
     //     name: '两层嵌套if',
-    //     // disabled: true,
+    //     // disabled: false,
     //     test () {
 
     //         const result: any[] = [];
@@ -228,7 +244,7 @@ export default [
     // },
     // {
     //     name: '两层嵌套if-2',
-    //     // disabled: true,
+    //     // disabled: false,
     //     test () {
 
     //         const result: any[] = [];
@@ -280,7 +296,7 @@ export default [
     // },
     // {
     //     name: '三层嵌套if',
-    //     // disabled: true,
+    //     // disabled: false,
     //     test () {
 
     //         const result: any[] = [];
@@ -301,7 +317,7 @@ export default [
     // },
     // {
     //     name: '三层嵌套if2',
-    //     // disabled: true,
+    //     // disabled: false,
     //     test () {
 
     //         const result: any[] = [];

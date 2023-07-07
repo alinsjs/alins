@@ -18,10 +18,10 @@ import {createCallCache} from './scope/cache';
 import {createBranchLink, IBranchTarget} from './scope/branch';
 
 export function createContext () {
-    const anchor = createAnchor();
     const cache = createCallCache();
+    const anchor = createAnchor(cache);
 
-    const branch = createBranchLink(cache);
+    const branch = createBranchLink(cache, anchor);
 
     const util: ICtxUtil = {
         anchor,
@@ -46,17 +46,18 @@ export function createContext () {
             call().then((res: ITrueElement|any) => {
                 if (Renderer.isElement(res) && isReturnEl) {
                     if (target.isVisible()) {
-                        anchor.replaceContent(res);
+                        anchor.replaceContent(res, target);
                     } else {
                         cache.modifyCache(call, res);
                     }
                 }
             });
             if (isReturnEl) {
-                target = branch.next(call as any, true);
+                target = branch.next(call as any, anchor, true);
                 const cacheCall = () => Renderer.createEmptyMountNode();
                 const res = cache.call(target, cacheCall) as ITrueElement;
                 branch.back();
+                // ! 首次不需要branch
                 return anchor.replaceContent(res);
             }
         }

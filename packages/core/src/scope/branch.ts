@@ -1,30 +1,40 @@
+/*
+ * @Author: chenzhongsheng
+ * @Date: 2023-07-07 10:35:16
+ * @Description: Coding something
+ */
 import {IReturnCall} from '../type';
+import {ICtxAnchor} from './anchor';
 import {ICallCache} from './cache';
 
 export interface IBranchTarget {
     id: number;
     call: IReturnCall;
-    parent: IBranchTarget|null;
+    parent: IBranchTarget|null; // null 表示root
     visit(): void;
     current(): IBranchTarget|null;
     isVisible(branch?: IBranchTarget|null): boolean;
+    anchor: ICtxAnchor;
+    inited?: boolean;
 }
 
-export function createBranchLink (cache: ICallCache) {
+export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
     let stack: IBranchTarget[] = [];
     let id = 0;
+    const Root = {anchor, parent: null};
 
     let currentBranch: IBranchTarget|null = null;
 
     let branchMap: WeakMap<IBranchTarget, 1>|null = null;
 
-    const createTarget = (call: IReturnCall, isNext = false): IBranchTarget => {
-        const last = stack.length === 0 ? null : stack[stack.length - 1];
+    const createTarget = (call: IReturnCall, anchor: ICtxAnchor, isNext = false): IBranchTarget => {
+        const last = stack.length === 0 ? Root : stack[stack.length - 1];
         const parent = (isNext ? last?.parent : last) as IBranchTarget|null;
         return {
             id: id++,
             call,
             parent,
+            anchor,
             current () {
                 return currentBranch;
             },
@@ -72,10 +82,12 @@ export function createBranchLink (cache: ICallCache) {
     };
 
     return {
-        next (call: IReturnCall, forward = false) {
-            const target = createTarget(call, !forward);
+        next (call: IReturnCall, anchor: ICtxAnchor, forward = false) {
+            const target = createTarget(call, anchor, !forward);
             forward ? stack.push(target) : stack[stack.length - 1] = target;
             console.warn(`【target:${target.id}】`, target.call.toString());
+            if (!window.bs) window.bs = {};
+            window.bs[target.id] = target;
             return target;
         },
         back () {

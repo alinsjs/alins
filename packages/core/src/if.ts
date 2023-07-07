@@ -11,6 +11,7 @@ import {
 import {IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {empty} from 'packages/utils/src';
 import {IBranchTarget} from './scope/branch';
+import {createAnchor} from './scope/anchor';
 
 export type IIfTarget = IWatchRefTarget<boolean>;
 export interface IIfReturn {
@@ -20,17 +21,14 @@ export interface IIfReturn {
 }
 
 export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfReturn {
+    const anchor = createAnchor(util.cache);
     const branchs: IBranchTarget[] = [];
     console.log(branchs);
 
     const switchNode = (i: number) => {
         const branch = branchs[i];
-        const current = branch.current();
-        const dom = util.cache.call(branch);
+        const dom = anchor.replaceBranch(branch);
         console.warn('switch node', i, dom);
-        if (branch.isVisible(current)) {
-            util.anchor.replaceContent(dom);
-        };
     };
     const onDataChange = (bs: boolean[]) => {
         console.warn('if onDataChange', bs);
@@ -44,13 +42,15 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     const acceptIf = (ref: IIfTarget, call: IReturnCall, init = false) => {
         const id = index ++;
         console.warn('accept if', id);
-        branchs[id] = util.branch.next(call, init);
+        branchs[id] = util.branch.next(call, anchor, init);
         refs[id] = ref;
         if (returnEle === empty) {
             const value = typeof ref === 'function' ? ref() : ref.value;
             if (value) {
                 const dom = util.cache.call(branchs[id]);
-                if (dom) returnEle = dom;
+                if (dom) {
+                    returnEle = dom;
+                }
             }
         }
     };
@@ -73,10 +73,11 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
             ), onDataChange, false);
             // @ts-ignore ! 回收refs内存
             // refs = null;
-            if (returnEle !== empty) {
-                return util.anchor.replaceContent(returnEle);
-            }
             util.branch.back();
+            if (returnEle !== empty) {
+                // ! 首次不需要branch
+                return anchor.replaceContent(returnEle);
+            }
             return Renderer.createDocumentFragment();
         }
     };
