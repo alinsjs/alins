@@ -36,7 +36,6 @@ export function createAsyncScope (call: IAsyncReturnCall, isReturnEl: boolean, {
         // ! 此处访问一次之后相关内存就不会再使用 可以回收了
     });
     if (isReturnEl) {
-        debugger;
         target = branch.next(cacheCall as any, anchor, true);
         console.log(target.parent);
         const res = cache.call(target, cacheCall) as ITrueElement;

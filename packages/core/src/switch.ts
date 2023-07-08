@@ -7,7 +7,7 @@
 import {IWatchRefTarget, watch} from 'packages/reactive/src';
 import {ISimpleValue} from 'packages/utils/src';
 import {IBranchTarget} from './scope/branch';
-import {ITrueElement, Renderer} from './element/renderer';
+import {IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {ICtxUtil, IReturnCall} from './type';
 import {createAnchor} from './scope/anchor';
 
@@ -23,9 +23,6 @@ export interface ISwitchCase {
 }
 
 export type ISwitchCaseList = ISwitchCase[];
-export interface ISwitchReturn {
-    end(): void;
-}
 
 enum SwitchResult {
     Init = 0,
@@ -41,6 +38,8 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
     const anchor = createAnchor(util.cache);
     let endCall: IReturnCall;
 
+    let initilizing = true;
+
     const branchMap = new WeakMap<IReturnCall, IBranchTarget>();
 
     let result: SwitchResult = SwitchResult.Init;
@@ -51,7 +50,8 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         if (call) {
             const branch = branchMap.get(call);
             if (!branch) throw new Error('empty branch');
-            const dom = anchor.replaceBranch(branch);
+            // if (!initilizing) debugger;
+            const dom = initilizing ? util.cache.call(branch) : anchor.replaceBranch(branch);
             if (dom) {
                 result = SwitchResult.Return;
                 return dom;
@@ -61,20 +61,13 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         return !!brk;
     };
 
-
-    const run = (value: any, isInit = false) => {
+    window.branchMap = branchMap;
+    const run = (value: any) => {
         console.warn('switch run');
         let macthed: boolean = false;
         result = SwitchResult.Init;
-        let first = true;
         let el: boolean|ITrueElement|null|undefined = null;
         for (const item of caseList) {
-            if (isInit && item.call) {
-                // ! 首次run初始化分支
-                debugger;
-                branchMap.set(item.call, util.branch.next(item.call, anchor, first));
-                if (first) first = false;
-            }
             if (macthed) {
                 if (el = execSingle(item)) break;
             } else {
@@ -84,30 +77,39 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
                 }
             }
         }
-
-        if (isInit) {
-            branchMap.set(endCall, util.branch.next(endCall, anchor, !first));
-            util.branch.back();
-        }
-
         // @ts-ignore
         if (result !== SwitchResult.Return) { // 不是return;
             const branch = branchMap.get(endCall) as IBranchTarget;
-            el = util.anchor.replaceBranch(branch);
+            el = initilizing ? util.cache.call(branch) : anchor.replaceBranch(branch);
         }
         return el;
     };
 
+    // ! 首次run初始化分支
+    const initSwitchBranches = () => {
+        let first = true;
+        for (const item of caseList) {
+            if (item.call) {
+                branchMap.set(item.call, util.branch.next(item.call, anchor, first));
+                if (first) first = false;
+            }
+        }
+        branchMap.set(endCall, util.branch.next(endCall, anchor, first));
+        util.branch.back();
+    };
+
     return {
-        end (call: IReturnCall): ITrueElement {
+        end (call: IReturnCall): IGeneralElement|void {
             endCall = call;
             console.warn('switch end');
             const init = watch(target, (value) => {
+                // if (value === 3) debugger;
                 run(value);
             });
-
-            const el = run(init.value, true);
-            if (Renderer.isElement(el)) return el as ITrueElement;
+            initSwitchBranches();
+            const el = run(init.value);
+            initilizing = false;
+            if (Renderer.isElement(el)) return anchor.replaceContent(el as ITrueElement);
             // @ts-ignore
             return Renderer.createDocumentFragment();
         }

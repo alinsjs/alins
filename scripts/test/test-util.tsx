@@ -25,5 +25,6 @@ export function createTestBase (){
     const container = document.createElement('div');
     document.body.appendChild(container);
     const collect = () => {list.push(container.innerText);}
-    return {list, ctx, data, container, collect, str}
+    const append = (dom: any)=>{container.appendChild(dom)}
+    return {list, ctx, data, container, collect, str, append}
 }

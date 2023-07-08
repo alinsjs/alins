@@ -10,12 +10,12 @@ import {type, util} from './symbol';
 
 export type ISimpleValue = string|number|boolean;
 
-export type IOnChange<T = string> = (nv: T, ov: T, path: string) => void;
+export type IOnChange<T = string> = (nv: T, ov: T, path: string, prop: string, remove?: boolean) => void;
 
 // Reactive
 export interface IProxyUtils {
   lns: IProxyListenerMap;
-  triggerChange: (property: string, nv: any, old?: any) => void;
+  triggerChange: (property: string, nv: any, old?: any, remove?: boolean) => void;
   forceWrite: (v: any) => void;
   subscribe: (ln: IProxyListener<any>, deep?: boolean) => void;
   isArray: boolean;

@@ -4,13 +4,13 @@
  * @Description: Coding something
  */
 
-import {util, IRefData} from 'alins-utils';
+import {util, IRefData, IOnChange} from 'alins-utils';
 import {observe, createProxy, wrapReactive} from './proxy';
 import {isDepReactive} from './proxy';
 
 export interface IComputedObject<T> {
     get(): T;
-    set?: ((v: T, old: T, path: string) => void);
+    set?: IOnChange<T>;
 }
 
 // ! computed 都为ref，且都是shallow

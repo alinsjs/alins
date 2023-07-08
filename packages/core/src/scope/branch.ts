@@ -86,7 +86,7 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
         // forward 表示是否要向下一层
         next (call: IReturnCall, anchor: ICtxAnchor, forward = false) {
             const target = createTarget(call, anchor, forward);
-            debugger;
+            // debugger;
             forward ? stack.push(target) : stack[stack.length - 1] = target;
             console.warn(`【target:${target.id}】`, target.call.toString());
             if (!window.bs) window.bs = {};

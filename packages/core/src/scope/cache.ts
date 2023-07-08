@@ -33,7 +33,7 @@ function transformCacheToElement (cache: (IElement|ITextNode)[]): ITrueElement {
 export function createCallCache () {
     // ! call => dom 的cache
     const map = new WeakMap<IReturnCall|Object, (IElement|ITextNode)[]|null>();
-
+    window.map = map;
     // 当前执行到的函数
     // const currentCall: IReturnCall|IAsyncReturnCall|null = null;
 
@@ -42,7 +42,7 @@ export function createCallCache () {
         // ! 调用某个函数，缓存其结果
         // @ts-ignore
         call (branch: IBranchTarget, realGenerator?: IReturnCall) {
-            debugger;
+            // debugger;
             branch.visit();
             const fn = branch.call;
             const item = map.get(fn);
@@ -58,7 +58,7 @@ export function createCallCache () {
                 return element;
             }
             // todo 对于 return; 的处理
-            throw new Error('动态条件分支中不允许返回非元素类型');
+            // throw new Error('动态条件分支中不允许返回非元素类型');
         },
         modifyCache (fn: IReturnCall|IAsyncReturnCall, el: ITrueElement) {
             map.set(fn, transformElementToCache(el));

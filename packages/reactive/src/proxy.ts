@@ -6,7 +6,7 @@
 
 import {
     AlinsType,
-    IJson, IProxyData, IProxyListener, IProxyListenerMap,
+    IJson, IOnChange, IProxyData, IProxyListener, IProxyListenerMap,
     IProxyUtils,
     type, util
 } from 'alins-utils';
@@ -45,8 +45,8 @@ export function wrapReactive (data: any, force = false) {
 }
 
 export function createUtils (data: any, lns: IProxyListenerMap, path: string): IProxyUtils {
-    const triggerChange = (property: string, nv: any, old: any = null) => {
-        lns[property]?.forEach((fn) => fn(nv, old, `${path}.${property}`));
+    const triggerChange = (property: string, nv: any, old: any = null, remove?: boolean) => {
+        lns[property]?.forEach((fn) => fn(nv, old, `${path}.${property}`, property, remove));
     };
     const forceWrite = (v: any) => {
         for (const k in v)
@@ -85,7 +85,7 @@ export function createProxy<T extends IJson> (data: T, {
     lns?: IProxyListenerMap;
     shallow?: boolean;
     get?: ()=>any,
-    set?: ((v: any, old: any, path: string) => void)|null;
+    set?: IOnChange<any>|null;
     path?: string;
 } = {}): IProxyData<T> {
 
@@ -125,9 +125,9 @@ export function createProxy<T extends IJson> (data: T, {
                 console.log('Proxy.set', target, property, v);
                 const origin = target[property];
                 
-                if (v === origin) return true;
+                if (v === origina) return true;
                 if (set === null) { console.warn('Computed 不可设置'); return true;}
-                if (set) { set(v, origin, `${path}.${property as string}`); return true; }
+                if (set) { set(v, origin, `${path}.${property as string}`, property); return true; }
 
                 if (v && typeof v === 'object' && !shallow) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
                     v = createProxy(v, {lns: origin[util].lns, shallow, path: `${path}.${property as string}`});
@@ -141,7 +141,25 @@ export function createProxy<T extends IJson> (data: T, {
         },
         deleteProperty (target: IJson, property) {
             console.log('deleteProperty', target, property);
+            triggerChange(property as string, undefined, target[property], true);
             return Reflect.deleteProperty(target, property);
         }
     }) as IProxyData<T>;
+}
+
+export function replaceProxy (nv: IProxyData<object>, origin: IProxyData<object>) {
+    const nutil = nv[util];
+    const outil = origin[util];
+    outil.forceWrite(nv);
+
+    for (const k in origin) {
+        const type = typeof origin[k];
+        if (type !== typeof nv[k]) continue;
+        outil.lns[k].forEach(item => {
+            nutil.lns[k].add(item);
+        });
+        if (typeof origin[k] === 'object') {
+            replaceProxy(nv[k], origin[k]);
+        }
+    }
 }
