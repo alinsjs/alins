@@ -14,11 +14,17 @@ export type IOnChange<T = string> = (nv: T, ov: T, path: string, prop: string, r
 
 // Reactive
 export interface IProxyUtils {
+  path: string[];
   lns: IProxyListenerMap;
-  triggerChange: (property: string, nv: any, old?: any, remove?: boolean) => void;
+  commonLns?: Set<IOnChange>;
+  triggerChange: (property: string, nv: any, old?: any, remove?: boolean, isNew?: boolean) => void;
   forceWrite: (v: any) => void;
   subscribe: (ln: IProxyListener<any>, deep?: boolean) => void;
   isArray: boolean;
+  shallow: boolean;
+  forceUpdate: ()=>void;
+  replace(v: any): void;
+  proxy: IProxyData<any>;
 }
 
 interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {

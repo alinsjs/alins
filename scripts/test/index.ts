@@ -9,9 +9,12 @@ import dom from './cases/dom';
 import ifCase from './cases/if';
 import asyncCase from './cases/async';
 import switchCase from './cases/switch';
+import forCase from './cases/for';
 import {react, watch} from 'packages/reactive/src';
 window.react = react;
 window.watch = watch;
+
+
 function startTestMain () {
     startTest({
         cases: [
@@ -20,6 +23,7 @@ function startTestMain () {
             // ...ifCase,
             // ...asyncCase,
             // ...switchCase,
+            ...forCase
         ],
         onTestComplete ({passed, results, time}) {
             console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);

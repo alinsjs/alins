@@ -21,10 +21,12 @@ export function createTestBase (){
     const list: string[] = []
     const ctx = createContext();
     const data = ctx.$({a: 1, b: 1, c: 1});
+    const arr = ctx.$([1,2,3,4]);
+    const arrObj = ctx.$([{a:1},{a:2},{a:3},{a:4}]);
     const str = ctx.$('1');
     const container = document.createElement('div');
     document.body.appendChild(container);
     const collect = () => {list.push(container.innerText);}
     const append = (dom: any)=>{container.appendChild(dom)}
-    return {list, ctx, data, container, collect, str, append}
+    return {list, ctx, data, container, collect, str, append, arr, arrObj}
 }

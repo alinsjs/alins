@@ -42,3 +42,18 @@ export const isSafari = (() => {
     const ua = navigator.userAgent;
     return /Safari/.test(ua) && !/Chrome/.test(ua);
 })();
+
+export function mergeSet (s1?: Set<any>, s2?: Set<any>): any {
+    if (!s1) return s2;
+    if (!s2) return s1;
+    s2.forEach(item => {s1.add(item);});
+    return s1;
+}
+
+export function assignLast (a1: any[], v: any): void {
+    a1[a1.length - 1] = v;
+}
+
+export function isSimpleValue (v: any) {
+    return typeof v !== 'object' || v === null;
+}

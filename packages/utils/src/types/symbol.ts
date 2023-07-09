@@ -7,3 +7,4 @@ export const type = Symbol('t');
 export const util = Symbol('u');
 export const child = Symbol('c');
 export const empty = Symbol('e');
+export const trig = Symbol('t');

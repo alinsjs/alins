@@ -3,9 +3,10 @@
  * @Date: 2023-06-26 15:31:14
  * @Description: Coding something
  */
-import {IProxyListener, IProxyData, util, IRefData} from 'alins-utils';
+import {IProxyListener, IProxyData, util, IRefData, trig} from 'alins-utils';
 import {isProxy} from './proxy';
 import {computed} from './computed';
+import {IOprationAction} from './array-proxy';
 
 export type IWatchRefTarget<T> = (()=>T)|IRefData<T>|{value:T};
 export type IWatchTarget<T> = IWatchRefTarget<T>|(IProxyData<T>);
@@ -27,7 +28,7 @@ export function watch<T> (
         // 防止多次重复触发watch
         const origin = cb;
         let value: any;
-        cb = (v, nv, path) => {if (value !== v) origin(value = v, nv, path);};
+        cb = (v, nv, path, p, remove) => {if (value !== v) origin(value = v, nv, path, p, remove);};
     } else if (!isProxy(target)) {
         // ! 兼容computed(()=>1+1)情况
         return target;
@@ -35,3 +36,16 @@ export function watch<T> (
     (target as IRefData<T>)[util].subscribe(cb, deep);
     return target;
 };
+
+export function watchArray (
+    target: IProxyData<any[]>,
+    listener: ({index, count, data, type}: IOprationAction)=>void
+) {
+    if (!target[trig]) {
+        target[trig] = [listener];
+    } else {
+        target[trig].push(listener);
+    }
+}
+
+window.watchArray = watchArray;

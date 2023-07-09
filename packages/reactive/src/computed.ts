@@ -23,6 +23,7 @@ export function computed<T> (target:(()=>T)|IComputedObject<T>): IRefData<T>|{va
 
     const value = observe(get, () => {
         // ! 每次都需要重新get一下 因为可能代码逻辑分支有变化导致出现了没有收集到的依赖
+        debugger;
         proxy[util].forceWrite(wrapReactive(get(), true));
     });
 
