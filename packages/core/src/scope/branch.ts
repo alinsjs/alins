@@ -39,7 +39,7 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                 return currentBranch;
             },
             isVisible (branch?: IBranchTarget|null) {
-                console.warn('isVisible', this);
+                // console.warn('isVisible', this);
                 // 做一件事情：如果需要更新dom，则直接更新，否则清除祖先缓存
                 // debugger;
                 if (branchMap === null) {
@@ -52,7 +52,7 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                 }
                 const isCurrentVisible = !!branchMap.get(this);
                 if (isCurrentVisible) {
-                    console.warn('isVisible result true');
+                    // console.warn('isVisible result true');
                     return true;
                 }
                 let parent = this.parent;
@@ -61,20 +61,20 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                 while (parent) {
                     const isVisible = !!branchMap.get(parent);
                     if (isVisible) {
-                        console.warn('isVisible result false1');
+                        // console.warn('isVisible result false1');
                         break;
                     }
                     // todo ! 是否需要
                     // cache.clearCache(parent.call); // 清除不可见分支的缓存
                     parent = parent.parent;
                 }
-                console.warn('isVisible result false2');
+                // console.warn('isVisible result false2');
                 return false;
             },
             visit () {
                 // ! 访问某个分支之后 将该分支作为stack起点 作为还未加载节点的父分支
                 stack = [this];
-                console.warn('visit branch', this);
+                // console.warn('visit branch', this);
                 if (currentBranch === this) return;
                 currentBranch = this;
                 branchMap = null;
@@ -88,7 +88,7 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
             const target = createTarget(call, anchor, forward);
             // debugger;
             forward ? stack.push(target) : stack[stack.length - 1] = target;
-            console.warn(`【target:${target.id}】`, target.call.toString());
+            // console.warn(`【target:${target.id}】`, target.call.toString());
             if (!window.bs) window.bs = {};
             window.bs[target.id] = target;
             return target;

@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-01 22:56:13
+ * @LastEditTime: 2023-07-10 09:03:58
  */
 
 import {react, observe, computed, watch, IReactBindingResult} from 'packages/reactive';
@@ -11,7 +11,7 @@ import {react, observe, computed, watch, IReactBindingResult} from 'packages/rea
 export default [
     {
         name: 'Test observe',
-        disable: true,
+        disable: false,
         test () {
             const a = react(1);
             const list: any = [];
@@ -33,7 +33,7 @@ export default [
     },
     {
         name: 'Test computed',
-        disable: true,
+        disable: false,
         test () {
             const list:any[] = [];
             const data = react({a: 1});
@@ -68,11 +68,11 @@ export default [
             const list:any[] = [];
 
             watch(() => {
-                console.warn('debug:  watch');
+                // console.warn('debug:  watch');
                 return c1.value + a.value;
             }, (...args) => {
-                console.log('watchwatchwatch', ...args);
-                console.log(a.value, b.value, c1.value);
+                // console.log('watchwatchwatch', ...args);
+                // console.log(a.value, b.value, c1.value);
                 list.push(args.slice(0, 2));
             });
 

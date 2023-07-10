@@ -41,67 +41,24 @@ function proxyItem (data: IProxyData<any[]>, args: any[], index: number) {
 
 // ! 此处用于模拟触发watch 因为proxy拦截数组方法之后 原本的数组元素proxy不生效了 会导致watch行为不一致
 function triggerOprationEvent (arr: any[], type: OprateType, index:number, data: any[], count: number, fromAssign?:boolean) {
-    const ut = arr[util];
-    // const moveArr = (moveStep: number) => {
-    //     for (let i = arr.length - 1; i > index; i--) {
-    //         const newItem = arr[i];
-    //         const oldItem = arr[i + moveStep];
-    //         if (newItem) oldItem ? (newItem[util] = oldItem[util]) : assignLast(newItem[util].path, i + moveStep);
-    //         ut.triggerChange(`${i + moveStep}`, newItem, oldItem, false, typeof oldItem === 'undefined');
-    //     }
-    // };
-    // switch (type) {
-    //     case OprateType.Push: {
-    //         data.forEach((item, i) => {
-    //             ut.triggerChange(`${(index + i)}`, item, undefined, false, true);
-    //         });
-    //     };break;
-    //     case OprateType.Replace: {
-    //         if (!fromAssign) {
-    //             ut.triggerChange('' + index, data[0], data[1], false, typeof data[0] === 'undefined');
-    //         } else {
-    //         }
-    //     };break;
-    //     case OprateType.Remove: {
-    //         // ! 往前移动
-    //         for (let i = index; i < arr.length + count - 1; i++) {
-    //             const newIndex = i + count;
-    //             const oldIndex = i;
-    //             const newItem = arr[newIndex];
-    //             const oldItem = arr[oldIndex];
-    //             if (newItem) oldItem ? (newItem[util] = oldItem[util]) : assignLast(newItem[util].path, oldIndex);
-    //             ut.triggerChange(`${oldIndex}`, newItem, oldItem, false, typeof oldItem === 'undefined');
-    //         }
-    //     };break;
-    //     case OprateType.Insert: {
-    //         // ! 往后移动
-    //         console.log(index, count);
-    //         for (let i = arr.length + count - 1; i >= index + count; i--) {
-    //             const oldIndex = i;
-    //             const newIndex = i - count;
-    //             const newItem = arr[newIndex];
-    //             const oldItem = arr[oldIndex];
-    //             if (newItem) oldItem ? (newItem[util] = oldItem[util]) : assignLast(newItem[util].path, oldIndex);
-    //             ut.triggerChange(`${oldIndex}`, newItem, oldItem, false, typeof oldItem === 'undefined');
-    //         }
-    //         debugger;
-    //         data.forEach((item, i) => {
-    //             ut.triggerChange(`${(index + i)}`, item, arr[index + i], false);
-    //         });
-    //     };break;
-    // }
+    // const ut = arr[util];
     arr[trig]?.forEach(fn => {fn({type, data, index, count, fromAssign});});
 }
 
 const ArrayMap = {
-    splice (this: {target: IProxyData<any[]>, origin: any}, start: number, count: number, ...args: any[]) {
+    splice (this: {target: IProxyData<any[]>, origin: any}, start: number, count?: number, ...args: any[]) {
         // if(this)
         const {target, origin} = this;
+        if (start >= target.length) {
+            start = target.length;
+            count = 0;
+        } else if (typeof count === 'undefined' || start + count > target.length) {
+            count = target.length - start;
+        }
         const newCount = args.length;
         const replaceNum = Math.min(count, newCount);
         const n = start + replaceNum;
-        const result: any = null;
-        const proxy = target[util].proxy;
+        // const result: any = null;
         if (newCount > count) { // insert
             const data = proxyItem(target, args.slice(replaceNum), n);
             triggerOprationEvent(target, OprateType.Insert, n, data, data.length);
@@ -124,7 +81,11 @@ const ArrayMap = {
             //     proxy[i] = data;
             // }
         }
-        return origin.call(proxy, start, count, ...args); ;
+        const items = target[util].scopeItems;
+        const data = items?.slice(start, start + args.length).map(i => i[items.key]);
+        // const data = args;
+        // debugger;
+        return origin.call(target[util].proxy, start, count, ...data); ;
     },
     push (this: {target: IProxyData<any[]>, origin: any}, ...args: any[]) {
         // console.log('Push', args);
@@ -135,7 +96,9 @@ const ArrayMap = {
     },
     pop (this: {target: IProxyData<any[]>, origin: any}) {
         const {target, origin} = this;
-        triggerOprationEvent(target, OprateType.Remove, target.length - 1, [target[target.length - 1]], 1);
+        if (target.length > 0) {
+            triggerOprationEvent(target, OprateType.Remove, target.length - 1, [target[target.length - 1]], 1);
+        }
         // console.log('Remove', this.length - 1, 1);
         return origin.call(target);
     },
@@ -149,7 +112,9 @@ const ArrayMap = {
     shift (this: {target: IProxyData<any[]>, origin: any}) {
         // console.log('Remove', 0, 1);
         const {target, origin} = this;
-        triggerOprationEvent(target, OprateType.Remove, 0, target[0], 1);
+        if (target.length > 0) {
+            triggerOprationEvent(target, OprateType.Remove, 0, target[0], 1);
+        }
         return origin.call(target);
     },
     sort (this: {target: IProxyData<any[]>, origin: any}, compareFn?: ((a: any, b: any) => number) | undefined) {
@@ -166,21 +131,41 @@ const ArrayMap = {
         }
         return result;
     },
-    replace (target: any, index: number, ov: any, v: any, fromAssign?: boolean) {
-        console.warn('replace=======', index, ov, v, fromAssign);
-        triggerOprationEvent(target, OprateType.Replace, index, [v, ov], 1, fromAssign);
-        if (target[index] && v && typeof v === 'object') {
-            target[index][util].replace(v);
-        } else {
-            target[index] = v;
-        }
-    }
+    replace (target: any, index: number, ov: any, v: any) {
+        // console.warn('replace=======', index, ov, v);
+        triggerOprationEvent(target, OprateType.Replace, index, [v, ov], 1);
+        target[index] = v;
+    },
 };
 
-let mapFunc: any = null;
+const mapFunc: any = {
+    // todo
+    // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
+    // indexOf (this: any[]) {
+        
+    // },
+    // lastIndexOf () {
+        
+    // },
+    // includes () {
+
+    // },
+    // find () {
+
+    // },
+    // filter () {
+
+    // },
+    // some () {
+
+    // },
+    // every () {
+
+    // },
+};
 
 export function registArrayMap (fn: any) {
-    mapFunc = fn;
+    mapFunc.map = fn;
 }
 
 export function arrayFuncProxy (target: any, property: string, receiver: any) {
@@ -189,49 +174,49 @@ export function arrayFuncProxy (target: any, property: string, receiver: any) {
         target[property].hack = true;
         return target[property];
     }
-    if (property === 'map' && mapFunc) {
-        return mapFunc.bind(target);
+    if (mapFunc[property]) {
+        return mapFunc[property].bind(target);
     }
     return Reflect.get(target, property, receiver);
 }
 
-export function replaceArrayItem (target: any, property: string, v: any, receiver: any) {
+export function replaceArrayItem (target: any, property: string, v: any) {
     if (target[trig]) {
-        ArrayMap.replace(target, parseInt(property), target[property], v, true);
+        ArrayMap.replace(target, parseInt(property), target[property], v);
         return true;
     }
     return empty;
 }
 
-function testSpliceRemove (flag = true) {
+// function testSpliceRemove (flag = true) {
 
-    const list = react([{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]);
+//     const list = react([{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]);
 
-    if (flag)
-        watchArray(list, ({index, count, data, type, fromAssign}) => {
-            console.warn('type======', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data.map(i => JSON.stringify(i)));
-        });
-    watch(list, (...args) => console.warn('watch======', args, JSON.stringify(args[0]), JSON.stringify(args[1])));
+//     if (flag)
+//         watchArray(list, ({index, count, data, type, fromAssign}) => {
+//             console.warn('type======', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data.map(i => JSON.stringify(i)));
+//         });
+//     watch(list, (...args) => console.warn('watch======', args, JSON.stringify(args[0]), JSON.stringify(args[1])));
     
-    list.splice(1, 2, {a: 0});
-}
-window.testSpliceRemove = testSpliceRemove;
+//     list.splice(1, 2, {a: 0});
+// }
+// window.testSpliceRemove = testSpliceRemove;
 
-function testSpliceInsert (flag = true) {
+// function testSpliceInsert (flag = true) {
 
-    const list = react([{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]);
+//     const list = react([{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]);
 
-    const result: any = [];
+//     const result: any = [];
 
-    if (flag)
-        watchArray(list, ({index, count, data, type, fromAssign}) => {
-            console.warn('type======', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data.map(i => JSON.stringify(i)));
-        });
-    watch(list, (...args) => {
-        // result.push()
-        console.warn('watch======', args, JSON.stringify(args[0]), JSON.stringify(args[1]));
-    });
+//     if (flag)
+//         watchArray(list, ({index, count, data, type, fromAssign}) => {
+//             console.warn('type======', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data.map(i => JSON.stringify(i)));
+//         });
+//     watch(list, (...args) => {
+//         // result.push()
+//         console.warn('watch======', args, JSON.stringify(args[0]), JSON.stringify(args[1]));
+//     });
     
-    list.splice(1, 1, {a: 0}, {a: 1});
-}
-window.testSpliceInsert = testSpliceInsert;
+//     list.splice(1, 1, {a: 0}, {a: 1});
+// }
+// window.testSpliceInsert = testSpliceInsert;

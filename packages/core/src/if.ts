@@ -23,17 +23,17 @@ export interface IIfReturn {
 export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfReturn {
     const anchor = createAnchor(util.cache);
     const branchs: IBranchTarget[] = [];
-    console.log(branchs);
+    // console.log(branchs);
 
     const switchNode = (i: number) => {
         const branch = branchs[i];
-        debugger;
-        const dom = anchor.replaceBranch(branch);
-        console.warn('switch node', i, dom);
+        // debugger;
+        anchor.replaceBranch(branch);
+        // console.warn('switch node', i, dom);
     };
     const onDataChange = (bs: boolean[]) => {
-        console.warn('if onDataChange', bs);
-        debugger;
+        // console.warn('if onDataChange', bs);
+        // debugger;
         for (let i = 0; i < bs.length; i++) {
             if (bs[i]) return switchNode(i);
         }
@@ -43,7 +43,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     const refs: IIfTarget[] = [];
     const acceptIf = (ref: IIfTarget, call: IReturnCall, init = false) => {
         const id = index ++;
-        console.warn('accept if', id);
+        // console.warn('accept if', id);
         branchs[id] = util.branch.next(call, anchor, init);
         refs[id] = ref;
         if (returnEle === empty) {
@@ -65,11 +65,11 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         else (call) {
             // else 永远为true
             acceptIf(() => true, call);
-            console.log('if else');
+            // console.log('if else');
             return this.end();
         },
         end () {
-            console.warn('if end', refs);
+            // console.warn('if end', refs);
             watch<boolean[]>(() => (
                 refs.map(item => typeof item === 'function' ? item() : item.value)
             ), onDataChange, false);

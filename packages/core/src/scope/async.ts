@@ -37,7 +37,7 @@ export function createAsyncScope (call: IAsyncReturnCall, isReturnEl: boolean, {
     });
     if (isReturnEl) {
         target = branch.next(cacheCall as any, anchor, true);
-        console.log(target.parent);
+        // console.log(target.parent);
         const res = cache.call(target, cacheCall) as ITrueElement;
         branch.back();
         // ! 首次不需要branch

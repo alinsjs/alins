@@ -12,8 +12,8 @@ import {watch} from 'packages/reactive/src';
  */
 
 
-window.react = react;
-window.watch = watch;
+// window.react = react;
+// window.watch = watch;
 const win = window as any;
 
 const delay = (time = 3000) => {
@@ -79,12 +79,6 @@ function mainOrigin4 () {
     return b === 'b' ? <div>{b}</div> : <h1>{b}2</h1>;
 }
 
-// TODO 有bug
-/**
- a.value = 'a1'
-b.value = 'bb'
-a.value = 'a2'
- */
 function main () {
     const ctx = createContext();
     const a = ctx.$('a2');

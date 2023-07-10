@@ -25,6 +25,7 @@ export interface IProxyUtils {
   forceUpdate: ()=>void;
   replace(v: any): void;
   proxy: IProxyData<any>;
+  scopeItems?: any[];
 }
 
 interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {

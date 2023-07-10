@@ -33,7 +33,7 @@ function transformCacheToElement (cache: (IElement|ITextNode)[]): ITrueElement {
 export function createCallCache () {
     // ! call => dom 的cache
     const map = new WeakMap<IReturnCall|Object, (IElement|ITextNode)[]|null>();
-    window.map = map;
+    // window.map = map;
     // 当前执行到的函数
     // const currentCall: IReturnCall|IAsyncReturnCall|null = null;
 

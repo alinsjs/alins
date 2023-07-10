@@ -45,10 +45,9 @@ export interface IJSXDomOptions {
 
 export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
     let el: ITrueElement;
-
     if (opt.isText) {
         el = Renderer.createTextNode('');
-        if (opt.text) {
+        if (opt.text !== '') {
             // @ts-ignore
             el.textContent = reactiveBinding(opt.text, (v) => {el.textContent = v;});
         }
@@ -80,7 +79,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     // @ts-ignore
                     el.className = reactiveClass(v, (key, value) => {
                         el = el as IElement;
-                        console.log(key, value);
+                        // console.log(key, value);
                         if (!key) el.className = value;
                         else !!value ? el.classList.add(key) : el.classList.remove(key);
                     });
@@ -93,7 +92,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         bool ? el.setAttribute(k, v) : el.removeAttribute(k);
                     });
                     // debugger;
-                    console.warn('reactiveBindingEnable', k, value);
+                    // console.warn('reactiveBindingEnable', k, value);
                     // @ts-ignore
                     el.setAttribute(k, value);
                 }
@@ -105,7 +104,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
 
 export function appendChildren (parent: IElement|IFragment, children: (IChildren|IJSXDomOptions)[]) {
     for (const item of children) {
-        if (!item) continue;
+        if (typeof item === 'undefined' || item === null) continue;
 
         if (Renderer.isElement(item)) {
             parent.appendChild(item as any);
@@ -134,11 +133,11 @@ export const JSX = {
     createElement (tag: string|((options: IJSXDomOptions)=>ITrueElement), attributes: any, ...children: any[]): ITrueElement {
         if (typeof tag === 'function') {
             const result: IJSXDomOptions = {attributes, children, jsx: true};
-            console.log('createComponent', result);
+            // console.log('createComponent', result);
             return tag(result);
         }
         const result: IJSXDomOptions = {tag, attributes, children, jsx: true};
-        console.log('createElement', result);
+        // console.log('createElement', result);
         return transformOptionsToElement(result);
     }
 };

@@ -29,7 +29,7 @@ export function createAnchor (cache: ICallCache) {
     const initFirstMount = (element?: IGeneralElement): IFragment => {
         end = Renderer.createEmptyMountNode(id++);
         start = getFirstElement(element) || end;
-        console.warn('initFirstMount', start);
+        // console.warn('initFirstMount', start);
 
         if (Renderer.isFragment(element)) {
             // @ts-ignore
@@ -57,7 +57,7 @@ export function createAnchor (cache: ICallCache) {
             }
         },
         replaceBranch (branch: IBranchTarget) {
-            console.log(start);
+            // console.log(start);
             // branch.parent
             const current = branch.current(); // ! 缓存一下当前branch， call之后会被覆盖
             const dom = cache.call(branch);
@@ -84,7 +84,7 @@ export function createAnchor (cache: ICallCache) {
                 return frag;
             }
             if (!element) return;
-            console.log(element.textContent, element.outerHTML, end.parentElement);
+            // console.log(element.textContent, element.outerHTML, end.parentElement);
             // debugger;
             const container = (end.parentElement || frag);
             if (container === element) return element;
@@ -118,7 +118,7 @@ export function createAnchor (cache: ICallCache) {
             }
             start = newStart;
             container.insertBefore(element, end);
-            console.log('xxxxxxx', this.start(), start, start?.parentElement);
+            // console.log('xxxxxxx', this.start(), start, start?.parentElement);
             // debugger;
             return element;
         }

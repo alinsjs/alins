@@ -10,33 +10,35 @@ import ifCase from './cases/if';
 import asyncCase from './cases/async';
 import switchCase from './cases/switch';
 import forCase from './cases/for';
-import {react, watch} from 'packages/reactive/src';
-window.react = react;
-window.watch = watch;
+// import {react, watch} from 'packages/reactive/src';
+// window.react = react;
+// window.watch = watch;
 
 
 function startTestMain () {
+    document.body.innerText = '';
     startTest({
         cases: [
-            // ...dom,
-            // ...reactive,
-            // ...ifCase,
-            // ...asyncCase,
-            // ...switchCase,
+            ...dom,
+            ...reactive,
+            ...ifCase,
+            ...asyncCase,
+            ...switchCase,
             ...forCase
         ],
         onTestComplete ({passed, results, time}) {
             console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);
-            console.log(results);
-            results.forEach(({name, index, passed, result, expect}) => {
-                console.log(`%c【name=${name}】[${index}]${passed ? 'passed' : 'failed'}!`, `color: ${passed ? 'green' : 'red'}`);
-                const text = ` ----result:${JSON.stringify(result)} ${!passed ? `
- ----expect:${JSON.stringify(expect)}` : ''}`;
-                console.info(text);
-            });
+            //             console.log(results);
+            //             results.forEach(({name, index, passed, result, expect}) => {
+            //                 console.log(`%c【name=${name}】[${index}]${passed ? 'passed' : 'failed'}!`, `color: ${passed ? 'green' : 'red'}`);
+            //                 const text = ` ----result:${JSON.stringify(result)} ${!passed ? `
+            // ----expect:${JSON.stringify(expect)}` : ''}`;
+            //                 console.info(text);
+            //             });
 
         }
     });
 }
+window.startTestMain = startTestMain;
 
-startTestMain();
+// startTestMain();

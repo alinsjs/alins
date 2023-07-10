@@ -1,4 +1,5 @@
 import {createTestBase, mockFetch, delay} from "../test-util";
+import {JSX as React} from 'packages/core/src/element/element';
 
 export default [
 
@@ -108,8 +109,8 @@ export default [
 
             const dom = (()=>{
                 return ctx.if(()=>data.a === 1, ()=>{
-                    console.warn('async call-----------')
-                    debugger;
+                    // console.warn('async call-----------')
+                    // debugger;
                     return ctx.async(async ()=>{
                         const result = await mockFetch(2);
                         return <span>async{result}-{()=>data.b}</span>

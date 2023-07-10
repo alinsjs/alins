@@ -3,15 +3,15 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-07 22:31:17
+ * @LastEditTime: 2023-07-10 09:17:57
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
 import {createTestBase} from '../test-util';
 
-const w = window as any;
-w.React = React;
-const addEnv = (data: any) => {Object.assign(w, data);};
+// const w = window as any;
+// w.React = React;
+// const addEnv = (data: any) => {Object.assign(w, data);};
 
 
 const if3Base = () => {
@@ -74,12 +74,12 @@ export default [
             const collect = () => result.push(container.innerText);
             const append = dom => container.appendChild(dom);
             // const Child = () => <div>child</div>;
+            const ctx = createContext();
+            const str = ctx.$('1');
+            const str2 = ctx.$('s2');
             const dom = (() => {
-                const ctx = createContext();
-                const str = ctx.$('1');
-                const str2 = ctx.$('s2');
-                w.str = str;
-                w.str2 = str2;
+                // w.str = str;
+                // w.str2 = str2;
                 return ctx.if(() => str.value === '1', () => {
                     return <div>{str}{str2}
                         {/* <Child>11</Child> */}
@@ -90,11 +90,11 @@ export default [
             })();
             append(dom);
             collect();
-            w.str.value = '2';
+            str.value = '2';
             collect();
-            w.str2.value = 's22';
+            str2.value = 's22';
             collect();
-            w.str.value = '1';
+            str.value = '1';
             collect();
             return result;
         },
@@ -133,8 +133,8 @@ export default [
                 return <div>
                     <span>0</span>
                     {
-                        ctx.if(() => str2.value === '1', () => <div>11</div>)
-                            .else(() => <div>22</div>)
+                        ctx.if(() => str2.value === '1', () => <span>11</span>)
+                            .else(() => <span>22</span>)
                     }
                 </div>;
             }).else(() => {
@@ -195,7 +195,7 @@ export default [
             data.a = 2;
             collect();
             // @ts-ignore
-            window.data = data;
+            // window.data = data;
             return list;
         },
         expect: ['a1', 'b1', 'c1', 'c2', 'a1', 'c2']

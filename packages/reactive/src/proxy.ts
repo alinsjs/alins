@@ -107,6 +107,7 @@ export function createUtils (
         commonLns.forEach(item => {lns[key].add(item);});
     }
     return {
+        proxy: null,
         path: current,
         shallow,
         lns,
@@ -157,7 +158,7 @@ export function createProxy<T extends IJson> (data: T, {
         get (target: IJson, property, receiver) {
             const isFunc = typeof target[property] === 'function';
             if (isArray && isFunc) {
-                console.log('Proxy function', property, target[property]);
+                // console.log('Proxy function', property, target[property]);
                 // debugger;
                 return arrayFuncProxy(target, property as string, receiver);
             }
@@ -178,14 +179,14 @@ export function createProxy<T extends IJson> (data: T, {
         },
         set (target: IJson, property, v, receiver) {
             if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
-                console.log('Proxy.set', target, property, v);
+                // console.log('Proxy.set', target, property, v);
                 const origin = target[property];
                 
                 if (v === origin) return true;
                 if (set === null) { console.warn('Computed 不可设置'); return true;}
                 if (set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
 
-                if (v && typeof v === 'object' && !shallow) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
+                if (v && typeof v === 'object' && !shallow && !isProxy(v)) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
                     // debugger;
                     v = createProxy(v, {
                         commonLns: target[util].commonLns,
@@ -199,8 +200,7 @@ export function createProxy<T extends IJson> (data: T, {
                 let value: any = empty;
 
                 if (isArray && /^\d+$/.test(property)) {
-                    debugger;
-                    const data = replaceArrayItem(target, property, v, receiver);
+                    const data = replaceArrayItem(target, property, v);
                     if (data !== empty) value = data;
                 }
                 if (value === empty) value = Reflect.set(target, property, v, receiver);
@@ -212,8 +212,9 @@ export function createProxy<T extends IJson> (data: T, {
             return Reflect.set(target, property, v, receiver);
         },
         deleteProperty (target: IJson, property) {
-            console.log('deleteProperty', target, property);
+            // console.log('deleteProperty', target, property);
             triggerChange(property as string, undefined, target[property], true);
+            // todo 释放内存
             return Reflect.deleteProperty(target, property);
         }
     }) as IProxyData<T>;

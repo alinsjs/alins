@@ -40,7 +40,7 @@ export function createBinding (
         return template[0];
     }
     const fn = (onchange: IBindingChange) => {
-        console.warn('debug:', reactions);
+        // console.warn('debug:', reactions);
         const funcs = reactions.map((reaction: IRefData<any>|(()=>any)) => {
             return typeof reaction === 'function' ? () => reaction() : () => reaction.value;
         });

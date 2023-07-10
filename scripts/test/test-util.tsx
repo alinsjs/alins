@@ -16,13 +16,12 @@ export function delay (time = 500){
         }, time);
     })
 }
-
 export function createTestBase (){
     const list: string[] = []
     const ctx = createContext();
     const data = ctx.$({a: 1, b: 1, c: 1});
-    const arr = ctx.$([1,2,3,4]);
-    const arrObj = ctx.$([{a:1},{a:2},{a:3},{a:4}]);
+    const arr = ctx.$([1,2,3]);
+    const arrObj = ctx.$([{a:1},{a:2},{a:3}]);
     const str = ctx.$('1');
     const container = document.createElement('div');
     document.body.appendChild(container);

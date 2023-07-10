@@ -48,4 +48,4 @@ export function watchArray (
     }
 }
 
-window.watchArray = watchArray;
+// window.watchArray = watchArray;

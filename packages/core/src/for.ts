@@ -7,7 +7,7 @@
 import {createProxy, isProxy, watch, watchArray, wrapReactive} from 'packages/reactive/src';
 import {IOprationAction, OprateType, registArrayMap} from 'packages/reactive/src/array-proxy';
 import {IProxyData, IRefData, trig, util} from 'packages/utils/src';
-import {IFragment, IGeneralElement, ITrueElement, Renderer, ITextNode} from './element/renderer';
+import {IFragment, IGeneralElement, ITrueElement, Renderer, ITextNode, IElement} from './element/renderer';
 
 
 /*
@@ -21,9 +21,15 @@ export function _for () {
     // list =
 }
 
-export function map (this: IProxyData<any[]>, call: (item: any, index: number)=>IGeneralElement, isJSX = false) {
+export function map (
+    this: IProxyData<any[]>,
+    call: (scope: any)=>IGeneralElement,
+    jsx = false,
+    k = '$I',
+    ik = ''
+) {
     const list = this;
-    if (!isJSX) return list.map(call);
+    if (!jsx) return list.map(call);
     // list.map
     const container = Renderer.createDocumentFragment();
     const isReactive = isProxy(list);
@@ -35,35 +41,32 @@ export function map (this: IProxyData<any[]>, call: (item: any, index: number)=>
         }
         return container;
     }
-    const proxy = list[util].proxy;
-    const TotalEnd = Renderer.createEmptyMountNode();
+    // const proxy = list[util].proxy;
+    const ScopeEnd = Renderer.createEmptyMountNode();
     const EndMap: ITrueElement[] = [];
 
-    const modifyedList: IRefData[] = [];
+    const scopeItems: IProxyData<{item: any, index: number}>[] = [];
+    list[util].scopeItems = scopeItems;
+    scopeItems.key = k;
+    // window.scope = scopeItems;
+    // window.EndMap = EndMap;
 
-    let isModifyed = false;
-
-    const replaceItem = (index: number, item: any) => {
-        if (isModifyed) {
-            modifyedList[index].value = item;
-        } else {
-            
-        }
+    const createScope = (item: any, i: number) => {
+        const data: any = {[k]: item};
+        if (ik) data[ik] = i;
+        return createProxy(wrapReactive(data), {shallow: true});
     };
 
     const createChild = (item: any, i: number) => {
         // if (!isProxy(item)) {
         //     item = wrapReactive();
         // }
-        if (!isProxy(item)) {
-            item = createProxy(wrapReactive(item));
-            modifyedList[i] = item;
-            if (!isModifyed) isModifyed = true;
-        }
-        i = createProxy(wrapReactive(i));
-        item[util].index = i; // 缓存index
+        const scope = createScope(item, i);
 
-        let child = call(item, i);
+        i = createProxy(wrapReactive(i));
+        // item[util].index = i; // 缓存index
+
+        let child = call(scope);
         // @ts-ignore
         let end: ITrueElement = child;
         if (!child) {
@@ -79,11 +82,12 @@ export function map (this: IProxyData<any[]>, call: (item: any, index: number)=>
                 end = child.children[n - 1] as any;
             }
         }
-        return [child, end];
+        return [child, end, scope];
     };
     for (let i = 0; i < n; i++) {
         const item = list[i];
-        const [child, end] = createChild(item, i);
+        const [child, end, scope] = createChild(item, i);
+        scopeItems[i] = scope;
         container.appendChild(child as any);
         EndMap[i] = end;
     }
@@ -93,24 +97,76 @@ export function map (this: IProxyData<any[]>, call: (item: any, index: number)=>
                 const doc = Renderer.createDocumentFragment();
                 const length = list.length;
                 for (let i = 0; i < data.length; i++) {
-                    const [child, end] = createChild(data[i], length + i);
-                    doc.appendChild(child);
+                    const [child, end, scope] = createChild(data[i], length + i);
                     EndMap.push(end);
+                    scopeItems.push(scope);
+                    doc.appendChild(child);
                 }
-                TotalEnd.parentElement.insertBefore(doc, TotalEnd);
+                ScopeEnd.parentElement.insertBefore(doc, ScopeEnd);
             };break;
             case OprateType.Replace: {
-                replaceItem(index, data[0]);
+                // console.warn('【watch array replace', index, JSON.stringify(data));
+                if (!scopeItems[index]) {
+                    scopeItems[index] = createScope(data[0], index);
+                } else {
+                    // if (data[0] !== scopeItems[index][k]) {
+                    //     scopeItems[index][k] = data[0];
+                    // }
+                    scopeItems[index][k] = data[0];
+                    scopeItems[index][ik] = index;
+                }
+                // replaceItem(index, data[0]);
             };break;
             case OprateType.Remove: {
+                if (count === 0) break;
+                const startPos = index - 1;
+                const endPos = startPos + count;
+                const endDom = EndMap[endPos]?.nextSibling || ScopeEnd;
+                // debugger;
+                // if (endDom === ScopeEnd) debugger; // debug
+
+                const parent = ScopeEnd.parentElement;
+                if (startPos < 0) {
+                    if (endPos === list.length - 1) {
+                        parent.innerText = '';
+                        parent.appendChild(ScopeEnd);
+                    } else {
+                        const children = parent.children;
+                        while (children[0] && children[0] !== endDom) {
+                            children[0].remove();
+                        }
+                    }
+                } else {
+                    const startDom = EndMap[startPos];
+                    while (startDom.nextSibling && startDom.nextSibling !== endDom) {
+                        startDom.nextSibling.remove();
+                    }
+                }
+                EndMap.splice(index, count);
+                scopeItems.splice(index, count);
+                // items.forEach(item => item[util].release());
+                // console.warn('【watch array remove】', index, count, data);
             };break;
             case OprateType.Insert: {
+                // if (!EndMap[index - 1]) debugger;
+                const mountNode = index === 0 ? ScopeEnd.parentElement.children[0] : EndMap[index - 1].nextSibling;
+                const ends: any[] = [];
+                const scopes: any[] = [];
+                data.forEach((item, i) => {
+                    const [child, end, scope] = createChild(item, index + i);
+                    mountNode.parentElement.insertBefore(child, mountNode);
+                    scopes.push(scope);
+                    ends.push(end);
+                });
+                scopeItems.splice(index, 0, ...scopes);
+                EndMap.splice(index, 0, ...ends);
+                // console.warn('【watch array insert】', index, count, data);
             };break;
         }
-        console.log('type=', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data, fromAssign);
+        // console.log('type=', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data, fromAssign);
     });
     // EndMap.push(end);
-    container.appendChild(TotalEnd as any);
+    container.appendChild(ScopeEnd as any);
     return container;
 }
 

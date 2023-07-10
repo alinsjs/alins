@@ -28,6 +28,7 @@ export interface IElement {
   }
   insertBefore<T extends ITrueElement>(node: T, child: IElement | null): T;
   remove(): void;
+  children: (IElement|ITextNode)[];
   get parentElement(): IElement;
   get nextSibling(): IElement;
   get className(): string;
