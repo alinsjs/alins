@@ -49,7 +49,10 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         el = Renderer.createTextNode('');
         if (opt.text !== '') {
             // @ts-ignore
-            el.textContent = reactiveBinding(opt.text, (v) => {el.textContent = v;});
+            el.textContent = reactiveBinding(opt.text, (v) => {
+                console.warn('reactiveBinding trigger', el, el.textContent, v);
+                el.textContent = v;
+            });
         }
     } else {
         const isDom = !!opt.tag;

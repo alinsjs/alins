@@ -1,4 +1,4 @@
-import {createTestBase, mockFetch, delay} from "../test-util";
+import {createTestBase, mockFetch, delay} from '../test-util';
 import {JSX as React} from 'packages/core/src/element/element';
 
 export default [
@@ -17,18 +17,18 @@ export default [
             }
             */
 
-            const dom = (()=>{
-                return ctx.async(async ()=>{
+            const dom = (() => {
+                return ctx.async(async () => {
                     const result = await mockFetch(2);
-                    return <span>async{result}-{()=>data.b}</span>
-                }, true)
-            })()
+                    return <span>async{result}-{() => data.b}</span>;
+                }, true);
+            })();
 
             container.appendChild(dom);
             collect();
             await delay(600);
             collect();
-            data.b = 2
+            data.b = 2;
             collect();
 
             return list;
@@ -50,15 +50,15 @@ export default [
                 return <div>{data.a}</div>
             }
             */
-            const dom = (()=>{
-                ctx.if(()=>data.c === 1, ()=>{
-                    ctx.async(async ()=>{
+            const dom = (() => {
+                ctx.if(() => data.c === 1, () => {
+                    ctx.async(async () => {
                         const result = await mockFetch(2);
                         data.a = result;
-                    }, false)
-                })
-                return <div>{()=>data.a}</div>
-            })()
+                    }, false);
+                });
+                return <div>{() => data.a}</div>;
+            })();
 
             container.appendChild(dom);
             collect();
@@ -77,24 +77,24 @@ export default [
         async test () {
             const {list, ctx, data, container, collect, str} = createTestBase();
 
-            const dom = (()=>{
-                return ctx.if(()=>data.a === 2, ()=>{
-                    return ctx.async(async ()=>{
+            const dom = (() => {
+                return ctx.if(() => data.a === 2, () => {
+                    return ctx.async(async () => {
                         const result = await mockFetch(2);
-                        return <span>async{result}-{()=>data.b}</span>
-                    }, true)
-                }).else(()=>{
-                    return <div>else</div>
-                })
-            })()
+                        return <span>async{result}-{() => data.b}</span>;
+                    }, true);
+                }).else(() => {
+                    return <div>else</div>;
+                });
+            })();
 
             container.appendChild(dom);
             collect();
-            data.a = 2
+            data.a = 2;
             collect();
             await delay(600);
             collect();
-            data.b = 2
+            data.b = 2;
             collect();
 
             return list;
@@ -107,29 +107,29 @@ export default [
         async test () {
             const {list, ctx, data, container, collect, str} = createTestBase();
 
-            const dom = (()=>{
-                return ctx.if(()=>data.a === 1, ()=>{
+            const dom = (() => {
+                return ctx.if(() => data.a === 1, () => {
                     // console.warn('async call-----------')
                     // debugger;
-                    return ctx.async(async ()=>{
+                    return ctx.async(async () => {
                         const result = await mockFetch(2);
-                        return <span>async{result}-{()=>data.b}</span>
-                    }, true)
-                }).else(()=>{
-                    return <div>else</div>
-                })
-            })()
+                        return <span>async{result}-{() => data.b}</span>;
+                    }, true);
+                }).else(() => {
+                    return <div>else</div>;
+                });
+            })();
 
             container.appendChild(dom);
             collect();
-            data.a = 2
+            data.a = 2;
             collect();
             await delay(600);
-            data.a = 1
+            data.a = 1;
             collect();
 
             return list;
         },
         expect: ['', 'else', 'async2-1']
     }
-]
+];

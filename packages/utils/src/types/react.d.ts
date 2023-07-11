@@ -26,6 +26,8 @@ export interface IProxyUtils {
   replace(v: any): void;
   proxy: IProxyData<any>;
   scopeItems?: any[];
+  replaceLns?: boolean;
+  extraLns?: Set<IProxyListenerMap>;
 }
 
 interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {

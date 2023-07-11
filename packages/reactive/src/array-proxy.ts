@@ -5,7 +5,8 @@
  */
 
 import {assignLast, empty, IProxyData, trig, util} from 'packages/utils/src';
-import {createProxy} from './proxy';
+import {createProxy, replaceLNS} from './proxy';
+import {react} from './react';
 
 export enum OprateType {
     Replace = 0, // Replace index a => b
@@ -43,6 +44,13 @@ function proxyItem (data: IProxyData<any[]>, args: any[], index: number) {
 function triggerOprationEvent (arr: any[], type: OprateType, index:number, data: any[], count: number, fromAssign?:boolean) {
     // const ut = arr[util];
     arr[trig]?.forEach(fn => {fn({type, data, index, count, fromAssign});});
+}
+
+function wrapArrayCall (target: IProxyData<any[]>, fn:()=>any) {
+    target[util].replaceLns = false;
+    const result = fn();
+    delete target[util].replaceLns;
+    return result;
 }
 
 const ArrayMap = {
@@ -85,14 +93,13 @@ const ArrayMap = {
         const data = items?.slice(start, start + args.length).map(i => i[items.key]);
         // const data = args;
         // debugger;
-        return origin.call(target[util].proxy, start, count, ...data); ;
-    },
+        return wrapArrayCall(target, () => origin.call(target[util].proxy, start, count, ...data));     },
     push (this: {target: IProxyData<any[]>, origin: any}, ...args: any[]) {
         // console.log('Push', args);
         const {target, origin} = this;
         args = proxyItem(target, args, target.length);
         triggerOprationEvent(target, OprateType.Push, target.length, args, args.length);
-        return origin.call(target, ...args);
+        return origin.call(target[util].proxy, ...args);
     },
     pop (this: {target: IProxyData<any[]>, origin: any}) {
         const {target, origin} = this;
@@ -100,14 +107,14 @@ const ArrayMap = {
             triggerOprationEvent(target, OprateType.Remove, target.length - 1, [target[target.length - 1]], 1);
         }
         // console.log('Remove', this.length - 1, 1);
-        return origin.call(target);
+        return origin.call(target[util].proxy);
     },
     unshift (this: {target: IProxyData<any[]>, origin: any}, ...args: any[]) {
         // console.log('Insert', );
         const {target, origin} = this;
         args = proxyItem(target, args, 0);
         triggerOprationEvent(target, OprateType.Insert, 0, args, args.length);
-        return origin.call(target, ...args);
+        return wrapArrayCall(target, () => origin.call(target[util].proxy, ...args));
     },
     shift (this: {target: IProxyData<any[]>, origin: any}) {
         // console.log('Remove', 0, 1);
@@ -115,22 +122,33 @@ const ArrayMap = {
         if (target.length > 0) {
             triggerOprationEvent(target, OprateType.Remove, 0, target[0], 1);
         }
-        return origin.call(target);
+        return origin.call(target[util].proxy);
     },
-    sort (this: {target: IProxyData<any[]>, origin: any}, compareFn?: ((a: any, b: any) => number) | undefined) {
-        const {target, origin} = this;
-        const originData = [...target];
-        const result = origin.call(target, compareFn);
-        const n = result.length;
-        for (let i = 0; i < n; i++) {
-            if (originData[i] !== result[i]) {
-                // Sort 作为另外一种类型 移动dom元素 修改索引 既可以
-                triggerOprationEvent(target, OprateType.Replace, i, [result[i], originData[i]], 1);
-                // console.log('Replace', i, origin[i], result[i]);
-            }
-        }
-        return result;
-    },
+    // sort (this: {target: IProxyData<any[]>, origin: any}, compareFn?: ((a: any, b: any) => number) | undefined) {
+    //     const {target, origin} = this;
+    //     const originData = [...target];
+    //     const result = origin.call(target, compareFn);
+    //     const n = result.length;
+    //     for (let i = 0; i < n; i++) {
+    //         if (originData[i] !== result[i]) {
+    //             // Sort 作为另外一种类型 移动dom元素 修改索引 既可以
+    //             triggerOprationEvent(target, OprateType.Replace, i, [result[i], originData[i]], 1);
+    //             // console.log('Replace', i, origin[i], result[i]);
+    //         }
+    //     }
+    //     return result;
+    // },
+    // fill (this: {target: IProxyData<any[]>, origin: any}, data: any, start?: number, end?: number) {
+    //     const {target, origin} = this;
+    //     const result = origin.call(target[util].proxy, data, start, end);
+    //     const n = end ?? result.length;
+    //     const endItem = result[n - 1];
+    //     for (let i = start ?? 0; i < n; i++) {
+    //         debugger;
+    //         replaceLNS(result[i], endItem);
+    //     }
+    //     return result;
+    // },
     replace (target: any, index: number, ov: any, v: any) {
         // console.warn('replace=======', index, ov, v);
         triggerOprationEvent(target, OprateType.Replace, index, [v, ov], 1);

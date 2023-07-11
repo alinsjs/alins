@@ -48,8 +48,8 @@ export function map (
     const scopeItems: IProxyData<{item: any, index: number}>[] = [];
     list[util].scopeItems = scopeItems;
     scopeItems.key = k;
-    // window.scope = scopeItems;
-    // window.EndMap = EndMap;
+    window.scope = scopeItems;
+    window.EndMap = EndMap;
 
     const createScope = (item: any, i: number) => {
         const data: any = {[k]: item};
@@ -105,14 +105,16 @@ export function map (
                 ScopeEnd.parentElement.insertBefore(doc, ScopeEnd);
             };break;
             case OprateType.Replace: {
-                // console.warn('【watch array replace', index, JSON.stringify(data));
+                debugger;
                 if (!scopeItems[index]) {
+                    console.warn('【debug: watch array replace1', index, JSON.stringify(data));
                     scopeItems[index] = createScope(data[0], index);
                 } else {
-                    // if (data[0] !== scopeItems[index][k]) {
-                    //     scopeItems[index][k] = data[0];
-                    // }
-                    scopeItems[index][k] = data[0];
+                    console.warn('【debug: watch array replace2', index, JSON.stringify(data));
+                    if (data[0] !== scopeItems[index][k]) {
+                        console.log('debug: watch array replace------------');
+                        scopeItems[index][k] = data[0];
+                    }
                     scopeItems[index][ik] = index;
                 }
                 // replaceItem(index, data[0]);

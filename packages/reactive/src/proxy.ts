@@ -13,7 +13,7 @@ import {
 } from 'alins-utils';
 import {arrayFuncProxy} from './array-proxy';
 import {replaceArrayItem} from './array-proxy';
-import {empty} from 'packages/utils/src';
+import {empty, pureproxy} from 'packages/utils/src';
 
 let currentFn: any = null;
 let depReactive = false; // 当前表达式是否依赖响应数据
@@ -67,26 +67,30 @@ function replaceProxy (v: any, data: any) {
 
 export function createUtils (
     data: IProxyData<object>,
-    commonLns,
-    lns: IProxyListenerMap,
     key: string,
     path: string[],
-    shallow: boolean,
-): IProxyUtils {
+): void {
     const current = key ? [...path, key] : [...path];
     const isArray = Array.isArray(data);
     const triggerChange = (property: string, nv: any, old: any, remove?: boolean, isNew?: boolean) => {
-        const each = fn => {
-            fn(nv, old, `${current.join('.')}.${property}`, property, remove);
-        };
+        const each = fn => {fn(nv, old, `${current.join('.')}.${property}`, property, remove);};
         if (isNew) data[util].commonLns?.forEach(each);
-        lns[property]?.forEach(each);
+        try {
+            data[util].lns[property]?.forEach(each);
+        } catch (e) {
+            debugger;
+        }
+        data[util].extraLns?.forEach(item => {
+            debugger;
+            item[property]?.forEach(each);
+        });
     };
     const forceUpdate = () => {
         for (const k in data)
             triggerChange(k, data[k], data[k]);
     };
     const replace = (v: any) => {
+        throw new Error('xxxxxxxxx');
         replaceProxy(v, data[util].proxy);
     };
     const forceWrite = (v: any) => {
@@ -98,26 +102,23 @@ export function createUtils (
         // console.trace('subscribe', Object.keys(lns));
         data[util].commonLns?.add(ln) || (data[util].commonLns = new Set([ln]));
         for (const k in data) {
-            lns[k]?.add(ln) || (lns[k] = new Set([ln]));
+            data[util].lns[k]?.add(ln) || (data[util].lns[k] = new Set([ln]));
             if (deep && isProxy(data[k])) data[k][util].subscribe(ln, deep);
         }
     };
-    if (commonLns) {
-        lns[key] = new Set();
-        commonLns.forEach(item => {lns[key].add(item);});
+    if (data[util].commonLns) {
+        data[util].lns[key] = new Set();
+        data[util].commonLns.forEach(item => {data[util].lns[key].add(item);});
     }
-    return {
-        proxy: null,
+    Object.assign(data[util], {
         path: current,
-        shallow,
-        lns,
         triggerChange,
         forceWrite,
         subscribe,
         isArray,
         forceUpdate,
         replace,
-    };
+    });
 }
 
 export function createProxy<T extends IJson> (data: T, {
@@ -151,9 +152,17 @@ export function createProxy<T extends IJson> (data: T, {
     }
 
     // @ts-ignore
-    const {
-        triggerChange, isArray
-    } = data[util] = createUtils(data, commonLns, lns, key, path, shallow);
+    data[util] = {
+        commonLns,
+        lns,
+        shallow,
+    };
+    // @ts-ignore
+    createUtils(data, key, path);
+
+    // @ts-ignore
+    const {triggerChange, isArray} = data[util];
+
     const proxy = new Proxy(data, {
         get (target: IJson, property, receiver) {
             const isFunc = typeof target[property] === 'function';
@@ -174,27 +183,42 @@ export function createProxy<T extends IJson> (data: T, {
                 }
                 // if (__DEBUG__) console.log('Proxy.get', target, property);
                 if (get) return get();
+            } else if (property === pureproxy) {
+                return true;
             }
             return Reflect.get(target, property, receiver);
         },
         set (target: IJson, property, v, receiver) {
             if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
-                // console.log('Proxy.set', target, property, v);
+                console.log('debug:Proxy.set', target, property, v);
+                if (v.a === 2) debugger;
                 const origin = target[property];
                 
                 if (v === origin) return true;
                 if (set === null) { console.warn('Computed 不可设置'); return true;}
                 if (set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
-
-                if (v && typeof v === 'object' && !shallow && !isProxy(v)) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
+                // if (v.a === 0) debugger;
+                if (v && typeof v === 'object' && !shallow) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
                     // debugger;
-                    v = createProxy(v, {
-                        commonLns: target[util].commonLns,
-                        lns: origin?.[util].lns,
-                        shallow,
-                        path,
-                        key: property as string,
-                    });
+                    if (!isProxy(v)) {
+                        if (origin) origin[util].removed = true;
+                        v = createProxy(v, {
+                            commonLns: target[util].commonLns,
+                            lns: origin?.[util].lns,
+                            shallow,
+                            path,
+                            key: property as string,
+                        });
+                    } else {
+                        if (!v[pureproxy]) v = v[util].proxy; // ! 如果是伪proxy 则获取真proxy
+                        if (isProxy(origin) && data[util].replaceLns !== false) {
+                            // todo 多个对象引用同一个数据时处理 !
+                            // const list = target.filter(item => item[util] === v[util]);
+                            // 需要修改lns
+                            console.warn('debug: replace lns', JSON.stringify(v), JSON.stringify(origin));
+                            replaceLNS(v, origin);
+                        }
+                    }
                 }
 
                 let value: any = empty;
@@ -220,4 +244,31 @@ export function createProxy<T extends IJson> (data: T, {
     }) as IProxyData<T>;
     data[util].proxy = proxy;
     return proxy;
+}
+
+export function replaceLNS (nv: IProxyData<any>, origin: IProxyData<any>) {
+    // debugger;
+    const ut = nv[util], out = origin[util];
+    console.log(`debug:replaceLNS new=${nv.a}[${ut.removed}];old=${origin.a}[${out.removed}]`);
+
+    // ! 引入extraLns 来处理 赋值问题
+    if (!out.extraLns || !out.extraLns.has(ut.lns)) {
+        if (!ut.extraLns) {
+            ut.extraLns = new Set([out.lns]);
+        } else {
+            ut.extraLns.add(out.lns);
+        }
+    } else {
+        const n = ut.lns;
+        ut.lns = out.lns;
+        out.lns = n;
+        out.extraLns.delete(n);
+    }
+
+    for (const k in nv) {
+        console.log(k);
+        if (isProxy(nv[k]) && isProxy(origin[k])) {
+            replaceLNS(nv[k], origin[k]);
+        }
+    }
 }

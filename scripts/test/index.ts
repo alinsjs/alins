@@ -28,17 +28,16 @@ function startTestMain () {
         ],
         onTestComplete ({passed, results, time}) {
             console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);
-            //             console.log(results);
-            //             results.forEach(({name, index, passed, result, expect}) => {
-            //                 console.log(`%c【name=${name}】[${index}]${passed ? 'passed' : 'failed'}!`, `color: ${passed ? 'green' : 'red'}`);
-            //                 const text = ` ----result:${JSON.stringify(result)} ${!passed ? `
-            // ----expect:${JSON.stringify(expect)}` : ''}`;
-            //                 console.info(text);
-            //             });
+            console.log(results);
+            results.forEach(({name, index, passed, result, expect}) => {
+                console.log(`%c【name=${name}】[${index}]${passed ? 'passed' : 'failed'}!`, `color: ${passed ? 'green' : 'red'}`);
+                const text = ` ----result:${JSON.stringify(result)} ${!passed ? `\n ----expect:${JSON.stringify(expect)}` : ''}`;
+                console.info(text);
+            });
 
         }
     });
 }
 window.startTestMain = startTestMain;
 
-// startTestMain();
+startTestMain();
