@@ -89,8 +89,8 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
             // debugger;
             forward ? stack.push(target) : stack[stack.length - 1] = target;
             // console.warn(`【target:${target.id}】`, target.call.toString());
-            if (!window.bs) window.bs = {};
-            window.bs[target.id] = target;
+            // if (!window.bs) window.bs = {};
+            // window.bs[target.id] = target;
             return target;
         },
         back () {

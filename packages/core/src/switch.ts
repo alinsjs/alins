@@ -61,7 +61,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         return !!brk;
     };
 
-    window.branchMap = branchMap;
+    // window.branchMap = branchMap;
     const run = (value: any) => {
         // console.warn('switch run');
         let macthed: boolean = false;

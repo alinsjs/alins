@@ -332,6 +332,28 @@ function hh(){
   let list = [];
   let children = h.dom([]);
 
+
+  for(let i=0,a=2;a<10;i++){
+    const item = list[a];
+    children.push(xxx);
+  }
+
+   
+
+
+  h.for((call)=>{
+    let i=0,a=2;
+
+    while(a<list.length){
+      call(i,a);
+      i++
+    }
+
+  }, (i,a)=>{
+    children.push(i,a);
+  })
+
+
   for(let i of list){
     if(i === 3) return <div>{i}</div>
     children.push(<div>{i}</div>)
