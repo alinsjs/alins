@@ -18,12 +18,12 @@ function startTestMain () {
     document.body.innerText = '';
     startTest({
         cases: [
-            // ...reactive,
-            // ...dom,
+            ...reactive,
+            ...dom,
             ...ifCase,
-            // ...asyncCase,
-            // ...switchCase,
-            // ...forCase,
+            ...asyncCase,
+            ...switchCase,
+            ...forCase,
         ],
         onTestComplete ({passed, results, time}) {
             console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!(case count=${results.length})】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);

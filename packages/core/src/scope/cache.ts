@@ -70,7 +70,7 @@ export function createCallCache () {
                 return element;
             }
             // todo 对于 return; 的处理
-            // throw new Error('动态条件分支中不允许返回非元素类型');
+            throw new Error('动态条件分支中不允许返回非元素类型');
         },
         modifyCache (fn: IReturnCall|IAsyncReturnCall, el: ITrueElement) {
             map.set(fn, transformElementToCache(el));

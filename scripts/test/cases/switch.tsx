@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-10 09:09:48
+ * @LastEditTime: 2023-07-16 15:53:02
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
@@ -18,30 +18,42 @@ export default [
         test () {
             const {list, ctx, data, container, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
+
+            /*
+            const dom = ()=>{
+                switch(data.a) {
+                    case 0: list.push(0);
+                    case 1: list.push(1);
+                    case 2: list.push(2);break;
+                    case 3: list.push(3);break;
+                }
+                return <div>end</div>;
+            }
+            */
             const dom = (() => {
                 return ctx.switch(() => data.a, [
                     {
                         value: 0,
                         brk: false,
-                        call: ()=>{list.push('0')},
+                        call: () => {list.push('0');},
                     },
                     {
                         value: 1,
                         brk: false,
-                        call: ()=>{list.push('1')},
+                        call: () => {list.push('1');},
                     },
                     {
                         value: 2,
                         brk: true,
-                        call: ()=>{list.push('2')},
+                        call: () => {list.push('2');},
                     },
                     {
                         value: 3,
                         brk: true,
-                        call: ()=>{list.push('3')},
+                        call: () => {list.push('3');},
                     },
-                ]).end(()=>{
-                    return <div>end</div>
+                ]).end(() => {
+                    return <div>end</div>;
                 });
             })();
             append(dom);
@@ -58,30 +70,42 @@ export default [
         test () {
             const {list, ctx, data, container, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
+
+            /*
+            const dom = ()=>{
+                switch(data.a) {
+                    case 0: return <div>c0</div>;
+                    case 1: return <div>c1</div>;
+                    case 2: list.push(2);
+                    case 3: return <div>c3</div>;
+                }
+                return <div>end</div>;
+            }
+            */
             const dom = (() => {
                 return ctx.switch(() => data.a, [
                     {
                         value: 0,
                         brk: false,
-                        call: ()=><div>c0</div>,
+                        call: () => <div>c0</div>,
                     },
                     {
                         value: 1,
                         brk: false,
-                        call: ()=><div>c1</div>,
+                        call: () => <div>c1</div>,
                     },
                     {
                         value: 2,
                         brk: false,
-                        call: ()=>{list.push('2')},
+                        call: () => {list.push('2');},
                     },
                     {
                         value: 3,
                         brk: true,
-                        call: ()=><div>c3</div>,
+                        call: () => <div>c3</div>,
                     },
-                ]).end(()=>{
-                    return <div>end</div>
+                ]).end(() => {
+                    return <div>end</div>;
                 });
             })();
             append(dom);

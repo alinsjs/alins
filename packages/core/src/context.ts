@@ -49,11 +49,11 @@ export function createContext (top = false) {
         ce: JSX.createElement,
 
         // ! 处理 async 代码没有返回值
-        // asyncNotReturned
-        anr (fn: any) {
+        // markNotReturned
+        mnr (fn: any) {
             fn.returned = false;
             return fn;
-        }
+        },
     };
     return ctx;
 }

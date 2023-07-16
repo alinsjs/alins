@@ -58,11 +58,12 @@ export default [
             }
             */
             const fn = () => {
-                ctx.if(() => data.c === 2, ctx.anr(async () => {
+                return ctx.if(() => data.c === 2, ctx.mnr(async () => {
                     const result = await mockFetch(2);
                     data.a = result;
-                })).end();
-                return <div>{() => data.a}</div>;
+                })).end(() => {
+                    return <div>{() => data.a}</div>;
+                });
                 // if (d) return d;
             };
             window.data = data;
@@ -98,7 +99,7 @@ export default [
                     return <span>async{result}-{() => data.b}</span>;
                 }).else(() => {
                     return <div>else</div>;
-                });
+                }).end();
             })();
 
             container.appendChild(dom);
@@ -140,7 +141,7 @@ export default [
                     return <span>async{result}-{() => data.b}</span>;
                 }).else(() => {
                     return <div>else</div>;
-                });
+                }).end();
             });
 
             const dom = ctx.ce(fn);
@@ -177,7 +178,7 @@ export default [
                 }).else(() => {
                     console.warn('asyncdebug: else');
                     return <div>else</div>;
-                });
+                }).end();
             };
             window.data = data;
 

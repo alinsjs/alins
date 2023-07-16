@@ -11,7 +11,10 @@ import {ICallCache} from './scope/cache';
 import {ITrueElement} from './element/renderer';
 
 // eslint-disable-next-line no-undef
-export type IReturnCall = () => JSX.Element|null|ITrueElement|void;
+export interface IReturnCall {
+    (): JSX.Element|null|ITrueElement|void | Promise<JSX.Element|null|ITrueElement|void>;
+    returned?: boolean;
+}
 export type IAsyncReturnCall = () => Promise<ITrueElement|void>;
 
 export interface ICtxUtil {

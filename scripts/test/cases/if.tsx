@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-16 15:39:26
+ * @LastEditTime: 2023-07-16 16:44:37
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
@@ -66,7 +66,7 @@ const if3Base = () => {
 export default [
     {
         name: '基础if-else',
-        disabled: true,
+        disabled: false,
         test () {
             const result: any[] = [];
             const container = document.createElement('div');
@@ -95,7 +95,7 @@ export default [
                     </div>;
                 }).else(() => {
                     return <div>else</div>;
-                });
+                }).end();
             })();
             append(dom);
             collect();
@@ -121,7 +121,7 @@ export default [
             const append = dom => container.appendChild(dom);
             // const Child = () => <div>child</div>;
             const ctx = createContext();
-            const str = ctx.$('2');
+            const str = ctx.$('1');
             const str2 = ctx.$('s2');
             /*
                 const dom = ()=>{
@@ -136,32 +136,30 @@ export default [
             const dom = (() => {
                 // w.str = str;
                 // w.str2 = str2;
-                const _$R = ctx.if(() => str.value === '1', () => {
+                return ctx.if(() => str.value === '1', () => {
                     return <div>{str}{str2}</div>;
-                }).end();
-                debugger;
-                if (_$R) return _$R;
-                const b = ctx.$(1);
-                b.value ++;
-                return <div>b{b}</div>;
-
+                }).end(() => {
+                    const b = ctx.$(1);
+                    b.value ++;
+                    return <div>b{b}</div>;
+                });
             })();
-            window.s = str;
+            debugger;
             append(dom);
-            // collect();
-            // str.value = '2';
-            // collect();
-            // str2.value = 's22';
-            // collect();
-            // str.value = '1';
-            // collect();
+            collect();
+            str.value = '2';
+            collect();
+            str2.value = 's22';
+            collect();
+            str.value = '1';
+            collect();
             return result;
         },
-        expect: [],
+        expect: ['1s2', 'b2', 'b2', '1s22'],
     },
     {
         name: '基础if-else-2',
-        disabled: true,
+        disabled: false,
         test () {
             const result: any[] = [];
             const container = document.createElement('div');
@@ -195,12 +193,12 @@ export default [
                     <span>0</span>
                     {
                         ctx.if(() => str2.value === '1', () => <span>11</span>)
-                            .else(() => <span>22</span>)
+                            .else(() => <span>22</span>).end()
                     }
                 </div>;
             }).else(() => {
                 return <div>else</div>;
-            });
+            }).end();
             append(dom);
             collect();
             str.value = '2';
@@ -221,7 +219,7 @@ export default [
     },
     {
         name: '三层嵌套if-1',
-        disabled: true,
+        disabled: false,
         test () {
             const {data, collect, list} = if3Base();
             collect();
@@ -241,7 +239,7 @@ export default [
     },
     {
         name: '三层嵌套if-2',
-        disabled: true,
+        disabled: false,
         test () {
             const {data, collect, list} = if3Base();
             collect();
