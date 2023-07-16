@@ -51,7 +51,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
             const branch = branchMap.get(call);
             if (!branch) throw new Error('empty branch');
             // if (!initilizing) debugger;
-            const dom = initilizing ? util.cache.call(branch) : anchor.replaceBranch(branch);
+            const dom = initilizing ? util.cache.call(branch, anchor) : anchor.replaceBranch(branch);
             if (dom) {
                 result = SwitchResult.Return;
                 return dom;
@@ -80,7 +80,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         // @ts-ignore
         if (result !== SwitchResult.Return) { // 不是return;
             const branch = branchMap.get(endCall) as IBranchTarget;
-            el = initilizing ? util.cache.call(branch) : anchor.replaceBranch(branch);
+            el = initilizing ? util.cache.call(branch, anchor) : anchor.replaceBranch(branch);
         }
         return el;
     };

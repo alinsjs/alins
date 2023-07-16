@@ -27,13 +27,11 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
 
     const switchNode = (i: number) => {
         const branch = branchs[i];
-        // debugger;
         anchor.replaceBranch(branch);
         // console.warn('switch node', i, dom);
     };
     const onDataChange = (bs: boolean[]) => {
         // console.warn('if onDataChange', bs);
-        // debugger;
         for (let i = 0; i < bs.length; i++) {
             if (bs[i]) return switchNode(i);
         }
@@ -49,7 +47,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         if (returnEle === empty) {
             const value = typeof ref === 'function' ? ref() : ref.value;
             if (value) {
-                const dom = util.cache.call(branchs[id]);
+                const dom = util.cache.call(branchs[id], anchor);
                 if (dom) {
                     returnEle = dom;
                 }
@@ -76,6 +74,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
             // @ts-ignore ! 回收refs内存
             // refs = null;
             util.branch.back();
+            console.log('asyncdebuf: if End', returnEle);
             if (returnEle !== empty) {
                 // ! 首次不需要branch
                 return anchor.replaceContent(returnEle);

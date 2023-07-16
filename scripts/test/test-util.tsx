@@ -6,7 +6,7 @@
 import {createContext} from 'packages/core/src/context';
 
 export async function mockFetch <T> (s: T) {
-    await delay(500);
+    await delay(100);
     return s;
 }
 export function delay (time = 500) {

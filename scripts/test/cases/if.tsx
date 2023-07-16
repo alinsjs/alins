@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-10 09:17:57
+ * @LastEditTime: 2023-07-15 08:07:54
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
@@ -77,6 +77,15 @@ export default [
             const ctx = createContext();
             const str = ctx.$('1');
             const str2 = ctx.$('s2');
+            /*
+                const dom = ()=>{
+                    if(str === '1'){
+                        return <div>{str}{str2}</div>;
+                    }else{
+                        return <div>else</div>;
+                    }
+                }
+            */
             const dom = (() => {
                 // w.str = str;
                 // w.str2 = str2;
@@ -127,6 +136,8 @@ export default [
                             })()
                         }
                     </div>
+                }else{
+                    return <div>else</div>;
                 }
                  */
             const dom = ctx.if(() => str.value === '1', () => {

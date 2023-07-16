@@ -23,7 +23,7 @@ export function _for () {
 
 export function map (
     this: IProxyData<any[]>,
-    call: (scope: any)=>IGeneralElement,
+    call: (scope: any, i?: number)=>IGeneralElement,
     jsx = false,
     k = '$I',
     ik = ''
@@ -105,7 +105,6 @@ export function map (
                 ScopeEnd.parentElement.insertBefore(doc, ScopeEnd);
             };break;
             case OprateType.Replace: {
-                debugger;
                 if (!scopeItems[index]) {
                     console.warn('【debug: watch array replace1', index, JSON.stringify(data));
                     scopeItems[index] = createScope(data[0], index);

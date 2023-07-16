@@ -73,3 +73,9 @@ export const Renderer = {
         return this.isFragment(el) || this.isOriginElement(el);
     }
 };
+
+export function getFirstElement (element?: IGeneralElement) {
+    if (!element) return null;
+    // @ts-ignore
+    return (Renderer.isFragment(element) ? (element.firstChild) : element);
+}

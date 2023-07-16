@@ -4,9 +4,10 @@
  * @Description: Coding something
  */
 
-import {ITrueElement, IElement, ITextNode, Renderer} from '../element/renderer';
-import {IAsyncReturnCall, IReturnCall} from '../type';
-import {IBranchTarget} from './branch';
+import {transformAsyncDom} from '../element/element';
+import {ITrueElement, IElement, ITextNode, Renderer, getFirstElement} from '../element/renderer';
+import type {IAsyncReturnCall, IReturnCall} from '../type';
+import type {IBranchTarget} from './branch';
 
 // const DEFAULT_CACHE_KEY = createEmptyJson();
 
@@ -37,19 +38,30 @@ export function createCallCache () {
     // 当前执行到的函数
     // const currentCall: IReturnCall|IAsyncReturnCall|null = null;
 
-
     return {
         // ! 调用某个函数，缓存其结果
         // @ts-ignore
-        call (branch: IBranchTarget, realGenerator?: IReturnCall) {
+        call (branch: IBranchTarget, anchor?: any) {
             // debugger;
             branch.visit();
             const fn = branch.call;
             const item = map.get(fn);
-            if (!realGenerator) realGenerator = fn;
             if (item) return transformCacheToElement(item);
             // currentCall = fn;
-            const element = realGenerator();
+            const origin = fn();
+            let element: any;
+            if (fn.returned === false) {
+                element = transformAsyncDom(origin, false);
+            } else {
+                let first: any = null;
+                element = transformAsyncDom(origin, true, (trueDom: any) => {
+                    // ! 被异步dom返回替换时需要替换cache和anchor
+                    map.set(fn, transformElementToCache(trueDom));
+                    anchor?.replaceStart(first, trueDom);
+                    first = null;
+                });
+                first = getFirstElement(element);
+            }
             // currentCall = null;
             if (typeof element === 'undefined') return;
             // 有可能存在void的情况

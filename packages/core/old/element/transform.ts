@@ -25,7 +25,6 @@ import {text} from '../builder/text';
 // const div = document.createElement('div');
 export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     const config = builder.exe(); // ! 执行builder
-    // debugger;
     // console.count('transformBuilderToDomCount');
 
     // const str = JSON.stringify(config);
@@ -56,7 +55,6 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     // memo.add(() => dom.cloneNode());
     // console.log('transformBuilderToDom', config);
     // if (!dom) dom = div.cloneNode() as HTMLElement;
-    // debugger;
     // if (!config.binding) debugger;
     for (let i = 0; i < config.binding.length; i++) {
         const binding = config.binding[i];
@@ -115,7 +113,6 @@ export function transformBuilderToDom (builder: IElementBuilder): HTMLElement {
     // // console.log('dom done', dom.children.length);
     // // ! 缓存节点 直接clone使用 可以提升性能
     // console.log((Memo.funcProcInstance as any).name);
-    // debugger;
     mountLifes(dom, config.lifes);
     LifeMountedCollector.collectMounted(dom, config.lifes.mounted);
     config.lifes.created?.exe()(dom);

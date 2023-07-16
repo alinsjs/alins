@@ -150,8 +150,9 @@ declare namespace Alins {
 
 declare global {
     namespace JSX {
+        interface PElement extends Promise<HTMLElement>, HTMLElement{}
         // tslint:disable-next-line:no-empty-interface
-        interface Element extends HTMLElement {
+        interface Element extends PElement {
         }
         // interface ElementClass {
         //     render():void;

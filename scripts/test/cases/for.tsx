@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-11 09:09:02
+ * @LastEditTime: 2023-07-16 11:36:33
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createTestBase} from '../test-util';
@@ -79,7 +79,7 @@ export default [
             collect();
             arrObj[2].a = 22;
             collect();
-            arrObj[2] = {a:222}
+            arrObj[2] = {a: 222};
             collect();
             window.arrObj = arrObj;
             return list;
@@ -125,7 +125,6 @@ export default [
             collect();
             arrObj.shift();
             collect();
-            // debugger;
             arrObj.unshift({a: 5}, {a: 1});
             collect();
             arrObj[1].a = 11;
@@ -197,7 +196,7 @@ export default [
         test () {
             const {list, ctx, data, arrObj, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
-            const arr = ctx.$([{a:3},{a:2},{a:5}])
+            const arr = ctx.$([{a: 3}, {a: 2}, {a: 5}]);
             const dom = (() => {
                 return arr.map($s => <span>{() => $s.index}-{() => $s.item.a};</span>, true, 'item', 'index');
             })();
@@ -215,7 +214,7 @@ export default [
             collect();
             arr[1].a = 11;
             collect();
-            arr[1] = {a:111};
+            arr[1] = {a: 111};
             collect();
             // arrObj[1].a = 11;
             // collect();
@@ -234,13 +233,13 @@ export default [
             // return [];
         },
         expect: [
-            "0-3;1-2;2-5;3-4;4-1;",
-            "0-1;1-2;2-3;3-4;4-5;",
-            "0-1;1-2;2-2;3-4;4-5;",
-            "0-1;1-3;2-2;3-4;4-5;",
-            "0-0;1-3;2-2;3-4;4-5;",
-            "0-0;1-11;2-2;3-4;4-5;",
-            "0-0;1-111;2-2;3-4;4-5;",
+            '0-3;1-2;2-5;3-4;4-1;',
+            '0-1;1-2;2-3;3-4;4-5;',
+            '0-1;1-2;2-2;3-4;4-5;',
+            '0-1;1-3;2-2;3-4;4-5;',
+            '0-0;1-3;2-2;3-4;4-5;',
+            '0-0;1-11;2-2;3-4;4-5;',
+            '0-0;1-111;2-2;3-4;4-5;',
         ]
     },
     {
@@ -259,13 +258,13 @@ export default [
             collect();
             arrObj.reverse();
             collect();
-            arrObj.fill({a:0}, 1);
+            arrObj.fill({a: 0}, 1);
             collect();
             arrObj[0].a = 0;
             collect();
             arrObj[1].a = 11;
             collect();
-            arrObj[2] = {a:22};
+            arrObj[2] = {a: 22};
             collect();
             return list;
         },

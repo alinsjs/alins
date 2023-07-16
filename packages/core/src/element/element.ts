@@ -133,14 +133,51 @@ export function isJSXElement (item: any) {
 }
 
 export const JSX = {
-    createElement (tag: string|((options: IJSXDomOptions)=>ITrueElement), attributes: any, ...children: any[]): ITrueElement {
+    createElement (
+        tag: string | ((options: IJSXDomOptions)=>ITrueElement|Promise<ITrueElement>),
+        attributes: any = null,
+        ...children: any[]
+    ): ITrueElement {
         if (typeof tag === 'function') {
             const result: IJSXDomOptions = {attributes, children, jsx: true};
             // console.log('createComponent', result);
-            return tag(result);
+            const dom = tag(result);
+            // if (dom.toString() === '[object Promise]') {
+            return transformAsyncDom(dom) as any;
         }
         const result: IJSXDomOptions = {tag, attributes, children, jsx: true};
         // console.log('createElement', result);
         return transformOptionsToElement(result);
     }
 };
+
+export function transformAsyncDom (
+    dom: ITrueElement|Promise<ITrueElement>|null|void,
+    returned = true,
+    onRealDom?: (trueDom: any)=>void,
+) {
+    if (!dom) return dom;
+    if (dom instanceof Promise) {
+        // ! returned 表示 async 有返回值
+        if (returned === false) return void 0;
+        // ! 此处是为了应对 元素没有立即append到dom上的情况
+        const frag = Renderer.createDocumentFragment();
+        const node = Renderer.createEmptyMountNode();
+        frag.appendChild(node as any);
+        dom.then((realDom: any) => {
+            if (!Renderer.isElement(realDom)) return;
+            const parent = node.parentElement || frag;
+            // ! 此处当async node被隐藏时 async执行完毕 此处会报错
+            try {
+                parent.insertBefore(realDom, node);
+            } catch (e) {
+                console.log('node 已被隐藏');
+            } finally {
+                onRealDom?.(realDom);
+                node.remove();
+            }
+        });
+        return frag;
+    }
+    return dom;
+}

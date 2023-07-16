@@ -48,7 +48,6 @@ export function wrapReactive (data: any, force = false) {
 }
 
 function replaceProxy (v: any, data: any) {
-    debugger;
     const keys = new Set(Object.keys(data));
     for (const k in v) {
         const oldData = data[k];
@@ -81,7 +80,6 @@ export function createUtils (
             debugger;
         }
         data[util].extraLns?.forEach(item => {
-            debugger;
             item[property]?.forEach(each);
         });
     };

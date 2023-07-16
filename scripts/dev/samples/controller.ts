@@ -12,7 +12,6 @@ export function Controller () {
     const num = $(-1);
     const array = $([1, 2]);
     const add = () => {num.value++;};
-    debugger;
     return div(
         $`number=${num}`,
         button('+1', click(add)),

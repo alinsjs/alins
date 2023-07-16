@@ -18,4 +18,5 @@ export interface ICtxUtil {
     cache: ICallCache;
     anchor: ICtxAnchor;
     branch: IBranchLink;
+    top: boolean;
 }

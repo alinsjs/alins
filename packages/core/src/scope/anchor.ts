@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {IFragment, IGeneralElement, ITrueElement, Renderer} from '../element/renderer';
+import {IFragment, IGeneralElement, ITrueElement, Renderer, getFirstElement} from '../element/renderer';
 import {IElement} from '../element/renderer';
 import {IBranchTarget} from './branch';
 import {ICallCache} from './cache';
@@ -12,12 +12,6 @@ import {ICallCache} from './cache';
 dom 元素挂载的锚点
 firstElement => anchor 之前为组件的所有dom
 */
-
-function getFirstElement (element?: IGeneralElement) {
-    if (!element) return null;
-    // @ts-ignore
-    return (Renderer.isFragment(element) ? (element.children[0]) : element);
-}
 
 let id = 0;
 export function createAnchor (cache: ICallCache) {
@@ -54,6 +48,13 @@ export function createAnchor (cache: ICallCache) {
             if (element) {
                 // debugger;
                 start = getFirstElement(element) || end;
+            }
+        },
+        // ! async 时dom被替换了 此时需要检测一下如果是start 则需要替换start
+        replaceStart (old: any, newDom: any) {
+            const oldStart = getFirstElement(old);
+            if (oldStart === start) {
+                start = getFirstElement(newDom);
             }
         },
         replaceBranch (branch: IBranchTarget) {
@@ -125,4 +126,4 @@ export function createAnchor (cache: ICallCache) {
     };
 }
 
-export type ICtxAnchor = ReturnType<typeof createAnchor>
+export type ICtxAnchor = ReturnType<typeof createAnchor>;
