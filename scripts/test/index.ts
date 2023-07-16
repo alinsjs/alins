@@ -14,7 +14,6 @@ import forCase from './cases/for';
 // window.react = react;
 // window.watch = watch;
 
-
 function startTestMain () {
     document.body.innerText = '';
     startTest({
@@ -27,7 +26,7 @@ function startTestMain () {
             ...forCase,
         ],
         onTestComplete ({passed, results, time}) {
-            console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);
+            console.log(`%c【TEST ${passed ? 'PASSED' : 'FAILED'}!(case count=${results.length})】[time=${time}]`, `color: ${passed ? 'green' : 'red'}`);
             // console.log(results);
             results.forEach(({name, index, passed, result, expect}) => {
                 console.log(`%c【name=${name}】[${index}]${passed ? 'passed' : 'failed'}!`, `color: ${passed ? 'green' : 'red'}`);
@@ -40,4 +39,4 @@ function startTestMain () {
 }
 window.startTestMain = startTestMain;
 
-// startTestMain();
+startTestMain();
