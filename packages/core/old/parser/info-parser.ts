@@ -84,9 +84,7 @@ export function getTagNameFromDomInfo (domInfo: string) {
     return domInfo.substring(1);
 }
 
-// (window as any).parseCount = 0;
 export function parseDomInfo (info: string): IDomInfoData {
-    // (window as any).parseCount++;
     const result: IDomInfoData = {textContent: ''};
     info = checkDefaultTextItem(info);
 

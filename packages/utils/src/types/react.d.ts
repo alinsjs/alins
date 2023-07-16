@@ -23,7 +23,6 @@ export interface IProxyUtils {
   isArray: boolean;
   shallow: boolean;
   forceUpdate: ()=>void;
-  replace(v: any): void;
   proxy: IProxyData<any>;
   scopeItems?: any[];
   replaceLns?: boolean;

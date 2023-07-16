@@ -42,7 +42,7 @@ export default [
                 return arrObj.map(($s) => <span>{() => $s.index}-{() => $s.item.a};</span>, true, 'item', 'index');
             })();
             append(dom);
-            window.arrObj = arrObj;
+            // window.arrObj = arrObj;
 
             // arrObj.unshift({a:4})
 
@@ -81,7 +81,7 @@ export default [
             collect();
             arrObj[2] = {a: 222};
             collect();
-            window.arrObj = arrObj;
+            // window.arrObj = arrObj;
             return list;
         },
         expect: [
@@ -131,7 +131,7 @@ export default [
             collect();
             arrObj[1] = {a: 111};
             collect();
-            window.arrObj = arrObj;
+            // window.arrObj = arrObj;
             return list;
         },
         expect: [
@@ -218,7 +218,7 @@ export default [
             collect();
             // arrObj[1].a = 11;
             // collect();
-            window.arr = arr;
+            // window.arr = arr;
             return list;
 
 
@@ -252,7 +252,7 @@ export default [
             const dom = (() => {
                 return arrObj.map($s => <span>{() => $s.index}-{() => $s.item.a};</span>, true, 'item', 'index');
             })();
-            window.arrObj = arrObj;
+            // window.arrObj = arrObj;
             append(dom);
             arrObj.sort((a, b) => a.a - b.a);
             collect();

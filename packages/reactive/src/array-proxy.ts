@@ -47,6 +47,7 @@ function triggerOprationEvent (arr: any[], type: OprateType, index:number, data:
 }
 
 function wrapArrayCall (target: IProxyData<any[]>, fn:()=>any) {
+    // ! 某些方法不需要replaceLns处理 ! 是否可能有bug
     target[util].replaceLns = false;
     const result = fn();
     delete target[util].replaceLns;
@@ -93,7 +94,8 @@ const ArrayMap = {
         const data = items?.slice(start, start + args.length).map(i => i[items.key]);
         // const data = args;
         // debugger;
-        return wrapArrayCall(target, () => origin.call(target[util].proxy, start, count, ...data));     },
+        return wrapArrayCall(target, () => origin.call(target[util].proxy, start, count, ...data));
+    },
     push (this: {target: IProxyData<any[]>, origin: any}, ...args: any[]) {
         // console.log('Push', args);
         const {target, origin} = this;

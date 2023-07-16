@@ -50,7 +50,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         if (opt.text !== '') {
             // @ts-ignore
             el.textContent = reactiveBinding(opt.text, (v) => {
-                console.warn('reactiveBinding trigger', el, el.textContent, v);
+                // console.warn('reactiveBinding trigger', el, el.textContent, v);
                 el.textContent = v;
             });
         }
