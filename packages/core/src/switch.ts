@@ -11,8 +11,8 @@ import {IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {ICtxUtil, IReturnCall} from './type';
 import {createAnchor} from './scope/anchor';
 
-export const _break = Symbol('b');
-export const _default = Symbol('d');
+// export const _break = Symbol('b');
+// export const _default = Symbol('d');
 
 export type ISwitchTarget = IWatchRefTarget<ISimpleValue>;
 
@@ -71,7 +71,8 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
             if (macthed) {
                 if (el = execSingle(item)) break;
             } else {
-                if (item.value === value || typeof item.value === 'undefined') { // 命中或走default
+                // 没有value表示为default
+                if (item.value === value || !('value' in item)) { // 命中或走default
                     macthed = true;
                     if (el = execSingle(item)) break;
                 }
