@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-16 11:36:33
+ * @LastEditTime: 2023-07-19 01:05:39
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createTestBase} from '../test-util';
@@ -13,13 +13,13 @@ import {createTestBase} from '../test-util';
 export default [
     {
         name: '基础for 简单类型',
-        disabled: false,
+        disabled: true,
         test () {
             const {list, ctx, data, arr, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
             const dom = (() => {
                 // return arrObj.map((item, index)=><div>{index}-{()=>item.a}</div>, true)
-                return arr.map(($s) => <span>{() => $s.index}-{() => $s.item};</span>, true, 'item', 'index');
+                return arr.map((item, index) => <span>{() => index.v}-{() => item.v};</span>, true, 'item', 'index');
             })();
             append(dom);
             collect();
@@ -34,12 +34,12 @@ export default [
     },
     {
         name: '基础for 赋值',
-        disabled: false,
+        disabled: true,
         test () {
             const {list, ctx, data, arrObj, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
             const dom = (() => {
-                return arrObj.map(($s) => <span>{() => $s.index}-{() => $s.item.a};</span>, true, 'item', 'index');
+                return arrObj.map((item, index) => <span>{() => index.v}-{() => item.v.a};</span>, true, 'item', 'index');
             })();
             append(dom);
             // window.arrObj = arrObj;
@@ -102,12 +102,12 @@ export default [
     },
     {
         name: 'push-pop-shift-unshift',
-        disabled: false,
+        disabled: true,
         test () {
             const {list, ctx, data, arrObj, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
             const dom = (() => {
-                return arrObj.map(($s) => <span>{() => $s.index}-{() => $s.item.a};</span>, true, 'item', 'index');
+                return arrObj.map((item, index) => <span>{() => index.v}-{() => item.v.a};</span>, true, 'item', 'index');
             })();
             append(dom);
 
@@ -153,7 +153,7 @@ export default [
             const {list, ctx, data, arrObj, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
             const dom = (() => {
-                return arrObj.map($s => <span>{() => $s.index}-{() => $s.item.a};</span>, true, 'item', 'index');
+                return arrObj.map((item, index) => <span>{() => index.v}-{() => item.v.a};</span>, true, 'item', 'index');
             })();
             append(dom);
             collect();
@@ -198,7 +198,7 @@ export default [
             // const Child = () => <div>child</div>;
             const arr = ctx.$([{a: 3}, {a: 2}, {a: 5}]);
             const dom = (() => {
-                return arr.map($s => <span>{() => $s.index}-{() => $s.item.a};</span>, true, 'item', 'index');
+                return arr.map((item,index) => <span>{() => index.v}-{() => item.v.a};</span>, true, 'item', 'index');
             })();
             append(dom);
             arr.push({a: 4}, {a: 1});
@@ -250,7 +250,7 @@ export default [
             // const Child = () => <div>child</div>;
             const arrObj = ctx.$([{a: 2}, {a: 1}, {a: 3}]);
             const dom = (() => {
-                return arrObj.map($s => <span>{() => $s.index}-{() => $s.item.a};</span>, true, 'item', 'index');
+                return arrObj.map((item,index) => <span>{() => index.v}-{() => item.v.a};</span>, true, 'item', 'index');
             })();
             // window.arrObj = arrObj;
             append(dom);

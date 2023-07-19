@@ -52,22 +52,21 @@ export function map (
     // window.scope = scopeItems;
     // window.EndMap = EndMap;
 
-    const createScope = (item: any, i: number) => {
-        const data: any = {[k]: item};
-        if (ik) data[ik] = i;
-        return createProxy(wrapReactive(data), {shallow: true});
+    const createScope = (item: any, i: number): IProxyData<any> => {
+        item = createProxy({v: item}, {shallow: true});
+        const scope = {[k]: item};
+
+        if (ik) { // 表示有第二个参数
+            scope[ik] = createProxy({v: i}, {shallow: true});
+        }
+        return scope;
     };
 
-    const createChild = (item: any, i: number) => {
-        // if (!isProxy(item)) {
-        //     item = wrapReactive();
-        // }
+    const createChild = (item: any, i: number): [ITrueElement, ITrueElement, IProxyData<any>] => {
+        
         const scope = createScope(item, i);
 
-        i = createProxy(wrapReactive(i));
-        // item[util].index = i; // 缓存index
-
-        let child = call(scope);
+        let child = call(scope[k], scope[ik] || i);
         // @ts-ignore
         let end: ITrueElement = child;
         if (!child) {
@@ -92,7 +91,7 @@ export function map (
         container.appendChild(child as any);
         EndMap[i] = end;
     }
-    watchArray(list, ({index, count, data, type, fromAssign}: IOprationAction) => {
+    watchArray(list, ({index, count, data, type}: IOprationAction) => {
         switch (type) {
             case OprateType.Push: {
                 const doc = Renderer.createDocumentFragment();
@@ -110,12 +109,13 @@ export function map (
                     // console.warn('【debug: watch array replace1', index, JSON.stringify(data));
                     scopeItems[index] = createScope(data[0], index);
                 } else {
-                    // console.warn('【debug: watch array replace2', index, JSON.stringify(data));
-                    if (data[0] !== scopeItems[index][k]) {
+                    console.warn('【debug: watch array replace2', index, JSON.stringify(data));
+                    // const v = isProxy(data[0]) ? data[0].v : data[0];
+                    if (data[0] !== scopeItems[index][k].v) {
                         // console.log('debug: watch array replace------------');
-                        scopeItems[index][k] = data[0];
+                        scopeItems[index][k].v = data[0];
                     }
-                    scopeItems[index][ik] = index;
+                    scopeItems[index][ik].v = index;
                 }
                 // replaceItem(index, data[0]);
             };break;

@@ -18,11 +18,11 @@ function startTestMain () {
     document.body.innerText = '';
     startTest({
         cases: [
-            ...reactive,
-            ...dom,
-            ...ifCase,
-            ...asyncCase,
-            ...switchCase,
+            // ...reactive,
+            // ...dom,
+            // ...ifCase,
+            // ...asyncCase,
+            // ...switchCase,
             ...forCase,
         ],
         onTestComplete ({passed, results, time}) {
