@@ -40,7 +40,7 @@ export function isProxy (data: any): boolean {
 
 export function wrapReactive (data: any, force = false) {
     if (force || !data || typeof data !== 'object') {
-        return {value: data, [type]: AlinsType.Ref};
+        return {v: data, [type]: AlinsType.Ref};
     }
     return data;
 }

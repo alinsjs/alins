@@ -17,6 +17,7 @@ import {createCallCache} from './scope/cache';
 import {createBranchLink} from './scope/branch';
 import {util} from 'packages/utils/src';
 import {JSX} from './element/element';
+import {watch} from 'packages/reactive/src/watch';
 
 
 export function createContext (top = false) {
@@ -34,13 +35,14 @@ export function createContext (top = false) {
 
     const ctx = {
         util: ctxUtil,
-        $: react,
-        co: computed,
+        r: react,
+        c: computed,
+        w: watch,
         if: (cond: IIfTarget, call: IReturnCall) => {
             return _if(cond, call, ctxUtil);
         },
         switch: (cond: ISwitchTarget, list: ISwitchCaseList) => _switch(cond, list, ctxUtil),
-        for: _for,
+        // for: _for,
         dom: createDomCtx,
         equal: (v1: any, v2: any) => {
             if (v1[util] && v2[util]) return v1[util] === v2[util];

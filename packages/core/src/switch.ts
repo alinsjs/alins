@@ -108,7 +108,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
                 run(value);
             });
             initSwitchBranches();
-            const el = run(init.value);
+            const el = run(init.v);
             initilizing = false;
             if (Renderer.isElement(el)) return anchor.replaceContent(el as ITrueElement);
             // @ts-ignore

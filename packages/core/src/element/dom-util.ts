@@ -48,23 +48,24 @@ export function reactiveBindingEnable (
     const value: IBindingReaction = isEnableObject ? (arg as IBindingReactionEnableObj).value : arg as IBindingReaction;
 
     if (isEnableObject) {
-        onenable(watch((arg as IBindingReactionEnableObj).enable, onenable as any).value);
+        onenable(watch((arg as IBindingReactionEnableObj).enable, onenable as any).v);
     }
 
     return reactiveBinding(value, onchange);
 }
 
 export function reactiveBinding (bind: IBindingReaction, onchange: IBindingChange): string {
-    if (isBindingResult(bind)) {
-        return (bind as IReactBindingResult)(onchange);
-    }
-    if (typeof bind === 'function' || isRef(bind)) {
-        return watch(bind, onchange).value;
+    // if (isBindingResult(bind)) {
+    //     return (bind as IReactBindingResult)(onchange);
+    // }
+    if (typeof bind === 'function' || (isProxy(bind) && typeof bind.v !== 'undefined')) {
+        return watch(bind, onchange).v;
     }
     try {
         return typeof bind === 'string' ? bind : bind.toString();
     } catch (e) {
         debugger;
+        throw new Error(e);
     }
 }
 

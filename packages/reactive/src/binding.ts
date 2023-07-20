@@ -42,7 +42,7 @@ export function createBinding (
     const fn = (onchange: IBindingChange) => {
         // console.warn('debug:', reactions);
         const funcs = reactions.map((reaction: IRefData<any>|(()=>any)) => {
-            return typeof reaction === 'function' ? () => reaction() : () => reaction.value;
+            return typeof reaction === 'function' ? () => reaction() : () => reaction.v;
         });
         const n = funcs.length;
         // @ts-ignore
@@ -54,7 +54,7 @@ export function createBinding (
             return str;
         }, (nv: string, ov: string) => {
             onchange(nv, ov);
-        }, false) as IRefData).value;
+        }, false) as IRefData).v;
     };
     // @ts-ignore
     fn[type] = AlinsType.BindResult;
