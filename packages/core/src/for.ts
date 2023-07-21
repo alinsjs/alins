@@ -29,6 +29,8 @@ export function map (
     ik = ''
 ) {
     const list = this;
+    // todo list 需要reactive
+    debugger;
     if (!jsx) return list.map(call);
     // list.map
     const container = Renderer.createDocumentFragment();

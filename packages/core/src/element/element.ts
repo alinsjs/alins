@@ -109,6 +109,11 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
     for (const item of children) {
         if (typeof item === 'undefined' || item === null) continue;
 
+        if(Array.isArray(item)){
+            appendChildren(parent, item);
+            return;
+        }
+
         if (Renderer.isElement(item)) {
             parent.appendChild(item as any);
             continue;
