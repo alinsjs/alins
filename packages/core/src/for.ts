@@ -30,7 +30,7 @@ export function map (
 ) {
     const list = this;
     // todo list 需要reactive
-    debugger;
+    // debugger;
     if (!jsx) return list.map(call);
     // list.map
     const container = Renderer.createDocumentFragment();
@@ -46,6 +46,8 @@ export function map (
     // const proxy = list[util].proxy;
     const ScopeEnd = Renderer.createEmptyMountNode();
     const EndMap: ITrueElement[] = [];
+
+    let head: ITrueElement;
 
     const scopeItems: IProxyData<{item: any, index: number}>[] = [];
     list[util].scopeItems = scopeItems;
@@ -65,7 +67,7 @@ export function map (
     };
 
     const createChild = (item: any, i: number): [ITrueElement, ITrueElement, IProxyData<any>] => {
-        
+        console.log('createChild', item, i);
         const scope = createScope(item, i);
 
         let child = call(scope[k], scope[ik] || i);
@@ -74,16 +76,23 @@ export function map (
         if (!child) {
             child = Renderer.createEmptyMountNode();
             end = child;
+            if(i === 0) head = child;
         } else if (Renderer.isFragment(child)) {
             child = child as IFragment;
             const n = child.children.length;
             if (n === 0) {
                 end = Renderer.createEmptyMountNode();
                 child.appendChild(end as any);
+                if(i === 0) head = end;
             } else {
                 end = child.children[n - 1] as any;
+                if(i === 0) head = child.children[0];
             }
+        }else{
+            if(i === 0) head = child;
         }
+        // if(i===0)debugger;
+        console.log(head, i);
         return [child, end, scope];
     };
     for (let i = 0; i < n; i++) {
@@ -129,31 +138,31 @@ export function map (
                 // debugger;
                 // if (endDom === ScopeEnd) debugger; // debug
 
-                const parent = ScopeEnd.parentElement;
-                if (startPos < 0) {
-                    if (endPos === list.length - 1) {
-                        parent.innerText = '';
-                        parent.appendChild(ScopeEnd);
-                    } else {
-                        const children = parent.children;
-                        while (children[0] && children[0] !== endDom) {
-                            children[0].remove();
-                        }
-                    }
-                } else {
-                    const startDom = EndMap[startPos];
-                    while (startDom.nextSibling && startDom.nextSibling !== endDom) {
-                        startDom.nextSibling.remove();
+
+                let startDom = ((startPos < 0) ? (head||ScopeEnd) :  EndMap[startPos]) as Node;
+
+                while (startDom.nextSibling && startDom.nextSibling !== endDom) {
+                    startDom.nextSibling.remove();
+                }
+
+                if(startPos < 0){
+                    if(startDom !== ScopeEnd){
+                        head = startDom.nextSibling;
+                        startDom.remove();
+                    }else{
+                        head = ScopeEnd;
                     }
                 }
+
                 EndMap.splice(index, count);
                 scopeItems.splice(index, count);
                 // items.forEach(item => item[util].release());
                 // console.warn('【watch array remove】', index, count, data);
             };break;
             case OprateType.Insert: {
+                debugger;
                 // if (!EndMap[index - 1]) debugger;
-                const mountNode = index === 0 ? ScopeEnd.parentElement.children[0] : EndMap[index - 1].nextSibling;
+                const mountNode = index === 0 ? (head||ScopeEnd) : EndMap[index - 1].nextSibling;
                 const ends: any[] = [];
                 const scopes: any[] = [];
                 data.forEach((item, i) => {
@@ -173,7 +182,6 @@ export function map (
     container.appendChild(ScopeEnd as any);
     return container;
 }
-
 registArrayMap(map);
 /*
 var list = react([{a:1},{a:2}])

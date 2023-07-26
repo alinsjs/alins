@@ -12,6 +12,7 @@ import {
 import {IJson} from 'alins-utils';
 import {IBindingReaction, IBindingRef} from 'alins-reactive';
 import {IAttributes} from './jsx';
+import {parseStyle} from './style';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -87,17 +88,12 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         else !!value ? el.classList.add(key) : el.classList.remove(key);
                     });
                 } else {
-                    const value = reactiveBindingEnable(v, (v) => {
-                        el = el as IElement;
-                        el.setAttribute(k, v);
-                    }, (bool) => {
-                        el = el as IElement;
-                        bool ? el.setAttribute(k, v) : el.removeAttribute(k);
+                    if(k === 'style' && parseStyle(el as HTMLElement, v)){
+                        continue;
+                    }
+                    reactiveBindingEnable(v, (v, ov) => {
+                        v === null ? el.removeAttribute(k): el.setAttribute(k, v);
                     });
-                    // debugger;
-                    // console.warn('reactiveBindingEnable', k, value);
-                    // @ts-ignore
-                    el.setAttribute(k, value);
                 }
             }
         }
@@ -139,14 +135,15 @@ export function isJSXElement (item: any) {
 
 export const JSX = {
     createElement (
-        tag: string | ((options: IJSXDomOptions)=>ITrueElement|Promise<ITrueElement>),
+        tag: string | ((
+            attributes: Record<string,any>, children: ITrueElement[]
+        )=>ITrueElement|Promise<ITrueElement>),
         attributes: any = null,
         ...children: any[]
     ): ITrueElement {
         if (typeof tag === 'function') {
-            const result: IJSXDomOptions = {attributes, children, jsx: true};
             // console.log('createComponent', result);
-            const dom = tag(result);
+            const dom = tag(attributes, children);
             // if (dom.toString() === '[object Promise]') {
             return transformAsyncDom(dom) as any;
         }

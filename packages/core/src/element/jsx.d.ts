@@ -103,6 +103,8 @@ declare namespace Alins {
         ontouchcancel?: IEventObject;
     }
 
+    type IStyle = Partial<CSSStyleDeclaration>
+
     interface IAttributes extends IEventAttributes {
         accesskey?: any;
         alt?: any;
@@ -126,7 +128,7 @@ declare namespace Alins {
         required?: any;
         size?: any;
         src?: any;
-        style?: any;
+        style?: IStyle | string | (()=>string);
         summary?: any;
         tabindex?: any;
         target?: any;

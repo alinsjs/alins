@@ -41,17 +41,26 @@ export type IBindingReactionEnable = IBindingReaction | IBindingReactionEnableOb
 export function reactiveBindingEnable (
     arg: IBindingReactionEnable,
     onchange: IBindingChange,
-    onenable:(v:boolean)=>void
 ) {
     const type = typeof arg;
     const isEnableObject = (type === 'object' && !isProxy(arg) && typeof (arg as any).enable !== 'undefined');
-    const value: IBindingReaction = isEnableObject ? (arg as IBindingReactionEnableObj).value : arg as IBindingReaction;
-
+    const react: IBindingReaction = isEnableObject ? (arg as IBindingReactionEnableObj).value : arg as IBindingReaction;
+    let enable = true;
+    let value = '';
+    value = reactiveBinding(react, (nv, ov)=>{
+        value = nv;
+        if(enable){
+            onchange(nv, ov);
+        }
+    });
     if (isEnableObject) {
-        onenable(watch((arg as IBindingReactionEnableObj).enable, onenable as any).v);
+        enable = watch((arg as IBindingReactionEnableObj).enable, (v)=>{
+            enable = v;
+            onchange(enable?value:null, null);
+        }).v;
     }
-
-    return reactiveBinding(value, onchange);
+    onchange(enable?value:null, undefined as any);
+    return value;
 }
 
 export function reactiveBinding (bind: IBindingReaction, onchange: IBindingChange): string {

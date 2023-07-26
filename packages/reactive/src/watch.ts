@@ -8,13 +8,13 @@ import {isProxy} from './proxy';
 import {computed} from './computed';
 import {IOprationAction} from './array-proxy';
 
-export type IWatchRefTarget<T> = (()=>T)|IRefData<T>|{value:T};
+export type IWatchRefTarget<T> = (()=>T)|IRefData<T>|{v:T};
 export type IWatchTarget<T> = IWatchRefTarget<T>|(IProxyData<T>);
 
 export function watchRef<T> (
     target: IWatchRefTarget<T>,
     cb: IProxyListener<T>,
-): IRefData<T>|{value:T} {
+): IRefData<T>|{v:T} {
     return watch(target, cb, false) as any;
 }
 
@@ -22,7 +22,7 @@ export function watch<T> (
     target: IWatchTarget<T>,
     cb: IProxyListener<T>,
     deep = true,
-): IProxyData<T>|IRefData<T>|{value:T} {
+): IProxyData<T>|IRefData<T>|{v:T} {
     if (typeof target === 'function') {
         target = computed(target);
         // 防止多次重复触发watch

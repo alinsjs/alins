@@ -35,7 +35,7 @@ interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {
 }
 
 export interface IRefData<T=any> extends IProxyBase<AlinsType.Ref> {
-  value: T;
+  v: T;
 }
 
 

@@ -93,7 +93,7 @@ const ArrayMap = {
         const items = target[util].scopeItems;
         const data = items?.slice(start, start + args.length).map(i => i[items.key].v);
         // const data = args;
-        debugger;
+        // debugger;
         return wrapArrayCall(target, () => origin.call(target[util].proxy, start, count, ...data));
     },
     push (this: {target: IProxyData<any[]>, origin: any}, ...args: any[]) {

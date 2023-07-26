@@ -8,7 +8,7 @@ import {react} from 'packages/reactive/src';
 import {IIfTarget, _if} from './if';
 import {computed} from 'alins-reactive';
 import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
-import {_for} from './for';
+import './for';
 import {ICtxUtil, IReturnCall} from './type';
 import {createDomCtx} from './dom';
 // import {createAnchor, createBranchLink, createCallCache} from './ctx-util';
