@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-16 16:44:37
+ * @LastEditTime: 2023-07-30 11:13:26
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
@@ -12,7 +12,6 @@ import {createTestBase} from '../test-util';
 // const w = window as any;
 // w.React = React;
 // const addEnv = (data: any) => {Object.assign(w, data);};
-
 
 const if3Base = () => {
     const {list, ctx, data, container, collect, str} = createTestBase();

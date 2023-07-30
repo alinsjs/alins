@@ -13,6 +13,7 @@ import {IJson} from 'alins-utils';
 import {IBindingReaction, IBindingRef} from 'alins-reactive';
 import {IAttributes} from './jsx';
 import {parseStyle} from './style';
+import {parseModel} from './model';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -78,7 +79,6 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     addEvent(el as IElement, k, v);
                     continue;
                 }
-    
                 if (k === 'class') {
                     // @ts-ignore
                     el.className = reactiveClass(v, (key, value) => {
@@ -88,9 +88,8 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         else !!value ? el.classList.add(key) : el.classList.remove(key);
                     });
                 } else {
-                    if(k === 'style' && parseStyle(el as HTMLElement, v)){
-                        continue;
-                    }
+                    if(k === 'style' && parseStyle(el as HTMLElement, v)) continue;
+                    else if(parseModel(el as HTMLElement, v, k)) continue;
                     reactiveBindingEnable(v, (v, ov) => {
                         v === null ? el.removeAttribute(k): el.setAttribute(k, v);
                     });

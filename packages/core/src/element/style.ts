@@ -10,16 +10,25 @@ export function parseStyle(
     dom: HTMLElement,
     value: IStyle | string | (()=>string)
 ): boolean{
-    if(typeof value !== 'object'){
+    if(value === null || typeof value === 'undefined') return false;
+
+    if(typeof value === 'function'){
+        reactiveBindingEnable(value, (v: any, ov: any) => {
+            if(typeof v === 'string') return dom.setAttribute('style', v);
+            for(let k in v) dom.style[k] = v[k];
+            for(let k in ov)
+                if(typeof v[k] === 'undefined')
+                    dom.style[k] = '';
+        });
+    }else if(typeof value === 'object'){
+        for(let k in value){
+            // !todo style value 编译 + func包裹 ()=>{}
+            reactiveBindingEnable(value[k], (v, ov) => {
+                dom.style[k] = v === null ? '': v;
+            });
+        }
+    }else{
         return false;
     }
-
-    for(let k in value){
-        // !todo style value 编译 + func包裹 ()=>{}
-        reactiveBindingEnable(value[k], (v, ov) => {
-            dom.style[k] = v === null ? '': v;
-        });
-    }
-
     return true;
 }
