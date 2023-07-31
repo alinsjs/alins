@@ -35,29 +35,36 @@ export function createContext (top = false) {
 
     const ctx = {
         util: ctxUtil,
-        r: react,
-        c: computed,
-        w: watch,
         if: (cond: IIfTarget, call: IReturnCall) => {
             return _if(cond, call, ctxUtil);
         },
         switch: (cond: ISwitchTarget, list: ISwitchCaseList) => _switch(cond, list, ctxUtil),
         // for: _for,
-        dom: createDomCtx,
-        equal: (v1: any, v2: any) => {
-            if (v1[util] && v2[util]) return v1[util] === v2[util];
-            return v1 === v2;
-        },
-        ce: JSX.createElement,
+        // equal: (v1: any, v2: any) => {
+        //     if (v1[util] && v2[util]) return v1[util] === v2[util];
+        //     return v1 === v2;
+        // },
+        // ce: JSX.createElement,
 
         // ! 处理 async 代码没有返回值
         // markNotReturned
-        mnr (fn: any) {
-            fn.returned = false;
-            return fn;
-        },
+        // mnr (fn: any) {
+        //     fn.returned = false;
+        //     return fn;
+        // },
     };
     return ctx;
 }
+
+Object.assign(createContext, {
+    ce: JSX.createElement,
+    mnr (fn: any) {
+        fn.returned = false;
+        return fn;
+    },
+    r: react,
+    c: computed,
+    w: watch,
+})
 
 export type IComponentContext = ReturnType<typeof createContext>;

@@ -155,6 +155,8 @@ declare namespace Alins {
     }
 }
 
+declare const For = () => {};
+
 declare global {
     namespace JSX {
         interface PElement extends Promise<HTMLElement>, HTMLElement{}
@@ -182,6 +184,8 @@ declare global {
 
         interface IntrinsicElements {
             // HTML
+            for: {data: any, item: string; index: string},
+
             div: Alins.IAttributes,
             a: Alins.IAttributes;
             h1: Alins.IAttributes;

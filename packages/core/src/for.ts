@@ -183,6 +183,7 @@ export function map (
     return container;
 }
 registArrayMap(map);
+
 /*
 var list = react([{a:1},{a:2}])
     initArrayProxy(list, ({index, count, data, type, fromAssign}) => {
