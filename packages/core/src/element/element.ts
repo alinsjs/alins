@@ -10,7 +10,7 @@ import {
     reactiveClass, IChildren,
 } from './dom-util';
 import {IJson} from 'alins-utils';
-import {IBindingReaction, IBindingRef} from 'alins-reactive';
+import {IBindingReaction, IBindingRef, isProxy} from 'alins-reactive';
 import {IAttributes} from './jsx';
 import {parseStyle} from './style';
 import {parseModel} from './model';
@@ -142,6 +142,15 @@ export const JSX = {
     ): ITrueElement {
         if (typeof tag === 'function') {
             // console.log('createComponent', result);
+            debugger;
+            for(let k in attributes){
+                const v = attributes[k];
+                if(!isProxy(v)){
+                    attributes[k] = {v}
+                }
+                // if(typeof v === 'function')
+            }
+
             const dom = tag(attributes, children);
             // if (dom.toString() === '[object Promise]') {
             return transformAsyncDom(dom) as any;

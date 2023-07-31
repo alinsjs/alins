@@ -16,26 +16,34 @@ export function parseModel(
     k: string,
 ): boolean{
     if(k !== 'value' && k !== 'checked') return false
-    if(!isProxy(value)) return false;
+
+    if(!isProxy(value) && !value.__deco) return false; // 不是proxy不支持双向绑定
     const tag = dom.tagName;
     if(!ModelTag[tag]) return false;
-    const type = typeof value.v;
-    const parseType = ({
+
+    const type = value.__deco || typeof value.v;
+
+    let parseType = ({
         'boolean': v => v === 'true',
         'number': v => parseFloat(v),
         'string': v => v,
-    })[type]
+    })[type];
+
+    if(!parseType) parseType = v => v;
+    debugger
+    const bindValue = value.__deco ? value.v : value;
+
     const eventName = tag === 'SELECT' ? 'change': 'input';
     dom.addEventListener(eventName, ()=>{
         let newValue = dom[k];
         if(type !== typeof newValue) {
             newValue = parseType(newValue);
         }
-        value.v = dom[k];
+        bindValue.v = Number.isNaN(newValue)?'':newValue;
     });
-    watch(value, (v: any, ov: any) => {
+    watch(bindValue, (v: any, ov: any) => {
         dom[k] = v;
     }, false);
-    dom[k] = value.v;
+    dom[k] = bindValue.v;
     return true;
 }

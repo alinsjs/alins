@@ -14,11 +14,16 @@ declare namespace Alins {
     // capture：使用事件的捕获模式；
     // self：只有event.target是当前操作的元素时才触发事件；
     type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self';
-    type IEventObject = ((e: Event)=>any) | ({
+    type IEventObjectDeco = {
         listener: (e: Event)=>any;
     } & {
-    [decorator in TEventDecorator]?: boolean;
-    })
+        [decorator in TEventDecorator]?: boolean;
+    }
+    type IEventObject = ((e: Event)=>any) | IEventObjectDeco;
+    // | {
+    //     v: (e: Event)=>any;
+    //     __deco: TEventDecorator;
+    // }
     interface IEventAttributes {
         onclick?: IEventObject;
         onmousedown?: IEventObject;

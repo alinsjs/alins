@@ -5,25 +5,35 @@
  */
 
 import {IElement, IFragment} from './renderer';
-import {IEventObject, IEventAttributes} from './jsx';
+import {IEventObject, IEventAttributes, IEventObjectDeco} from './jsx';
 
 export type IEventNames = keyof IEventAttributes;
 
 export function isEventAttr (dom: IElement|IFragment, name: string, event: IEventObject) {
+    debugger;
     if (!name.startsWith('on')) return false;
     if (dom[name] !== null && typeof dom[name] !== 'function') return false;
     // @ts-ignore
-    if (typeof event !== 'function' && typeof event?.listener !== 'function') return false;
+    if (
+        typeof event !== 'function' && 
+        typeof event?.listener !== 'function' &&
+        typeof event?.__deco !== 'string'
+    ) return false;
     return true;
 }
 
-export function addEvent (dom: IElement, name: string, event: IEventObject) {
+export function addEvent (dom: IElement, name: string, event: IEventObjectDeco) {
     name = name.substring(2);
     if (typeof event === 'function') {
         dom.addEventListener(name, event);
     } else {
+        if(event.__deco){
+            event = {
+                [event.__deco]: true,
+                listener: event.v,
+            } as IEventObjectDeco;
+        }
         const handle = (e: Event) => {
-            // @ts-ignore
             if (event.self && e.target !== dom) return;
             if (event.stop) e.stopPropagation();
             if (event.prevent) e.preventDefault();
