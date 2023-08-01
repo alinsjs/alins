@@ -100,7 +100,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
     };
 
     return {
-        end (call: IReturnCall): IGeneralElement|void {
+        end (call: IReturnCall = ()=>void 0): IGeneralElement|void {
             endCall = call;
             // console.warn('switch end');
             const init = watch(target, (value) => {
