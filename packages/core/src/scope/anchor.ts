@@ -6,6 +6,7 @@
 
 import {IFragment, IGeneralElement, ITrueElement, Renderer, getFirstElement} from '../element/renderer';
 import {IElement} from '../element/renderer';
+import {getParent} from '../utils';
 import {IBranchTarget} from './branch';
 import {ICallCache} from './cache';
 /*
@@ -82,12 +83,13 @@ export function createAnchor (cache: ICallCache) {
         replaceContent (element?: IGeneralElement, branch?: IBranchTarget) {
             if (!end || !start) {
                 frag = initFirstMount(element);
+                debugger;
                 return frag;
             }
             if (!element) return;
             // console.log(element.textContent, element.outerHTML, end.parentElement);
             // debugger;
-            const container = (end.parentElement || frag);
+            const container = getParent(end, frag);
             if (container === element) return element;
             // if (!start.parentElement) {
             //     start = end; // ! start 不在页面上了 则 指向end

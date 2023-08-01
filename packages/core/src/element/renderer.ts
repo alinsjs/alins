@@ -30,6 +30,7 @@ export interface IElement {
   remove(): void;
   children: (IElement|ITextNode)[];
   get parentElement(): IElement;
+  get parentNode(): IElement;
   get nextSibling(): IElement;
   get className(): string;
   set className(value: string);

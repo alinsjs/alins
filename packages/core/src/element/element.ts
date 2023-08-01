@@ -14,6 +14,7 @@ import {IBindingReaction, IBindingRef, isProxy} from 'alins-reactive';
 import {IAttributes} from './jsx';
 import {parseStyle} from './style';
 import {parseModel} from './model';
+import {getParent} from '../utils';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -176,7 +177,7 @@ export function transformAsyncDom (
         frag.appendChild(node as any);
         dom.then((realDom: any) => {
             if (!Renderer.isElement(realDom)) return;
-            const parent = node.parentElement || frag;
+            const parent = getParent(node, frag);
             // ! 此处当async node被隐藏时 async执行完毕 此处会报错
             try {
                 parent.insertBefore(realDom, node);

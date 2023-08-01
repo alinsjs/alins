@@ -9,3 +9,7 @@ export function createEmptyJson () {
     json.__proto__ = null;
     return json;
 }
+
+export function getParent(node: any, def: any = null){
+    return node.parentElement || node.parentNode || def;
+}

@@ -8,6 +8,7 @@ import {createProxy, isProxy, watch, watchArray, wrapReactive} from 'packages/re
 import {IOprationAction, OprateType, registArrayMap} from 'packages/reactive/src/array-proxy';
 import {IProxyData, IRefData, trig, util} from 'packages/utils/src';
 import {IFragment, IGeneralElement, ITrueElement, Renderer, ITextNode, IElement} from './element/renderer';
+import {getParent} from './utils';
 
 
 /*
@@ -113,7 +114,8 @@ export function map (
                     scopeItems.push(scope);
                     doc.appendChild(child);
                 }
-                ScopeEnd.parentElement.insertBefore(doc, ScopeEnd);
+                // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
+                getParent(ScopeEnd, container).insertBefore(doc, ScopeEnd);
             };break;
             case OprateType.Replace: {
                 if (!scopeItems[index]) {
@@ -167,7 +169,7 @@ export function map (
                 const scopes: any[] = [];
                 data.forEach((item, i) => {
                     const [child, end, scope] = createChild(item, index + i);
-                    mountNode.parentElement.insertBefore(child, mountNode);
+                    getParent(mountNode, container).insertBefore(child, mountNode);
                     scopes.push(scope);
                     ends.push(end);
                 });

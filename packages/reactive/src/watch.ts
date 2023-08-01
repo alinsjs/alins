@@ -33,7 +33,9 @@ export function watch<T> (
         // ! 兼容computed(()=>1+1)情况
         return target;
     }
-    (target as IRefData<T>)[util].subscribe(cb, deep);
+    if(target[util]){ // ! 没有 util 表示不是proxy
+        target[util].subscribe(cb, deep);
+    }
     return target;
 };
 
