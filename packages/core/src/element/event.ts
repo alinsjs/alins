@@ -28,10 +28,13 @@ export function addEvent (dom: IElement, name: string, event: IEventObjectDeco) 
         dom.addEventListener(name, event);
     } else {
         if(event.__deco){
+            const deco = event.__deco.split('-')
             event = {
-                [event.__deco]: true,
                 listener: event.v,
             } as IEventObjectDeco;
+            for(let name of deco){
+                event[name] = true;
+            }
         }
         const handle = (e: Event) => {
             if (event.self && e.target !== dom) return;

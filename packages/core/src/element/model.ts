@@ -22,7 +22,7 @@ export function parseModel(
     if(!ModelTag[tag]) return false;
 
     const type = value.__deco || typeof value.v;
-
+    debugger;
     let parseType = ({
         'boolean': v => v === 'true',
         'number': v => parseFloat(v),

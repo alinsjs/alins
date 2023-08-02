@@ -15,6 +15,7 @@ import {IAttributes} from './jsx';
 import {parseStyle} from './style';
 import {parseModel} from './model';
 import {getParent} from '../utils';
+import {parseAttributes} from './attributes';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -88,6 +89,8 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         if (!key) el.className = value;
                         else !!value ? el.classList.add(key) : el.classList.remove(key);
                     });
+                } else if (k === '$attributes') {
+                    parseAttributes(el, v);
                 } else {
                     if(k === 'style' && parseStyle(el as HTMLElement, v)) continue;
                     else if(parseModel(el as HTMLElement, v, k)) continue;

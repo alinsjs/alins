@@ -3,9 +3,10 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-31 19:42:31
+ * @LastEditTime: 2023-08-02 09:31:17
  */
 import {JSX as React} from 'packages/core/src/element/element';
+import {IAttributes} from 'packages/core/src/element/jsx';
 import {createTestBase} from '../test-util';
 
 // const w = window as any;
@@ -277,6 +278,4 @@ export default [
             '0-0;1-11;2-22;',
         ]
     }
-
-
 ];
