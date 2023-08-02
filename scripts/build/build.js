@@ -11,6 +11,12 @@ const dirName = process.argv[2];
  
 console.log(`dirName=${dirName}`);
 
+const BuildMap = {
+    'client-core': {
+        format: '',
+    },
+}
+
 async function build () {
     await execa(
         resolveRootPath('node_modules/rollup/dist/bin/rollup'),
