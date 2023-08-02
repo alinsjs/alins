@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {assignLast, empty, IProxyData, trig, util} from 'packages/utils/src';
+import {assignLast, empty, IProxyData, trig, util} from 'alins-utils';
 import {createProxy, replaceLNS} from './proxy';
 import {react} from './react';
 

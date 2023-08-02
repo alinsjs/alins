@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {IJson} from 'packages/utils/src';
+import {IJson} from 'alins-utils';
 import {IGeneralElement} from './element/renderer';
 
 export function createDomCtx (element: IGeneralElement) {

@@ -4,20 +4,16 @@
  * @Description: Coding something
  */
 
-import {react} from 'packages/reactive/src';
 import {IIfTarget, _if} from './if';
-import {computed} from 'alins-reactive';
+import {computed, react, watch} from 'alins-reactive';
 import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
 import './for';
 import {ICtxUtil, IReturnCall} from './type';
-import {createDomCtx} from './dom';
 // import {createAnchor, createBranchLink, createCallCache} from './ctx-util';
 import {createAnchor} from './scope/anchor';
 import {createCallCache} from './scope/cache';
 import {createBranchLink} from './scope/branch';
-import {util} from 'packages/utils/src';
 import {JSX} from './element/element';
-import {watch} from 'packages/reactive/src/watch';
 
 
 export function createContext (top = false) {
@@ -65,7 +61,7 @@ export const ContextTool = {
     r: react,
     c: computed,
     w: watch,
-}
+};
 
 Object.assign(createContext, ContextTool);
 

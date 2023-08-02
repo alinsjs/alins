@@ -10,6 +10,6 @@ export function createEmptyJson () {
     return json;
 }
 
-export function getParent(node: any, def: any = null){
+export function getParent (node: any, def: any = null) {
     return node.parentElement || node.parentNode || def;
 }

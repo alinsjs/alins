@@ -11,7 +11,7 @@ import {
 } from 'alins-utils';
 import {arrayFuncProxy} from './array-proxy';
 import {replaceArrayItem} from './array-proxy';
-import {empty, pureproxy} from 'packages/utils/src';
+import {empty, pureproxy} from 'alins-utils';
 
 let currentFn: any = null;
 let depReactive = false; // 当前表达式是否依赖响应数据

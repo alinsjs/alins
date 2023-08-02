@@ -4,8 +4,8 @@
  * @Description: Coding something
  */
 
-import {IWatchRefTarget, watch} from 'packages/reactive/src';
-import {ISimpleValue} from 'packages/utils/src';
+import {IWatchRefTarget, watch} from 'alins-reactive';
+import {ISimpleValue} from 'alins-utils';
 import {IBranchTarget} from './scope/branch';
 import {IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {ICtxUtil, IReturnCall} from './type';
@@ -100,7 +100,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
     };
 
     return {
-        end (call: IReturnCall = ()=>void 0): IGeneralElement|void {
+        end (call: IReturnCall = () => void 0): IGeneralElement|void {
             endCall = call;
             // console.warn('switch end');
             const init = watch(target, (value) => {

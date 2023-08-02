@@ -11,9 +11,9 @@ export {_if} from './if';
 export {_switch} from './switch';
 export {map} from './for';
 
-export * from './element/renderer'
+export * from './element/renderer';
 
 export * from 'alins-reactive';
 
-export {reactiveBindingEnable} from './element/dom-util'
+export {reactiveBindingEnable} from './element/dom-util';
 

@@ -9,4 +9,6 @@ export * from './computed';
 export * from './watch';
 export * from './binding';
 
-export * from 'alins-utils'
+export * from 'alins-utils';
+
+export * from './array-proxy';

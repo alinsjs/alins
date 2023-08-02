@@ -4,9 +4,11 @@
  * @Description: Coding something
  */
 
-import {createProxy, isProxy, watch, watchArray, wrapReactive} from 'packages/reactive/src';
-import {IOprationAction, OprateType, registArrayMap} from 'packages/reactive/src/array-proxy';
-import {IProxyData, IRefData, trig, util} from 'packages/utils/src';
+import {
+    createProxy, isProxy, watch, watchArray, wrapReactive,
+    IOprationAction, OprateType, registArrayMap
+} from 'alins-reactive';
+import {IProxyData, IRefData, trig, util} from 'alins-utils';
 import {IFragment, IGeneralElement, ITrueElement, Renderer, ITextNode, IElement} from './element/renderer';
 import {getParent} from './utils';
 
@@ -46,8 +48,8 @@ export function map (
     let head: ITrueElement;
 
     const scopeItems: IProxyData<{item: any, index: number}>[] = [];
-    window.EndMap = EndMap
-    window.scopeItems = scopeItems
+    window.EndMap = EndMap;
+    window.scopeItems = scopeItems;
     list[util].scopeItems = scopeItems;
     list[util]._map = true; // ! 标识需要强制更新，从而更新map的index
     // @ts-ignore ! 此处用于在slice方法中获取 item
@@ -75,7 +77,7 @@ export function map (
         if (!child) {
             child = Renderer.createEmptyMountNode();
             end = child;
-            if(i === 0) head = child;
+            if (i === 0) head = child;
         } else if (Renderer.isFragment(child)) {
             child = child as IFragment;
             const children = child.childNodes;
@@ -83,13 +85,13 @@ export function map (
             if (n === 0) {
                 end = Renderer.createEmptyMountNode();
                 child.appendChild(end as any);
-                if(i === 0) head = end;
+                if (i === 0) head = end;
             } else {
                 end = children[n - 1] as any;
-                if(i === 0) head = children[0];
+                if (i === 0) head = children[0];
             }
-        }else{
-            if(i === 0) head = child;
+        } else {
+            if (i === 0) head = child;
         }
         // if(i===0)debugger;
         console.log(head, i);
@@ -127,7 +129,7 @@ export function map (
                         // console.log('debug: watch array replace------------');
                         scopeItems[index][k].v = data[0];
                     }
-                    if(ik) scopeItems[index][ik].v = index;
+                    if (ik) scopeItems[index][ik].v = index;
                 }
                 // replaceItem(index, data[0]);
             };break;
@@ -140,17 +142,17 @@ export function map (
                 // if (endDom === ScopeEnd) debugger; // debug
 
 
-                let startDom = ((startPos < 0) ? (head||ScopeEnd) :  EndMap[startPos]) as Node;
+                const startDom = ((startPos < 0) ? (head || ScopeEnd) :  EndMap[startPos]) as Node;
 
                 while (startDom.nextSibling && startDom.nextSibling !== endDom) {
                     startDom.nextSibling.remove();
                 }
 
-                if(startPos < 0){
-                    if(startDom !== ScopeEnd){
+                if (startPos < 0) {
+                    if (startDom !== ScopeEnd) {
                         head = startDom.nextSibling;
                         startDom.remove();
-                    }else{
+                    } else {
                         head = ScopeEnd;
                     }
                 }
@@ -162,7 +164,7 @@ export function map (
             };break;
             case OprateType.Insert: {
                 // if (!EndMap[index - 1]) debugger;
-                const mountNode = index === 0 ? (head||ScopeEnd) : EndMap[index - 1].nextSibling;
+                const mountNode = index === 0 ? (head || ScopeEnd) : EndMap[index - 1].nextSibling;
                 const ends: any[] = [];
                 const scopes: any[] = [];
                 data.forEach((item, i) => {

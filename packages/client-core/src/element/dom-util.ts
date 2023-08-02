@@ -5,8 +5,7 @@
  */
 
 import {
-    IBindingChange, IReactBindingResult, isBindingResult,
-    isProxy, isRef, watch, IBindingReaction
+    IBindingChange, isProxy, isRef, watch, IBindingReaction
 } from 'alins-reactive';
 import {AlinsType, IJson, IRefData, type} from 'alins-utils';
 import {IElement, ITextNode} from './renderer';
@@ -47,19 +46,19 @@ export function reactiveBindingEnable (
     const react: IBindingReaction = isEnableObject ? (arg as IBindingReactionEnableObj).value : arg as IBindingReaction;
     let enable = true;
     let value = '';
-    value = reactiveBinding(react, (nv, ov)=>{
+    value = reactiveBinding(react, (nv, ov) => {
         value = nv;
-        if(enable){
+        if (enable) {
             onchange(nv, ov);
         }
     });
     if (isEnableObject) {
-        enable = watch((arg as IBindingReactionEnableObj).enable, (v)=>{
+        enable = watch((arg as IBindingReactionEnableObj).enable, (v) => {
             enable = v;
-            onchange(enable?value:null, null);
+            onchange(enable ? value : null, null);
         }).v;
     }
-    onchange(enable?value:null, undefined as any);
+    onchange(enable ? value : null, undefined as any);
     return value;
 }
 
