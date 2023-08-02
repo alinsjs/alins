@@ -659,8 +659,12 @@ declare namespace Alins {
 
 // declare const For = () => {};
 
+declare const React: any;
 
 declare global {
+    interface Window {
+        React: any;
+    }
     namespace JSX {
         interface PElement extends Promise<HTMLElement>, HTMLElement{}
         // tslint:disable-next-line:no-empty-interface
@@ -781,7 +785,7 @@ declare global {
     const Async: JSXInnerComp<{data: Promise<any>, name?: string}>;
     const Show: JSXInnerComp<{data: boolean}>;
 
-    var $item: any;
-    var $index: number;
-    var $data: any;
+    let $item: any;
+    let $index: number;
+    let $data: any;
 }

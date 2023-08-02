@@ -81,13 +81,13 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     addEvent(el as IElement, k, v);
                     continue;
                 }
-                if(k === '$parent'){
+                if (k === '$parent') {
                     v.appendChild(el);
                 } else if (k === '$attributes') {
                     parseAttributes(el, v);
                 } else if (k === '$show') {
                     reactiveBindingEnable(v, (v, ov) => {
-                        el.style.display = v ? '': 'none';
+                        el.style.display = v ? '' : 'none';
                     });
                 } else if (k === 'class') {
                     // @ts-ignore
@@ -97,11 +97,11 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         if (!key) el.className = value;
                         else !!value ? el.classList.add(key) : el.classList.remove(key);
                     });
-                }else {
-                    if(k === 'style' && parseStyle(el as HTMLElement, v)) continue;
-                    else if(parseModel(el as HTMLElement, v, k)) continue;
+                } else {
+                    if (k === 'style' && parseStyle(el as HTMLElement, v)) continue;
+                    else if (parseModel(el as HTMLElement, v, k)) continue;
                     reactiveBindingEnable(v, (v, ov) => {
-                        v === null ? el.removeAttribute(k): el.setAttribute(k, v);
+                        v === null ? el.removeAttribute(k) : el.setAttribute(k, v);
                     });
                 }
             }
@@ -114,7 +114,7 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
     for (const item of children) {
         if (typeof item === 'undefined' || item === null) continue;
 
-        if(Array.isArray(item)){
+        if (Array.isArray(item)) {
             appendChildren(parent, item);
             return;
         }
@@ -145,24 +145,30 @@ export function isJSXElement (item: any) {
 export const JSX = {
     createElement (
         tag: string | ((
-            attributes: Record<string,any>, children: ITrueElement[]
+            attributes: Record<string, any>, children: ITrueElement[]
         )=>ITrueElement|Promise<ITrueElement>),
         attributes: any = null,
         ...children: any[]
     ): ITrueElement {
         if (typeof tag === 'function') {
+            const $parent = attributes.$parent;
+            delete attributes.$parent;
             // console.log('createComponent', result);
-            for(let k in attributes){
+            for (const k in attributes) {
                 const v = attributes[k];
-                if(!isProxy(v)){
-                    attributes[k] = {v}
+                if (!isProxy(v)) {
+                    attributes[k] = {v};
                 }
                 // if(typeof v === 'function')
             }
 
             const dom = tag(attributes, children);
             // if (dom.toString() === '[object Promise]') {
-            return transformAsyncDom(dom) as any;
+            const result = transformAsyncDom(dom) as any;
+            if ($parent) {
+                $parent.appendChild(result);
+            }
+            return result;
         }
         const result: IJSXDomOptions = {tag, attributes, children, jsx: true};
         // console.log('createElement', result);

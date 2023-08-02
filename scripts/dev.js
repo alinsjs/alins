@@ -1,12 +1,14 @@
 /*
+import default from './test/cases/async';
  * @Author: chenzhongsheng
  * @Date: 2022-10-24 10:31:38
  * @Description: Coding something
  */
 const esbuild = require('esbuild');
 const {resolveRootPath} = require('./helper/utils');
+const fs = require('fs');
 
-const mode = process.argv[2] || 'devweb';
+const mode = process.argv[2] || 'dev_web';
 
 const entry = ({
     dev_node: 'scripts/dev/dev-node.ts',
@@ -16,6 +18,12 @@ const entry = ({
     dev_web_standalone: 'scripts/dev/dev-web-standalone.ts',
     test_web: 'scripts/test/client/index.ts',
 })[mode];
+
+if (mode === 'dev_web') {
+    const files = fs.readdirSync(resolveRootPath('scripts/dev/samples'));
+    const arr = files.map(name => name.substring(0, name.indexOf('.')));
+    fs.writeFileSync(resolveRootPath('scripts/dev/samples-list.ts'), `export default ${JSON.stringify(arr)};`, 'utf8');
+}
 
 main(
     resolveRootPath(entry),
