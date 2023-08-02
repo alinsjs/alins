@@ -1,5 +1,5 @@
 {
-    "name": "alins-utils",
+    "name": "alins-compiler-node",
     "version": "0.0.18",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
@@ -7,7 +7,7 @@
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
-        "build": "node ../../scripts/build/build.js utils"
+        "build": "node ../../scripts/build/build.js compiler-node"
     },
     "keywords": [
         "alins",
@@ -22,5 +22,10 @@
         "registry": "https://registry.npmjs.org/"
     },
     "unpkg": "dist/alins-utils.min.js",
-    "jsdelivr": "dist/alins-utils.min.js"
+    "jsdelivr": "dist/alins-utils.min.js",
+    "dependencies": {
+        "@babel/core": "^7.22.9",
+        "@babel/preset-react": "^7.22.5",
+        "alins-compiler-core": "^0.0.18"
+    }
 }

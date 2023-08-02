@@ -13,9 +13,47 @@ console.log(`dirName=${dirName}`);
 
 const BuildMap = {
     'client-core': {
-        format: '',
+        packageName: 'alins',
+        format: ['esm', 'umd'],
+        umdName: 'Alins',
     },
-}
+    'client-reactive': {
+        packageName: 'alins-reactive',
+        format: ['esm', 'umd'],
+        umdName: 'AlinsReactive',
+    },
+    'client-utils': {
+        packageName: 'alins-utils',
+        format: ['esm', 'umd'],
+    },
+    'client-standalone': {
+        packageName: 'alins-standalone',
+        format: ['esm', 'umd', 'iife'],
+        umdName: 'Alins',
+    },
+    'compiler-core': {
+        packageName: 'alins-compiler-core',
+        format: ['esm', 'umd'],
+        umdName: 'AlinsCompiler',
+    },
+    'compiler-node': {
+        packageName: 'alins-compiler-node',
+        format: ['esm', 'cjs'],
+    },
+    'compiler-web': {
+        packageName: 'alins-compiler-web',
+        format: ['esm', 'umd', 'iife'],
+        umdName: 'AlinsWeb',
+    },
+    'plugin-babel': {
+        packageName: 'alins-babel-plugin',
+        format: ['esm', 'cjs'],
+    },
+    'plugin-vite': {
+        packageName: 'alins-vite-plugin',
+        format: ['esm', 'cjs'],
+    },
+};
 
 async function build () {
     await execa(

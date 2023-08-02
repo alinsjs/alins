@@ -1,13 +1,8 @@
 /*
- * @Author: tackchen
- * @Date: 2022-10-23 18:24:06
+ * @Author: chenzhongsheng
+ * @Date: 2023-08-02 22:36:16
  * @Description: Coding something
  */
-export * from './utils';
-export * from './types/symbol';
-export {version} from '../package.json';
+import {babelPluginAlins} from 'alins-compiler-core';
 
-export * from './types/common.d';
-export * from './types/react.d';
-// export * from './types/style.d';
-export * from './types/enum';
+export default babelPluginAlins;
