@@ -116,7 +116,11 @@ export function createProxy<T extends IJson> (data: T, {
         for (const k in data) {
             const v = data[k];
             if (v && typeof v === 'object') {
-                data[k] = createProxy(v, {path, key: k});
+                try{
+                    data[k] = createProxy(v, {path, key: k});
+                }catch(e){
+                    debugger
+                }
             }
         }
     }
@@ -163,8 +167,7 @@ export function createProxy<T extends IJson> (data: T, {
                 // console.log('debug:Proxy.set', target, property, v);
                 // if (v.a === 2) debugger;
                 const origin = target[property];
-                
-                if (v === origin) return true;
+                if (v === origin && !target[util]?._map) return true;
                 if (set === null) { console.warn('Computed 不可设置'); return true;}
                 if (set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
                 // if (v.a === 0) debugger;

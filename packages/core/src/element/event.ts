@@ -10,7 +10,6 @@ import {IEventObject, IEventAttributes, IEventObjectDeco} from './jsx';
 export type IEventNames = keyof IEventAttributes;
 
 export function isEventAttr (dom: IElement|IFragment, name: string, event: IEventObject) {
-    debugger;
     if (!name.startsWith('on')) return false;
     if (dom[name] !== null && typeof dom[name] !== 'function') return false;
     // @ts-ignore

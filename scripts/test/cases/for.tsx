@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-02 09:31:17
+ * @LastEditTime: 2023-08-02 17:34:47
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {IAttributes} from 'packages/core/src/element/jsx';
@@ -279,3 +279,10 @@ export default [
         ]
     }
 ];
+
+
+const d = <For data={[]}>
+    <div>{$item}</div>
+</For>
+
+window.$item

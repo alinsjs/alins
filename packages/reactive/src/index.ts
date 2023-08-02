@@ -8,3 +8,5 @@ export * from './react';
 export * from './computed';
 export * from './watch';
 export * from './binding';
+
+export * from 'alins-utils'

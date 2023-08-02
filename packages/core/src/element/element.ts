@@ -81,7 +81,15 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     addEvent(el as IElement, k, v);
                     continue;
                 }
-                if (k === 'class') {
+                if(k === '$parent'){
+                    v.appendChild(el);
+                } else if (k === '$attributes') {
+                    parseAttributes(el, v);
+                } else if (k === '$show') {
+                    reactiveBindingEnable(v, (v, ov) => {
+                        el.style.display = v ? '': 'none';
+                    });
+                } else if (k === 'class') {
                     // @ts-ignore
                     el.className = reactiveClass(v, (key, value) => {
                         el = el as IElement;
@@ -89,9 +97,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         if (!key) el.className = value;
                         else !!value ? el.classList.add(key) : el.classList.remove(key);
                     });
-                } else if (k === '$attributes') {
-                    parseAttributes(el, v);
-                } else {
+                }else {
                     if(k === 'style' && parseStyle(el as HTMLElement, v)) continue;
                     else if(parseModel(el as HTMLElement, v, k)) continue;
                     reactiveBindingEnable(v, (v, ov) => {
@@ -146,7 +152,6 @@ export const JSX = {
     ): ITrueElement {
         if (typeof tag === 'function') {
             // console.log('createComponent', result);
-            debugger;
             for(let k in attributes){
                 const v = attributes[k];
                 if(!isProxy(v)){

@@ -16,17 +16,11 @@ import {getParent} from './utils';
  通过函数调用的话特殊处理
  分为两种插入和删除
  */
-
-
-export function _for () {
-    // list =
-}
-
 export function map (
     this: IProxyData<any[]>,
     call: (scope: any, i?: number)=>IGeneralElement,
     jsx = false,
-    k = '$I',
+    k = '$item',
     ik = ''
 ) {
     const list = this;
@@ -48,10 +42,14 @@ export function map (
     const ScopeEnd = Renderer.createEmptyMountNode();
     const EndMap: ITrueElement[] = [];
 
+
     let head: ITrueElement;
 
     const scopeItems: IProxyData<{item: any, index: number}>[] = [];
+    window.EndMap = EndMap
+    window.scopeItems = scopeItems
     list[util].scopeItems = scopeItems;
+    list[util]._map = true; // ! 标识需要强制更新，从而更新map的index
     // @ts-ignore ! 此处用于在slice方法中获取 item
     scopeItems.key = k;
     // window.scope = scopeItems;
@@ -80,14 +78,15 @@ export function map (
             if(i === 0) head = child;
         } else if (Renderer.isFragment(child)) {
             child = child as IFragment;
-            const n = child.children.length;
+            const children = child.childNodes;
+            const n = children.length;
             if (n === 0) {
                 end = Renderer.createEmptyMountNode();
                 child.appendChild(end as any);
                 if(i === 0) head = end;
             } else {
-                end = child.children[n - 1] as any;
-                if(i === 0) head = child.children[0];
+                end = children[n - 1] as any;
+                if(i === 0) head = children[0];
             }
         }else{
             if(i === 0) head = child;
@@ -128,7 +127,7 @@ export function map (
                         // console.log('debug: watch array replace------------');
                         scopeItems[index][k].v = data[0];
                     }
-                    scopeItems[index][ik].v = index;
+                    if(ik) scopeItems[index][ik].v = index;
                 }
                 // replaceItem(index, data[0]);
             };break;
@@ -162,7 +161,6 @@ export function map (
                 // console.warn('【watch array remove】', index, count, data);
             };break;
             case OprateType.Insert: {
-                debugger;
                 // if (!EndMap[index - 1]) debugger;
                 const mountNode = index === 0 ? (head||ScopeEnd) : EndMap[index - 1].nextSibling;
                 const ends: any[] = [];

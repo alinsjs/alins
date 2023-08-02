@@ -56,7 +56,7 @@ export function createContext (top = false) {
     return ctx;
 }
 
-Object.assign(createContext, {
+export const ContextTool = {
     ce: JSX.createElement,
     mnr (fn: any) {
         fn.returned = false;
@@ -65,6 +65,8 @@ Object.assign(createContext, {
     r: react,
     c: computed,
     w: watch,
-})
+}
+
+Object.assign(createContext, ContextTool);
 
 export type IComponentContext = ReturnType<typeof createContext>;

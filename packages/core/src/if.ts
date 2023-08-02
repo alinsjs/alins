@@ -29,14 +29,12 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     // 返回当前接节点是否有返回值
     const switchNode = (i: number) => {
         const branch = branchs[i];
-        debugger;
         anchor.replaceBranch(branch);
         // console.warn('switch node', i, dom);
         // ! 编译时注入的returned
         return branch.call.returned !== false;
     };
     const onDataChange = (bs: boolean[]) => {
-        debugger;
         // console.warn('if onDataChange', bs);
         const n = bs.length;
         for (let i = 0; i < n; i++) {

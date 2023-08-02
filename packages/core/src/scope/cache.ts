@@ -15,7 +15,7 @@ function transformElementToCache (element: ITrueElement|null): (IElement|ITextNo
     if (!element) return null;
     if (Renderer.isFragment(element)) {
         // @ts-ignore
-        return Array.from(element.children);
+        return Array.from(element.childNodes);
     }
     // @ts-ignore
     return [element];

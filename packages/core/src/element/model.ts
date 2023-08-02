@@ -22,7 +22,6 @@ export function parseModel(
     if(!ModelTag[tag]) return false;
 
     const type = value.__deco || typeof value.v;
-    debugger;
     let parseType = ({
         'boolean': v => v === 'true',
         'number': v => parseFloat(v),
@@ -30,7 +29,6 @@ export function parseModel(
     })[type];
 
     if(!parseType) parseType = v => v;
-    debugger
     const bindValue = value.__deco ? value.v : value;
 
     const eventName = tag === 'SELECT' ? 'change': 'input';

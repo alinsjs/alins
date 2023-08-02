@@ -644,6 +644,7 @@ declare namespace Alins {
 
     interface IAttributes extends IBaseAttributes {
         $parent?: HTMLElement|Node|DocumentFragment;
+        $show?: boolean|(()=>boolean);
         $attributes?: {
             [prop in keyof IBaseAttributes]?: IAttributes[prop];
         } & {
@@ -656,7 +657,8 @@ declare namespace Alins {
     }
 }
 
-declare const For = () => {};
+// declare const For = () => {};
+
 
 declare global {
     namespace JSX {
@@ -684,15 +686,16 @@ declare global {
         // interface IntrinsicClassAttributes { href?: string }
 
         interface IntrinsicElements {
-            // HTML
-            for: {data: any, item?: string; index?: string},
-            if: {data: any},
-            elseif: {data: any},
-            else: {},
-            switch: {data: any},
-            case: {data: any, break?: boolean|null},
-            default: {break?: boolean|null},
-            async: {data: any, name?: string},
+            // // HTML
+            // for: {data: any[], item?: string; index?: string},
+            // if: {data: boolean},
+            // elseif: {data: boolean},
+            // else: {},
+            // switch: {data: any},
+            // case: {data: any, break?: boolean|null},
+            // default: {break?: boolean|null},
+            // async: {data: Promise<any>, name?: string},
+            // show: {data: boolean},
 
             div: Alins.IAttributes,
             a: Alins.IAttributes;
@@ -765,4 +768,20 @@ declare global {
             [prop: string]: Alins.IAttributes;
         }
     }
+
+    type JSXInnerComp<T> = (attrs: T) => JSX.Element;
+
+    const For: JSXInnerComp<{data: any[], item?: string, index?: string}>;
+    const If: JSXInnerComp<{data: boolean}>;
+    const ElseIf: JSXInnerComp<{data: boolean}>;
+    const Else: JSXInnerComp<{}>;
+    const Switch: JSXInnerComp<{data: any}>;
+    const Case: JSXInnerComp<{data: any, break?: boolean|null}>;
+    const Default: JSXInnerComp<{break?: boolean|null}>;
+    const Async: JSXInnerComp<{data: Promise<any>, name?: string}>;
+    const Show: JSXInnerComp<{data: boolean}>;
+
+    var $item: any;
+    var $index: number;
+    var $data: any;
 }
