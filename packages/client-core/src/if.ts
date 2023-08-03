@@ -20,6 +20,7 @@ export interface IIfReturn {
 }
 
 export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfReturn {
+    console.log('branch debug:enter if', call.toString());
     const anchor = createAnchor(util.cache);
     // ! 最后一个branch是end
     const branchs: IBranchTarget[] = [];

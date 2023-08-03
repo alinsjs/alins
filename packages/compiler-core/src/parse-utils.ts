@@ -22,12 +22,6 @@ import {isBlockReturned} from './is';
 
 let currentCtx: any = null;
 
-let getCurrentCtx: ()=>any;
-
-export function setContextGetter (fn: any) {
-    getCurrentCtx = fn;
-}
-
 export const Names = {
     _Ctx: '_$',
     AliasPrefix: '_$',
@@ -42,7 +36,7 @@ export const Names = {
     get Ctx () {
         // 部分使用ctx时候并不是在当前作用域
         // 比如因为有赋值导致的react和computed
-        const ctx = getCurrentCtx();
+        const ctx = currentCtx;
         console.log('AlinsCtx use', ctx);
         // if (!ctx) debugger;
         if (!ctx._used) ctx._used = true;
@@ -100,7 +94,7 @@ export function createVarDeclarator (id: string, init: any) {
     );
 }
 let id = 0;
-export function createAlinsCtx (top = false) {
+export function createAlinsCtx () {
     console.log('AlinsCtx 111', top);
     currentCtx = t.variableDeclaration(
         'const',
@@ -109,7 +103,7 @@ export function createAlinsCtx (top = false) {
                 t.identifier(Names._Ctx),
                 t.callExpression(
                     t.identifier(Names.CtxFn),
-                    top ? [ t.booleanLiteral(top) ] : []
+                    []
                 ),
             )
         ]

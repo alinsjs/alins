@@ -87,10 +87,10 @@ export function createNodeVisitor (t: IBabelType) {
                 if (!path.parent._scopeEntry) { // ! 父元素不是一个scope（不是函数）
                     ctx.enterScope(path);
                 }
-                // ! 函数作用域
-                if (!ctx.curScope.inJsxTrans && path.parent.type.includes('Function')) {
-                    path.unshiftContainer('body', createAlinsCtx());
-                }
+                // // ! 函数作用域
+                // if (!ctx.curScope.inJsxTrans && path.parent.type.includes('Function')) {
+                //     path.unshiftContainer('body', createAlinsCtx());
+                // }
             },
             exit (path) {
                 if (!path.parent._scopeEntry) {
@@ -109,7 +109,7 @@ export function createNodeVisitor (t: IBabelType) {
                 }
                 if (path.node._isCtx) { // ! 是否是生成的alins ctx
                     path.node._isCtx = false;
-                    ctx.curScope.ctx = path;
+                    ctx.ctx = path;
                 }
                 if (!ctx.enter(path)) return;
 

@@ -16,7 +16,7 @@ import {createBranchLink} from './scope/branch';
 import {JSX} from './element/element';
 
 
-export function createContext (top = false) {
+export function createContext () {
     const cache = createCallCache();
     const anchor = createAnchor(cache);
 
@@ -26,7 +26,6 @@ export function createContext (top = false) {
         anchor,
         cache,
         branch,
-        top,
     };
 
     const ctx = {
@@ -35,25 +34,14 @@ export function createContext (top = false) {
             return _if(cond, call, ctxUtil);
         },
         switch: (cond: ISwitchTarget, list: ISwitchCaseList) => _switch(cond, list, ctxUtil),
-        // for: _for,
-        // equal: (v1: any, v2: any) => {
-        //     if (v1[util] && v2[util]) return v1[util] === v2[util];
-        //     return v1 === v2;
-        // },
-        // ce: JSX.createElement,
-
-        // ! 处理 async 代码没有返回值
-        // markNotReturned
-        // mnr (fn: any) {
-        //     fn.returned = false;
-        //     return fn;
-        // },
     };
     return ctx;
 }
 
 export const ContextTool = {
     ce: JSX.createElement,
+    // ! 处理 async 代码没有返回值
+    // markNotReturned
     mnr (fn: any) {
         fn.returned = false;
         return fn;

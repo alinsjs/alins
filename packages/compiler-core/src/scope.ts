@@ -48,7 +48,6 @@ export interface IScopeVariable {
     handled: boolean;
     isJSX?: boolean;
     alias?: string;
-    ctx?: Node;
     isProps?: boolean;
     skipReadV?: boolean;
 }
@@ -58,7 +57,6 @@ export interface IScopeWatchJSXExpression {
     isDynamic: boolean; // 是否依赖了其他响应式数据
     handled: boolean;
     skip: boolean;
-    ctx?: Node;
     isComp?: boolean;
 }
 
@@ -77,7 +75,7 @@ export class Scope {
 
     module: Module;
 
-    ctx: NodePath<Node>; // ! 当前的 alins ctx 用不到的话需要移除出去
+    // ctx: NodePath<Node>; // ! 当前的 alins ctx 用不到的话需要移除出去
 
     jsxScope: JsxScope;
     get inJsxTrans () {
@@ -224,7 +222,6 @@ export class Scope {
             dependJsx: [],
             dependTransJsx: [],
             handled: false,
-            ctx: this.ctx?.node,
             skipReadV: !!NodeNeedHandleVarMap[initType],
         };
     }
@@ -459,7 +456,6 @@ export class Scope {
             isDynamic: false,
             handled: false,
             skip: false,
-            ctx: this.ctx?.node,
             isComp: this.jsxScope.isJSXComp,
         };
         path.node._jsxExp = exp;

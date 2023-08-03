@@ -126,13 +126,14 @@ export function createAnchor (cache: ICallCache) {
             let parent = branch?.parent;
             while (parent && parent.anchor.start() === start) {
                 parent.anchor.setStart(newStart);
-                if (parent.call) cache.modifyCache(parent.call, newEle);
+                if (parent.call) cache.modifyCache(parent, newEle);
                 parent = parent.parent;
             }
             start = newStart;
             try {
                 container.insertBefore(element, end);
             } catch (e) {
+                console.error(e, container, element, end);
                 debugger;
             }
             // console.log('xxxxxxx', this.start(), start, start?.parentElement);

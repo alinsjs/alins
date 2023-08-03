@@ -14,8 +14,6 @@ import {INodeTypeMap} from './types';
 
 export let currentModule: Module = null as any;
 
-// window.ctx = () => currentModule;
-
 const NoNeedCollectVarMap: INodeTypeMap = {
     'ForInStatement': 1, 'ForOfStatement': 1, 'ForStatement': 1,
 };
@@ -41,18 +39,15 @@ export class Module {
     curScope: Scope = null as any;
     curDeclarationType: VariableDeclaration['kind'] = 'var';
     id = 0;
+    ctx: NodePath<Node>; // ! 当前的 alins ctx 用不到的话需要移除出去
     constructor (path: NodePath<Program>) {
         this.id = moduleId++;
         this.enterScope(path);
-
-        setContextGetter(() => {
-            console.log(this, this.curScope);
-            let scope = this.curScope;
-            while (!scope.ctx && scope.parent) {
-                scope = scope.parent;
-            }
-            return scope?.ctx?.node;
-        });
+    }
+    exitModule () {
+        if (this.ctx && !this.ctx.node._used) {
+            this.ctx.remove();
+        }
     }
     enterScope (path: NodePath<Node>) {
         // iii ++;
@@ -73,10 +68,6 @@ export class Module {
         // ! 没有使用到的 ctx 则删除
         const scope = this.curScope;
         // debugger;
-        // console.log('AlinsCtx exit Scope', scope.ctx?.node?._used, scope.id, scope.deep, scope.path.toString());
-        if (scope.ctx && !scope.ctx.node._used) {
-            scope.ctx.remove();
-        }
         scope.exit();
         this.curScope = scope.parent;
         // console.log('SCOPE-DEBUG Exit:', scope.path.toString());
@@ -274,6 +265,7 @@ export function enterContext (path: NodePath<Program>) {
 
 export function exitContext () {
     currentModule.exitScope();
+    currentModule.exitModule();
     currentModule = currentModule.parent;
 }
 

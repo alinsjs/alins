@@ -21,7 +21,8 @@ function transformElementToCache (element: ITrueElement|null): (IElement|ITextNo
     return [element];
 }
 
-function transformCacheToElement (cache: (IElement|ITextNode)[]): ITrueElement {
+function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElement|null {
+    if (!cache) return Renderer.createEmptyMountNode();
     if (cache.length === 1) return cache[0];
     const d = Renderer.createDocumentFragment();
     for (const item of cache) {
@@ -46,8 +47,14 @@ export function createCallCache () {
             branch.visit();
             const fn = branch.call;
             const item = map.get(fn);
+            // ! 需要更新自己与父branch的cache
+            console.log('branch debug:item', branch.id, item);
+            if (typeof item !== 'undefined') {
+                debugger;
+                branch.parent?.clearCache?.();
+                return transformCacheToElement(item);
+            }
             debugger;
-            if (item) return transformCacheToElement(item);
             // currentCall = fn;
             const origin = fn();
             let element: any;
@@ -57,26 +64,30 @@ export function createCallCache () {
                 let first: any = null;
                 element = transformAsyncDom(origin, true, (trueDom: any) => {
                     // ! 被异步dom返回替换时需要替换cache和anchor
-                    map.set(fn, transformElementToCache(trueDom));
+                    this.modifyCache(branch, trueDom);
                     anchor?.replaceStart(first, trueDom);
                     first = null;
                 });
                 first = getFirstElement(element);
             }
             // currentCall = null;
-            if (typeof element === 'undefined') return;
             // 有可能存在void的情况
-            if (Renderer.isElement(element)) {
-                debugger;
-                map.set(fn, transformElementToCache(element));
+            if (Renderer.isElement(element) || typeof element === 'undefined') {
+                this.modifyCache(branch, element);
                 return element;
             }
             // todo 对于 return; 的处理
             throw new Error('动态条件分支中不允许返回非元素类型');
         },
-        modifyCache (fn: IReturnCall|IAsyncReturnCall, el: ITrueElement) {
-            debugger;
-            map.set(fn, transformElementToCache(el));
+        modifyCache (branch: IBranchTarget, el: ITrueElement) {
+            if (!branch.call) return;
+            // if (el) {
+            const doms = transformElementToCache(el);
+            console.log('branch debug: cache call', branch.id, doms);
+            map.set(branch.call, doms);
+            // } else {
+            //     branch.parent?.clearCache?.();
+            // }
         },
         // getCurrentCall () {
         //     return currentCall;

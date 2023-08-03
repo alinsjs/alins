@@ -14,6 +14,7 @@ export interface IBranchTarget {
     visit(): void;
     current(): IBranchTarget|null;
     isVisible(branch?: IBranchTarget|null): boolean;
+    clearCache(): void;
     anchor: ICtxAnchor;
     inited?: boolean;
 }
@@ -26,13 +27,17 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
 
     let currentBranch: IBranchTarget|null = null;
 
+    // const branchPool: WeakMap<IReturnCall, IBranchTarget> = new WeakMap();
+
+    // 用作判断某branch是否可见
     let branchMap: WeakMap<IBranchTarget, 1>|null = null;
 
     const createTarget = (call: IReturnCall, anchor: ICtxAnchor, forward = false): IBranchTarget => {
+        // const item = branchPool.get(call);
+        // if (item) return item;
         const last = stack.length === 0 ? Root : stack[stack.length - 1];
-        debugger;
         const parent = (forward ? last : last?.parent) as IBranchTarget|null;
-        return {
+        const branch = {
             id: id++,
             call,
             parent,
@@ -80,17 +85,23 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                 if (currentBranch === this) return;
                 currentBranch = this;
                 branchMap = null;
+            },
+            clearCache () {
+                // console.warn('branch debug:clearCache', this.id, this.call);
+                // cache.clearCache(this.call);
+                // this.parent?.clearCache?.();
             }
         };
+        // branchPool.set(call, branch);
+        return branch;
     };
 
     return {
         // forward 表示是否要向下一层
         next (call: IReturnCall, anchor: ICtxAnchor, forward = false) {
             const target = createTarget(call, anchor, forward);
-            // debugger;
             forward ? stack.push(target) : stack[stack.length - 1] = target;
-            console.warn(`branch:next:${target.id}:${forward}`, target.call.toString());
+            console.warn(`branch debug:next:${target.id}:${forward}`, target.call.toString());
             if (!window.bs) window.bs = [];
             window.bs.push(target);
             return target;
