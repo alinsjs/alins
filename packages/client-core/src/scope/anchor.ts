@@ -79,6 +79,8 @@ export function createAnchor (cache: ICallCache) {
             // console.log(start);
             // branch.parent
             const current = branch.current(); // ! 缓存一下当前branch， call之后会被覆盖
+            // const activeBranch = branch.getBottomChild();
+            debugger;
             const dom = cache.call(branch);
             console.log('branch debug:dom', dom);
             // if (!window.bs) window.bs = {};

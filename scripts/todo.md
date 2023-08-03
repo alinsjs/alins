@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-03 17:47:16
+ * @LastEditTime: 2023-08-04 01:12:54
 -->
 
 # 0.1.0
@@ -54,7 +54,9 @@ fix
 - [x] fix: computed get set时获取任意属性都为get的问题
 - [x] fix: if 没有 elseif和else的情况 没有else情况的ui显示异常问题
 - [x] fix: if 组件 多层嵌套执行有问题 (anchor start指向有问题)
-- [ ] fix: branch visible判断的逻辑问题，原因在于branch visit 时没有对
+- [x] fix: branch visible判断的逻辑问题，原因在于branch visit 时没有对
+- [ ] fix: cache 节点 失效的问题，如何更新cache: 缓存的节点中有if，if节点变更导致缓存失效了
+- [ ] fix: If 标签之后的节点不见了
 - [ ] 多层嵌套if问题
 <!-- - [ ] 多层嵌套的reactive -->
 

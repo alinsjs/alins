@@ -17,6 +17,8 @@ export interface IBranchTarget {
     clearCache(): void;
     anchor: ICtxAnchor;
     inited?: boolean;
+    activeChild: IBranchTarget|null;
+    getBottomChild(): IBranchTarget;
 }
 
 export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
@@ -26,6 +28,8 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
     const Root = {anchor, parent: null};
 
     let currentBranch: IBranchTarget|null = null;
+
+    window.getCurBranch = () => currentBranch;
 
     // const branchPool: WeakMap<IReturnCall, IBranchTarget> = new WeakMap();
 
@@ -40,10 +44,11 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
         // if (item) return item;
         const last = stack.length === 0 ? Root : stack[stack.length - 1];
         const parent = (forward ? last : last?.parent) as IBranchTarget|null;
-        const branch = {
+        const branch: IBranchTarget = {
             id: id++,
             call,
             parent,
+            activeChild: null,
             anchor,
             current () {
                 return currentBranch;
@@ -94,19 +99,21 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                 // console.warn('visit branch', this);
                 if (currentBranch === this) return;
                 if (initialized) {
-                    debugger;
                     stack = [this];
                 }
                 currentBranch = this;
+                if (this.parent) this.parent.activeChild = this;
                 branchMap = null;
-            },
-            updateCache () {
-                debugger;
             },
             clearCache () {
                 // console.warn('branch debug:clearCache', this.id, this.call);
                 // cache.clearCache(this.call);
                 // this.parent?.clearCache?.();
+            },
+            getBottomChild () {
+                let node = this;
+                while (node.activeChild) node = node.activeChild;
+                return node;
             }
         };
         // branchPool.set(call, branch);

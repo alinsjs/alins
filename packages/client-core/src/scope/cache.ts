@@ -83,7 +83,7 @@ export function createCallCache () {
             if (!branch.call) return;
             // if (el) {
             const doms = transformElementToCache(el);
-            console.log('branch debug: cache call', branch.id, doms);
+            console.log('branch debug: cacheMap set', branch.id, doms);
             cacheMap.set(branch.call, doms);
             // } else {
             //     branch.parent?.clearCache?.();
