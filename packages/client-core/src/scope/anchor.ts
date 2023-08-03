@@ -43,6 +43,23 @@ export function createAnchor (cache: ICallCache) {
     //     console.log(start);
     // }, 3000);
 
+    const clearDom = () => {
+        const cursor = start;
+        if (cursor !== end) {
+            while (cursor.nextSibling && cursor.nextSibling !== end) {
+                try {
+                    cursor.nextSibling.remove();
+                } catch (e) {
+                    // debugger;
+                    console.error(e);
+                    break;
+                }
+            }
+            cursor.remove();
+        }
+        start = end;
+    };
+
     return {
         start () {return start;},
         setStart (element: ITrueElement|null|undefined) {
@@ -71,6 +88,14 @@ export function createAnchor (cache: ICallCache) {
                 branch.inited = true;
                 // debugger;
                 this.replaceContent(dom, branch);
+            } else {
+                if (dom) {
+                    if (branch.isVisible(current)) {
+                        this.replaceContent(dom, branch);
+                    }
+                } else {
+                    clearDom();
+                }
             }
             return dom;
             // console.log(dom, branch, current);
@@ -83,33 +108,18 @@ export function createAnchor (cache: ICallCache) {
         replaceContent (element?: IGeneralElement, branch?: IBranchTarget) {
             if (!end || !start) {
                 frag = initFirstMount(element);
-                debugger;
                 return frag;
             }
-            if (!element) return;
             // console.log(element.textContent, element.outerHTML, end.parentElement);
-            // debugger;
             const container = getParent(end, frag);
+
             if (container === element) return element;
             // if (!start.parentElement) {
             //     start = end; // ! start 不在页面上了 则 指向end
             // } else {
-            const cursor = start;
-            // debugger;
-            if (cursor !== end) {
-                while (cursor.nextSibling !== end) {
-                    try {
-                        cursor.nextSibling.remove();
-                    } catch (e) {
-                        // debugger;
-                        console.error(e);
-                        break;
-                        // throw new Error(e);
-                    }
-                }
-                cursor.remove();
-            }
+            clearDom();
             // }
+            if (!element) return element;
             // @ts-ignore
             const newEle = getFirstElement(element);
             const newStart = newEle || end;
@@ -120,10 +130,17 @@ export function createAnchor (cache: ICallCache) {
                 parent = parent.parent;
             }
             start = newStart;
-            container.insertBefore(element, end);
+            try {
+                container.insertBefore(element, end);
+            } catch (e) {
+                debugger;
+            }
             // console.log('xxxxxxx', this.start(), start, start?.parentElement);
             // debugger;
             return element;
+        },
+        clearCache () {
+
         }
     };
 }

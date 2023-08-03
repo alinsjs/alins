@@ -38,7 +38,7 @@ export function createNodeVisitor (t: IBabelType) {
         'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression': {
             enter (path) {
                 // debugger;
-                console.log('ArrowFunctionExpression', path.toString());
+                // console.log('ArrowFunctionExpression', path.toString());
                 if (!ctx.enter(path)) return;
 
                 if (path.node.type === 'FunctionDeclaration') {
@@ -134,7 +134,7 @@ export function createNodeVisitor (t: IBabelType) {
                     });
                 }
 
-                console.log('NEXT', path.getNextSibling().node);
+                // console.log('NEXT', path.getNextSibling().node);
                 // debugger;
                 ctx.enterVariableDeclaration(path.node);
                 // add(path, 'VariableDeclaration', true);
@@ -199,7 +199,6 @@ export function createNodeVisitor (t: IBabelType) {
 
         },
         Identifier (path) {
-            console.log('Identifier', path.node.name);
             if (!ctx.enter(path)) return;
             ctx.enterIdentifier(path);
 
@@ -216,16 +215,13 @@ export function createNodeVisitor (t: IBabelType) {
         },
         Expression: {
             enter (path) {
-                // console.log('Expression', path.toString());
                 if (!ctx.enter(path)) return;
                 if (ctx.curScope.inJsxTrans && path.node._needJsxRefeat) {
-                    // console.log('JSX-DEBUG:', `Expression: ${path.toString()}`);
                     ctx.enterJSXExpression(path);
                 }
             },
             exit (path) {
                 if (ctx.curScope?.inJsxTrans && path.node._needJsxRefeat) {
-                    // console.log('JSX-DEBUG:', `exit Expression: ${path.toString()}`);
                     ctx.curScope.exitJSXExpression();
                 }
             }
@@ -331,7 +327,7 @@ export function createNodeVisitor (t: IBabelType) {
             }
         },
         BreakStatement (path) {
-            console.log(ctx.curScope);
+            // console.log(ctx.curScope);
             if (ctx.curScope.inIf || ctx.curScope.inSwitch) {
                 if (ctx.curScope.inSwitch) {
                     if (path.parent.type === 'SwitchCase') {

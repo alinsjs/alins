@@ -34,7 +34,7 @@ function wrapChildren (children: any[], args: any[]|null = []) {
 }
 
 function isEmptyText (node: Node) {
-    return node.type === 'JSXText' && node.value.trim() === '';
+    return node?.type === 'JSXText' && node.value.trim() === '';
 }
 
 function createNext (path: NodePath<any>) {
@@ -113,11 +113,16 @@ function parseIf (path: NodePath<JSXElement>) {
 
     const nextSibling = createNext(path);
 
+
+    const endIf = () => {
+        setAnchor(anchor, t.identifier('end'), []);
+    };
+
     const handleNext = () => {
-        const name = node.openingElement?.name.name;
         let end = false;
         let object: any, id: Identifier, args: any[];
 
+        const name = node.openingElement?.name.name;
         switch (name) {
             case CompNames.If: {
                 object = t.identifier(Names.Ctx);
@@ -152,10 +157,16 @@ function parseIf (path: NodePath<JSXElement>) {
                 node = path.node;
                 path.remove();
                 path.skip();
+                if (!node) {
+                    endIf();
+                    return;
+                }
                 handleNext();
             } else {
-                setAnchor(anchor, t.identifier('end'), []);
+                endIf();
             }
+        } else {
+            endIf();
         }
     };
 

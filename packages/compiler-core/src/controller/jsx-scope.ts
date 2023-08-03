@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import {getT, replaceJsxDomCreator} from '../parse-utils';
+import {createFullComputed, createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator} from '../parse-utils';
 import type {JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment} from '@babel/types';
 import type {Module} from '../context';
 import {isJSXComponent} from '../is';
@@ -89,25 +89,25 @@ export class JsxScope {
         const key = path.node.name;
         let name = '';
         const expression = path.node.value.expression;
+
+        let newExpression: any = null;
+        const t = getT();
+
         if (key.type === 'JSXNamespacedName') {
             // 利用命名空间做一个语法糖
             name = key.namespace.name;
-            const t = getT();
             // path.insertAfter(
             //     skipNode(t.jsxAttribute(t.jsxIdentifier(`$${name}_${key.name.name}`)))
             // );
 
             expression._deco = true;
 
-            const decoNode = t.objectExpression([
+            newExpression = t.objectExpression([
                 t.objectProperty(t.identifier('v'), expression),
                 t.objectProperty(t.identifier('__deco'), t.stringLiteral(key.name.name))
             ]);
+            debugger;
 
-            path.replaceWith(t.jsxAttribute(
-                t.jsxIdentifier(name),
-                t.jsxExpressionContainer(decoNode)
-            ));
         } else {
             name = key.name;
         }
@@ -120,11 +120,34 @@ export class JsxScope {
 
         if (ModelTag[this.curTag]) { // 是输入类型的dom
             if (name === 'value' || (this.curTag === 'input' && name === 'checked')) {
-                // const express = path.node.value?.expression;
-                if (expression?.type === 'Identifier') {
-                    this.module.markVarChange(expression.name);
+                if (expression) {
+                    if (expression.type === 'Identifier') {
+                        this.module.markVarChange(expression.name);
+                    } else if (expression.type === 'MemberExpression') {
+                        const object = parseFirstMemberObject(expression);
+                        this.module.markVarChange(object.name);
+                        const computedExp = t.callExpression(
+                            createMemberExp(Names.CtxFn, Names.ComputedFullFn),
+                            [
+                                t.arrowFunctionExpression([], expression),
+                                t.arrowFunctionExpression([t.identifier('v')], t.assignmentExpression('=', expression, t.identifier('v'))),
+                            ]
+                        );
+                        if (!newExpression) {
+                            newExpression = computedExp;
+                        } else {
+                            newExpression.properties[0].value = computedExp;
+                        }
+                    }
                 }
             }
+        }
+
+        if (newExpression) {
+            path.replaceWith(t.jsxAttribute(
+                t.jsxIdentifier(name),
+                t.jsxExpressionContainer(newExpression)
+            ));
         }
     }
     exitJSXAttribute () {

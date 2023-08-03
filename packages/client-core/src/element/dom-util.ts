@@ -5,9 +5,9 @@
  */
 
 import {
-    IBindingChange, isProxy, isRef, watch, IBindingReaction
+    isProxy, isRef, watch, IBindingReaction
 } from 'alins-reactive';
-import {AlinsType, IJson, IRefData, type} from 'alins-utils';
+import {AlinsType, IJson, IProxyListener, IRefData, type} from 'alins-utils';
 import {IElement, ITextNode} from './renderer';
 
 
@@ -39,42 +39,32 @@ export type IBindingReactionEnable = IBindingReaction | IBindingReactionEnableOb
 
 export function reactiveBindingEnable (
     arg: IBindingReactionEnable,
-    onchange: IBindingChange,
+    onchange: IProxyListener,
 ) {
     const type = typeof arg;
     const isEnableObject = (type === 'object' && !isProxy(arg) && typeof (arg as any).enable !== 'undefined');
     const react: IBindingReaction = isEnableObject ? (arg as IBindingReactionEnableObj).value : arg as IBindingReaction;
     let enable = true;
     let value = '';
-    value = reactiveBinding(react, (nv, ov) => {
+    value = reactiveBinding(react, (nv, ov, path, v) => {
         value = nv;
         if (enable) {
-            onchange(nv, ov);
+            onchange(nv, ov, path, v);
         }
     });
     if (isEnableObject) {
         enable = watch((arg as IBindingReactionEnableObj).enable, (v) => {
             enable = v;
-            onchange(enable ? value : null, null);
+            onchange(enable ? value : null, null, '', '');
         }).v;
     }
-    onchange(enable ? value : null, undefined as any);
+    onchange(enable ? value : null, undefined as any, '', '');
     return value;
 }
 
-export function reactiveBinding (bind: IBindingReaction, onchange: IBindingChange): string {
-    // if (isBindingResult(bind)) {
-    //     return (bind as IReactBindingResult)(onchange);
-    // }
-    if (typeof bind === 'function' || (isProxy(bind) && typeof bind.v !== 'undefined')) {
-        return watch(bind, onchange).v;
-    }
-    try {
-        return typeof bind === 'string' ? bind : bind.toString();
-    } catch (e) {
-        debugger;
-        throw new Error(e);
-    }
+export function reactiveBindingValue (bind: IBindingReaction, onchange: IProxyListener) {
+    const value = reactiveBinding(bind, onchange);
+    onchange(value, undefined, '', '');
 }
 
 export function reactiveClass (
@@ -113,5 +103,17 @@ export function reactiveClass (
         return reactiveBinding(arg as IBindingReaction, (v) => {
             onchange('', v); // ! key 为空表示重新设置class
         });
+    }
+}
+
+function reactiveBinding<T=string> (bind: IBindingReaction, onchange: IProxyListener<T>): T {
+    if (typeof bind === 'function' || (isProxy(bind) && typeof bind.v !== 'undefined')) {
+        return watch(bind, onchange).v;
+    }
+    try {
+        return typeof bind === 'string' ? bind : bind.toString();
+    } catch (e) {
+        debugger;
+        throw new Error(e);
     }
 }

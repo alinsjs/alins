@@ -116,10 +116,10 @@ export function createProxy<T extends IJson> (data: T, {
         for (const k in data) {
             const v = data[k];
             if (v && typeof v === 'object') {
-                try{
+                try {
                     data[k] = createProxy(v, {path, key: k});
-                }catch(e){
-                    debugger
+                } catch (e) {
+                    debugger;
                 }
             }
         }
@@ -156,7 +156,7 @@ export function createProxy<T extends IJson> (data: T, {
                     return Reflect.get(target, property, receiver);
                 }
                 // if (__DEBUG__) console.log('Proxy.get', target, property);
-                if (get) return get();
+                if (property === 'v' && get) return get();
             } else if (property === pureproxy) {
                 return true;
             }
@@ -169,7 +169,7 @@ export function createProxy<T extends IJson> (data: T, {
                 const origin = target[property];
                 if (v === origin && !target[util]?._map) return true;
                 if (set === null) { console.warn('Computed 不可设置'); return true;}
-                if (set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
+                if (property === 'v' && set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
                 // if (v.a === 0) debugger;
                 if (v && typeof v === 'object' && !shallow) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
                     // debugger;

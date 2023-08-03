@@ -21,6 +21,9 @@ export function parseModel (
     const tag = dom.tagName;
     if (!ModelTag[tag]) return false;
 
+    // console.log(JSON.stringify(value));
+    // window.vvv = value;
+
     const type = value.__deco || typeof value.v;
     let parseType = ({
         'boolean': v => v === 'true',

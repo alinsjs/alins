@@ -61,6 +61,9 @@ export const ContextTool = {
     r: react,
     c: computed,
     w: watch,
+    cc (get: any, set: any) { // 简写，减少编译代码量
+        return computed({get, set});
+    }
 };
 
 Object.assign(createContext, ContextTool);

@@ -46,6 +46,7 @@ export function createCallCache () {
             branch.visit();
             const fn = branch.call;
             const item = map.get(fn);
+            debugger;
             if (item) return transformCacheToElement(item);
             // currentCall = fn;
             const origin = fn();
@@ -66,6 +67,7 @@ export function createCallCache () {
             if (typeof element === 'undefined') return;
             // 有可能存在void的情况
             if (Renderer.isElement(element)) {
+                debugger;
                 map.set(fn, transformElementToCache(element));
                 return element;
             }
@@ -73,6 +75,7 @@ export function createCallCache () {
             throw new Error('动态条件分支中不允许返回非元素类型');
         },
         modifyCache (fn: IReturnCall|IAsyncReturnCall, el: ITrueElement) {
+            debugger;
             map.set(fn, transformElementToCache(el));
         },
         // getCurrentCall () {

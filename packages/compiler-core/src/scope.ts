@@ -84,11 +84,11 @@ export class Scope {
         return this.jsxScope.deep > 0;
     }
     enterJsxScope (path: NodePath<any>) {
-        console.log('SCOPE_DEBUG_JSX:enterJsxScope', path.toString());
+        // console.log('SCOPE_DEBUG_JSX:enterJsxScope', path.toString());
         this.jsxScope.enter(path);
     }
     exitJsxScope (path: any) {
-        console.log('SCOPE_DEBUG_JSX:exitJsxScope', path.toString());
+        // console.log('SCOPE_DEBUG_JSX:exitJsxScope', path.toString());
         this.jsxScope.exit();
     }
 
@@ -149,7 +149,7 @@ export class Scope {
         if (!dnode.isComputed) { // 当前处于一个变量声明语句中
             // console.log('variable', node.name, variable.isReactive, variable.isComputed, variable.name);
             if (variable.isReactive) {
-                console.log('isComputed = true2', dnode.name);
+                // console.log('isComputed = true2', dnode.name);
                 dnode.isReactive = dnode.isComputed = true;
             } else {
                 variable.dependComputed.push(dnode);
@@ -399,7 +399,7 @@ export class Scope {
         //     debugger;
         // }
         // debugger;
-        console.log('FOR_DEBUG collectIdentifier', variable.path.toString(), this.currentJSXExpression);
+        // console.log('FOR_DEBUG collectIdentifier', variable.path.toString(), this.currentJSXExpression);
         if (this.currentJSXExpression) {
             this.processJSXNode(variable);
         } else if (this.curVarNode) {
@@ -473,7 +473,7 @@ export class Scope {
             this.currentJSXExpression = null;
             return;
         }
-        console.log('FOR_DEBUG', xnode.path.toString());
+        // console.log('FOR_DEBUG', xnode.path.toString());
         if (xnode.isDynamic) {
             this.handleJsx(xnode);
         } else {

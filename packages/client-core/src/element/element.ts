@@ -6,8 +6,8 @@
 import {addEvent, isEventAttr, IEventNames} from './event';
 import {IElement, IFragment, ITrueElement, Renderer} from './renderer';
 import {
-    reactiveBinding, IBindingReactionEnable, reactiveBindingEnable,
-    reactiveClass, IChildren,
+    IBindingReactionEnable, reactiveBindingEnable,
+    reactiveClass, IChildren, reactiveBindingValue,
 } from './dom-util';
 import {IJson} from 'alins-utils';
 import {IBindingReaction, IBindingRef, isProxy} from 'alins-reactive';
@@ -53,7 +53,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         el = Renderer.createTextNode('');
         if (opt.text !== '') {
             // @ts-ignore
-            el.textContent = reactiveBinding(opt.text, (v) => {
+            reactiveBindingValue(opt.text, (v) => {
                 // console.warn('reactiveBinding trigger', el, el.textContent, v);
                 el.textContent = v;
             });
@@ -63,7 +63,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         el = isDom ? Renderer.createElement(opt.tag as string) : Renderer.createDocumentFragment();
         // if (opt.html) {
         //     // @ts-ignore
-        //     el.innerHTML = reactiveBinding(opt.html, (v) => {el.innerHTML = v;});
+        //     reactiveBindingValue(opt.html, (v) => {el.innerHTML = v;});
         // } else
         if (opt.children) {
             appendChildren(el, opt.children);

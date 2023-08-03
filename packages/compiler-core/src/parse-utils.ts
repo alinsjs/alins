@@ -34,6 +34,7 @@ export const Names = {
     CtxFn: '_$$',
     ReactFn: 'r',
     ComputedFn: 'c',
+    ComputedFullFn: 'cc',
     WatchFn: 'w',
     CreateElementFn: 'ce',
     Value: 'v',
@@ -144,15 +145,18 @@ export function createReadValue (idName: string) {
     return node;
 }
 
+export function createFullComputed (get: any, set: any) {
+    return t.objectExpression([
+        t.objectProperty(t.identifier('get'), get),
+        t.objectProperty(t.identifier('set'), set),
+    ]);
+}
+
 export function createComputed (node: VariableDeclarator) {
     const get = t.arrowFunctionExpression([], node.init as any);
     let target: any; ;
     if (node._computedSet) {
-        target = t.objectExpression([
-            t.objectProperty(t.identifier('get'), get),
-            t.objectProperty(t.identifier('set'), node._computedSet.expression
-            ),
-        ]);
+        target = createFullComputed(get, node._computedSet.expression);
     } else {
         target = get;
     }

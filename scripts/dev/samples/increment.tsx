@@ -6,7 +6,7 @@
 
 let count = 1;
 
-<button 
+<button
     $parent={document.body}
-    onclick={()=>{count++}}
+    onclick={() => {count++;}}
 >click:{count}</button>;

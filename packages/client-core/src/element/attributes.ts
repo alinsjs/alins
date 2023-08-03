@@ -3,6 +3,7 @@
  * @Date: 2023-07-21 22:37:05
  * @Description: Coding something
  */
+import {isProxy} from 'alins-reactive';
 import {reactiveBindingEnable} from './dom-util';
 import {IBaseAttributes} from './jsx';
  
@@ -12,15 +13,22 @@ export function parseAttributes (
 ): boolean {
     if (value === null || typeof value === 'undefined') return false;
 
-    if (typeof value === 'function') {
-        reactiveBindingEnable(value, (v: any, ov: any) => {
+    if (typeof value === 'function' || isProxy(value)) {
+        reactiveBindingEnable(value, (v: any, ov: any, path, prop, remove) => {
             if (typeof v === 'string') {
-                const r1 = v.matchAll(/(.*?)=(.*?)(&|$)/g);
-                v = {};
-                for (const item of r1)v[r1[1]] = r1[2];
-                const r2 = ov.matchAll(/(.*?)=(.*?)(&|$)/g);
-                ov = {};
-                for (const item of r2) ov[r2[1]] = r2[2];
+                if (!prop || prop === 'v') {
+                    const r1 = v.matchAll(/(.*?)=(.*?)(&|$)/g);
+                    v = {};
+                    for (const item of r1)v[item[1]] = item[2];
+                    const r2 = ov.matchAll(/(.*?)=(.*?)(&|$)/g);
+                    ov = {};
+                    for (const item of r2) ov[item[1]] = item[2];
+                } else {
+                    !!remove ?
+                        dom.removeAttribute(prop) :
+                        dom.setAttribute(prop, v);
+                    return;
+                }
             }
             for (const k in v) dom.setAttribute(k, v[k]);
             for (const k in ov)

@@ -23,18 +23,21 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     const anchor = createAnchor(util.cache);
     // ! 最后一个branch是end
     const branchs: IBranchTarget[] = [];
+    let activeIndex = -1;
     // console.log(branchs);
 
     // 返回当前接节点是否有返回值
     const switchNode = (i: number) => {
+        if (activeIndex === i) return true;
+        activeIndex = i;
         const branch = branchs[i];
         anchor.replaceBranch(branch);
-        // console.warn('switch node', i, dom);
+        console.warn('switch node', i);
         // ! 编译时注入的returned
         return branch.call.returned !== false;
     };
     const onDataChange = (bs: boolean[]) => {
-        // console.warn('if onDataChange', bs);
+        console.warn('if onDataChange', bs);
         const n = bs.length;
         for (let i = 0; i < n; i++) {
             if (bs[i]) {
@@ -51,6 +54,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     let returnEle: ITrueElement|(typeof empty) = empty;
     const refs: IIfTarget[] = [];
     const acceptIf = (ref: IIfTarget, call: IReturnCall, init = false) => {
+        const currentIndex = index;
         const id = index ++;
         // console.warn('accept if', id);
         branchs[id] = util.branch.next(call, anchor, init);
@@ -60,6 +64,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
             if (value) {
                 const dom = util.cache.call(branchs[id], anchor);
                 if (call.returned !== false) { // ! 编译时注入的returned
+                    activeIndex = currentIndex;
                     returnEle = dom;
                 }
             }
@@ -79,17 +84,12 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         },
         // ! if判断会引起finally执行与否
         end (call = () => {}) {
+            acceptIf(() => true, call);
             // console.warn('if end', refs);
             watch<boolean[]>(() => (
                 refs.map(item => typeof item === 'function' ? item() : item.v)
             ), onDataChange, false);
-            // ! end 的 ref不需要监听
-            acceptIf(() => true, call);
-            // @ts-ignore ! 回收refs内存
-            // refs = null;
             util.branch.back();
-            console.log('asyncdebuf: if End', returnEle);
-            debugger;
             if (returnEle !== empty) {
                 // ! 首次不需要branch
                 return anchor.replaceContent(returnEle);

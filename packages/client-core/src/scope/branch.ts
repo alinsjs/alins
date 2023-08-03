@@ -19,6 +19,7 @@ export interface IBranchTarget {
 }
 
 export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
+    console.log('createBranchLink');
     let stack: IBranchTarget[] = [];
     let id = 0;
     const Root = {anchor, parent: null};
@@ -29,6 +30,7 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
 
     const createTarget = (call: IReturnCall, anchor: ICtxAnchor, forward = false): IBranchTarget => {
         const last = stack.length === 0 ? Root : stack[stack.length - 1];
+        debugger;
         const parent = (forward ? last : last?.parent) as IBranchTarget|null;
         return {
             id: id++,
@@ -88,12 +90,13 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
             const target = createTarget(call, anchor, forward);
             // debugger;
             forward ? stack.push(target) : stack[stack.length - 1] = target;
-            // console.warn(`【target:${target.id}】`, target.call.toString());
-            // if (!window.bs) window.bs = {};
-            // window.bs[target.id] = target;
+            console.warn(`branch:next:${target.id}:${forward}`, target.call.toString());
+            if (!window.bs) window.bs = [];
+            window.bs.push(target);
             return target;
         },
         back () {
+            console.warn(`branch:back`);
             return stack.pop();
         },
     };

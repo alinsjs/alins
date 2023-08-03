@@ -6,7 +6,7 @@
 import 'packages/compiler-web';
 import samplesList from './samples-list';
 
-document.write(`<div style="margin-bottom: 10px; font-size: 18px; display: flex; gap: 15px;">
+document.write(`<div style="margin-bottom: 10px; font-size: 18px; display: flex; gap: 3px 15px; flex-wrap: wrap;">
     ${samplesList.map(name => {
         return `<a style="color:#000" href="/?file=${name}">${name}</a>`;
     }).join(' ')}

@@ -18,6 +18,22 @@ export function watchRef<T> (
     return watch(target, cb, false) as any;
 }
 
+function isValueEqual (v1: any, v2: any, deep: boolean = true, first = true): boolean {
+    if (v1 && v2 && typeof v1 === 'object' && typeof v2 === 'object' && (first || deep)) {
+        if (Array.isArray(v1)) {
+            if (v1.length !== v2.length) return false;
+        } else {
+            if (Object.keys(v1).length !== Object.keys(v2).length) return false;
+        }
+        for (const k in v1) {
+            if (!isValueEqual(v1[k], v2[k], deep, false)) return false;
+        }
+        return true;
+    } else {
+        return v1 === v2;
+    }
+}
+
 export function watch<T> (
     target: IWatchTarget<T>,
     cb: IProxyListener<T>,
@@ -27,13 +43,16 @@ export function watch<T> (
         target = computed(target);
         // 防止多次重复触发watch
         const origin = cb;
-        let value: any;
-        cb = (v, nv, path, p, remove) => {if (value !== v) origin(value = v, nv, path, p, remove);};
+        cb = (v, nv, path, p, remove) => {
+            if (!isValueEqual(v, nv)) {
+                origin(v, nv, path, p, remove);
+            }
+        };
     } else if (!isProxy(target)) {
         // ! 兼容computed(()=>1+1)情况
         return target;
     }
-    if(target[util]){ // ! 没有 util 表示不是proxy
+    if (target[util]) { // ! 没有 util 表示不是proxy
         target[util].subscribe(cb, deep);
     }
     return target;
