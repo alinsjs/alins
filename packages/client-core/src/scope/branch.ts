@@ -19,6 +19,8 @@ export interface IBranchTarget {
     inited?: boolean;
     activeChild: IBranchTarget|null;
     getBottomChild(): IBranchTarget;
+    updateCache(): void;
+    updateActiveCache(): void;
 }
 
 export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
@@ -104,6 +106,21 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                 currentBranch = this;
                 if (this.parent) this.parent.activeChild = this;
                 branchMap = null;
+            },
+            // updateCache (from?: IBranchTarget) {
+            updateCache () {
+                const nodes = anchor.getNodes();
+                console.log('branch debug: updateCache', this.id, nodes);
+                cache.setCache(this.call, nodes);
+                this.parent?.updateCache?.();
+                // if (this !== from) {
+                //     this.parent?.updateCache?.();
+                // }
+            },
+            updateActiveCache () {
+                // ! 找到当前分支的最底部之前的活跃分支，一直往上进行cache更新
+                this.getBottomChild().parent?.updateCache?.();
+                // this.getBottomChild().parent?.updateCache?.(this);
             },
             clearCache () {
                 // console.warn('branch debug:clearCache', this.id, this.call);

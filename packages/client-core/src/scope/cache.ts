@@ -52,7 +52,6 @@ export function createCallCache () {
             // ! 需要更新自己与父branch的cache
             console.log('branch debug:item', branch.id, item);
             if (typeof item !== 'undefined') {
-                branch.parent?.clearCache?.();
                 return transformCacheToElement(item);
             }
             // currentCall = fn;
@@ -88,6 +87,9 @@ export function createCallCache () {
             // } else {
             //     branch.parent?.clearCache?.();
             // }
+        },
+        setCache (call: any, doms: any[]) {
+            cacheMap.set(call, doms);
         },
         // getCurrentCall () {
         //     return currentCall;

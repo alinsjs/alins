@@ -61,6 +61,15 @@ export function createAnchor (cache: ICallCache) {
     };
 
     return {
+        getNodes () {
+            const arr: any[] = [];
+            let node = start;
+            while (node && node !== end) {
+                arr.push(node);
+                node = node.nextSibling;
+            }
+            return arr;
+        },
         start () {return start;},
         setStart (element: ITrueElement|null|undefined) {
             if (element) {
@@ -80,7 +89,6 @@ export function createAnchor (cache: ICallCache) {
             // branch.parent
             const current = branch.current(); // ! 缓存一下当前branch， call之后会被覆盖
             // const activeBranch = branch.getBottomChild();
-            debugger;
             const dom = cache.call(branch);
             console.log('branch debug:dom', dom);
             // if (!window.bs) window.bs = {};
@@ -101,6 +109,7 @@ export function createAnchor (cache: ICallCache) {
                     // 目前branch为空则清除dom
                     console.log('branch debug:clearDom');
                     clearDom();
+                    branch.updateActiveCache();
                 }
             }
             return dom;
@@ -126,7 +135,11 @@ export function createAnchor (cache: ICallCache) {
             // } else {
             clearDom();
             // }
-            if (!element) return element;
+            if (!element) {
+                debugger;
+                branch?.updateActiveCache();
+                return element;
+            }
             // @ts-ignore
             const newEle = getFirstElement(element);
             const newStart = newEle || end;
@@ -140,6 +153,8 @@ export function createAnchor (cache: ICallCache) {
             console.log('branch debug:container insert', container, start, end);
             try {
                 container.insertBefore(element, end);
+                debugger;
+                branch?.updateActiveCache();
             } catch (e) {
                 console.error(e, container, element, end);
                 debugger;

@@ -108,9 +108,6 @@ function parseIf (path: NodePath<JSXElement>) {
         if (args.length > 0)args[args.length - 1]._call = anchor;
     };
 
-
-    let node = path.node;
-
     const nextSibling = createNext(path);
 
 
@@ -118,11 +115,14 @@ function parseIf (path: NodePath<JSXElement>) {
         setAnchor(anchor, t.identifier('end'), []);
     };
 
-    const handleNext = () => {
+    const handleNext = (path: NodePath<JSXElement>) => {
         let end = false;
         let object: any, id: Identifier, args: any[];
 
+        const node = path.node;
+
         const name = node.openingElement?.name.name;
+        let removed = true;
         switch (name) {
             case CompNames.If: {
                 object = t.identifier(Names.Ctx);
@@ -131,6 +131,7 @@ function parseIf (path: NodePath<JSXElement>) {
                     t.arrowFunctionExpression([], getExp(node.openingElement)),
                     wrapChildren(node.children),
                 ];
+                removed = false;
             };break;
             case CompNames.ElseIf: {
                 object = anchor;
@@ -147,21 +148,25 @@ function parseIf (path: NodePath<JSXElement>) {
                 end = true;
             };break;
             default: {
+                removed = false;
                 end = true;
             };break;
+        }
+        if (removed) {
+            path.remove();
+            path.skip();
         }
         if (object) {
             setAnchor(object, id, args);
             if (!end) {
                 const path = nextSibling();
-                node = path.node;
-                path.remove();
-                path.skip();
-                if (!node) {
+                console.log(path?.toString?.());
+                debugger;
+                if (!path.node) {
                     endIf();
                     return;
                 }
-                handleNext();
+                handleNext(path);
             } else {
                 endIf();
             }
@@ -170,7 +175,7 @@ function parseIf (path: NodePath<JSXElement>) {
         }
     };
 
-    handleNext();
+    handleNext(path);
 
     path.replaceWith(anchor);
 
