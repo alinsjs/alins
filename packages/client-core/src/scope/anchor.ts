@@ -80,20 +80,24 @@ export function createAnchor (cache: ICallCache) {
             // branch.parent
             const current = branch.current(); // ! 缓存一下当前branch， call之后会被覆盖
             const dom = cache.call(branch);
+            console.log('branch debug:dom', dom);
             // if (!window.bs) window.bs = {};
             // for (const k in window.bs) {
             //     console.log(k, window.bs[k].anchor.start());
             // }
-            if (!branch.inited || (dom && branch.isVisible(current))) {
+            if (!branch.inited) {
                 branch.inited = true;
-                // debugger;
+                console.log('branch debug:replace 111');
                 this.replaceContent(dom, branch);
             } else {
                 if (dom) {
                     if (branch.isVisible(current)) {
+                        console.log('branch debug:replace 222');
                         this.replaceContent(dom, branch);
                     }
                 } else {
+                    // 目前branch为空则清除dom
+                    console.log('branch debug:clearDom');
                     clearDom();
                 }
             }
@@ -107,6 +111,7 @@ export function createAnchor (cache: ICallCache) {
         // 往当前组件替换dom元素
         replaceContent (element?: IGeneralElement, branch?: IBranchTarget) {
             if (!end || !start) {
+                console.log('branch debug:replaceContent');
                 frag = initFirstMount(element);
                 return frag;
             }
@@ -130,6 +135,7 @@ export function createAnchor (cache: ICallCache) {
                 parent = parent.parent;
             }
             start = newStart;
+            console.log('branch debug:container insert', container, start, end);
             try {
                 container.insertBefore(element, end);
             } catch (e) {

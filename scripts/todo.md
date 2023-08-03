@@ -54,6 +54,7 @@ fix
 - [x] fix: computed get set时获取任意属性都为get的问题
 - [x] fix: if 没有 elseif和else的情况 没有else情况的ui显示异常问题
 - [x] fix: if 组件 多层嵌套执行有问题 (anchor start指向有问题)
+- [ ] fix: branch visible判断的逻辑问题，原因在于branch visit 时没有对
 - [ ] 多层嵌套if问题
 <!-- - [ ] 多层嵌套的reactive -->
 

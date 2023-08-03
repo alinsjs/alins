@@ -11,18 +11,20 @@ import type {IBranchTarget} from './branch';
 
 // const DEFAULT_CACHE_KEY = createEmptyJson();
 
-function transformElementToCache (element: ITrueElement|null): (IElement|ITextNode)[]|null {
+function transformElementToCache (element: ITrueElement|null|(IElement|ITextNode)[]): (IElement|ITextNode)[]|null {
     if (!element) return null;
     if (Renderer.isFragment(element)) {
         // @ts-ignore
         return Array.from(element.childNodes);
+    } else if (Array.isArray(element)) {
+        return element;
     }
     // @ts-ignore
     return [element];
 }
 
 function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElement|null {
-    if (!cache) return Renderer.createEmptyMountNode();
+    if (!cache) return null;
     if (cache.length === 1) return cache[0];
     const d = Renderer.createDocumentFragment();
     for (const item of cache) {
@@ -34,8 +36,8 @@ function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElem
 
 export function createCallCache () {
     // ! call => dom 的cache
-    const map = new WeakMap<IReturnCall|Object, (IElement|ITextNode)[]|null>();
-    // window.map = map;
+    const cacheMap = new WeakMap<IReturnCall|Object, (IElement|ITextNode)[]|null>();
+    // window.cacheMap = cacheMap;
     // 当前执行到的函数
     // const currentCall: IReturnCall|IAsyncReturnCall|null = null;
 
@@ -46,15 +48,13 @@ export function createCallCache () {
             // debugger;
             branch.visit();
             const fn = branch.call;
-            const item = map.get(fn);
+            const item = cacheMap.get(fn);
             // ! 需要更新自己与父branch的cache
             console.log('branch debug:item', branch.id, item);
             if (typeof item !== 'undefined') {
-                debugger;
                 branch.parent?.clearCache?.();
                 return transformCacheToElement(item);
             }
-            debugger;
             // currentCall = fn;
             const origin = fn();
             let element: any;
@@ -84,7 +84,7 @@ export function createCallCache () {
             // if (el) {
             const doms = transformElementToCache(el);
             console.log('branch debug: cache call', branch.id, doms);
-            map.set(branch.call, doms);
+            cacheMap.set(branch.call, doms);
             // } else {
             //     branch.parent?.clearCache?.();
             // }
@@ -93,13 +93,13 @@ export function createCallCache () {
         //     return currentCall;
         // },
         // cacheDefault (el: ITrueElement) {
-        //     map.set(DEFAULT_CACHE_KEY, transformElementToCache(el));
+        //     cacheMap.set(DEFAULT_CACHE_KEY, transformElementToCache(el));
         // },
-        clearCache (fn: IReturnCall) {
-            map.delete(fn);
-        },
+        // clearCache (fn: IReturnCall) {
+        //     cacheMap.delete(fn);
+        // },
         _get (fn: any) {
-            return map.get(fn);
+            return cacheMap.get(fn);
         }
     };
 }

@@ -81,7 +81,6 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
             // else 永远为true
             acceptIf(() => true, call);
             return result;
-            // console.log('if else');
         },
         // ! if判断会引起finally执行与否
         end (call = () => {}) {
