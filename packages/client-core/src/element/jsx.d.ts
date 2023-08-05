@@ -642,9 +642,12 @@ declare namespace Alins {
         colspan?: any;
     }
 
-    interface IAttributes extends IBaseAttributes {
+    interface IControlAttributes {
         $parent?: HTMLElement|Node|DocumentFragment;
         $show?: boolean|(()=>boolean);
+    }
+
+    interface IAttributes extends IBaseAttributes, IControlAttributes {
         $attributes?: {
             [prop in keyof IBaseAttributes]?: IAttributes[prop];
         } & {
@@ -784,6 +787,7 @@ declare global {
     const Default: JSXInnerComp<{break?: boolean|null}>;
     const Async: JSXInnerComp<{data: Promise<any>, name?: string}>;
     const Show: JSXInnerComp<{data: boolean}>;
+    const Frag: (attrs: Alins.IControlAttributes) => JSX.Element;
 
     let $item: any;
     let $index: number;

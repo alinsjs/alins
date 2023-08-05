@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-04 01:57:47
+ * @LastEditTime: 2023-08-05 13:22:44
 -->
 
 # 0.1.0
@@ -37,6 +37,7 @@ new feature
 - [ ] For Object 支持
 - [ ] $if $elif $else $case $default 属性支持
 - [ ] style 标签优化 处理 提高css可用性, style 值类型声明
+- [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
 
 fix
 

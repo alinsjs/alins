@@ -44,6 +44,7 @@ module.exports = {
         'require': true,
         'module': true,
         __DEBUG__: true,
+
         'For': true,
         'Switch': true,
         'Case': true,
@@ -53,6 +54,7 @@ module.exports = {
         'Else': true,
         'Async': true,
         'Show': true,
+        // 'Frag': true,
         '$item': true,
         '$index': true,
         '$data': true,

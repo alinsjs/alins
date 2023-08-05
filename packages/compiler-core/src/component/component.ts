@@ -17,6 +17,7 @@ const CompNames = {
     Default: 'Default',
     Async: 'Async',
     Show: 'Show',
+    // Frag: 'Frag',
 };
 
 function wrapChildren (children: any[], args: any[]|null = []) {
