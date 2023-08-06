@@ -55,6 +55,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
             // @ts-ignore
             reactiveBindingValue(opt.text, (v) => {
                 // console.warn('reactiveBinding trigger', el, el.textContent, v);
+            // @ts-ignore
                 el.textContent = v;
             });
         }
@@ -84,9 +85,12 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                 if (k === '$parent') {
                     v.appendChild(el);
                 } else if (k === '$attributes') {
+                    // @ts-ignore
                     parseAttributes(el, v);
                 } else if (k === '$show') {
-                    reactiveBindingEnable(v, (v, ov) => {
+                    // @ts-ignore
+                    reactiveBindingEnable(v, (v) => {
+                        // @ts-ignore
                         el.style.display = v ? '' : 'none';
                     });
                 } else if (k === 'class') {
@@ -98,9 +102,12 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         else !!value ? el.classList.add(key) : el.classList.remove(key);
                     });
                 } else {
+                    // @ts-ignore
                     if (k === 'style' && parseStyle(el as HTMLElement, v)) continue;
+                    // @ts-ignore
                     else if (parseModel(el as HTMLElement, v, k)) continue;
-                    reactiveBindingEnable(v, (v, ov) => {
+                    reactiveBindingEnable(v, (v) => {
+                        // @ts-ignore
                         v === null ? el.removeAttribute(k) : el.setAttribute(k, v);
                     });
                 }

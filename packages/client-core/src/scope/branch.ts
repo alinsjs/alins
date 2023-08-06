@@ -31,7 +31,8 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
 
     let currentBranch: IBranchTarget|null = null;
 
-    window.getCurBranch = () => currentBranch;
+    // @ts-ignore
+    // window.getCurBranch = () => currentBranch;
 
     // const branchPool: WeakMap<IReturnCall, IBranchTarget> = new WeakMap();
 
@@ -144,8 +145,8 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
             const target = createTarget(call, anchor, forward);
             forward ? stack.push(target) : (stack[stack.length - 1] = target);
             console.warn(`branch debug:next:${target.id}:${forward}`, target.call.toString());
-            if (!window.bs) window.bs = [];
-            window.bs.push(target);
+            // if (!window.bs) window.bs = [];
+            // window.bs.push(target);
             return target;
         },
         back () {

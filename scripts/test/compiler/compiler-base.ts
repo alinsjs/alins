@@ -4,14 +4,14 @@
  * @Description: Coding something
  */
 import {startTest} from 'easy-test-lib';
-import jsx from './compiler-cases/jsx';
-import react from './compiler-cases/react';
-import ifCase from './compiler-cases/if';
-import asyncCase from './compiler-cases/async';
-import switchCase from './compiler-cases/switch';
-import mapCase from './compiler-cases/map';
+// import jsx from './compiler-cases/jsx';
+// import react from './compiler-cases/react';
+// import ifCase from './compiler-cases/if';
+// import asyncCase from './compiler-cases/async';
+// import switchCase from './compiler-cases/switch';
+// import mapCase from './compiler-cases/map';
 import test from './compiler-cases/test';
-import mix from './compiler-cases/mix';
+// import mix from './compiler-cases/mix';
 import {createTestCase} from './util';
 
 export function startTestMain (

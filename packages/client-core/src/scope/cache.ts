@@ -6,7 +6,7 @@
 
 import {transformAsyncDom} from '../element/element';
 import {ITrueElement, IElement, ITextNode, Renderer, getFirstElement} from '../element/renderer';
-import type {IAsyncReturnCall, IReturnCall} from '../type';
+import type {IReturnCall} from '../type';
 import type {IBranchTarget} from './branch';
 
 // const DEFAULT_CACHE_KEY = createEmptyJson();
@@ -58,9 +58,11 @@ export function createCallCache () {
             const origin = fn();
             let element: any;
             if (fn.returned === false) {
+            // @ts-ignore
                 element = transformAsyncDom(origin, false);
             } else {
                 let first: any = null;
+                // @ts-ignore
                 element = transformAsyncDom(origin, true, (trueDom: any) => {
                     // ! 被异步dom返回替换时需要替换cache和anchor
                     this.modifyCache(branch, trueDom);

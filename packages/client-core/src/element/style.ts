@@ -13,6 +13,7 @@ export function parseStyle (
 ): boolean {
     if (value === null || typeof value === 'undefined') return false;
     if (typeof value === 'function' || isProxy(value)) {
+        // @ts-ignore
         reactiveBindingEnable(value, (v: any, ov: any, path, prop, remove) => {
             if (typeof v === 'string') {
                 if (!prop || prop === 'v') {
@@ -32,7 +33,8 @@ export function parseStyle (
     } else if (typeof value === 'object') {
         for (const k in value) {
             // !todo style value 编译 + func包裹 ()=>{}
-            reactiveBindingEnable(value[k], (v, ov) => {
+        // @ts-ignore
+            reactiveBindingEnable(value[k], (v) => {
                 dom.style[k] = v === null ? '' : v;
             });
         }

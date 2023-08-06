@@ -7,6 +7,7 @@ import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
 import {createAlinsCtx, createEmptyString, createUnfInit, getT, initTypes, ModArrayFunc, parseFirstMemberObject} from './parse-utils';
 
+
 export function createNodeVisitor (t: IBabelType) {
     initTypes(t);
     return {
@@ -16,7 +17,7 @@ export function createNodeVisitor (t: IBabelType) {
                 const body = path.node.body;
                 for (let i = 0; i < body.length; i++) {
                     if (body[i]?.type !== 'ImportDeclaration') {
-                        body.splice(i, 0, createAlinsCtx(true));
+                        body.splice(i, 0, createAlinsCtx());
                         return;
                     }
                 }
@@ -27,12 +28,13 @@ export function createNodeVisitor (t: IBabelType) {
             }
         },
         ImportDeclaration: (path) => {
+            // @ts-ignore
             path.node._importReactive = parseCommentReactive(path.node);
         },
         'ImportDefaultSpecifier|ImportSpecifier|ImportNamespaceSpecifier' (path) {
             ctx.curScope.collectImportVar(path);
         },
-        'AwaitExpression|ForAwaitStatement' (path) {
+        'AwaitExpression|ForAwaitStatement' () {
             ctx.curScope.collectAwait();
         },
         'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression': {
@@ -42,6 +44,7 @@ export function createNodeVisitor (t: IBabelType) {
                 if (!ctx.enter(path)) return;
 
                 if (path.node.type === 'FunctionDeclaration') {
+                    // @ts-ignore
                     ctx.checkJsxComponent(path);
                 }
 
@@ -57,7 +60,9 @@ export function createNodeVisitor (t: IBabelType) {
                 // }
 
                 // 标注是函数参数
+                // @ts-ignore
                 path.node._scopeEntry = true;
+                // @ts-ignore
                 path.node.params.forEach(node => {
                     if (node.type === 'ObjectPattern') {
                         node.properties.forEach(item => {
@@ -73,10 +78,12 @@ export function createNodeVisitor (t: IBabelType) {
                 ctx.enterScope(path);
             },
             exit (path) {
+                // @ts-ignore
                 if (path.node._mapScope) {
+                // @ts-ignore
                     ctx.exitMapScope(path.node._mapScope);
                 }
-                ctx.exitScope(path);
+                ctx.exitScope();
                 ctx.exitJsxComponent(path);
             }
         },
@@ -84,6 +91,7 @@ export function createNodeVisitor (t: IBabelType) {
             enter (path) {
                 if (!ctx.enter(path)) return;
                 // console.log('BlockStatement', path.toString());
+                // @ts-ignore
                 if (!path.parent._scopeEntry) { // ! 父元素不是一个scope（不是函数）
                     ctx.enterScope(path);
                 }
@@ -93,8 +101,9 @@ export function createNodeVisitor (t: IBabelType) {
                 // }
             },
             exit (path) {
+                // @ts-ignore
                 if (!path.parent._scopeEntry) {
-                    ctx.exitScope(path);
+                    ctx.exitScope();
                 }
             }
         },
@@ -107,12 +116,15 @@ export function createNodeVisitor (t: IBabelType) {
                     path.skip();
                     return;
                 }
+                // @ts-ignore
                 if (path.node._isCtx) { // ! 是否是生成的alins ctx
+                // @ts-ignore
                     path.node._isCtx = false;
                     ctx.ctx = path;
                 }
                 if (!ctx.enter(path)) return;
 
+                // @ts-ignore
                 ctx.checkJsxComponent(path);
 
                 // ! computed set 解析
@@ -121,15 +133,21 @@ export function createNodeVisitor (t: IBabelType) {
                 // 是否是一个label（set: watch:）
                 if (nnode && nnode.type === 'LabeledStatement') {
                     if (nnode.label.name === 'set') {
+                        // @ts-ignore
                         path.node.declarations.forEach(node => {
+                            // @ts-ignore
                             node._computedSet = nnode.body;
                         });
                         // next.remove();
+                        // @ts-ignore
                         nnode._shouldRemoved = true;
                     }
                 } else if (path.parent.type === 'ExportNamedDeclaration') {
+                    // @ts-ignore
                     path.node.declarations.forEach(node => {
+                        // @ts-ignore
                         node._export = true;
+                        // @ts-ignore
                         node._parentPath = path;
                     });
                 }
@@ -145,6 +163,7 @@ export function createNodeVisitor (t: IBabelType) {
         },
         LabeledStatement: {
             exit (path) {
+                // @ts-ignore
                 if (path.node._shouldRemoved) { // ! 移除需要删除的label
                     path.remove();
                 }
@@ -177,22 +196,29 @@ export function createNodeVisitor (t: IBabelType) {
             const pnode = path.node;
             if (!ctx.enter(path)) return;
 
+            // @ts-ignore
             if (path.node._propNode) {
+                // @ts-ignore
                 path.node._propNode._secondPath = path;
             }
 
             const node = parseFirstMemberObject(pnode, (n2, n1) => {
+                // @ts-ignore
                 if (ctx.inJsxComp && n1.name === 'props') {
                     // jsx 组件的props
+                // @ts-ignore
                     n2._propNode = n1;
                     if (n2 === pnode) {
+                        // @ts-ignore
                         n1._secondPath = path;
                     }
                 }
             });
 
+            // @ts-ignore
             node._firstMember = true;
 
+            // @ts-ignore
             if (node.name === 'React' && pnode.property.name === 'Fragment' && path.parent._jsxScope) {
                 path.replaceWith(createEmptyString());
             }
@@ -205,6 +231,7 @@ export function createNodeVisitor (t: IBabelType) {
         },
         UpdateExpression (path) {
             if (!ctx.enter(path)) return;
+            // @ts-ignore
             ctx.markVarChange(path.node.argument.name);
         },
         AssignmentExpression (path) {
@@ -216,11 +243,13 @@ export function createNodeVisitor (t: IBabelType) {
         Expression: {
             enter (path) {
                 if (!ctx.enter(path)) return;
+                // @ts-ignore
                 if (ctx.curScope.inJsxTrans && path.node._needJsxRefeat) {
                     ctx.enterJSXExpression(path);
                 }
             },
             exit (path) {
+                // @ts-ignore
                 if (ctx.curScope?.inJsxTrans && path.node._needJsxRefeat) {
                     ctx.curScope.exitJSXExpression();
                 }
@@ -231,6 +260,7 @@ export function createNodeVisitor (t: IBabelType) {
                 ctx.curScope.jsxScope.enterJsxElement(path);
             },
             exit (path) {
+                // @ts-ignore
                 ctx.curScope.jsxScope.exitJsxElement(path);
             }
         },
@@ -238,17 +268,21 @@ export function createNodeVisitor (t: IBabelType) {
             enter (path) {
                 // if(path.node)
                 // console.log('SCOPE_DEBUG_JSX JSXElement', path.toString());
+                // @ts-ignore
                 if (parseInnerComponent(path)) {
+                // @ts-ignore
                     path.node._innerComp = true;
                     return;
                 }
                 ctx.curScope.jsxScope.enterJsxElement(path);
             },
             exit (path) {
+                // @ts-ignore
                 if (path.node._innerComp) {
                     return;
                 }
                 // console.log('SCOPE_DEBUG_JSX JSXElement', path.toString());
+                // @ts-ignore
                 ctx.curScope.jsxScope.exitJsxElement(path);
             }
         },
@@ -257,7 +291,7 @@ export function createNodeVisitor (t: IBabelType) {
                 // console.log('JSXAttr_Debug enter', path.toString());
                 ctx.curScope.jsxScope.enterJSXAttribute(path);
             },
-            exit (path) {
+            exit () {
                 // console.log('JSXAttr_Debug exit', path.toString());
                 ctx.curScope.jsxScope.exitJSXAttribute();
             }
@@ -269,6 +303,7 @@ export function createNodeVisitor (t: IBabelType) {
                 if (!ctx.enter(path)) return;
                 const callee = path.node.callee;
                 if (callee.type === 'MemberExpression') {
+                // @ts-ignore
                     const prop = callee.property.name;
                     // path.node._mapScope = true;
                     // debugger;
@@ -282,9 +317,11 @@ export function createNodeVisitor (t: IBabelType) {
                 }
             },
             exit (path) {
+                // @ts-ignore
                 if (path.node._jsxScope) {
                     // console.warn(`Exit JSX Scope: ${path.node.type}-${path.toString()}`, path.node.object);
-                    ctx.curScope.exitJsxScope(path);
+                    ctx.curScope.exitJsxScope();
+                    // @ts-ignore
                     path.node._jsxScope = false;
                 }
                 // if (path.node._mapScope) {
@@ -300,7 +337,8 @@ export function createNodeVisitor (t: IBabelType) {
                 // console.log('JSX-DEBUG:', `JSXExpressionContainer: ${path.toString()}`);
                 ctx.enterJSXExpContainer(path);
             },
-            exit (path) {
+            // @ts-ignore
+            exit () {
                 // console.log('JSX-DEBUG:', `exit JSXExpressionContainer: ${path.toString()}`);
                 ctx.curScope.exitJSXExpression();
             }
@@ -331,9 +369,11 @@ export function createNodeVisitor (t: IBabelType) {
             if (ctx.curScope.inIf || ctx.curScope.inSwitch) {
                 if (ctx.curScope.inSwitch) {
                     if (path.parent.type === 'SwitchCase') {
+                        // @ts-ignore
                         path.parent._setBrk?.();
                     } else {
                         const parent = path.findParent(node => node.type === 'SwitchCase');
+                        // @ts-ignore
                         parent?.node._setBrk?.();
                     }
                 }

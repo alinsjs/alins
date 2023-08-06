@@ -22,5 +22,8 @@
         "registry": "https://registry.npmjs.org/"
     },
     "unpkg": "dist/alins-utils.min.js",
-    "jsdelivr": "dist/alins-utils.min.js"
+    "jsdelivr": "dist/alins-utils.min.js",
+    "dependencies": {
+        "alins-compiler-node": "^0.0.18"
+    }
 }

@@ -14,6 +14,7 @@ export function parseAttributes (
     if (value === null || typeof value === 'undefined') return false;
 
     if (typeof value === 'function' || isProxy(value)) {
+        // @ts-ignore
         reactiveBindingEnable(value, (v: any, ov: any, path, prop, remove) => {
             if (typeof v === 'string') {
                 if (!prop || prop === 'v') {
@@ -38,7 +39,7 @@ export function parseAttributes (
     } else if (typeof value === 'object') {
         for (const k in value) {
             // !todo style value 编译 + func包裹 ()=>{}
-            reactiveBindingEnable(value[k], (v, ov) => {
+            reactiveBindingEnable(value[k], (v) => {
                 v === null ?
                     dom.removeAttribute(v) :
                     dom.setAttribute(k, v);

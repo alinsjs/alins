@@ -17,6 +17,7 @@ export function parseModel (
 ): boolean {
     if (k !== 'value' && k !== 'checked') return false;
 
+    // @ts-ignore
     if (!isProxy(value) && !value.__deco) return false; // 不是proxy不支持双向绑定
     const tag = dom.tagName;
     if (!ModelTag[tag]) return false;
@@ -24,6 +25,7 @@ export function parseModel (
     // console.log(JSON.stringify(value));
     // window.vvv = value;
 
+    // @ts-ignore
     const type = value.__deco || typeof value.v;
     let parseType = ({
         'boolean': v => v === 'true',
@@ -32,6 +34,7 @@ export function parseModel (
     })[type];
 
     if (!parseType) parseType = v => v;
+    // @ts-ignore
     const bindValue = value.__deco ? value.v : value;
 
     const eventName = tag === 'SELECT' ? 'change' : 'input';
@@ -42,7 +45,7 @@ export function parseModel (
         }
         bindValue.v = Number.isNaN(newValue) ? '' : newValue;
     });
-    watch(bindValue, (v: any, ov: any) => {
+    watch(bindValue, (v: any) => {
         dom[k] = v;
     }, false);
     dom[k] = bindValue.v;

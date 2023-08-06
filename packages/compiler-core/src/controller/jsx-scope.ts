@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import {createFullComputed, createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator} from '../parse-utils';
+import {createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator} from '../parse-utils';
 import type {JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment} from '@babel/types';
 import type {Module} from '../context';
 import {isJSXComponent} from '../is';
@@ -51,6 +51,7 @@ export class JsxScope {
         if (nodes?.length) {
             // ! 将该jsx方法对应的jsx表达式全部标记为removed
             // 作用是转换之后就忽略掉转换之前的jsx表示式reactive处理
+            // @ts-ignore
             nodes.forEach(node => node._removed = true);
             this.jsxNodes = this.jsxNodesStack[this.jsxNodesStack.length - 1];
         }
@@ -70,10 +71,12 @@ export class JsxScope {
         this.jsxNodes = [];
         this.jsxNodesStack.push(this.jsxNodes);
 
+        // @ts-ignore
         const name = isFrag ? 'FRAG' : path.node.openingElement?.name.name;
         // ! 此处忽略 <A.a> <A:a> 的用法
         this.jsxTagStack.push(name);
         this.curTag = name;
+        // @ts-ignore
         this.isJSXComp = isFrag ? false : isJSXComponent(path);
     }
     exitJsxElement () {
@@ -81,6 +84,7 @@ export class JsxScope {
         this.curTag = this.jsxTagStack[this.jsxTagStack.length - 1];
     }
 
+    // @ts-ignore
     private curAttr: string;
 
     enterJSXAttribute (path: NodePath<JSXAttribute>) {
@@ -88,6 +92,7 @@ export class JsxScope {
         // ! React babel 不支持JSXNamespacedName
         const key = path.node.name;
         let name = '';
+        // @ts-ignore
         const expression = path.node.value.expression;
 
         let newExpression: any = null;

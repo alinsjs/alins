@@ -36,12 +36,14 @@ export class MapScope extends ControlScope<CallExpression> {
         this.parentScope.collectDependAction(this.dataName, () => {
             scope.markMapVariable(this.keyName, this.indexKeyName);
         });
+        // @ts-ignore
         if (this.path.parent._jsxExp) this.path.parent._jsxExp.skip = true;
         this.isReturnJsx = true;
     }
 
     onExit () {
         if (this.isReturnJsx) {
+            // @ts-ignore
             this.path.node._isMap = true;
             // debugger;
             this.parentScope.collectDependAction(this.dataName, () => {
@@ -56,16 +58,20 @@ export class MapScope extends ControlScope<CallExpression> {
     }
 
     _init () {
+        // @ts-ignore
         this._replaceQueue = [];
         const node = this.path.node;
+        // @ts-ignore
         this.dataName = node.callee?.object.name || '';
         const arg = node.arguments[0];
         // console.log('map node', node);
+        // @ts-ignore
         arg._mapScope = this;
         // debugger;
         // debugger;
 
 
+        // @ts-ignore
         const params = arg.params;
 
         if (params.length === 0) { // map 函数没有参数

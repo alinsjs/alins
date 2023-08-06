@@ -95,7 +95,7 @@ export function createVarDeclarator (id: string, init: any) {
 }
 let id = 0;
 export function createAlinsCtx () {
-    console.log('AlinsCtx 111', top);
+    // console.log('AlinsCtx 111', top);
     currentCtx = t.variableDeclaration(
         'const',
         [
@@ -135,6 +135,7 @@ export function replaceJsxDomCreator (path: NodePath<CallExpression>) {
 // ! 暂时先全部用v包裹 后续优化
 export function createReadValue (idName: string) {
     const node = createMemberExp(idName, Names.Value);
+    // @ts-ignore
     node._skip = true;
     return node;
 }
@@ -149,7 +150,9 @@ export function createFullComputed (get: any, set: any) {
 export function createComputed (node: VariableDeclarator) {
     const get = t.arrowFunctionExpression([], node.init as any);
     let target: any; ;
+    // @ts-ignore
     if (node._computedSet) {
+        // @ts-ignore
         target = createFullComputed(get, node._computedSet.expression);
     } else {
         target = get;
@@ -183,11 +186,13 @@ export function createJsxCompute (node: Expression|JSXExpressionContainer, isCom
 
     const computed = isComp ? createComputeCall(call) : call;
     const result = isContainer ? t.jsxExpressionContainer(computed) : computed;
+    // @ts-ignore
     result._handled = true;
     return result;
 }
 
 export function skipNode<T> (node: T): T {
+    // @ts-ignore
     node._skip = true;
     return node;
 }
@@ -198,7 +203,7 @@ export function createReact (node: VariableDeclarator) {
     //     [ identifier(idName) ]
     // );
     // debugger;
-    console.log('wrap react-------', node.id.name);
+    // console.log('wrap react-------', node.id.name);
     return skipNode(t.variableDeclarator(
         node.id,
         t.callExpression(
@@ -263,12 +268,13 @@ export function isStaticNode (node: Node): boolean {
 // a.a.a.a => a
 export function parseFirstMemberObject (m: MemberExpression|Identifier, second?: (n2: Node, n1: Node)=>void) {
     let node = m;
-    let last = null;
+    let last: any = null;
     // debugger;
     while (node.type === 'MemberExpression') {
         if (second) {
             last = node;
         }
+        // @ts-ignore
         node = node.object;
     }
     second?.(last, node);
@@ -325,6 +331,7 @@ function transformToBlock (body: any) {
 }
 
 export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i = 0) {
+    // @ts-ignore
     node._traversed = true;
 
     if (node.alternate) {
@@ -375,8 +382,10 @@ export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i
 
 export function createSetAsyncArrowFunc (body: BlockStatement) {
     const node = t.arrowFunctionExpression([], body);
+    // @ts-ignore
     body._setAsync = () => {
         node.async = true;
+        // @ts-ignore
         const args = node._call.arguments;
         const fn = args[args.length - 1];
         if (!isBlockReturned(fn.body)) {
@@ -386,7 +395,9 @@ export function createSetAsyncArrowFunc (body: BlockStatement) {
                 [ args[args.length - 1] ]
             );
         }
+        // @ts-ignore
         node._call = null;
+        // @ts-ignore
         body._setAsync = null;
     };
     return node;
@@ -400,16 +411,21 @@ export function traverseSwitchStatement (node: SwitchStatement) {
         let body = cons.length === 1 ? cons[0] : t.blockStatement(cons);
         body = transformToBlock(body);
         let result = t.objectExpression([
+            // @ts-ignore
             t.objectProperty(t.identifier('c'), t.arrowFunctionExpression([], body)),
         ]);
         if (test !== null) { // ! default 分支处理
+            // @ts-ignore
             result.properties.push(t.objectProperty(t.identifier('v'), test));
         }
+        // @ts-ignore
         item._setBrk = () => {
             result.properties.push(
                 t.objectProperty(t.identifier('b'), t.booleanLiteral(true)),
             );
+            // @ts-ignore
             item._setBrk = null;
+            // @ts-ignore
             result = null;
         };
         return result;

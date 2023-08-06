@@ -12,6 +12,7 @@ import {ITrueElement} from './element/renderer';
 
 // eslint-disable-next-line no-undef
 export interface IReturnCall {
+    // @ts-ignore
     (): JSX.Element|null|ITrueElement|void | Promise<JSX.Element|null|ITrueElement|void>;
     returned?: boolean;
 }

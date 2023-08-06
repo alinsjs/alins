@@ -23,6 +23,7 @@ export class IfScope extends ControlScope<IfStatement> {
         const setAnchor = (
             object: any, id: Identifier, args: any[],
         ) => {
+            // @ts-ignore
             anchor = t.callExpression(
                 t.memberExpression(object, id),
                 args
@@ -52,10 +53,12 @@ export class IfScope extends ControlScope<IfStatement> {
                 end.fn.body._setAsync?.();
             }
             end.fn.body = block;
+            // @ts-ignore
             this.replaceEnd = null;
         };
 
         if (!this.top) {
+            // @ts-ignore
             anchor = t.returnStatement(anchor);
             // anchor = createVarDeclaration('var',
             //     [ createVarDeclarator(Names.TempResult, anchor) ]

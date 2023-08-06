@@ -1,11 +1,13 @@
 /*
+import { IAttributes } from 'packages/core/src/element/jsx';
  * @Author: chenzhongsheng
  * @Date: 2023-07-06 22:46:06
  * @Description: Coding something
  */
 
 // tslint:disable-next-line:export-just-namespace
-export = Alins;
+// export = Alins;
+
 
 declare namespace Alins {
     // prevent：阻止默认事件（常用）；
@@ -793,3 +795,11 @@ declare global {
     let $index: number;
     let $data: any;
 }
+
+export type IAttributes = Alins.IAttributes;
+export type IBaseAttributes = Alins.IBaseAttributes;
+export type IStyle = Alins.IStyle;
+
+export type IEventObject  = Alins.IEventObject;
+export type IEventAttributes  = Alins.IEventAttributes;
+export type IEventObjectDeco  = Alins.IEventObjectDeco;

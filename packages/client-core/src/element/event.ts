@@ -14,8 +14,9 @@ export function isEventAttr (dom: IElement|IFragment, name: string, event: IEven
     if (dom[name] !== null && typeof dom[name] !== 'function') return false;
     // @ts-ignore
     if (
-        typeof event !== 'function' && 
+        typeof event !== 'function' &&
         typeof event?.listener !== 'function' &&
+        // @ts-ignore
         typeof event?.__deco !== 'string'
     ) return false;
     return true;
@@ -26,16 +27,20 @@ export function addEvent (dom: IElement, name: string, event: IEventObjectDeco) 
     if (typeof event === 'function') {
         dom.addEventListener(name, event);
     } else {
-        if(event.__deco){
-            const deco = event.__deco.split('-')
+        // @ts-ignore
+        if (event.__deco) {
+        // @ts-ignore
+            const deco = event.__deco.split('-');
             event = {
+                // @ts-ignore
                 listener: event.v,
             } as IEventObjectDeco;
-            for(let name of deco){
+            for (const name of deco) {
                 event[name] = true;
             }
         }
         const handle = (e: Event) => {
+            // @ts-ignore
             if (event.self && e.target !== dom) return;
             if (event.stop) e.stopPropagation();
             if (event.prevent) e.preventDefault();

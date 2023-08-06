@@ -4,7 +4,6 @@
  * @Description: Coding something
  */
 
-// const traverse = require('@babel/traverse').default;
 import type {NodePath} from '@babel/traverse';
 import type {
     Expression,
@@ -18,7 +17,7 @@ import type {
 import {IfScope} from './controller/if-scope';
 import {isObjectAssignDeclarator} from './is';
 import {JsxScope} from './controller/jsx-scope';
-import {isStaticNode, createReact, createComputed, createJsxCompute, createReadValue, Names, createVarDeclarator, createVarDeclaration, createExportAliasInit, replaceJsxDomCreator, getT, skipNode} from './parse-utils';
+import {isStaticNode, createReact, createComputed, createJsxCompute, createReadValue, Names, createVarDeclarator, createVarDeclaration, createExportAliasInit, getT, skipNode} from './parse-utils';
 import {SwitchScope} from './controller/switch-scope';
 import {Module} from './context';
 import {INodeTypeMap} from './types';
@@ -85,7 +84,7 @@ export class Scope {
         // console.log('SCOPE_DEBUG_JSX:enterJsxScope', path.toString());
         this.jsxScope.enter(path);
     }
-    exitJsxScope (path: any) {
+    exitJsxScope () {
         // console.log('SCOPE_DEBUG_JSX:exitJsxScope', path.toString());
         this.jsxScope.exit();
     }
@@ -95,6 +94,7 @@ export class Scope {
         // 记录当前作用域的所有的非静态变量声明
         [prop: string]: IScopeVariable;
     } = {
+        // @ts-ignore
             __proto__: null,
         };
 
@@ -165,6 +165,7 @@ export class Scope {
 
     collectImportVar (path: NodePath<any>) {
         path.skip();
+        // @ts-ignore
         const ir = path.parent._importReactive as string|string[];
         const name = path.node.local.name;
         const reactive = ir !== '' && (ir === '*' || ir.includes(name));
@@ -209,6 +210,7 @@ export class Scope {
         const initType = path.node.init?.type;
         // debugger;
         return {
+        // @ts-ignore
             __proto__: null,
             type,
             path,
@@ -233,8 +235,10 @@ export class Scope {
         variable.isParam = true;
         variable.handled = true;
 
+        // @ts-ignore
         if (node._isReactive) {
             variable.isReactive = true;
+        // @ts-ignore
         } else if (node._isProps) {
             variable.isReactive = true;
             variable.isProps = true;
@@ -260,6 +264,7 @@ export class Scope {
         // console.trace(variable.name);
         const node = variable.path.node;
 
+        // @ts-ignore
         if (node.init?._isMap) { // ! arr.map 声明变量
             return;
         }
@@ -280,8 +285,10 @@ export class Scope {
 
     private handleExportAlias (variable: IScopeVariable, newNode: any) {
         const node = variable.path.node;
+        // @ts-ignore
         if (node._export) {
             variable.alias = `${Names.AliasPrefix}${variable.name}`;
+            // @ts-ignore
             node._parentPath.insertBefore(
                 createVarDeclaration(variable.type, [ createVarDeclarator(variable.alias, newNode.init) ])
             );
@@ -308,6 +315,7 @@ export class Scope {
         // ! 如果是react转译之后的JsxCompute 停止后续继续遍历
         // if (!node._needJsxRefeat) {
         xnode.handled = true;
+        // @ts-ignore
         if (node._handled) return; // 防止重复处理
         xnode.path.replaceWith(createJsxCompute(node, xnode.isComp));
         // }
@@ -334,7 +342,7 @@ export class Scope {
 
     // ! 更新某个变量的所有引用 和 computed依赖
     private _updateDependIdentifier (v: IScopeVariable) {
-
+        console.log('---_updateDependIdentifier', v.name, v.usedIds.length);
         v.usedIds.forEach((path) => {
             this._replaceReadValuePath(path, v);
         });
@@ -349,6 +357,7 @@ export class Scope {
         });
         v.dependJsx.forEach((xnode) => {
             // debugger;
+        // @ts-ignore
             if (!xnode.path.node._removed) {
                 this.handleJsx(xnode);
             }
@@ -368,7 +377,9 @@ export class Scope {
     }
 
     collectIdentifier (path: NodePath<Identifier>) {
+        console.log('---collectIdentifier', path.node.name);
         const node = path.node;
+        // @ts-ignore
         if (typeof node.start !== 'undefined' && path.parent.id === node.start) {
             // debugger;
             return;
@@ -405,6 +416,7 @@ export class Scope {
 
         // if (node.name === 'c') debugger;
 
+        console.log('---variable.isReactive', variable.isReactive);
         if (variable.isReactive) { //
             this._replaceReadValuePath(path, variable);
             return;
@@ -414,8 +426,10 @@ export class Scope {
     }
 
     private _replaceReadValuePath (path: NodePath, variable: IScopeVariable) {
+        console.log('---_replaceReadValuePath', variable.skipReadV);
         if (variable.skipReadV) return;
         if (variable.isProps) {
+        // @ts-ignore
             const sp = path.node._secondPath;
             const t = getT();
             sp.replaceWith(skipNode(t.memberExpression(
@@ -458,6 +472,7 @@ export class Scope {
             skip: false,
             isComp: this.jsxScope.isJSXComp,
         };
+        // @ts-ignore
         path.node._jsxExp = exp;
         this.currentJSXExpression = exp;
     }
@@ -481,13 +496,16 @@ export class Scope {
     // if Scope
     ifScope: IfScope|null = null;
     enterIfScope (path: NodePath<IfStatement>) {
+        // @ts-ignore
         if (path.node._traversed) return;
         const newScope = new IfScope(path, this);
         if (this.ifScope) {
             newScope.parent = this.ifScope;
         }
+        // @ts-ignore
         if (!newScope.ended) {
             // Program 和 Function 节点 body层次不一样
+        // @ts-ignore
             let body = this.path.node.body;
             if (!Array.isArray(body)) body = body.body;
             // 当前if节点的index
@@ -505,6 +523,7 @@ export class Scope {
     }
     exitIfScope (path: NodePath<IfStatement>) {
         if (!this.ifScope) return;
+        // @ts-ignore
         if (path.node._traversed && path !== this.ifScope.path) return;
         this.ifScope = this.ifScope.exit();
         Scope.ifScopeDeep --;
@@ -524,8 +543,10 @@ export class Scope {
         if (this.switchScope) {
             newScope.parent = this.switchScope;
         }
+        // @ts-ignore
         if (!newScope.ended) {
             // 当前if节点的index
+        // @ts-ignore
             let body = this.path.node.body;
             if (!Array.isArray(body)) body = body.body;
             const index = body.indexOf(path.node);
@@ -555,6 +576,7 @@ export class Scope {
     private onExitQueue: (()=>void)[] = [];
     exit () {
         this.onExitQueue.forEach(fn => {fn();});
+        // @ts-ignore
         this.onExitQueue = null;
     }
 
@@ -586,6 +608,7 @@ export class Scope {
         if (!this.isAsync) this.isAsync = true;
         if (!this.awaitRecorded) this.awaitRecorded = true;
         // debugger;
+        // @ts-ignore
         this.node._setAsync?.(); // ! 设置block元素方法为async
     }
 }

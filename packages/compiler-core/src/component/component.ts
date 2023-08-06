@@ -44,6 +44,7 @@ function createNext (path: NodePath<any>) {
         let next;
         do {
             index ++;
+            // @ts-ignore
             next = path.getSibling(path.key + index);
         } while (isEmptyText(next.node));
         return next;
@@ -53,7 +54,9 @@ function createNext (path: NodePath<any>) {
 function getExp (openinigEl: JSXOpeningElement) {
     const attrs = openinigEl.attributes as JSXAttribute[];
     const data = attrs.find(attr => attr.name.name === 'data');
+    // @ts-ignore
     if (!data) throw new Error(`${openinigEl.name.name}: 缺少data属性`);
+    // @ts-ignore
     return data.value.expression;
 };
 
@@ -67,10 +70,13 @@ function parseFor (path: NodePath<JSXElement>) {
     for (const item of attrs) {
         const name = item.name.name;
         if (name === 'data') {
+            // @ts-ignore
             arrId = item.value?.expression;
         } else if (name === 'item') {
+            // @ts-ignore
             itemName = item.value?.value;
         } else if (name === 'index') {
+            // @ts-ignore
             indexName = item.value?.value;
         }
     }
@@ -122,6 +128,7 @@ function parseIf (path: NodePath<JSXElement>) {
 
         const node = path.node;
 
+        // @ts-ignore
         const name = node.openingElement?.name.name;
         let removed = true;
         switch (name) {
@@ -158,6 +165,7 @@ function parseIf (path: NodePath<JSXElement>) {
             path.skip();
         }
         if (object) {
+            // @ts-ignore
             setAnchor(object, id, args);
             if (!end) {
                 const path = nextSibling();
@@ -193,6 +201,7 @@ function parseSwitch (path: NodePath<JSXElement>) {
         if (isEmptyText(item)) continue;
         if (item.type !== 'JSXElement') throw new Error('switch 中只能包含jsxElement');
         const el = item.openingElement;
+        // @ts-ignore
         const name = el.name.name;
         if (name === CompNames.Case || name === CompNames.Default) {
             const properties: any[] = [];
@@ -206,6 +215,7 @@ function parseSwitch (path: NodePath<JSXElement>) {
                     getExp(el)
                 ));
             }
+            // @ts-ignore
             const brk = !!el.attributes.find(item => item.name.name === 'break');
             if (brk)
                 properties.push(t.objectProperty(
@@ -238,7 +248,9 @@ function parseAsync (path: NodePath<JSXElement>) {
     const node = path.node;
     const el = node.openingElement;
     const t = getT();
+    // @ts-ignore
     const name = el.attributes.find(item => item.name.name === 'name');
+    // @ts-ignore
     const dataName = name?.value.value || '$data';
     const body = t.blockStatement([
         t.variableDeclaration(
@@ -268,6 +280,7 @@ function parseShow (path: NodePath<JSXElement>) {
     node.children.forEach(item => {
         if (item.type === 'JSXElement') {
             const attrs = item.openingElement.attributes;
+            // @ts-ignore
             const show = attrs.find(attr => attr.name.name === '$show') as JSXAttribute;
 
             if (!show) {
@@ -290,6 +303,7 @@ function parseShow (path: NodePath<JSXElement>) {
 
 export function parseInnerComponent (path: NodePath<JSXElement>) {
     const el = path.node.openingElement;
+    // @ts-ignore
     const name = el.name?.name;
     switch (name) {
         case CompNames.For: parseFor(path); break;

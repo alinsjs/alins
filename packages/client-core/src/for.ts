@@ -5,11 +5,11 @@
  */
 
 import {
-    createProxy, isProxy, watch, watchArray, wrapReactive,
+    createProxy, isProxy, watchArray,
     IOprationAction, OprateType, registArrayMap
 } from 'alins-reactive';
-import {IProxyData, IRefData, trig, util} from 'alins-utils';
-import {IFragment, IGeneralElement, ITrueElement, Renderer, ITextNode, IElement} from './element/renderer';
+import {IProxyData, util} from 'alins-utils';
+import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {getParent} from './utils';
 
 
@@ -48,9 +48,10 @@ export function map (
     let head: ITrueElement;
 
     const scopeItems: IProxyData<{item: any, index: number}>[] = [];
-    window.EndMap = EndMap;
-    window.scopeItems = scopeItems;
+    // window.EndMap = EndMap;
+    // window.scopeItems = scopeItems;
     list[util].scopeItems = scopeItems;
+    // @ts-ignore
     list[util]._map = true; // ! 标识需要强制更新，从而更新map的index
     // @ts-ignore ! 此处用于在slice方法中获取 item
     scopeItems.key = k;
@@ -88,6 +89,7 @@ export function map (
                 if (i === 0) head = end;
             } else {
                 end = children[n - 1] as any;
+                // @ts-ignore
                 if (i === 0) head = children[0];
             }
         } else {
@@ -113,6 +115,7 @@ export function map (
                     const [child, end, scope] = createChild(data[i], length + i);
                     EndMap.push(end);
                     scopeItems.push(scope);
+                    // @ts-ignore
                     doc.appendChild(child);
                 }
                 // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
@@ -137,6 +140,7 @@ export function map (
                 if (count === 0) break;
                 const startPos = index - 1;
                 const endPos = startPos + count;
+                // @ts-ignore
                 const endDom = EndMap[endPos]?.nextSibling || ScopeEnd;
                 // debugger;
                 // if (endDom === ScopeEnd) debugger; // debug
@@ -149,8 +153,11 @@ export function map (
                 }
 
                 if (startPos < 0) {
+                    // @ts-ignore
                     if (startDom !== ScopeEnd) {
+                        // @ts-ignore
                         head = startDom.nextSibling;
+                        // @ts-ignore
                         startDom.remove();
                     } else {
                         head = ScopeEnd;
@@ -164,6 +171,7 @@ export function map (
             };break;
             case OprateType.Insert: {
                 // if (!EndMap[index - 1]) debugger;
+            // @ts-ignore
                 const mountNode = index === 0 ? (head || ScopeEnd) : EndMap[index - 1].nextSibling;
                 const ends: any[] = [];
                 const scopes: any[] = [];

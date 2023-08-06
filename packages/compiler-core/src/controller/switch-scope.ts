@@ -22,9 +22,11 @@ export class SwitchScope extends ControlScope<SwitchStatement> {
         this.replaceEnd = (nodes: Statement[]) => {
             // 只要end有返回，则肯定有返回
             if (this.parentScope.awaitRecorded) {
+                // @ts-ignore
                 endFunc.body._setAsync?.();
             }
             endFunc.body = getT().blockStatement(nodes);
+            // @ts-ignore
             this.replaceEnd = null;
         };
     }

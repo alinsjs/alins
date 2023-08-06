@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "sourceMap": false,
+    "target": "es2016",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "removeComments": false,
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"],
+    "types": ["node"],
+    "rootDir": "../../",
+    "noEmit": false,
+    "paths": {
+      // "/prodec/*": ["../../packages/*"],
+      "/prodec/codec": ["../../packages/codec/src/index.ts"],
+      "/prodec/long": ["../../packages/long/src/index.ts"],
+      "/prodec/compiler": ["../../packages/compiler/src/index.ts"],
+      // "/@prodec/vite-plugin": ["../../packages/vite-plugin/src/index.ts"]
+    }
+  },
+  "include": [
+    "src",
+    "../../packages",
+    "test"
+  ],
+  "exclude": [
+      "./node_modules"
+  ]
+}

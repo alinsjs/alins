@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-05 13:22:44
+ * @LastEditTime: 2023-08-06 01:07:57
 -->
 
 # 0.1.0
@@ -26,6 +26,7 @@ feat：
 - [x] alins客户端直接使用封装api
 - [x] alins-web-compiler web侧编译器
 - [x] alins-node-compiler web侧编译器
+- [ ] jsx 编译 和 alins 编译分离 （解耦）
 - [ ] 文档
 - [ ] babel-alins插件，webpack、rollup、vite插件
 - [ ] For、async组件 data数据处理，识别不到data定义 (eslint-config解决)

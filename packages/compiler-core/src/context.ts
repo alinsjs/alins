@@ -4,12 +4,10 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import type {Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator} from '@babel/types';
+import type {CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator} from '@babel/types';
 import {MapScope} from './controller/map';
 import {isJsxCallee} from './is';
-import {setContextGetter} from './parse-utils';
 import {Scope} from './scope';
-import type {CallExpression} from '@babel/types';
 import {INodeTypeMap} from './types';
 
 export let currentModule: Module = null as any;
@@ -45,6 +43,7 @@ export class Module {
         this.enterScope(path);
     }
     exitModule () {
+        // @ts-ignore
         if (this.ctx && !this.ctx.node._used) {
             this.ctx.remove();
         }
@@ -61,7 +60,7 @@ export class Module {
         // console.log('AlinsCtx enterScope', newScope.id, newScope.deep, path.toString());
         // debugger;
     }
-    exitScope (path?: NodePath<Node>) {
+    exitScope () {
         // iii --;
         // console.log('SCOPE_DEBUG: exitScope', this.curScope?.inJsxTrans, path?.toString(), iii);
         if (this.curScope.inJsxTrans) return;
@@ -69,6 +68,7 @@ export class Module {
         const scope = this.curScope;
         // debugger;
         scope.exit();
+        // @ts-ignore
         this.curScope = scope.parent;
         // console.log('SCOPE-DEBUG Exit:', scope.path.toString());
     }
@@ -120,6 +120,7 @@ export class Module {
     }
 
     enterIdentifier (path: NodePath<Identifier>) {
+        // @ts-ignore
         if (path.node._deco) return; // 装饰器jsx直接表达式需要跳过 ! value:number={a}
         if (!!NoNeedCollectIdentifierMap[path.parent.type]) {
             return;
@@ -129,6 +130,7 @@ export class Module {
         }
         const scope = this.curScope;
         // 非首个member identify
+        // @ts-ignore
         if (path.parent.type === 'MemberExpression' && !path.node._firstMember) {
             return;
         }
@@ -160,6 +162,7 @@ export class Module {
     enterJSXExpContainer (path: NodePath<JSXExpressionContainer>) {
         const exp = path.node.expression;
         if (exp.type === 'Identifier') {
+            // @ts-ignore
             path.node.expression._skip = true;
             return;
         }
@@ -167,8 +170,10 @@ export class Module {
             return;
         }
         // debugger;
+        // @ts-ignore
         path.node.expression._needJsxRefeat = true;
         // debugger;
+        // @ts-ignore
         this.curScope.enterJSXExpression(path);
     }
 
@@ -201,6 +206,7 @@ export class Module {
         }
         this._lastReturnJsx = this.mapScope.isReturnJsx;
         this.mapScope.onExit();
+        // @ts-ignore
         this.mapScope = this.mapScope.exit();
     }
     get inMap () {
@@ -210,12 +216,15 @@ export class Module {
     jsxFlagStackDeep = 0;
     checkJsxComponent (path: NodePath<FunctionDeclaration|VariableDeclarator>) {
         let name = '';
+        // @ts-ignore
         if (path.node.type === 'FunctionDeclaration') {
+            // @ts-ignore
             name = path.node.id?.name;
         } else {
             const init = path.node.init;
             if (init?.type === 'ArrowFunctionExpression' || init?.type === 'FunctionExpression') {
                 // debugger;
+                // @ts-ignore
                 name = path.node.id;
             }
         }
@@ -223,6 +232,7 @@ export class Module {
         if (name) {
             if (name.charCodeAt(0) <= 90) {
                 // 首字母大写的函数
+                // @ts-ignore
                 const firstArg = path.node.params[0];
                 if (firstArg) {
                     if (firstArg.type === 'Identifier') {
@@ -241,6 +251,7 @@ export class Module {
         }
         if (isComp) {
             this.jsxFlagStackDeep ++;
+            // @ts-ignore
             path.node._jsxComp = true;
         }
         return isComp;

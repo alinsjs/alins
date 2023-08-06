@@ -4,3 +4,11 @@
  * @Description: Coding something
  */
 export {createNodeVisitor, babelPluginAlins} from './transform';
+
+// import type {Node} from '@babel/traverse';
+
+// import * as A from '@babel/types';
+
+// export const a: Node = {} as any;
+
+// export default A;

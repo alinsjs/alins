@@ -30,7 +30,8 @@
         "babel.config.js",
         "scripts/**/*",
         "src/**/*",
-        "global.d.ts"
+        "global.d.ts",
+        // "**/*.ts"
     ],
     "exclude": [
         "./node_modules"

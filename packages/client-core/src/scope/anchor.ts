@@ -14,7 +14,7 @@ dom 元素挂载的锚点
 firstElement => anchor 之前为组件的所有dom
 */
 
-let id = 0;
+// let id = 0;
 export function createAnchor (cache: ICallCache) {
     let end: IElement|null = null;
     let start: IElement|null = null;
@@ -22,7 +22,8 @@ export function createAnchor (cache: ICallCache) {
     let frag: IFragment;
 
     const initFirstMount = (element?: IGeneralElement): IFragment => {
-        end = Renderer.createEmptyMountNode(id++);
+        // @ts-ignore
+        end = Renderer.createEmptyMountNode();
         start = getFirstElement(element) || end;
         // console.warn('initFirstMount', start);
 
@@ -46,8 +47,10 @@ export function createAnchor (cache: ICallCache) {
     const clearDom = () => {
         const cursor = start;
         if (cursor !== end) {
+            // @ts-ignore
             while (cursor.nextSibling && cursor.nextSibling !== end) {
                 try {
+                    // @ts-ignore
                     cursor.nextSibling.remove();
                 } catch (e) {
                     // debugger;
@@ -55,6 +58,7 @@ export function createAnchor (cache: ICallCache) {
                     break;
                 }
             }
+            // @ts-ignore
             cursor.remove();
         }
         start = end;
@@ -146,6 +150,7 @@ export function createAnchor (cache: ICallCache) {
             let parent = branch?.parent;
             while (parent && parent.anchor.start() === start) {
                 parent.anchor.setStart(newStart);
+                // @ts-ignore
                 if (parent.call) cache.modifyCache(parent, newEle);
                 parent = parent.parent;
             }

@@ -4,15 +4,16 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import type {BlockStatement, CallExpression, Identifier, JSXElement, Node, VariableDeclarator} from '@babel/types';
+import type {BlockStatement, CallExpression, JSXElement, Node, VariableDeclarator} from '@babel/types';
 
-export function isFuncParameter (path: NodePath<Identifier>) {
+// export function isFuncParameter (path: NodePath<Identifier>) {
 
-}
+// }
  
 export function isJsxCallee (path: NodePath<CallExpression>) {
     const node = path.node.callee;
     if (!node) return false;
+    // @ts-ignore
     return node.object?.name === 'React' && node.property?.name === 'createElement';
 }
 
@@ -26,6 +27,7 @@ export function isSkippedNewNode (path: NodePath<Node>): boolean {
 export function isObjectAssignDeclarator (node:VariableDeclarator) {
     if (node.init?.type !== 'CallExpression') return false;
     const callee = node.init.callee;
+    // @ts-ignore
     return callee.type === 'MemberExpression' && callee.object?.name === 'Object' && callee.property?.name === 'assign';
 }
 
@@ -44,5 +46,6 @@ export function isFuncReturnJsx () {
 }
 
 export function isJSXComponent (path: NodePath<JSXElement>) {
+    // @ts-ignore
     return path.node.openingElement.name.name.charCodeAt(0) <= 90;
 }

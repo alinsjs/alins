@@ -12,12 +12,12 @@ function resolveRootPath (str) {
     return path.resolve(__dirname, `../../${str}`);
 }
 
-function resolvePacakgePath (str) {
+function resolvePackagePath (str) {
     return path.resolve(__dirname, `../../packages/${str}`);
 }
 
-function extrackSinglePackageInfo (dir) {
-    const {name, version, dependencies} = require(resolvePacakgePath(`${dir}/package.json`));
+function extractSinglePackageInfo (dir) {
+    const {name, version, dependencies} = require(resolvePackagePath(`${dir}/package.json`));
     return {
         name,
         version,
@@ -28,7 +28,7 @@ function extrackSinglePackageInfo (dir) {
 function extractPackagesInfo () {
     const dirs = fs.readdirSync(resolveRootPath('packages'));
 
-    return dirs.map(dir => extrackSinglePackageInfo(dir));
+    return dirs.map(dir => extractSinglePackageInfo(dir));
 }
 
 function upcaseFirstLetter (str) {
@@ -57,7 +57,7 @@ function initPackageInfo (isDev) {
 }
 
 function initSinglePackageInfo (dir, isDev = false) {
-    const packagePath = resolvePacakgePath(`${dir}/package.json`);
+    const packagePath = resolvePackagePath(`${dir}/package.json`);
     const package = require(packagePath);
     const packageName = buildPackageName(dir);
 
@@ -77,14 +77,14 @@ function initSinglePackageInfo (dir, isDev = false) {
         registry: 'https://registry.npmjs.org/',
     };
     writeJsonIntoFile(package, packagePath);
-    fs.copyFileSync(resolveRootPath('README.md'), resolvePacakgePath(`${dir}/README.md`));
-    fs.copyFileSync(resolveRootPath('LICENSE'), resolvePacakgePath(`${dir}/LICENSE`));
-    fs.copyFileSync(resolveRootPath('scripts/helper/.npmignore'), resolvePacakgePath(`${dir}/.npmignore`));
+    fs.copyFileSync(resolveRootPath('README.md'), resolvePackagePath(`${dir}/README.md`));
+    fs.copyFileSync(resolveRootPath('LICENSE'), resolvePackagePath(`${dir}/LICENSE`));
+    fs.copyFileSync(resolveRootPath('scripts/helper/.npmignore'), resolvePackagePath(`${dir}/.npmignore`));
 
     // const tsconfig = require(resolveRootPath('tsconfig.json'));
     // tsconfig.include = ['src/**/*'];
     // tsconfig.compilerOptions.rootDir = '../..';
-    // writeJsonIntoFile(tsconfig, resolvePacakgePath(`${dir}/tsconfig.json`));
+    // writeJsonIntoFile(tsconfig, resolvePackagePath(`${dir}/tsconfig.json`));
 }
 
 function writeJsonIntoFile (package, filePath) {
@@ -111,9 +111,9 @@ async function exec (cmd) {
     });
 }
 module.exports = {
-    extrackSinglePackageInfo,
+    extractSinglePackageInfo,
     resolveRootPath,
-    resolvePacakgePath,
+    resolvePackagePath,
     extractPackagesInfo,
     upcaseFirstLetter,
     buildPackageName,

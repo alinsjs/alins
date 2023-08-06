@@ -58,8 +58,8 @@ export const Renderer = {
         el[type] = AlinsType.TextNode;
         return el as ITextNode;
     },
-    createEmptyMountNode (s = ''): IElement {
-        return document.createComment(s) as any;
+    createEmptyMountNode (): IElement {
+        return document.createComment('') as any;
     },
     createDocumentFragment (): IFragment {
         return document.createDocumentFragment();
