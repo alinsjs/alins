@@ -53,7 +53,7 @@ export function createUtils (
     const current = key ? [...path, key] : [...path];
     const isArray = Array.isArray(data);
     const triggerChange = (property: string, nv: any, old: any, remove?: boolean, isNew?: boolean) => {
-        const each = fn => {fn(nv, old, `${current.join('.')}.${property}`, property, remove);};
+        const each = (fn: any) => {fn(nv, old, `${current.join('.')}.${property}`, property, remove);};
         if (isNew) data[util].commonLns?.forEach(each);
         data[util].lns[property]?.forEach(each);
         data[util].extraLns?.forEach(item => {
@@ -61,12 +61,16 @@ export function createUtils (
         });
     };
     const forceUpdate = () => {
-        for (const k in data)
+        for (const k in data) {
+            // @ts-ignore
             triggerChange(k, data[k], data[k]);
+        }
     };
     const forceWrite = (v: any) => {
-        for (const k in v)
+        for (const k in v) {
+            // @ts-ignore
             triggerChange(k, v[k], data[k]);
+        }
         Object.assign(data, v);
     };
     const subscribe = (ln: IProxyListener<any>, deep: boolean = true) => {
@@ -74,6 +78,7 @@ export function createUtils (
         data[util].commonLns?.add(ln) || (data[util].commonLns = new Set([ln]));
         for (const k in data) {
             data[util].lns[k]?.add(ln) || (data[util].lns[k] = new Set([ln]));
+            // @ts-ignore
             if (deep && isProxy(data[k])) data[k][util].subscribe(ln, deep);
         }
     };

@@ -1,9 +1,6 @@
 /*
  * @Author: chenzhongsheng
- * @Date: 2022-11-25 10:42:14
+ * @Date: 2023-01-19 13:19:45
  * @Description: Coding something
  */
-
-import './alins';
-
-console.log(1);
+export default '__VERSION__';

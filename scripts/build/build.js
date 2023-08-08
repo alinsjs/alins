@@ -57,6 +57,21 @@ const BuildMap = {
         // format: 'esm cjs',
         format: 'esm',
     },
+    'plugin-webpack': {
+        packageName: 'alins-loader',
+        // format: 'esm cjs',
+        format: 'esm',
+    },
+    'plugin-esbuild': {
+        packageName: 'esbuild-plugin-alins',
+        // format: 'esm cjs',
+        format: 'cjs',
+    },
+    'plugin-rollup': {
+        packageName: 'rollup-plugin-alins',
+        // format: 'esm cjs',
+        format: 'esm',
+    },
 };
 
 const {

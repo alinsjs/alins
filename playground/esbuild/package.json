@@ -1,0 +1,18 @@
+{
+  "name": "esbuild",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "_watch": "node dev/dev.js",
+    "_serve": "serve dev",
+    "dev": "run-p _watch _serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.18.19",
+    "npm-run-all": "^4.1.5"
+  }
+}

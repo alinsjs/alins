@@ -52,7 +52,9 @@ export function watch<T> (
         // ! 兼容computed(()=>1+1)情况
         return target;
     }
+    // @ts-ignore
     if (target[util]) { // ! 没有 util 表示不是proxy
+        // @ts-ignore
         target[util].subscribe(cb, deep);
     }
     return target;
@@ -62,9 +64,12 @@ export function watchArray (
     target: IProxyData<any[]>,
     listener: ({index, count, data, type}: IOprationAction)=>void
 ) {
+    // @ts-ignore
     if (!target[trig]) {
+        // @ts-ignore
         target[trig] = [listener];
     } else {
+        // @ts-ignore
         target[trig].push(listener);
     }
 }

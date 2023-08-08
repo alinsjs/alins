@@ -83,7 +83,7 @@ export class Module {
         // console.log(path.toString());
         if (!this.curScope) return false;
         if (this.curScope.inJsxTrans) return true; // 在 jsx 转译后的代码中需要向下遍历
-        if (isJsxCallee(path)) {
+        if (isJsxCallee(path.node)) {
             // debugger;
             // jsx 转译后的代码
             this.curScope.enterJsxScope(path);

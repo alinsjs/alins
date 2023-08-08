@@ -31,6 +31,7 @@
         "scripts/**/*",
         "src/**/*",
         "global.d.ts",
+        "plaground/**/src/*",
         // "**/*.ts"
     ],
     "exclude": [

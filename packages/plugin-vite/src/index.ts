@@ -5,7 +5,7 @@
  * @Description: Coding something
  */
 // import {parseAlins} from 'packages/compiler-node';
-import {parseAlins} from 'alins-compiler-node/dist/alins-compiler-node.esm.min';
+import {parseAlins} from 'alins-compiler-node/dist/alins-compiler-node.umd.min';
 // import {A} from './index.d';
 // const a: A = {a: 1};
 // console.log(a, bt);

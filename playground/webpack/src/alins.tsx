@@ -4,8 +4,10 @@
  * @Description: Coding something
  */
 
+// console.log('111')
+
 import {createContext as _$$} from '../../../packages/client-core/dist/alins.esm.min'
-window._$$ = _$$;
+(window as any)._$$ = _$$;
 let count = 1;
 
 <button

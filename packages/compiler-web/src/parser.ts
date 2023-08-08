@@ -17,3 +17,20 @@ export function parseWebAlins (code: string): string {
     });
     return output.code || '';
 }
+
+// export function parseWebAlins (code: string, react = true): string {
+//     let output: any = null;
+//     if (react) {
+//         output = Babel.transform(code, {
+//             sourceMaps: false,
+//             presets: [ 'react' ],
+//         });
+//         code = output.code;
+//         console.warn('react result', code);
+//     }
+//     output = Babel.transform(code, {
+//         sourceMaps: false,
+//         plugins: [ 'alins' ],
+//     });
+//     return output.code || '';
+// }

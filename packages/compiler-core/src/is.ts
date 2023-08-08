@@ -4,17 +4,21 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import type {BlockStatement, CallExpression, JSXElement, Node, VariableDeclarator} from '@babel/types';
+import type {BlockStatement, CallExpression, JSXElement, MemberExpression, Node, VariableDeclarator} from '@babel/types';
 
 // export function isFuncParameter (path: NodePath<Identifier>) {
 
 // }
+
+export function isJSXElement (node: Node) {
+    return node.type === 'CallExpression' && isJsxCallee(node);
+}
  
-export function isJsxCallee (path: NodePath<CallExpression>) {
-    const node = path.node.callee;
-    if (!node) return false;
+export function isJsxCallee (node: CallExpression) {
+    const callee = node.callee;
+    if (!callee) return false;
     // @ts-ignore
-    return node.object?.name === 'React' && node.property?.name === 'createElement';
+    return callee.object?.name === 'React' && callee.property?.name === 'createElement';
 }
 
 export function isSkippedNewNode (path: NodePath<Node>): boolean {

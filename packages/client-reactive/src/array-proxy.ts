@@ -4,9 +4,8 @@
  * @Description: Coding something
  */
 
-import {assignLast, empty, IProxyData, trig, util} from 'alins-utils';
-import {createProxy, replaceLNS} from './proxy';
-import {react} from './react';
+import {empty, IProxyData, trig, util} from 'alins-utils';
+import {createProxy} from './proxy';
 
 export enum OprateType {
     Replace = 0, // Replace index a => b
@@ -43,7 +42,8 @@ function proxyItem (data: IProxyData<any[]>, args: any[], index: number) {
 // ! 此处用于模拟触发watch 因为proxy拦截数组方法之后 原本的数组元素proxy不生效了 会导致watch行为不一致
 function triggerOprationEvent (arr: any[], type: OprateType, index:number, data: any[], count: number, fromAssign?:boolean) {
     // const ut = arr[util];
-    arr[trig]?.forEach(fn => {fn({type, data, index, count, fromAssign});});
+    // @ts-ignore
+    arr[trig]?.forEach((fn: any) => {fn({type, data, index, count, fromAssign});});
 }
 
 function wrapArrayCall (target: IProxyData<any[]>, fn:()=>any) {
@@ -91,9 +91,11 @@ const ArrayMap = {
             // }
         }
         const items = target[util].scopeItems;
+        // @ts-ignore
         const data = items?.slice(start, start + args.length).map(i => i[items.key].v);
         // const data = args;
         // debugger;
+        // @ts-ignore
         return wrapArrayCall(target, () => origin.call(target[util].proxy, start, count, ...data));
     },
     push (this: {target: IProxyData<any[]>, origin: any}, ...args: any[]) {
@@ -189,7 +191,9 @@ export function registArrayMap (fn: any) {
 }
 
 export function arrayFuncProxy (target: any, property: string, receiver: any) {
+    // @ts-ignore
     if (ArrayMap[property] && target[trig] && !target[property].hack) {
+        // @ts-ignore
         target[property] = ArrayMap[property].bind({target, origin: target[property]});
         target[property].hack = true;
         return target[property];

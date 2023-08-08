@@ -1,12 +1,12 @@
 
-import type {NodePath, Node, TraverseOptions} from '@babel/traverse';
+import type {NodePath, TraverseOptions} from '@babel/traverse';
 import type {Program} from '@babel/types';
 import type {IBabelType} from './types';
 import {parseCommentReactive} from './comment';
 import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
 import {createAlinsCtx, createEmptyString, createUnfInit, getT, initTypes, ModArrayFunc, parseFirstMemberObject} from './parse-utils';
-
+import {isJSXElement} from './is';
 
 export function createNodeVisitor (t: IBabelType) {
     initTypes(t);
@@ -187,7 +187,11 @@ export function createNodeVisitor (t: IBabelType) {
             if (!ctx.enter(path)) return;
             const node = path.node.argument;
             // debugger;
+            // @ts-ignore
             if (node?.type === 'JSXElement' || node?.type === 'JSXFragment') {
+            // if (isJSXElement(node) || (
+            //     node?.type === 'JSXElement' || node?.type === 'JSXFragment'
+            // )) {
                 ctx.mapScope?.markReturnJsx();
             }
         },
