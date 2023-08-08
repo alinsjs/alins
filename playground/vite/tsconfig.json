@@ -21,11 +21,6 @@
     "rootDir": "../../",
     "noEmit": false,
     "paths": {
-      // "/prodec/*": ["../../packages/*"],
-      "/prodec/codec": ["../../packages/codec/src/index.ts"],
-      "/prodec/long": ["../../packages/long/src/index.ts"],
-      "/prodec/compiler": ["../../packages/compiler/src/index.ts"],
-      // "/@prodec/vite-plugin": ["../../packages/vite-plugin/src/index.ts"]
     }
   },
   "include": [
