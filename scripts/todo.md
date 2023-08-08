@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-06 01:07:57
+ * @LastEditTime: 2023-08-08 19:49:31
 -->
 
 # 0.1.0
@@ -26,6 +26,9 @@ feat：
 - [x] alins客户端直接使用封装api
 - [x] alins-web-compiler web侧编译器
 - [x] alins-node-compiler web侧编译器
+- [ ] 去除 /*#__PURE__*/ comment
+- [ ] node-compiler 增加 import 'alins'
+- [ ] 发包脚本
 - [ ] jsx 编译 和 alins 编译分离 （解耦）
 - [ ] 文档
 - [ ] babel-alins插件，webpack、rollup、vite插件
@@ -59,8 +62,6 @@ fix
 - [x] fix: branch visible判断的逻辑问题，原因在于branch visit 时没有对
 - [x] fix: cache 节点 失效的问题，如何更新cache: 缓存的节点中有if，if节点变更导致缓存失效了(初步解决)
 - [x] fix: If 标签之后的节点不见了 (原因：if 编译时多删除了一个)
-- [ ] 多层嵌套if问题
-<!-- - [ ] 多层嵌套的reactive -->
 
 
 

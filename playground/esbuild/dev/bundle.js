@@ -952,14 +952,13 @@
 
   // src/alins.tsx
   window._$$ = createContext;
-  var count = 1;
-  <button
-    $parent={document.body}
-    onclick={() => {
-      count++;
-    }}
-  >
-    {"click:"}
-    {count}
-  </button>;
+  var count = createContext.r({
+    v: 1
+  });
+  /* @__PURE__ */ createContext.ce("button", {
+    $parent: document.body,
+    onclick: () => {
+      count.v++;
+    }
+  }, "click:", count);
 })();

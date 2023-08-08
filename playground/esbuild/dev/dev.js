@@ -14,7 +14,6 @@ main(
 
 async function main (entry, outfile) {
     const context = await esbuild.context({
-        jsx: 'preserve', // ! todo 看看能否把这个配置包含在alins插件中
         entryPoints: [ entry ],
         outfile,
         bundle: true,
@@ -25,3 +24,19 @@ async function main (entry, outfile) {
     await context.watch();
     console.log(`watching: ${outfile}`);
 }
+
+// console.log(esbuild.transformSync(`
+// import {createContext as _$$} from '../../../packages/client-core/dist/alins.esm.min'
+// (window as any)._$$ = _$$;
+// let count = 1;
+
+// let React: any;
+
+// <button
+//     $parent={document.body}
+//     onclick={() => {count++;}}
+// >click:{count}</button>;
+// `, {
+//     loader: 'tsx',
+//     jsx: 'preserve',
+// }));

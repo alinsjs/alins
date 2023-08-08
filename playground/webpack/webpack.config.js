@@ -17,10 +17,9 @@ module.exports = {
             test: /\.ts$/,
             use: [{loader: 'ts-loader'}]
         }, {
-            test: /\.tsx$/,
+            test: /\.[jt]sx$/,
             use: [
-                {loader: '../../packages/plugin-webpack/dist/alins-loader.esm.min.js'},
-                {loader: 'ts-loader'}
+                {loader: '../../packages/plugin-webpack/dist/alins-loader.cjs.min.js'},
             ]
         }]
     }

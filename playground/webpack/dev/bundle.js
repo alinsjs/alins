@@ -16,7 +16,7 @@
   \***********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _packages_client_core_dist_alins_esm_min__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../packages/client-core/dist/alins.esm.min */ \"../../packages/client-core/dist/alins.esm.min.js\");\n/*\n * @Author: chenzhongsheng\n * @Date: 2023-08-05 23:36:10\n * @Description: Coding something\n */\n// console.log('111')\n\nwindow._$$ = _packages_client_core_dist_alins_esm_min__WEBPACK_IMPORTED_MODULE_0__.createContext;\nlet count = _packages_client_core_dist_alins_esm_min__WEBPACK_IMPORTED_MODULE_0__.createContext.r({\n  v: 1\n});\n/*#__PURE__*/_packages_client_core_dist_alins_esm_min__WEBPACK_IMPORTED_MODULE_0__.createContext.ce(\"button\", {\n  $parent: document.body,\n  onclick: () => {\n    count.v++;\n  }\n}, \"click:\", count);\n\n//# sourceURL=webpack://webpack/./src/alins.tsx?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _packages_client_core_dist_alins_esm_min__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../packages/client-core/dist/alins.esm.min */ \"../../packages/client-core/dist/alins.esm.min.js\");\n\nwindow._$$ = _packages_client_core_dist_alins_esm_min__WEBPACK_IMPORTED_MODULE_0__.createContext;\nlet count = _packages_client_core_dist_alins_esm_min__WEBPACK_IMPORTED_MODULE_0__.createContext.r({\n  v: 1\n});\n/*#__PURE__*/_packages_client_core_dist_alins_esm_min__WEBPACK_IMPORTED_MODULE_0__.createContext.ce(\"button\", {\n  $parent: document.body,\n  onclick: () => {\n    count.v++;\n  }\n}, \"click:\", count);\n\n//# sourceURL=webpack://webpack/./src/alins.tsx?");
 
 /***/ }),
 

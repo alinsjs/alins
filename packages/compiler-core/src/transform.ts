@@ -6,7 +6,6 @@ import {parseCommentReactive} from './comment';
 import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
 import {createAlinsCtx, createEmptyString, createUnfInit, getT, initTypes, ModArrayFunc, parseFirstMemberObject} from './parse-utils';
-import {isJSXElement} from './is';
 
 export function createNodeVisitor (t: IBabelType) {
     initTypes(t);

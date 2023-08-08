@@ -17,5 +17,6 @@ module.exports = {
         '$item': true,
         '$index': true,
         '$data': true,
+        'React': true,
     },
 }

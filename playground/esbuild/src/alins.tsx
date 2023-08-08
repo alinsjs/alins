@@ -7,8 +7,6 @@ import {createContext as _$$} from '../../../packages/client-core/dist/alins.esm
 (window as any)._$$ = _$$;
 let count = 1;
 
-let React: any;
-
 <button
     $parent={document.body}
     onclick={() => {count++;}}
