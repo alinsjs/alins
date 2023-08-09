@@ -15,7 +15,6 @@ import {createCallCache} from './scope/cache';
 import {createBranchLink} from './scope/branch';
 import {JSX} from './element/element';
 
-
 export function createContext () {
     const cache = createCallCache();
     const anchor = createAnchor(cache);

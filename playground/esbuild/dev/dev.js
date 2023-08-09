@@ -5,7 +5,8 @@
  */
 const esbuild = require('esbuild');
 const path = require('path');
-const alins = require('../../../packages/plugin-esbuild/dist/esbuild-plugin-alins.cjs.min');
+// const alins = require('../../../packages/plugin-esbuild/dist/esbuild-plugin-alins.cjs.min');
+const alins = require('esbuild-plugin-alins');
 
 main(
     path.resolve(__dirname, '../src/index.ts'),
@@ -27,7 +28,8 @@ async function main (entry, outfile) {
 
 // console.log(esbuild.transformSync(`
 // import {createContext as _$$} from '../../../packages/client-core/dist/alins.esm.min'
-// (window as any)._$$ = _$$;
+// import plugin from '../../../packages/plugin-babel/src/index';
+
 // let count = 1;
 
 // let React: any;

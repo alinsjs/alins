@@ -1,6 +1,6 @@
 {
     "name": "eslint-config-alins",
-    "version": "0.0.18",
+    "version": "0.0.20-beta.1",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "index.js",
     "repository": "git@github.com:alinsjs/alins.git",
@@ -16,10 +16,9 @@
         "web-ui-framework"
     ],
     "license": "MIT",
-    "type": "module",
+    "type": "commonjs",
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/"
-    },
-    "unpkg": "dist/alins-utils.min.js",
-    "jsdelivr": "dist/alins-utils.min.js"
+        "registry": "https://registry.npmjs.org/",
+        "tag": "beta"
+    }
 }

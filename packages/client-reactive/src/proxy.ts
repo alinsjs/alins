@@ -40,6 +40,7 @@ export function isProxy (data: any): boolean {
 
 export function wrapReactive (data: any, force = false) {
     if (force || !data || typeof data !== 'object') {
+        // @ts-ignore
         return {v: data, [type]: AlinsType.Ref};
     }
     return data;
@@ -142,6 +143,7 @@ export function createProxy<T extends IJson> (data: T, {
     // @ts-ignore
     const {triggerChange, isArray} = data[util];
 
+    // @ts-ignore
     const proxy = new Proxy(data, {
         get (target: IJson, property, receiver) {
             const isFunc = typeof target[property] === 'function';

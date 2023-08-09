@@ -17,7 +17,7 @@
     "removeComments": false,
     "jsx": "preserve",
     "lib": ["esnext", "dom"],
-    "types": ["node"],
+    "types": ["node", "alins"],
     "rootDir": ".",
     "noEmit": false,
     "paths": {

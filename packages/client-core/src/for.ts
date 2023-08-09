@@ -12,7 +12,6 @@ import {IProxyData, util} from 'alins-utils';
 import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {getParent} from './utils';
 
-
 /*
  赋值的话是 状态替换
  通过函数调用的话特殊处理
@@ -22,7 +21,7 @@ export function map (
     this: IProxyData<any[]>,
     call: (scope: any, i?: number)=>IGeneralElement,
     jsx = false,
-    k = '$item',
+    k = 'item',
     ik = ''
 ) {
     const list = this;
@@ -194,32 +193,3 @@ export function map (
 }
 registArrayMap(map);
 
-/*
-var list = react([{a:1},{a:2}])
-    initArrayProxy(list, ({index, count, data, type, fromAssign}) => {
-        const ut = list[util];
-
-        switch (type) {
-            case OprateType.Push: {
-                data.forEach((item, i) => {
-                    ut.triggerChange(index + i, item, undefined, false, true);
-                });
-            };break;
-            case OprateType.Replace: {
-                if (!fromAssign) {
-                    
-                }
-            };break;
-            case OprateType.Push: {
-
-            };break;
-            case OprateType.Push: {
-
-            };break;
-        }
-        console.log('type=', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data,);
-    });
-watch(list, (...args)=>console.log('watch======',args));
-
-list.push({a: 3})
-*/

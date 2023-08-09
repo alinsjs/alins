@@ -14,35 +14,37 @@ export type ITrueElement = JSX.Element | IElement | ITextNode | IFragment;
 export type IGeneralElement = ITrueElement | null;
 
 export interface IElement {
-  [type]?: AlinsType.Element;
-  appendChild(child: ITrueElement): void;
-  // target stopPropagation preventDefault
-  addEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
-  removeEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
-  setAttribute(name: string, value: string): void;
-  removeAttribute(name: string): void;
-  getAttribute(name: string): string;
-  classList: {
-    add(name: string): void;
-    remove(name: string): void;
-  }
-  insertBefore<T extends ITrueElement>(node: T, child: IElement | null): T;
-  remove(): void;
-  children: (IElement|ITextNode)[];
-  get parentElement(): IElement;
-  get parentNode(): IElement;
-  get nextSibling(): IElement;
-  get className(): string;
-  set className(value: string);
-  get innerHTML(): string;
-  set innerHTML(value: string);
-  get innerText(): string;
-  set innerText(value: string);
+    // @ts-ignore
+    [type]?: AlinsType.Element;
+    appendChild(child: ITrueElement): void;
+    // target stopPropagation preventDefault
+    addEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
+    removeEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
+    setAttribute(name: string, value: string): void;
+    removeAttribute(name: string): void;
+    getAttribute(name: string): string;
+    classList: {
+        add(name: string): void;
+        remove(name: string): void;
+    }
+    insertBefore<T extends ITrueElement>(node: T, child: IElement | null): T;
+    remove(): void;
+    children: (IElement|ITextNode)[];
+    get parentElement(): IElement;
+    get parentNode(): IElement;
+    get nextSibling(): IElement;
+    get className(): string;
+    set className(value: string);
+    get innerHTML(): string;
+    set innerHTML(value: string);
+    get innerText(): string;
+    set innerText(value: string);
 }
 export interface ITextNode {
-  [type]?: AlinsType.TextNode;
-  get textContent(): string;
-  set textContent(value: string);
+    // @ts-ignore
+    [type]?: AlinsType.TextNode;
+    get textContent(): string;
+    set textContent(value: string);
 }
 
 export const Renderer = {

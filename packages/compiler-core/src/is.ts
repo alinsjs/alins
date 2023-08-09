@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import type {BlockStatement, CallExpression, JSXElement, MemberExpression, Node, VariableDeclarator} from '@babel/types';
+import type {BlockStatement, CallExpression, JSXElement, Node, VariableDeclarator} from '@babel/types';
 
 // export function isFuncParameter (path: NodePath<Identifier>) {
 
@@ -45,9 +45,9 @@ export function isBlockReturned (block: BlockStatement) {
     return false;
 }
 
-export function isFuncReturnJsx () {
+// export function isFuncReturnJsx () {
 
-}
+// }
 
 export function isJSXComponent (path: NodePath<JSXElement>) {
     // @ts-ignore

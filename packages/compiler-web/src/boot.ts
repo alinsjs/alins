@@ -8,11 +8,15 @@ import {createContext} from 'alins';
 import {parseWebAlins} from './parser';
 
 function onDOMContentLoaded () {
-    const scripts = document.querySelectorAll('script[type="text/alins"]');
-    // @ts-ignore
-    for (const item of scripts) {
+
+    const names = ['alins', 'babel'];
+    for (const name of names) {
+        const scripts = document.querySelectorAll(`script[type="text/${name}"]`);
         // @ts-ignore
-        onSingleScript(item);
+        for (const item of scripts) {
+            // @ts-ignore
+            onSingleScript(item);
+        }
     }
 }
 
@@ -33,7 +37,7 @@ async function onSingleScript (script: HTMLScriptElement) {
     const output = parseWebAlins(code);
     // console.warn(code);
     // console.warn('============>');
-    console.warn(output);
+    // console.warn(output);
     // debugger;
     if (output) {
         // exeJs(output);

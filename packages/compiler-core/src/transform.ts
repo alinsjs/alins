@@ -396,7 +396,10 @@ export function createNodeVisitor (t: IBabelType, isWeb = false) {
 }
 
 export function createBabelPluginAlins (isWeb?: boolean) {
-    return (data: any) => {
+    return (data: any, args: any) => {
+        if (args.web === true) {
+            isWeb = true;
+        }
         return {
             name: 'babel-plugin-alins',
             visitor: createNodeVisitor(data.types, isWeb)

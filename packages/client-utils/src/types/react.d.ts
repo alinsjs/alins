@@ -30,7 +30,9 @@ export interface IProxyUtils {
 }
 
 interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {
+  // @ts-ignore
   [util]: IProxyUtils;
+  // @ts-ignore
   [type]: T;
 }
 

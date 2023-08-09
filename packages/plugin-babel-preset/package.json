@@ -1,9 +1,9 @@
 {
     "name": "babel-preset-alins",
-    "version": "0.0.18",
+    "version": "0.0.20-beta.5",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/babel-preset-alins.cjs.min.js",
+    "typings": "dist/babel-preset-alins.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -19,11 +19,13 @@
     "license": "MIT",
     "type": "commonjs",
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/"
+        "registry": "https://registry.npmjs.org/",
+        "tag": "beta"
     },
     "dependencies": {
         "@babel/preset-react": "^7.22.5",
         "@babel/preset-typescript": "^7.22.5",
-        "babel-plugin-alins": "^0.0.18"
-    }
+        "babel-plugin-alins": "^0.0.20-beta.5"
+    },
+    "module": "dist/babel-preset-alins.esm.min.js"
 }

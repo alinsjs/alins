@@ -1,3 +1,4 @@
+import { _$$ } from "alins";
 /*
  * @Author: chenzhongsheng
  * @Date: 2023-08-05 23:36:10
@@ -7,7 +8,7 @@
 let count = _$$.r({
   v: 1
 });
-/*#__PURE__*/_$$.ce("button", {
+_$$.ce("button", {
   $parent: document.body,
   onclick: () => {
     count.v++;
@@ -25,3 +26,4 @@ let count = _$$.r({
 
 
 */
+export {};

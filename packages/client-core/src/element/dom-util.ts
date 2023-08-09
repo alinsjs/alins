@@ -12,10 +12,11 @@ import {IElement, ITextNode} from './renderer';
 
 
 export interface IElementBuilder {
-  [type]: AlinsType.ElementBuilder;
-  dom: ()=>IElement;
-  mount(parent: IElementLike): void;
-  appendChild(parent: IElementLike): void;
+    // @ts-ignore
+    [type]: AlinsType.ElementBuilder;
+    dom: ()=>IElement;
+    mount(parent: IElementLike): void;
+    appendChild(parent: IElementLike): void;
 }
 
 

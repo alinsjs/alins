@@ -1,5 +1,9 @@
 {
-    "plugins": [ "../../packages/plugin-babel/dist/babel-plugin-alins.cjs.min.js" ],
+    // "plugins": [ ["../../packages/plugin-babel/dist/babel-plugin-alins.cjs.min.js", {
+    //     "web": true
+    // }] ],
+    // "plugins": ["../../packages/plugin-babel/dist/babel-plugin-alins.cjs.min.js"],
+    "plugins": [["babel-plugin-alins", {"web": true}]],
     "presets": [
         "@babel/preset-typescript",
         "@babel/preset-react"

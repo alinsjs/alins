@@ -15,6 +15,7 @@ import {uglify} from 'rollup-plugin-uglify';
 import json from '@rollup/plugin-json';
 // import commonjs from '@rollup/plugin-commonjs'
 import path from 'path';
+import fs from 'fs';
 
 const {
     extractSinglePackageInfo,
@@ -23,29 +24,40 @@ const {
     // resolveRootPath,
 } = require('./utils');
 
+let isWebPackage = false;
+
 function parseBuildConfig () {
 
     const dirName = process.env.DIR_NAME;
 
+    // web => main: umd, module: esm, iife
+    // node => main: cjs, module: esm,
+
+    // ! 会将第一个format作为main
     const BuildMap = {
         'client-core': {
             packageName: 'alins',
-            // format: 'esm umd',
-            format: 'iife',
+            type: 'web',
+            // format: 'umd esm iife',
+            // format: 'iife',
             umdName: 'Alins',
         },
         'client-reactive': {
             packageName: 'alins-reactive',
-            format: 'esm umd',
+            type: 'web',
+            // format: 'esm umd',
             umdName: 'AlinsReactive',
         },
         'client-utils': {
             packageName: 'alins-utils',
-            format: 'esm umd',
+            type: 'web',
+            umdName: 'AlinsUtil',
+            // format: 'esm umd',
         },
         'client-standalone': {
             packageName: 'alins-standalone',
-            format: 'esm umd iife',
+            type: 'web',
+            // format: 'esm umd iife',
             umdName: 'Alins',
         },
         'compiler-core': {
@@ -56,53 +68,65 @@ function parseBuildConfig () {
         },
         'compiler-node': {
             packageName: 'alins-compiler-node',
+            type: 'node',
             // format: 'esm cjs',
-            format: 'umd',
         },
         'compiler-web': {
             packageName: 'alins-compiler-web',
-            format: 'esm umd iife',
+            type: 'web',
+            // format: 'esm umd iife',
             umdName: 'AlinsWeb',
         },
         'plugin-babel': {
             packageName: 'babel-plugin-alins',
+            type: 'node',
             // format: 'esm cjs',
-            format: 'cjs',
+        },
+        'plugin-eslint': {
+            packageName: 'eslint-config-alins',
+            type: 'cjs',
         },
         'plugin-babel-preset': {
             packageName: 'babel-preset-alins',
+            type: 'node',
             // format: 'esm cjs',
-            format: 'cjs',
         },
         'plugin-vite': {
             packageName: 'vite-plugin-alins',
             // format: 'esm cjs',
-            format: 'esm',
+            type: 'node',
         },
         'plugin-webpack': {
             packageName: 'alins-loader',
             // format: 'esm cjs',
-            format: 'cjs',
-            external: 'esbuild',
+            type: 'node',
         },
         'plugin-esbuild': {
             packageName: 'esbuild-plugin-alins',
             // format: 'esm cjs',
-            format: 'cjs',
+            type: 'node',
         },
         'plugin-rollup': {
             packageName: 'rollup-plugin-alins',
             // format: 'esm cjs',
-            format: 'cjs',
-            external: 'esbuild',
+            type: 'node',
         },
     };
     
     const buildConfig = BuildMap[dirName];
     
     const {
-        packageName, umdName
+        packageName, umdName, type
     } = buildConfig;
+
+    if (!buildConfig.format) {
+        if (type === 'web') {
+            isWebPackage = true;
+            buildConfig.format = 'umd esm iife';
+        } else {
+            buildConfig.format = 'cjs esm';
+        }
+    }
     
     const format = buildConfig.format.split(' ');
     
@@ -116,11 +140,11 @@ function parseBuildConfig () {
     // process.exit(0);
 
     let external = [];
-    if (buildConfig.external === true) {
+    if (typeof buildConfig.external === 'string') {
+        external = buildConfig.external.split(' ');
+    } else if (buildConfig.external !== false) {
         const packageInfo = extractSinglePackageInfo(dirName);
         external = packageInfo.dependencies;
-    } else if (typeof buildConfig.external === '') {
-        external = buildConfig.external.split(' ');
     }
     console.log('external: ', external);
 
@@ -135,11 +159,48 @@ const {
     inputFile, dirName, format, external
 } = parseBuildConfig();
 
+if (packageName === 'eslint-config-alins') {
+    modifyPackage(pkg => {
+        delete pkg.unpkg;
+        delete pkg.jsdelivr;
+        delete pkg.typings;
+        delete pkg.module;
+        pkg.type = 'commonjs';
+        pkg.main = 'index.js';
+    });
+    process.exit(0);
+}
+
+
+const isWebAndNodePkg = ['alins-compiler-core'].includes(packageName);
+
 console.log('external', external);
+
+const packageInfo = {
+    typings: `dist/${packageName}.d.ts`,
+    type: 'module',
+    'publishConfig': {
+        'registry': 'https://registry.npmjs.org/',
+        tag: 'beta',
+    },
+};
 
 const createBaseConfig = (format) => {
 
     const bundleName = `${packageName}.${format}.min.js`;
+
+    if (format === 'iife') {
+        packageInfo.unpkg = `dist/${bundleName}`;
+        packageInfo.jsdelivr = `dist/${bundleName}`;
+        isWebPackage = true;
+    } else if (format === 'umd') {
+        packageInfo.main = `dist/${bundleName}`;
+    } else if (format === 'cjs') {
+        packageInfo.main = `dist/${bundleName}`;
+        packageInfo.type = 'commonjs';
+    } else if (format === 'esm') {
+        packageInfo.module = `dist/${bundleName}`;
+    }
 
     return {
         input: inputFile,
@@ -152,8 +213,6 @@ const createBaseConfig = (format) => {
         plugins: [
             uglify(),
             json(),
-            // yaml(),
-            // vuePlugin(),
             typescript(),
             commonjs(),
             nodeResolve({
@@ -165,7 +224,8 @@ const createBaseConfig = (format) => {
                 configFile: path.join(__dirname, './babel.config.js'),
             }),
         ],
-        external,
+        // external: [], // format === 'iife' ? [] : external,
+        external: format === 'iife' ? [] : external,
     };
 };
 
@@ -173,16 +233,25 @@ const config = [
     ...format.map(item => {
         return createBaseConfig(item);
     }),
-    {
-    // 生成 .d.ts 类型声明文件
+    createDTSConfig(packageName),
+];
+
+// if (isWebAndNodePkg) {
+//     config.push(createDTSConfig(`${packageName}.cjs.min`));
+// }
+
+function createDTSConfig (name) {
+    return {
+        // 生成 .d.ts 类型声明文件
         input: inputFile,
         output: {
-            file: resolvePackagePath(`${dirName}/dist/${packageName}.${dtsFormat}.min.d.ts`),
+            // file: resolvePackagePath(`${dirName}/dist/${packageName}.${dtsFormat}.min.d.ts`),
+            file: resolvePackagePath(`${dirName}/dist/${name}.d.ts`),
             format: 'es',
         },
         plugins: [dts(), json()],
-    },
-];
+    };
+}
 
 // if (dirName === 'style') {
 //     config.push({
@@ -192,6 +261,30 @@ const config = [
 //         }),
 //     });
 // }
+
+modifyPackage(pkg => {
+    Object.assign(pkg, packageInfo);
+    if (!isWebPackage) {
+        delete pkg.unpkg;
+        delete pkg.jsdelivr;
+    }
+});
+
+const pkgPath = resolvePackagePath(`${dirName}/package.json`);
+const pkg = require(pkgPath);
+Object.assign(pkg, packageInfo);
+if (!isWebPackage) {
+    delete pkg.unpkg;
+    delete pkg.jsdelivr;
+}
+fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 4), 'utf8');
+
+function modifyPackage (fn) {
+    const pkgPath = resolvePackagePath(`${dirName}/package.json`);
+    const pkg = require(pkgPath);
+    fn(pkg);
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 4), 'utf8');
+}
 
 export default config;
 

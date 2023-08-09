@@ -5,4 +5,10 @@
  */
 import {createBabelPluginAlins} from 'alins-compiler-core';
 
-export default createBabelPluginAlins();
+// @ts-ignore
+const plugin: (data: any) => {
+    name: string;
+    visitor: any;
+} = createBabelPluginAlins();
+
+export default plugin;

@@ -19,7 +19,8 @@ module.exports = {
         }, {
             test: /\.[jt]sx$/,
             use: [
-                {loader: '../../packages/plugin-webpack/dist/alins-loader.cjs.min.js'},
+                // {loader: '../../packages/plugin-webpack/dist/alins-loader.cjs.min.js'},
+                {loader: 'alins-loader'},
             ]
         }]
     }

@@ -9,6 +9,7 @@
         "lint": "eslint packages --ext ts",
         "build": "npm run init:mono && lerna run build && node scripts/build/mod-package.js",
         "buildsingle": "node scripts/build/build.js",
+        "buildmulti": "node scripts/build/build-multi.js",
         "info": "node ./scripts/info.js",
         "boot": "npx lerna bootstrap",
         "init:package": "node ./scripts/init-packages-info.js",

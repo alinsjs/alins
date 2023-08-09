@@ -51,6 +51,7 @@ export function Component (
         children = attributes;
         attributes = {};
     }
+    // @ts-ignore
     return ContextTool.ce(fn, attributes, children);
 }
 
@@ -71,6 +72,7 @@ export function Component (
 // );
 
 export function If (condition: IBoolCond, generator: IDomGenerator, ...items: any[][]) {
+    // @ts-ignore
     let result = _if(condition, generator, createContext());
     for (const item of items) {
         if (item.length === 2) result = result.elif(item[0], item[1]);
@@ -92,6 +94,7 @@ export function Else (generator: IDomGenerator) {
 //     alins.default(1, ()=>{}, true),
 // )
 export function Switch (condition: IValueCond<any>, generator: IDomGenerator) {
+    // @ts-ignore
     return _switch(condition, generator, createContext()).end();
 }
 
@@ -111,7 +114,7 @@ export function Case (value: any, generator: IDomGenerator, brk?: boolean) {
     return data;
 }
 export function Default (generator: IDomGenerator, brk?: boolean) {
-    const data: ICaseItem = {c: generator, };
+    const data: ICaseItem = {c: generator};
     if (typeof brk === 'boolean') data.b = brk;
     return data;
 }
@@ -124,6 +127,7 @@ export function Async<T=any> (
     promise: Promise<T>,
     generator: (data: T)=>IGeneralElement|IGeneralElement[]
 ) {
+    // @ts-ignore
     return ContextTool.ce(async () => {
         const data = await promise;
         return generator(data);
@@ -137,6 +141,7 @@ export function For<T=any> (
     data: T[],
     generator: (item: T, index: number)=>IGeneralElement|IGeneralElement[]
 ) {
+    // @ts-ignore
     return map(data, generator, true, 'item', 'index');
 }
 

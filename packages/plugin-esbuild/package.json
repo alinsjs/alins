@@ -1,9 +1,9 @@
 {
     "name": "esbuild-plugin-alins",
-    "version": "0.0.18",
+    "version": "0.0.20-beta.5",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/esbuild-plugin-alins.cjs.min.js",
+    "typings": "dist/esbuild-plugin-alins.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -19,11 +19,11 @@
     "license": "MIT",
     "type": "commonjs",
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/"
+        "registry": "https://registry.npmjs.org/",
+        "tag": "beta"
     },
-    "unpkg": "dist/alins-utils.min.js",
-    "jsdelivr": "dist/alins-utils.min.js",
     "dependencies": {
-        "alins-compiler-node": "^0.0.18"
-    }
+        "alins-compiler-node": "^0.0.20-beta.5"
+    },
+    "module": "dist/esbuild-plugin-alins.esm.min.js"
 }

@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-16 15:53:02
+ * @LastEditTime: 2023-08-09 21:28:50
  */
 import {JSX as React} from 'packages/core/src/element/element';
 import {createContext} from 'packages/core/src/context';
@@ -16,7 +16,7 @@ export default [
         name: '基础switch',
         disabled: false,
         test () {
-            const {list, ctx, data, container, collect, append} = createTestBase();
+            const {list, ctx, data, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
 
             /*
@@ -68,7 +68,7 @@ export default [
         name: 'switch + return jsx',
         disabled: false,
         test () {
-            const {list, ctx, data, container, collect, append} = createTestBase();
+            const {list, ctx, data, collect, append} = createTestBase();
             // const Child = () => <div>child</div>;
 
             /*

@@ -4,7 +4,7 @@
  * @Date: 2022-11-25 10:45:54
  * @Description: Coding something
  */
-import {parseAlins} from 'alins-compiler-node/dist/alins-compiler-node.umd.min';
+import {parseAlins} from 'alins-compiler-node';
 
 export default function AlinsVitePlugin ()  {
     return {
@@ -14,14 +14,12 @@ export default function AlinsVitePlugin ()  {
             esbuild: {
                 jsx: 'preserve'
             }
-        }),
+        }) as any,
   
         transform (code: string, id: string) {
             if (!/\.[jt]sx$/.test(id)) return null;
             return {code: parseAlins(code)};
         },
-        // handleHotUpdate () {
-        // }
     };
 }
   

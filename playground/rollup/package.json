@@ -12,7 +12,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.1.0",
     "@rollup/plugin-typescript": "^11.1.2",
-    "rollup": "^3.27.2"
+    "rollup": "^3.27.2",
+    "rollup-plugin-alins": "0.0.20-beta.5"
+  },
+  "dependencies": {
+    "alins": "0.0.20-beta.1"
   }
 }

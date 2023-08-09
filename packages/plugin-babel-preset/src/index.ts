@@ -6,6 +6,7 @@
 export default function (babel: any, options : {
     ts?: boolean,
     jsx?: boolean,
+    web?: boolean,
 } = {}) {
     const presets: any[] = [];
     if (options?.ts) {
@@ -15,7 +16,9 @@ export default function (babel: any, options : {
         presets.push(require('@babel/preset-react'));
     }
     return {
-        plugins: [require('babel-plugin-alins')],
+        plugins: [[
+            require('babel-plugin-alins'), {web: options.web}
+        ]],
         presets,
     };
 }
