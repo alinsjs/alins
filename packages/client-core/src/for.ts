@@ -68,7 +68,7 @@ export function map (
     };
 
     const createChild = (item: any, i: number): [ITrueElement, ITrueElement, IProxyData<any>] => {
-        console.log('createChild', item, i);
+        // console.log('createChild', item, i);
         const scope = createScope(item, i);
 
         let child = call(scope[k], scope[ik] || i);
@@ -95,7 +95,7 @@ export function map (
             if (i === 0) head = child;
         }
         // if(i===0)debugger;
-        console.log(head, i);
+        // console.log(head, i);
         return [child, end, scope];
     };
     for (let i = 0; i < n; i++) {
@@ -125,7 +125,7 @@ export function map (
                     // console.warn('【debug: watch array replace1', index, JSON.stringify(data));
                     scopeItems[index] = createScope(data[0], index);
                 } else {
-                    console.warn('【debug: watch array replace2', index, JSON.stringify(data));
+                    // console.warn('【debug: watch array replace2', index, JSON.stringify(data));
                     // const v = isProxy(data[0]) ? data[0].v : data[0];
                     if (data[0] !== scopeItems[index][k].v) {
                         // console.log('debug: watch array replace------------');

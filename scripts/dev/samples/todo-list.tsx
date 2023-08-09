@@ -14,7 +14,9 @@ function List () {
             <button onclick={() => { list.push(value); }}>add</button>
         </div>
         <For data={list}>
-            <button onclick={() => {list.splice($index, 1);}}>delete</button>
+            <Item item={$item} index={$index}>
+                <button onclick={() => {list.splice($index, 1);}}>delete</button>
+            </Item>
         </For>
     </div>;
 }
