@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-09 23:43:23
+ * @LastEditTime: 2023-08-10 01:05:30
 -->
 
 # 0.1.0
@@ -30,13 +30,13 @@ feat：
 - [x] node-compiler 增加 import 'alins'
 - [x] babel、babel-preset，webpack-loader、rollup-plugin、vite-plugin、esbuild-plugin
 - [x] For、async组件 data数据处理，识别不到data定义 (eslint-config解决)
-- [ ] alins-compiler-web 将babel模改后直接引入
-- [ ] 重新走一下测试脚本
-- [ ] alins-cli、alins-template （base on vite、vite-plugin-alins、eslint-config）
+- [x] alins-cli、alins-template （base on vite、vite-plugin-alins、eslint-config）
+- [x] 重新走一下测试脚本
+- [x] 编译 + 运行时 结合测试
+- [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接被执行了
 - [ ] 发包脚本
 - [ ] 与react vue 性能比较
 - [ ] 文档 & 在线编译工具
-- [ ] 编译 + 运行时 结合测试
 - [ ] eslint-config-alins 验证
 
 new feature
@@ -46,6 +46,7 @@ new feature
 - [ ] $if $elif $else $case $default 属性支持
 - [ ] style 标签优化 处理 提高css可用性, style 值类型声明
 - [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
+- [ ] SSR
 
 fix
 
