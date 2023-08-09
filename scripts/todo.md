@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-10 01:05:30
+ * @LastEditTime: 2023-08-10 01:48:36
 -->
 
 # 0.1.0
@@ -47,6 +47,7 @@ new feature
 - [ ] style 标签优化 处理 提高css可用性, style 值类型声明
 - [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
 - [ ] SSR
+- [ ] 利用自定义 renderer 实现跨平台
 
 fix
 
