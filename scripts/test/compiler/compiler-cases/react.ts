@@ -162,7 +162,7 @@ let _$b = _$$.c(() => a.v + 1);
 export let b = _$$.w(() => _$b.v, () => b = v, false).v;
 a.v = 2;
 var s = _$$.c(() => \`\${a.v}\${a.v + 1}\${x}\${_$b.v}\`);
-var d = /*#__PURE__*/_$$.ce("div", {
+var d = _$$.ce("div", {
   class: () => a.v + 1,
   x: x,
   b: () => \`2\${a.v}1\${a.v + 1}\`

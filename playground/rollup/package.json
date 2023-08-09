@@ -1,0 +1,18 @@
+{
+  "name": "rollup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "_watch": "npx node ./dev/rollup.js",
+    "_serve": "serve dev",
+    "dev": "run-p _watch _serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.2",
+    "rollup": "^3.27.2"
+  }
+}

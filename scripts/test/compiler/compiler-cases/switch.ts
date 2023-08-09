@@ -3,7 +3,7 @@
  * @Date: 2023-07-01 01:15:31
  * @Description: Coding something
  */
-import { ICodeMap } from '../util';
+import {ICodeMap} from '../util';
 // import { parseAlins } from 'src/node-parser';
 
 // input: 'import aa from "aa"; var a=1;export let b=a+1; a=2;var s = `${a}${a+1}`;var d=<div class={a+1} b={`2${a}1${a+1}`}>{a}{a+1}</div>',
@@ -21,7 +21,7 @@ switch(data.a) {
 console.log(4);
 `,
         output: `
-const _$ = _$$(true);
+const _$ = _$$();
 _$.switch(() => data.a, [{
   c: () => {
     console.log(1);
@@ -67,8 +67,8 @@ async function fn() {
 }
 `,
         output: `
+const _$ = _$$();
 async function fn() {
-  const _$ = _$$();
   return _$.switch(() => data.a, [{
     c: () => {
       console.log(1);
@@ -94,7 +94,7 @@ async function fn() {
     b: true
   }, {
     c: () => {
-      return /*#__PURE__*/_$$.ce("div", null, "c1");
+      return _$$.ce("div", null, "c1");
     },
     v: 3
   }, {
@@ -104,11 +104,11 @@ async function fn() {
     v: 4
   }, {
     c: () => {
-      return /*#__PURE__*/_$$.ce("div", null, "c3");
+      return _$$.ce("div", null, "c3");
     },
     v: 5
   }]).end(() => {
-    return /*#__PURE__*/_$$.ce("div", null, "end");
+    return _$$.ce("div", null, "end");
   });
 }
     `
@@ -127,8 +127,8 @@ async function fn() {
 }
 `,
         output: `
+const _$ = _$$();
 async function fn() {
-  const _$ = _$$();
   return _$.switch(() => data.a, [{
     c: () => {
       console.log(1);
@@ -138,10 +138,10 @@ async function fn() {
     b: true
   }, {
     c: () => {
-      return /*#__PURE__*/_$$.ce("div", null, "c3");
+      return _$$.ce("div", null, "c3");
     }
   }]).end(() => {
-    return /*#__PURE__*/_$$.ce("div", null, "end");
+    return _$$.ce("div", null, "end");
   });
 }
   `
@@ -170,8 +170,8 @@ async function fn() {
 }
 `,
         output: `
+const _$ = _$$();
 async function fn() {
-  const _$ = _$$();
   return _$.switch(() => data.a, [{
     c: () => {
       console.log(1);
@@ -198,10 +198,10 @@ async function fn() {
           v: 1
         }, {
           c: () => {
-            return /*#__PURE__*/_$$.ce("div", null, "c3");
+            return _$$.ce("div", null, "c3");
           }
         }]).end(() => {
-          return /*#__PURE__*/_$$.ce("div", null, "end");
+          return _$$.ce("div", null, "end");
         });
       }
       ;
@@ -211,10 +211,10 @@ async function fn() {
     b: true
   }, {
     c: () => {
-      return /*#__PURE__*/_$$.ce("div", null, "c3");
+      return _$$.ce("div", null, "c3");
     }
   }]).end(() => {
-    return /*#__PURE__*/_$$.ce("div", null, "end");
+    return _$$.ce("div", null, "end");
   });
 }
 `
@@ -240,8 +240,8 @@ async function fn() {
 }
 `,
         output: `
+const _$ = _$$();
 async function fn() {
-  const _$ = _$$();
   return _$.switch(() => data.a, [{
     c: () => {
       console.log(2);
@@ -251,7 +251,7 @@ async function fn() {
     b: true
   }, {
     c: () => {
-      return /*#__PURE__*/_$$.ce("div", null, "c3");
+      return _$$.ce("div", null, "c3");
     }
   }]).end(() => {
     return _$.switch(() => data.a, [{
@@ -270,10 +270,10 @@ async function fn() {
       b: true
     }, {
       c: () => {
-        return /*#__PURE__*/_$$.ce("div", null, "c3");
+        return _$$.ce("div", null, "c3");
       }
     }]).end(() => {
-      return /*#__PURE__*/_$$.ce("div", null, "end");
+      return _$$.ce("div", null, "end");
     });
   });
 }

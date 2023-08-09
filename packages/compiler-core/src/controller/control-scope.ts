@@ -35,7 +35,7 @@ export abstract class ControlScope<NodeType> {
 
     exit () {
         // 记录end是否是async
-        console.log('recordAwait', this.recordAwait);
+        // console.log('recordAwait', this.recordAwait);
         if (this.recordAwait) {
             this.parentScope.startRecordAwait();
         }

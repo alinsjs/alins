@@ -37,7 +37,7 @@ export const Names = {
         // 部分使用ctx时候并不是在当前作用域
         // 比如因为有赋值导致的react和computed
         const ctx = currentCtx;
-        console.log('AlinsCtx use', ctx);
+        // console.log('AlinsCtx use', ctx);
         // if (!ctx) debugger;
         if (!ctx._used) ctx._used = true;
         return this._Ctx;
@@ -338,7 +338,6 @@ export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i
         if (node.alternate?.type === 'IfStatement') {
             traverseIfStatement(node.alternate, map, i + 1);
         } else {
-            console.log('if-debug: Else');
             let elseBody = node.alternate;
             if (elseBody.type !== 'BlockStatement') {
                 elseBody = t.blockStatement([ node.alternate ]);
@@ -362,12 +361,9 @@ export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i
     // ! 只要为false 则不需要再检查其他分支
     // if (returned) returned = isBlockReturned(body);
     if (i === 0) {
-        console.log('if-debug: If');
         item.id.name = 'if';
         map.if = item;
         // map.returned = returned;
-
-        console.log('if-debug: End');
         map.end = {
             id: t.identifier('end'),
             fn: createSetAsyncArrowFunc(t.blockStatement([])),
@@ -375,7 +371,6 @@ export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i
 
         return map;
     } else {
-        console.log('if-debug: ElseIf');
         map.elif.unshift(item);
     }
 }

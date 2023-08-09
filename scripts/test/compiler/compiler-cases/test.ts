@@ -39,13 +39,13 @@ var a = _$$.r({
 var list = _$$.r({
   v: [1, 2, 3, 4]
 });
-document.body.appendChild( /*#__PURE__*/_$$.ce("", null, /*#__PURE__*/_$$.ce("button", {
+document.body.appendChild(_$$.ce("", null, _$$.ce("button", {
   onclick: () => {
     a.v++;
     list.v.push(a.v);
   }
 }, a), list.v.map((v, i) => {
-  return /*#__PURE__*/_$$.ce("div", null, i, ":", v);
+  return _$$.ce("div", null, i, ":", v);
 }, true, "v", "i")));
     `
     },

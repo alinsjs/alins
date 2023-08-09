@@ -23,22 +23,120 @@ const {
     // resolveRootPath,
 } = require('./utils');
 
-const dirName = process.env.DIR_NAME;
-const packageName = process.env.PACKAGE_NAME;
-const format = process.env.FORMAT.split(' ');
-const umdName = process.env.UMD_NAME;
+function parseBuildConfig () {
 
-const umdFormat = format[0];
+    const dirName = process.env.DIR_NAME;
 
-// process.exit(0);
-const packageInfo = extractSinglePackageInfo(dirName);
-console.log(packageInfo.dependencies);
+    const BuildMap = {
+        'client-core': {
+            packageName: 'alins',
+            // format: 'esm umd',
+            format: 'iife',
+            umdName: 'Alins',
+        },
+        'client-reactive': {
+            packageName: 'alins-reactive',
+            format: 'esm umd',
+            umdName: 'AlinsReactive',
+        },
+        'client-utils': {
+            packageName: 'alins-utils',
+            format: 'esm umd',
+        },
+        'client-standalone': {
+            packageName: 'alins-standalone',
+            format: 'esm umd iife',
+            umdName: 'Alins',
+        },
+        'compiler-core': {
+            packageName: 'alins-compiler-core',
+            format: 'esm umd cjs',
+            umdName: 'AlinsCompiler',
+            // format: 'cjs'
+        },
+        'compiler-node': {
+            packageName: 'alins-compiler-node',
+            // format: 'esm cjs',
+            format: 'umd',
+        },
+        'compiler-web': {
+            packageName: 'alins-compiler-web',
+            format: 'esm umd iife',
+            umdName: 'AlinsWeb',
+        },
+        'plugin-babel': {
+            packageName: 'babel-plugin-alins',
+            // format: 'esm cjs',
+            format: 'cjs',
+        },
+        'plugin-babel-preset': {
+            packageName: 'babel-preset-alins',
+            // format: 'esm cjs',
+            format: 'cjs',
+            external: true,
+        },
+        'plugin-vite': {
+            packageName: 'vite-plugin-alins',
+            // format: 'esm cjs',
+            format: 'esm',
+        },
+        'plugin-webpack': {
+            packageName: 'alins-loader',
+            // format: 'esm cjs',
+            format: 'cjs',
+            external: 'esbuild',
+        },
+        'plugin-esbuild': {
+            packageName: 'esbuild-plugin-alins',
+            // format: 'esm cjs',
+            format: 'cjs',
+        },
+        'plugin-rollup': {
+            packageName: 'rollup-plugin-alins',
+            // format: 'esm cjs',
+            format: 'cjs',
+            external: 'esbuild',
+        },
+    };
+    
+    const buildConfig = BuildMap[dirName];
+    
+    const {
+        packageName, umdName
+    } = buildConfig;
+    
+    const format = buildConfig.format.split(' ');
+    
+    const dtsFormat = format[0];
+    
+    const extensions = ['.ts', '.d.ts', '.js'];
+    
+    const inputFile = resolvePackagePath(`${dirName}/src/index.ts`);
+    console.log(inputFile);
 
-const extensions = ['.ts', '.d.ts', '.js'];
+    // process.exit(0);
 
-const inputFile = resolvePackagePath(`${dirName}/src/index.ts`);
-console.log(inputFile);
+    let external = [];
+    if (buildConfig.external === true) {
+        const packageInfo = extractSinglePackageInfo(dirName);
+        external = packageInfo.dependencies;
+    } else if (typeof buildConfig.external === '') {
+        external = buildConfig.external.split(' ');
+    }
+    console.log('external: ', external);
 
+    return {
+        packageName, umdName, dtsFormat, extensions,
+        inputFile, dirName, format, external
+    };
+}
+
+const {
+    packageName, umdName, dtsFormat, extensions,
+    inputFile, dirName, format, external
+} = parseBuildConfig();
+
+console.log('external', external);
 
 const createBaseConfig = (format) => {
 
@@ -68,8 +166,7 @@ const createBaseConfig = (format) => {
                 configFile: path.join(__dirname, './babel.config.js'),
             }),
         ],
-        // external: (format === 'esm' || format === 'cjs') ? packageInfo.dependencies : {},
-        // external: (format === 'esm') ? packageInfo.dependencies : {},
+        external,
     };
 };
 
@@ -81,7 +178,7 @@ const config = [
     // 生成 .d.ts 类型声明文件
         input: inputFile,
         output: {
-            file: resolvePackagePath(`${dirName}/dist/${packageName}.${umdFormat}.min.d.ts`),
+            file: resolvePackagePath(`${dirName}/dist/${packageName}.${dtsFormat}.min.d.ts`),
             format: 'es',
         },
         plugins: [dts(), json()],

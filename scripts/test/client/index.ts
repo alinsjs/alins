@@ -4,11 +4,11 @@
  * @Description: Coding something
  */
 import {startTest} from 'easy-test-lib';
-import reactive from './cases/reactive';
-import dom from './cases/dom';
-import ifCase from './cases/if';
-import asyncCase from './cases/async';
-import switchCase from './cases/switch';
+// import reactive from './cases/reactive';
+// import dom from './cases/dom';
+// import ifCase from './cases/if';
+// import asyncCase from './cases/async';
+// import switchCase from './cases/switch';
 import forCase from './cases/for';
 // import {react, watch} from 'packages/reactive/src';
 // window.react = react;
@@ -37,6 +37,6 @@ function startTestMain () {
         }
     });
 }
-window.startTestMain = startTestMain;
+(window as any).startTestMain = startTestMain;
 
 startTestMain();

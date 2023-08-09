@@ -169,8 +169,6 @@ function parseIf (path: NodePath<JSXElement>) {
             setAnchor(object, id, args);
             if (!end) {
                 const path = nextSibling();
-                console.log(path?.toString?.());
-                debugger;
                 if (!path.node) {
                     endIf();
                     return;

@@ -14,7 +14,6 @@ export class IfScope extends ControlScope<IfStatement> {
     _init () {
         const node = this.path.node;
         const map = traverseIfStatement(node);
-        console.log('if-debug: map=', map);
 
         const t = getT();
 

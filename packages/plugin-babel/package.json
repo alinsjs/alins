@@ -1,5 +1,5 @@
 {
-    "name": "alins-plugin-babel",
+    "name": "babel-plugin-alins",
     "version": "0.0.18",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
@@ -17,7 +17,7 @@
         "web-ui-framework"
     ],
     "license": "MIT",
-    "type": "module",
+    "type": "commonjs",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },

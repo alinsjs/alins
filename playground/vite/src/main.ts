@@ -4,6 +4,6 @@
  * @Description: Coding something
  */
 
-import './a';
+import './alins';
 
 console.log(1);

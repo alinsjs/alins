@@ -3,6 +3,6 @@
  * @Date: 2023-08-02 22:36:16
  * @Description: Coding something
  */
-import {babelPluginAlins} from 'alins-compiler-core';
+import {createBabelPluginAlins} from 'alins-compiler-core';
 
-export default babelPluginAlins;
+export default createBabelPluginAlins();

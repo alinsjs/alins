@@ -1,5 +1,5 @@
 
-import type {NodePath, Node, TraverseOptions} from '@babel/traverse';
+import type {NodePath, TraverseOptions} from '@babel/traverse';
 import type {Program} from '@babel/types';
 import type {IBabelType} from './types';
 import {parseCommentReactive} from './comment';
@@ -7,8 +7,7 @@ import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
 import {createAlinsCtx, createEmptyString, createUnfInit, getT, initTypes, ModArrayFunc, parseFirstMemberObject} from './parse-utils';
 
-
-export function createNodeVisitor (t: IBabelType) {
+export function createNodeVisitor (t: IBabelType, isWeb = false) {
     initTypes(t);
     return {
         Program: {
@@ -18,9 +17,19 @@ export function createNodeVisitor (t: IBabelType) {
                 for (let i = 0; i < body.length; i++) {
                     if (body[i]?.type !== 'ImportDeclaration') {
                         body.splice(i, 0, createAlinsCtx());
-                        return;
+                        break;
                     }
                 }
+
+                const define = isWeb ? t.variableDeclaration('var', [
+                    t.variableDeclarator(t.identifier('_$$'), t.memberExpression(
+                        t.memberExpression(t.identifier('window'), t.identifier('Alins')),
+                        t.identifier('_$$'),
+                    ))
+                ]) : t.importDeclaration([
+                    t.importSpecifier(t.identifier('_$$'), t.identifier('_$$'))
+                ], t.stringLiteral('alins'));
+                body.unshift(define);
             },
             exit () {
                 exitContext();
@@ -187,7 +196,11 @@ export function createNodeVisitor (t: IBabelType) {
             if (!ctx.enter(path)) return;
             const node = path.node.argument;
             // debugger;
+            // @ts-ignore
             if (node?.type === 'JSXElement' || node?.type === 'JSXFragment') {
+            // if (isJSXElement(node) || (
+            //     node?.type === 'JSXElement' || node?.type === 'JSXFragment'
+            // )) {
                 ctx.mapScope?.markReturnJsx();
             }
         },
@@ -298,12 +311,11 @@ export function createNodeVisitor (t: IBabelType) {
         },
         CallExpression: {
             enter (path) {
-                // console.log('CallExpression', path.toString(), path.node._skip);
                 // debugger;
                 if (!ctx.enter(path)) return;
                 const callee = path.node.callee;
                 if (callee.type === 'MemberExpression') {
-                // @ts-ignore
+                    // @ts-ignore
                     const prop = callee.property.name;
                     // path.node._mapScope = true;
                     // debugger;
@@ -383,9 +395,11 @@ export function createNodeVisitor (t: IBabelType) {
     } as TraverseOptions<Node>;
 }
 
-export function babelPluginAlins (data: any) {
-    return {
-        name: 'babel-plugin-alins',
-        visitor: createNodeVisitor(data.types)
+export function createBabelPluginAlins (isWeb?: boolean) {
+    return (data: any) => {
+        return {
+            name: 'babel-plugin-alins',
+            visitor: createNodeVisitor(data.types, isWeb)
+        };
     };
 }

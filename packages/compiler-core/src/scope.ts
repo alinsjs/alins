@@ -325,24 +325,24 @@ export class Scope {
     markVariableReactive (name: string, force = false) {
         const variable = this.findVarDeclare(name);
         if (!variable) {
-            return console.warn(`markVariableReactive:未找到变量声明${name}`);
+            return; // console.warn(`markVariableReactive:未找到变量声明${name}`);
         }
         if (variable.handled && !force) return;
         // if (name === 'item') debugger;
         this.handleReactive(variable);
 
-        console.log(
-            'markVariableReactive', name,
-            variable.usedIds.length,
-            variable.dependComputed.length,
-        );
+        // console.log(
+        //     'markVariableReactive', name,
+        //     variable.usedIds.length,
+        //     variable.dependComputed.length,
+        // );
 
         // variable.usedIds = variable.dependComputed = variable.dependJsx = [];
     }
 
     // ! 更新某个变量的所有引用 和 computed依赖
     private _updateDependIdentifier (v: IScopeVariable) {
-        console.log('---_updateDependIdentifier', v.name, v.usedIds.length);
+        // console.log('---_updateDependIdentifier', v.name, v.usedIds.length);
         v.usedIds.forEach((path) => {
             this._replaceReadValuePath(path, v);
         });
@@ -365,7 +365,7 @@ export class Scope {
     }
 
     collectDependAction (name: string, fn: ()=>void) {
-        const variable = this.variableMap[name];
+        const variable = this.findVarDeclare(name);
         if (!variable) return false;
         if (variable.isReactive) {
             fn();
@@ -377,7 +377,7 @@ export class Scope {
     }
 
     collectIdentifier (path: NodePath<Identifier>) {
-        console.log('---collectIdentifier', path.node.name);
+        // console.log('---collectIdentifier', path.node.name);
         const node = path.node;
         // @ts-ignore
         if (typeof node.start !== 'undefined' && path.parent.id === node.start) {
@@ -394,7 +394,8 @@ export class Scope {
         // if (variable?.path.node.name === 'a') debugger;
         if (!variable) {
             // debugger;
-            return console.warn(`未找到变量声明${node.name}`);
+            // return console.warn(`未找到变量声明${node.name}`);
+            return;
         }
 
         if (variable.path.node.start === node.start) return;
@@ -414,9 +415,7 @@ export class Scope {
             this.processComputedNode(variable);
         }
 
-        // if (node.name === 'c') debugger;
-
-        console.log('---variable.isReactive', variable.isReactive);
+        // console.log('---variable.isReactive', variable.isReactive);
         if (variable.isReactive) { //
             this._replaceReadValuePath(path, variable);
             return;
@@ -426,10 +425,10 @@ export class Scope {
     }
 
     private _replaceReadValuePath (path: NodePath, variable: IScopeVariable) {
-        console.log('---_replaceReadValuePath', variable.skipReadV);
+        // console.log('---_replaceReadValuePath', variable.skipReadV);
         if (variable.skipReadV) return;
         if (variable.isProps) {
-        // @ts-ignore
+            // @ts-ignore
             const sp = path.node._secondPath;
             const t = getT();
             sp.replaceWith(skipNode(t.memberExpression(

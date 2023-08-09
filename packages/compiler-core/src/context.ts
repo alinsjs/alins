@@ -83,8 +83,14 @@ export class Module {
         // console.log(path.toString());
         if (!this.curScope) return false;
         if (this.curScope.inJsxTrans) return true; // 在 jsx 转译后的代码中需要向下遍历
-        if (isJsxCallee(path)) {
-            // debugger;
+        if (isJsxCallee(path.node)) {
+            // ! 移除 pure 的注释 ! 因为 $parent 属性导致不是纯函数
+            const comments = path.node.leadingComments;
+            for (let i = comments.length - 1; i >= 0; i--) {
+                if (comments[i].value === '#__PURE__') {
+                    comments.splice(i, 1);
+                }
+            }
             // jsx 转译后的代码
             this.curScope.enterJsxScope(path);
             return true;
@@ -137,7 +143,7 @@ export class Module {
         // @ts-ignore
         if (path.node._fnArg === true) {
             // 函数参数
-            console.log('函数参数: path.parent === scope.node', path.node.name);
+            // console.log('函数参数: path.parent === scope.node', path.node.name);
             scope.collectParam(path);
         } else {
             // console.log('collectIdentifier 1111', path.toString());
