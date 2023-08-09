@@ -27,7 +27,7 @@ const dom = <div a={a+1} b={{
 let a = _$$.r({
   v: 0
 });
-const dom = /*#__PURE__*/_$$.ce("div", {
+const dom = _$$.ce("div", {
   a: () => a.v + 1,
   b: () => ({
     a: a.v + 2
@@ -56,7 +56,7 @@ const dom = <div a={a+1} b={{
 let a = _$$.r({
   v: 0
 });
-const dom = /*#__PURE__*/_$$.ce("div", {
+const dom = _$$.ce("div", {
   a: () => a.v + 1,
   b: () => ({
     a: a.v + 2
@@ -83,9 +83,9 @@ let done = false;
 let done = _$$.r({
   v: false
 });
-/*#__PURE__*/_$$.ce("div", {
+_$$.ce("div", {
   a: () => !done.v
-}, /*#__PURE__*/_$$.ce("span", null, "1"), /*#__PURE__*/_$$.ce("button", {
+}, _$$.ce("span", null, "1"), _$$.ce("button", {
   onclick: () => {
     done.v = !done.v;
   }
@@ -105,14 +105,14 @@ function Bb({a,b,c: C}, children){
 `,
         output: `
 function Aa(props, children) {
-  return /*#__PURE__*/_$$.ce("div", null, () => props.b.v + 1, " ", () => props.a.v.b.c, " ");
+  return _$$.ce("div", null, () => props.b.v + 1, " ", () => props.a.v.b.c, " ");
 }
 function Bb({
   a,
   b,
   c: C
 }, children) {
-  return /*#__PURE__*/_$$.ce("div", null, () => a.v + 1, " ", () => b.v + 1, " ", () => C.v + 1, " ");
+  return _$$.ce("div", null, () => a.v + 1, " ", () => b.v + 1, " ", () => C.v + 1, " ");
 }
     `
     },
@@ -121,16 +121,16 @@ function Bb({
         disabled: false,
         input: `
 let data = [1]
-const d = <for data={data} item='item' index='index'>
+const d = <For data={data} item='item' index='index'>
   <span>{item+1}</span>
-</for>
+</For>
 data.push(1);
 `,
         output: `
 let data = _$$.r({
   v: [1]
 });
-const d = data.v.map((item, index) => /*#__PURE__*/_$$.ce("", null, /*#__PURE__*/_$$.ce("span", null, item.v + 1)), true, "item", "index");
+const d = data.v.map((item, index) => _$$.ce("", null, _$$.ce("span", null, () => item.v + 1)), true, "item", "index");
 data.v.push(1);
     `
     },
@@ -140,42 +140,43 @@ data.v.push(1);
         input: `
 let i = 1
 const d = <>
-    <if data={i === 1}>
+    <If data={i === 1}>
         <div>11</div>
-    </if>
-    <elseif data={i === 2}>
+    </If>
+    <ElseIf data={i === 2}>
         <div>22</div>
-    </elseif>
-    <else>
+    </ElseIf>
+    <Else>
         <div>33</div>
-    </else>
+    </Else>
 </>
 i = 2;
 `,
         output: `
-const _$ = _$$(true);
+const _$ = _$$();
 let i = _$$.r({
   v: 1
 });
-const d = /*#__PURE__*/_$$.ce("", null, _$.if(() => i.v === 1, () => /*#__PURE__*/_$$.ce("", null, /*#__PURE__*/_$$.ce("div", null, "11"))).elif(() => i.v === 2, () => /*#__PURE__*/_$$.ce("", null, /*#__PURE__*/_$$.ce("div", null, "22"))).else(() => /*#__PURE__*/_$$.ce("", null, /*#__PURE__*/_$$.ce("div", null, "33"))).end());
+const d = _$$.ce("", null, _$.if(() => i.v === 1, () => _$$.ce("", null, _$$.ce("div", null, "11"))).elif(() => i.v === 2, () => _$$.ce("", null, _$$.ce("div", null, "22"))).else(() => _$$.ce("", null, _$$.ce("div", null, "33"))).end());
 i.v = 2;
     `
     },
     {
-        name: 'if component',
+        name: 'switch component',
         disabled: false,
         input: `
 let v = 1;
 
-<switch data={v}>
-  <case data={1} break>11</case>
-  <case data={2} break>22</case>
-  <default>33</default>
-</switch>
+<Switch data={v}>
+  <Case data={1} break>11</Case>
+  <Case data={2} break>22</Case>
+  <Default>33</Default>
+</Switch>
 
 v = 2;
 `,
         output: `
+const _$ = _$$();
 let v = _$$.r({
   v: 1
 });
@@ -197,23 +198,23 @@ v.v = 2;
         name: 'async component',
         disabled: false,
         input: `
-document.body.appendChild(<async data={aa()} name="data">
+document.body.appendChild(<Async data={aa()} name="data">
   <div onclick={()=>{
     data ++;
   }}>{data}</div>
   <div>{data+1}</div>
-</async>)
+</Async>)
 `,
         output: `
 document.body.appendChild(_$$.ce(async () => {
   var data = _$$.r({
     v: await aa()
   });
-  return /*#__PURE__*/_$$.ce("", null, /*#__PURE__*/_$$.ce("div", {
+  return _$$.ce("", null, _$$.ce("div", {
     onclick: () => {
       data.v++;
     }
-  }, data), /*#__PURE__*/_$$.ce("div", null, () => data.v + 1));
+  }, data), _$$.ce("div", null, () => data.v + 1));
 }));
     `
     },

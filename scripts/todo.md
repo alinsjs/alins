@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-08 19:49:31
+ * @LastEditTime: 2023-08-08 23:19:52
 -->
 
 # 0.1.0
@@ -26,18 +26,20 @@ feat：
 - [x] alins客户端直接使用封装api
 - [x] alins-web-compiler web侧编译器
 - [x] alins-node-compiler web侧编译器
-- [ ] 去除 /*#__PURE__*/ comment
-- [ ] node-compiler 增加 import 'alins'
+- [x] 去除 /*#__PURE__*/ comment
+- [x] node-compiler 增加 import 'alins'
+- [x] babel、babel-preset，webpack-loader、rollup-plugin、vite-plugin、esbuild-plugin
+- [x] For、async组件 data数据处理，识别不到data定义 (eslint-config解决)
+- [ ] 重新走一下测试脚本
+- [ ] alins-cli、alins-template （base on vite、vite-plugin-alins、eslint-config）
 - [ ] 发包脚本
-- [ ] jsx 编译 和 alins 编译分离 （解耦）
-- [ ] 文档
-- [ ] babel-alins插件，webpack、rollup、vite插件
-- [ ] For、async组件 data数据处理，识别不到data定义 (eslint-config解决)
+- [ ] 与react vue 性能比较
+- [ ] 文档 & 在线编译工具
 - [ ] 编译 + 运行时 结合测试
-- [ ] typescript 支持
 
 new feature
 
+- [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
 - [ ] For Object 支持
 - [ ] $if $elif $else $case $default 属性支持
 - [ ] style 标签优化 处理 提高css可用性, style 值类型声明

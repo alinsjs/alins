@@ -4,33 +4,15 @@
  * @Description: Coding something
  */
 import * as Babel from '@babel/standalone';
-import {babelPluginAlins} from 'alins-compiler-core';
+import {createBabelPluginAlins} from 'alins-compiler-core';
 
-Babel.registerPlugin('alins', babelPluginAlins);
+Babel.registerPlugin('alins', createBabelPluginAlins(true));
 
 export function parseWebAlins (code: string): string {
     const output = Babel.transform(code, {
         sourceMaps: false,
-        // presets: [ 'env', 'react' ],
         presets: [ 'react' ],
         plugins: [ 'alins' ],
     });
     return output.code || '';
 }
-
-// export function parseWebAlins (code: string, react = true): string {
-//     let output: any = null;
-//     if (react) {
-//         output = Babel.transform(code, {
-//             sourceMaps: false,
-//             presets: [ 'react' ],
-//         });
-//         code = output.code;
-//         console.warn('react result', code);
-//     }
-//     output = Babel.transform(code, {
-//         sourceMaps: false,
-//         plugins: [ 'alins' ],
-//     });
-//     return output.code || '';
-// }

@@ -13,12 +13,14 @@ export interface ICodeMap {
 }
 
 export function createTestCase (codeMap: ICodeMap[]) {
+    const isWeb = 'object' === typeof window && !!window.navigator;
+    const head = isWeb ? 'var _$$ = window.Alins._$$;\n' : 'import { _$$ } from "alins";\n';
     return codeMap.map((item, index) => ({
         name: item.name || `test-compile-react-${index}`,
         disabled: item.disabled ?? false,
         test ({parse}: any) {
             return parse(item.input || '').replace('"use strict";', '').trim();
         },
-        expect: item.output.trim(),
+        expect: `${head}${item.output.trim()}`,
     })) as ITestConfigItem[];
 }

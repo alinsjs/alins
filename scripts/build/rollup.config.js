@@ -31,7 +31,7 @@ function parseBuildConfig () {
         'client-core': {
             packageName: 'alins',
             // format: 'esm umd',
-            format: 'esm',
+            format: 'iife',
             umdName: 'Alins',
         },
         'client-reactive': {
@@ -65,8 +65,15 @@ function parseBuildConfig () {
             umdName: 'AlinsWeb',
         },
         'plugin-babel': {
-            packageName: 'babel-plugin-babel',
-            format: 'esm cjs',
+            packageName: 'babel-plugin-alins',
+            // format: 'esm cjs',
+            format: 'cjs',
+        },
+        'plugin-babel-preset': {
+            packageName: 'babel-preset-alins',
+            // format: 'esm cjs',
+            format: 'cjs',
+            external: true,
         },
         'plugin-vite': {
             packageName: 'vite-plugin-alins',
@@ -108,10 +115,15 @@ function parseBuildConfig () {
     console.log(inputFile);
 
     // process.exit(0);
-    const packageInfo = extractSinglePackageInfo(dirName);
-    console.log(packageInfo.dependencies);
 
-    const external = buildConfig.external ? buildConfig.external.split(' ') : [];
+    let external = [];
+    if (buildConfig.external === true) {
+        const packageInfo = extractSinglePackageInfo(dirName);
+        external = packageInfo.dependencies;
+    } else if (typeof buildConfig.external === '') {
+        external = buildConfig.external.split(' ');
+    }
+    console.log('external: ', external);
 
     return {
         packageName, umdName, dtsFormat, extensions,

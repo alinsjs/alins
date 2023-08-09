@@ -1,0 +1,22 @@
+{
+  "name": "babel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "_copy_core": "node dev/copy-alins.js",
+    "_watch": "npx babel src/alins.tsx -o dev/bundle.js -w",
+    "_serve": "serve dev",
+    "dev": "run-p _copy_core _watch _serve"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.22.10",
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.10",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/preset-typescript": "^7.22.5",
+    "typescript": "^5.1.6"
+  }
+}

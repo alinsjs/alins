@@ -45,7 +45,8 @@ async function onSingleScript (script: HTMLScriptElement) {
 }
 
 if (typeof window !== 'undefined') {
-    window._$$ = createContext;
+    // @ts-ignore
+    window.Alins = {_$$: createContext};
     window.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 }
 

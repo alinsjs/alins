@@ -1,5 +1,5 @@
 {
-    "name": "babel-plugin-alins",
+    "name": "babel-preset-alins",
     "version": "0.0.18",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
@@ -7,7 +7,7 @@
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
-        "build": "node ../../scripts/build/build.js plugin-babel"
+        "build": "node ../../scripts/build/build.js plugin-babel-preset"
     },
     "keywords": [
         "alins",
@@ -21,9 +21,7 @@
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
-    "unpkg": "dist/alins-utils.min.js",
-    "jsdelivr": "dist/alins-utils.min.js",
     "dependencies": {
-        "alins-compiler-core": "^0.0.18"
+        "babel-plugin-alins": "^0.0.18"
     }
 }

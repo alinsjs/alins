@@ -61,7 +61,7 @@ export class JsxScope {
     }
     // ! 收集jsx表达式 // 作用是转换之后就忽略掉转换之前的jsx表示式reactive处理
     collectJsxExp (node: JSXExpressionContainer) {
-        console.log('SCOPE_DEBUG_JSX collectJsxExp', node.type);
+        // console.log('SCOPE_DEBUG_JSX collectJsxExp', node.type);
         this.jsxNodes.push(node);
     }
     // ! 此处是为了解决 jsx转换是从最里层开始的 而收集jsx表达式是从最外层开始收集的导致 错误的标记了jsx表达式remove状态

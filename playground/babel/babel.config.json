@@ -1,0 +1,7 @@
+{
+    "plugins": [ "../../packages/plugin-babel/dist/babel-plugin-alins.cjs.min.js" ],
+    "presets": [
+        "@babel/preset-typescript",
+        "@babel/preset-react"
+    ]
+}

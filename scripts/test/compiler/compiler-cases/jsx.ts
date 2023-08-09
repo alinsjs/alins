@@ -3,7 +3,7 @@
  * @Date: 2023-07-01 01:15:31
  * @Description: Coding something
  */
-import { ICodeMap } from '../util';
+import {ICodeMap} from '../util';
 // import { parseAlins } from 'src/node-parser';
 
 // input: 'import aa from "aa"; var a=1;export let b=a+1; a=2;var s = `${a}${a+1}`;var d=<div class={a+1} b={`2${a}1${a+1}`}>{a}{a+1}</div>',
@@ -25,13 +25,13 @@ function fn() {
   let a = _$$.r({
     v: 1
   });
-  const dom1 = /*#__PURE__*/_$$.ce("div", {
+  const dom1 = _$$.ce("div", {
     a: a,
     onclick: () => a.v++,
     b: () => a.v + 2
   }, () => a.v + 3);
   a.v = 2;
-  const dom12 = /*#__PURE__*/_$$.ce("div", {
+  const dom12 = _$$.ce("div", {
     a: a,
     onclick: () => {
       a.v++;
@@ -74,7 +74,7 @@ function fn() {
   const x = _$$.c(() => a.v + 1);
   a.v = 2;
   const c = _$$.c(() => a.v + x.v + 1);
-  return /*#__PURE__*/_$$.ce("div", {
+  return _$$.ce("div", {
     a: a,
     b: () => \`{\${a.v}}\`,
     onclick: () => a.v + 1
@@ -86,7 +86,7 @@ function fn() {
 `
     },
     {
-        name: 'jsx',
+        name: 'jsx2',
         disabled: false,
         input: `
 function fn () {
@@ -106,7 +106,7 @@ function fn() {
     v: 1
   });
   b.v++;
-  return /*#__PURE__*/_$$.ce("div", {
+  return _$$.ce("div", {
     a: a,
     b: () => b.v + 2,
     onclick: () => a.v++
@@ -126,7 +126,7 @@ b = 2;
 let b = _$$.r({
   v: 3
 });
-const dom = /*#__PURE__*/_$$.ce("div", {
+const dom = _$$.ce("div", {
   b: () => b.v + 1
 }, () => b.v + 1);
 b.v = 2;
@@ -147,7 +147,7 @@ let a = _$$.r({
   v: 1
 });
 {
-  /*#__PURE__*/_$$.ce("div", null, () => a.v + 1);
+  _$$.ce("div", null, () => a.v + 1);
 }
 a.v++;
 `

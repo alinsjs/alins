@@ -67,9 +67,6 @@ export class MapScope extends ControlScope<CallExpression> {
         // console.log('map node', node);
         // @ts-ignore
         arg._mapScope = this;
-        // debugger;
-        // debugger;
-
 
         // @ts-ignore
         const params = arg.params;

@@ -3,7 +3,7 @@
  * @Date: 2023-07-01 01:15:31
  * @Description: Coding something
  */
-import { ICodeMap } from '../util';
+import {ICodeMap} from '../util';
 // import { parseAlins } from 'src/node-parser';
 
 // input: 'import aa from "aa"; var a=1;export let b=a+1; a=2;var s = `${a}${a+1}`;var d=<div class={a+1} b={`2${a}1${a+1}`}>{a}{a+1}</div>',
@@ -157,18 +157,18 @@ function fn(){
 }
       `,
         output: `
+const _$ = _$$();
 function fn() {
-  const _$ = _$$();
   let a = _$$.r({
     v: 1
   });
   return _$.if(() => a.v > 2, () => {
-    return /*#__PURE__*/_$$.ce("div", null, () => a.v + 1);
+    return _$$.ce("div", null, () => a.v + 1);
   }).elif(() => a.v < 1, () => {
     a.v++;
-    return /*#__PURE__*/_$$.ce("div", null, () => a.v + 2);
+    return _$$.ce("div", null, () => a.v + 2);
   }).end(() => {
-    return /*#__PURE__*/_$$.ce("div", null, () => a.v + 3);
+    return _$$.ce("div", null, () => a.v + 3);
   });
 }
       `
@@ -192,8 +192,8 @@ const dom2 = ()=>{
   return <div>{str}</div>;
 }`,
         output: `
+const _$ = _$$();
 const dom = () => {
-  const _$ = _$$();
   let str = '1';
   return _$.if(() => str === '1', () => {
     console.log(str);
@@ -202,12 +202,11 @@ const dom = () => {
   });
 };
 const dom2 = () => {
-  const _$ = _$$();
   let str = '1';
   return _$.if(() => str === '1', () => {
     console.log(str);
   }).end(() => {
-    return /*#__PURE__*/_$$.ce("div", null, str);
+    return _$$.ce("div", null, str);
   });
 };
     `
@@ -269,8 +268,8 @@ async function fn() {
 }
 `,
         output: `
+const _$ = _$$();
 async function fn() {
-  const _$ = _$$();
   let a = _$$.r({
     v: 1
   });

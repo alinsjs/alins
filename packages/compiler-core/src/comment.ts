@@ -7,6 +7,7 @@
 
 1. // @reactive 标注import的内容为响应式数据
 2. // @shallow 标注为浅响应式
+3. // @static 标注数据不为响应式
 */
 
 import type {Node} from '@babel/types';

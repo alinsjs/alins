@@ -31,8 +31,8 @@
         "scripts/**/*",
         "src/**/*",
         "global.d.ts",
-        "playground/**/src/*",
-        "playground/**/dev/*",
+        "playground/**/*.js",
+        "playground/**/*.ts",
         // "**/*.ts"
     ],
     "exclude": [
