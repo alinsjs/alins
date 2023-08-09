@@ -3,15 +3,15 @@
  * @Date: 2023-08-02 22:36:16
  * @Description: Coding something
  */
-export default function (args: {
+export default function (babel: any, options : {
     ts?: boolean,
     jsx?: boolean,
 } = {}) {
     const presets: any[] = [];
-    if (args?.ts) {
+    if (options?.ts) {
         presets.push(require('@babel/preset-typescript'));
     }
-    if (args?.jsx !== false) {
+    if (options?.jsx !== false) {
         presets.push(require('@babel/preset-react'));
     }
     return {

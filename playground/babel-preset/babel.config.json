@@ -1,0 +1,10 @@
+{
+    "presets": [
+        [
+            "../../packages/plugin-babel-preset/dist/babel-preset-alins.cjs.min.js",
+            {
+                "ts": true
+            }
+        ]
+    ]
+}

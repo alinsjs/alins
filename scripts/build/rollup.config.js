@@ -73,7 +73,6 @@ function parseBuildConfig () {
             packageName: 'babel-preset-alins',
             // format: 'esm cjs',
             format: 'cjs',
-            external: true,
         },
         'plugin-vite': {
             packageName: 'vite-plugin-alins',

@@ -22,6 +22,8 @@
         "registry": "https://registry.npmjs.org/"
     },
     "dependencies": {
+        "@babel/preset-react": "^7.22.5",
+        "@babel/preset-typescript": "^7.22.5",
         "babel-plugin-alins": "^0.0.18"
     }
 }
