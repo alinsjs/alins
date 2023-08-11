@@ -17,6 +17,8 @@ declare module '@babel/types' {
     // Node 也是 type，无法扩展
     interface CommonNode {
         _a: 1
+        _isReplace?: boolean; // 是否是完全赋值 const a=b;
+        _isForUpdate?: boolean; // 是否是for循环的初始化
     }
 
     interface AnyTypeAnnotation extends CommonNode {}

@@ -16,6 +16,7 @@ import {parseStyle} from './style';
 import {parseModel} from './model';
 import {getParent} from '../utils';
 import {parseAttributes} from './attributes';
+import {parseClassName} from './class';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -95,12 +96,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     });
                 } else if (k === 'class') {
                     // @ts-ignore
-                    el.className = reactiveClass(v, (key, value) => {
-                        el = el as IElement;
-                        // console.log(key, value);
-                        if (!key) el.className = value;
-                        else !!value ? el.classList.add(key) : el.classList.remove(key);
-                    });
+                    parseClassName(el, v);
                 } else {
                     // @ts-ignore
                     if (k === 'style' && parseStyle(el as HTMLElement, v)) continue;

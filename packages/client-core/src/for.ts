@@ -25,7 +25,7 @@ export function map (
     ik = ''
 ) {
     const list = this;
-    window._list = list;
+    // window._list = list;
     // todo list 需要reactive
     // debugger;
     if (!jsx) return list.map(call);
@@ -79,7 +79,6 @@ export function map (
         let child = call(scope[k], scope[ik] || i);
         // @ts-ignore
         let end: ITrueElement = child;
-        debugger;
         if (!child) {
             child = Renderer.createEmptyMountNode();
             end = child;
@@ -111,16 +110,13 @@ export function map (
         container.appendChild(child as any);
         EndMap[i] = end;
     }
-    debugger;
     watchArray(list, ({index, count, data, type}: IOprationAction) => {
         switch (type) {
             case OprateType.Push: {
-                console.log(index, count, data, type);
-                debugger;
+                // console.log(index, count, data, type);
                 const doc = Renderer.createDocumentFragment();
                 const length = list.length;
                 for (let i = 0; i < data.length; i++) {
-                    debugger;
                     const [child, end, scope] = createChild(data[i], length + i);
                     EndMap.push(end);
                     scopeItems.push(scope);
@@ -146,8 +142,7 @@ export function map (
                 // replaceItem(index, data[0]);
             };break;
             case OprateType.Remove: {
-                console.log(index, count, data, type);
-                debugger;
+                // console.log(index, count, data, type);
                 if (count === 0) break;
                 const startPos = index - 1;
                 const endPos = startPos + count;

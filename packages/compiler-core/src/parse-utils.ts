@@ -180,14 +180,18 @@ export function createJsxCompute (node: Expression|JSXExpressionContainer, isCom
     //     )
     // );
     const isContainer = node.type === 'JSXExpressionContainer';
+    const exp = isContainer ? node.expression as any : node as any;
     const call = t.arrowFunctionExpression(
-        [], isContainer ? node.expression as any : node as any
+        [], exp
     );
 
     const computed = isComp ? createComputeCall(call) : call;
     const result = isContainer ? t.jsxExpressionContainer(computed) : computed;
     // @ts-ignore
     result._handled = true;
+    // @ts-ignore
+    exp._handled = true;
+
     return result;
 }
 

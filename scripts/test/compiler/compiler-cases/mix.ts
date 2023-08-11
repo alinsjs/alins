@@ -218,4 +218,33 @@ document.body.appendChild(_$$.ce(async () => {
 }));
     `
     },
+    {
+        name: 'async component',
+        disabled: false,
+        input: `
+const a = 1;
+a++;
+const d1 = a[1];
+const d2 = a.a.a();
+const d22 = a.a.a;
+const d3 = a.a();
+const d4 = a;
+const d5 = a().a;
+`,
+        output: `
+const a = _$$.r({
+  v: 1
+});
+a.v++;
+const d0 = _$$.c(() => a.v + 1);
+const d1 = a.v[1];
+const d2 = _$$.c(() => a.v.a.a());
+const d22 = a.v.a.a;
+const d3 = _$$.c(() => a.v.a());
+const d4 = a;
+const d5 = _$$.c(() => a.v().a);
+    `
+    },
+
+    
 ] as ICodeMap[];

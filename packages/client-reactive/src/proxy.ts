@@ -55,11 +55,22 @@ export function createUtils (
     const isArray = Array.isArray(data);
     const triggerChange = (property: string, nv: any, old: any, remove?: boolean, isNew?: boolean) => {
         const each = (fn: any) => {fn(nv, old, `${current.join('.')}.${property}`, property, remove);};
+        // ! todo 此处在数据删除时 需要手动清空 commonLns、lns、extraLns，不然会有内存泄露
         if (isNew) data[util].commonLns?.forEach(each);
         data[util].lns[property]?.forEach(each);
         data[util].extraLns?.forEach(item => {
             item[property]?.forEach(each);
         });
+    };
+    const clearCache = () => {
+        // @ts-ignore
+        data[util].commonLns = null;
+        // @ts-ignore
+        data[util].lns = null;
+        // @ts-ignore
+        data[util].extraLns = null;
+        // @ts-ignore
+        data[util] = null;
     };
     const forceUpdate = () => {
         for (const k in data) {
@@ -94,6 +105,7 @@ export function createUtils (
         subscribe,
         isArray,
         forceUpdate,
+        clearCache,
     });
 }
 

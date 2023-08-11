@@ -53,3 +53,17 @@ export function isJSXComponent (path: NodePath<JSXElement>) {
     // @ts-ignore
     return path.node.openingElement.name.name.charCodeAt(0) <= 90;
 }
+
+export function isNeedComputed (node: VariableDeclarator) {
+    if (!node.init) return false;
+    const type = node.init.type;
+    if (type === 'Identifier') return false;
+    else if (type === 'MemberExpression') {
+        let o = node.init.object;
+        while (o.type === 'MemberExpression') {
+            o = o.object;
+        }
+        if (o.type === 'Identifier') return false;
+    }
+    return true;
+}

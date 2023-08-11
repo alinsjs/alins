@@ -70,10 +70,12 @@ fix
 - [x] fix: branch visible判断的逻辑问题，原因在于branch visit 时没有对
 - [x] fix: cache 节点 失效的问题，如何更新cache: 缓存的节点中有if，if节点变更导致缓存失效了(初步解决)
 - [x] fix: If 标签之后的节点不见了 (原因：if 编译时多删除了一个)
-- [ ] class 绑定数据有bug class = {bool?'a':'b'}
-- [ ] 数组直接赋值有bug，不能更新
-- [ ] 数组 swapRows 有bug
-- [ ] create 10000rows 有bug
+- [x] class 绑定数据有bug class = {bool?'a':'b'}
+- [x] 数组直接赋值有bug，不能更新
+- [x] 数组 swapRows 有bug
+- [x] create 10000rows 有bug
+- [ ] 内存占用 优化
+- [ ] 运行时间 优化
 
 
 

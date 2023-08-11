@@ -1,10 +1,4 @@
 
-const d1 = rows[1];
-const d2 = a.a.a;
-const d3 = a.a();
-const d4 = a;
-const d5 = a().a;
-
 
 // /*
 //  * @Author: chenzhongsheng
@@ -15,20 +9,17 @@ const d5 = a().a;
 
 // let selected = -1;
 // let rows = [
-//     {id: '1', label: 'x1'},
-//     {id: '2', label: 'x2'},
-//     {id: '3', label: 'x3'},
-//     {id: '4', label: 'x4'},
-//     {id: '5', label: 'x5'},
-//     {id: '6', label: 'x6'},
-//     {id: '7', label: 'x7'}
+//     // {id: '2', label: 'x2'},
+//     // {id: '3', label: 'x3'},
+//     // {id: '4', label: 'x4'},
+//     // {id: '5', label: 'x5'},
+//     // {id: '6', label: 'x6'},
+//     // {id: '7', label: 'x7'}
 // ];
-
-// window._rows = () => rows;
-
 // function add () {
-//     // buildData();
-//     rows = [{id: 'xx', label: '2321'}];
+//     rows.push(...buildData());
+//     // // buildData();
+//     // rows = [{id: 'xx', label: '2321'}];
 //     // rows.push({id: 'xx', label: '2321'});
 // }
 
@@ -44,20 +35,24 @@ const d5 = a().a;
 // }
 
 // function run () {
-//     rows = buildData(1);
+//     rows = buildData();
 //     selected = -1;
 // }
 
 // function update () {
+//     console.time();
 //     const n = rows.length;
 //     for (let i = 0; i < n; i += 10) {
 //         rows[i].label += ' !!!';
 //     }
+//     console.timeEnd();
 // }
 
 // function runLots () {
+//     console.time();
 //     rows = buildData(10000);
 //     selected = -1;
+//     console.timeEnd();
 // }
 
 // function clear () {
@@ -66,19 +61,18 @@ const d5 = a().a;
 // }
 
 // function swapRows () {
-//     // if (rows.length > 998) {
-//     //     const d1 = rows[1];
-//     //     const d998 = rows[998];
-//     //     rows[1] = d998;
-//     //     rows[998] = d1;
-//     // }
-//     if (rows.length > 5) {
+//     if (rows.length > 998) {
 //         const d1 = rows[1];
-//         debugger;
-//         rows[1] = rows[3];
-//         debugger;
-//         rows[3] = d1;
+//         rows[1] = rows[998];
+//         rows[998] = d1;
 //     }
+//     // if (rows.length > 5) {
+//     //     const d1 = rows[1];
+//     //     debugger;
+//     //     rows[1] = rows[3];
+//     //     debugger;
+//     //     rows[3] = d1;
+//     // }
 // }
 
 // // @ts-ignore
@@ -86,7 +80,7 @@ const d5 = a().a;
 //     <div class="jumbotron">
 //         <div class="row">
 //             <div class="col-md-6">
-//                 <h1>Vue.js 3 (non-keyed)</h1>
+//                 <h1>Alins (non-keyed)</h1>
 //             </div>
 //             <div class="col-md-6">
 //                 <div class="row">
@@ -180,3 +174,32 @@ const d5 = a().a;
 //         aria-hidden="true"
 //     ></span>
 // </div>);
+
+// // let $item = 1;
+// // $item++;
+// // let selected = 1;
+// // selected++;
+// // const a = <For data={$item}>
+// //     <tr
+// //         class={{danger: $item.id === selected}}
+// //     ></tr>;
+// // </For>;
+
+let list = [];
+
+function add () {
+    list.push(...buildData());
+}
+function clear () {
+    list = [];
+}
+
+document.body.appendChild(<div>
+    <div>
+        <button onclick={add}>add</button>
+        <button onclick={clear}>clear</button>
+    </div>
+    <For data={list}>
+        <div>{$item.id} {$item.label}</div>
+    </For>
+</div>);

@@ -180,12 +180,25 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 }
             }
         },
+        ForStatement (path) {
+            const update = path.node.update;
+
+            if (!update) return;
+
+            // if(update.type === 'ExpressionS')
+
+            update._isForUpdate = true;
+        },
         VariableDeclarator: {
             enter (path) {
                 if (!path.node.init) {
                     path.node.init = createUnfInit();
                 }
-                console.log(path.node.init);
+                if (path.node.init.type === 'Identifier') {
+                    path.node.init._isReplace = true;
+                    // path.node.id._isReplace = true;
+                }
+                // console.log(path.node.init);
                 // console.log('VariableDeclaration:', path.toString());
                 if (!ctx.enter(path)) return;
                 // todo init = null 时 设置为 void 0;
@@ -195,6 +208,17 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             exit () {
                 ctx.curScope.endDeclarator();
             }
+        },
+        AssignmentExpression (path) {
+            if (path.node.right.type === 'Identifier') {
+                path.node.right._isReplace = true;
+                // path.node.left._isReplace = true;
+            }
+            if (!ctx.enter(path)) return;
+            if (path.node._isForUpdate) return;
+            // @ts-ignore
+            const node = parseFirstMemberObject(path.node.left);
+            ctx.markVarChange(node.name);
         },
         ReturnStatement (path) {
             if (!ctx.enter(path)) return;
@@ -248,14 +272,9 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         UpdateExpression (path) {
             if (!ctx.enter(path)) return;
+            if (path.node._isForUpdate) return;
             // @ts-ignore
             ctx.markVarChange(path.node.argument.name);
-        },
-        AssignmentExpression (path) {
-            if (!ctx.enter(path)) return;
-            // @ts-ignore
-            const node = parseFirstMemberObject(path.node.left);
-            ctx.markVarChange(node.name);
         },
         Expression: {
             enter (path) {

@@ -15,7 +15,7 @@ import type {
     VariableDeclarator,
 } from '@babel/types';
 import {IfScope} from './controller/if-scope';
-import {isObjectAssignDeclarator} from './is';
+import {isNeedComputed, isObjectAssignDeclarator} from './is';
 import {JsxScope} from './controller/jsx-scope';
 import {isStaticNode, createReact, createComputed, createJsxCompute, createReadValue, Names, createVarDeclarator, createVarDeclaration, createExportAliasInit, getT, skipNode} from './parse-utils';
 import {SwitchScope} from './controller/switch-scope';
@@ -197,7 +197,6 @@ export class Scope {
         // if (name === 'c') debugger;
         this.variableMap[name] = variable;
 
-
         // console.log(JSON.stringify(Object.keys(this.variableMap)));
 
     }
@@ -273,8 +272,13 @@ export class Scope {
         if (isObjectAssignDeclarator(node)) {
             return;
         }
-        this.handleExportAlias(variable, createComputed(node));
-        variable.isComputed = true;
+        // console.log('createComputed', node.init.type);
+        if (isNeedComputed(node)) {
+            this.handleExportAlias(variable, createComputed(node));
+            variable.isComputed = true;
+        } else {
+            variable.isComputed = variable.isReactive = false;
+        }
     }
 
     private handleReactive (variable: IScopeVariable) {
@@ -315,9 +319,11 @@ export class Scope {
         // ! 如果是react转译之后的JsxCompute 停止后续继续遍历
         // if (!node._needJsxRefeat) {
         xnode.handled = true;
+        // 防止重复处理
         // @ts-ignore
-        if (node._handled) return; // 防止重复处理
-        xnode.path.replaceWith(createJsxCompute(node, xnode.isComp));
+        if (!node._handled) {
+            xnode.path.replaceWith(createJsxCompute(node, xnode.isComp));
+        }
         // }
     }
 
@@ -329,6 +335,8 @@ export class Scope {
         }
         if (variable.handled && !force) return;
         // if (name === 'item') debugger;
+        // ! 对于直接赋值的 不需要 handleReactive
+        if (variable.path.node._isReplace) return;
         this.handleReactive(variable);
 
         // console.log(
@@ -436,7 +444,10 @@ export class Scope {
                 t.identifier(Names.Value)
             )));
         } else {
-            path.replaceWith(createReadValue(variable.alias || variable.name));
+            // @ts-ignore
+            if (!path.node._isReplace) {
+                path.replaceWith(createReadValue(variable.alias || variable.name));
+            }
         }
     }
 

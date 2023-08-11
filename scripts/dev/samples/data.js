@@ -1,27 +1,10 @@
-<!--
- * @Author: chenzhongsheng
- * @Date: 2022-10-24 10:31:38
- * @Description: Coding something
--->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alins Test</title>
-</head>
-<body>
-  <script>
-
-
-let ID = 1;
+let _ID = 1;
 
 function _random (max) {
     return Math.round(Math.random() * 1000) % max;
 }
 
-function buildData (count = 1000) {
+export function buildData (count = 1000) {
     const adjectives = [
         'pretty',
         'large',
@@ -80,7 +63,7 @@ function buildData (count = 1000) {
     const data = [];
     for (let i = 0; i < count; i++)
         data.push({
-            id: ID++,
+            id: _ID++,
             label:
         adjectives[_random(adjectives.length)] +
         ' ' +
@@ -88,11 +71,5 @@ function buildData (count = 1000) {
         ' ' +
         nouns[_random(nouns.length)]
         });
-    // console.log(data);
     return data;
 }
-
-  </script>
-  <script src="./bundle.min.js"></script>
-</body>
-</html>
