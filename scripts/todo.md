@@ -40,7 +40,7 @@ feat：
 - [ ] 文档 & 在线编译工具
 - [ ] eslint-config-alins 验证
 
-new feature
+next Version new feature
 
 - [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
 - [ ] For 支持结构

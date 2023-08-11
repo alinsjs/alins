@@ -212,26 +212,35 @@ export function replaceArrayItem (target: any, property: string, v: any) {
     return empty;
 }
 
+// ! 对于绑定dom的数组赋值，实际上并不进行真正的赋值
 export function replaceWholeArray (origin: any[], v: any[]) {
     // console.log(origin[trig], origin, v );
     // debugger;
-    if (!origin[trig]) return;
+    if (!origin[trig]) return empty;
     v[trig] = origin[trig];
     const on = origin.length, vn = v.length;
     const min = Math.min(on, vn);
 
+
     for (let i = 0; i < min; i++) {
         triggerOprationEvent(origin, OprateType.Replace, i, [v[i], origin[i]], 1);
+        origin[i] = v[i];
     }
 
-    if (on === vn) return;
+    if (on === vn) return true;
 
     if (on > vn) {
         // @ts-ignore
         triggerOprationEvent(origin, OprateType.Remove, min, null, on - vn);
     } else {
-        triggerOprationEvent(origin, OprateType.Push, min, v.slice(min), vn - on);
+        const data = v.slice(min);
+        // triggerOprationEvent(origin, OprateType.Push, min, data, vn - on);
+        origin.push(...data);
     }
+
+    origin.length = v.length;
+    
+    return true;
 }
 
 // function testSpliceRemove (flag = true) {

@@ -122,8 +122,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         VariableDeclaration: {
             enter (path) {
-                // console.log('VariableDeclaration:', path.toString());
-                // debugger;
                 if (!ctx) {
                     console.warn('Skip VariableDeclaration because ctx end');
                     path.skip();
@@ -187,6 +185,8 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 if (!path.node.init) {
                     path.node.init = createUnfInit();
                 }
+                console.log(path.node.init);
+                // console.log('VariableDeclaration:', path.toString());
                 if (!ctx.enter(path)) return;
                 // todo init = null 时 设置为 void 0;
                 // if (path.node.id.name === 'c') debugger;

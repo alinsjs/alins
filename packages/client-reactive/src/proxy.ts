@@ -206,12 +206,11 @@ export function createProxy<T extends IJson> (data: T, {
 
 
                 if (isArray && /^\d+$/.test(property)) {
-                    const data = replaceArrayItem(target, property, v);
-                    if (data !== empty) value = data;
+                    value = replaceArrayItem(target, property, v);
                 }
 
                 if (Array.isArray(v) && Array.isArray(origin)) {
-                    replaceWholeArray(origin, v);
+                    value = replaceWholeArray(origin, v);
                 }
 
                 if (value === empty) value = Reflect.set(target, property, v, receiver);
