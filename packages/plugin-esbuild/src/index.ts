@@ -17,9 +17,11 @@ export default () => {
                 let source = await fs.promises.readFile(args.path, 'utf8');
                 // console.log('esbuild-plugin-start', source);
                 if (ts) {
+                    // ! 此处使用自带的esbuild
                     source = build.esbuild.transformSync(source, {
-                        loader: 'tsx',
-                        jsx: 'preserve'
+                        // loader: 'tsx',
+                        // jsx: 'preserve',
+                        loader: 'ts', // todo 验证只使用 ts是否可行
                     }).code;
                     // console.log('esbuild-plugin-ts-result', source);
                 }

@@ -6,7 +6,7 @@
 import {createBabelPluginAlins} from 'alins-compiler-core';
 
 // @ts-ignore
-const plugin: (data: any) => {
+const plugin: (data: any, args?: {useImport?: boolean}) => {
     name: string;
     visitor: any;
 } = createBabelPluginAlins();

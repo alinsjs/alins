@@ -2,8 +2,8 @@
     "name": "alins-utils",
     "version": "0.0.20-beta.5",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "dist/alins-utils.umd.min.js",
-    "typings": "dist/alins-utils.d.ts",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -19,8 +19,7 @@
     "license": "MIT",
     "type": "module",
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/",
-        "tag": "beta"
+        "registry": "https://registry.npmjs.org/"
     },
     "unpkg": "dist/alins-utils.iife.min.js",
     "jsdelivr": "dist/alins-utils.iife.min.js",

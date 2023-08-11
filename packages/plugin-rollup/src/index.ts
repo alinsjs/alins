@@ -4,8 +4,7 @@
  * @Date: 2022-11-25 10:45:54
  * @Description: Coding something
  */
-import {parseAlins} from 'alins-compiler-node';
-import {transformSync} from 'esbuild';
+import {IParserOptions, parseAlins} from 'alins-compiler-node';
 
 export default function rollupPluginAlins () {
     return {
@@ -13,11 +12,13 @@ export default function rollupPluginAlins () {
         transform (source: string, id: string) {
             if (!/\.[jt]sx$/.test(id)) return source;
             // console.log('rollup 1-----', source);
+
+            const options: IParserOptions = {
+                filename: id
+            };
+            
             if (/\.tsx$/.test(id)) {
-                source = transformSync(source, {
-                    loader: 'tsx',
-                    jsx: 'preserve'
-                }).code;
+                options.ts = true;
             }
             // console.log('rollup 2-----', source);
             const result = parseAlins(source);

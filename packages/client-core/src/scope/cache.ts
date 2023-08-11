@@ -45,12 +45,11 @@ export function createCallCache () {
         // ! 调用某个函数，缓存其结果
         // @ts-ignore
         call (branch: IBranchTarget, anchor?: any) {
-            // debugger;
             branch.visit();
             const fn = branch.call;
             const item = cacheMap.get(fn);
             // ! 需要更新自己与父branch的cache
-            console.log('branch debug:item', branch.id, item);
+            // console.log('branch debug:item', branch.id, item);
             if (typeof item !== 'undefined') {
                 return transformCacheToElement(item);
             }
@@ -84,7 +83,7 @@ export function createCallCache () {
             if (!branch.call) return;
             // if (el) {
             const doms = transformElementToCache(el);
-            console.log('branch debug: cacheMap set', branch.id, doms);
+            // console.log('branch debug: cacheMap set', branch.id, doms);
             cacheMap.set(branch.call, doms);
             // } else {
             //     branch.parent?.clearCache?.();

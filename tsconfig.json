@@ -33,6 +33,7 @@
         "global.d.ts",
         "playground/**/*.js",
         "playground/**/*.ts",
+        "packages/plugin-eslint/*.js"
         // "**/*.ts"
     ],
     "exclude": [

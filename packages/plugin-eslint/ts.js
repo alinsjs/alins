@@ -1,9 +1,5 @@
-/*
- * @Author: chenzhongsheng
- * @Date: 2023-08-03 10:42:51
- * @Description: Coding something
- */
 module.exports = {
+    parser: '@typescript-eslint/parser',
     plugins: [ 'eslint-plugin-react' ],
     'globals': {
         'For': true,

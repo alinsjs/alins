@@ -38,9 +38,10 @@ function parseBuildConfig () {
         'client-core': {
             packageName: 'alins',
             type: 'web',
-            // format: 'umd esm iife',
-            // format: 'iife',
             umdName: 'Alins',
+            // format: 'umd esm iife',
+            // format: 'esm',
+            // external: false,
         },
         'client-reactive': {
             packageName: 'alins-reactive',
@@ -100,6 +101,8 @@ function parseBuildConfig () {
             packageName: 'alins-loader',
             // format: 'esm cjs',
             type: 'node',
+            // format: 'cjs',
+            // external: false,
         },
         'plugin-esbuild': {
             packageName: 'esbuild-plugin-alins',
@@ -140,11 +143,13 @@ function parseBuildConfig () {
     // process.exit(0);
 
     let external = [];
-    if (typeof buildConfig.external === 'string') {
-        external = buildConfig.external.split(' ');
-    } else if (buildConfig.external !== false) {
-        const packageInfo = extractSinglePackageInfo(dirName);
-        external = packageInfo.dependencies;
+    if (buildConfig.external !== false) {
+        if (typeof buildConfig.external === 'string') {
+            external = buildConfig.external.split(' ');
+        } else if (buildConfig.external !== false) {
+            const packageInfo = extractSinglePackageInfo(dirName);
+            external = packageInfo.dependencies;
+        }
     }
     console.log('external: ', external);
 

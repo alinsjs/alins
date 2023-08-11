@@ -25,6 +25,7 @@ export function map (
     ik = ''
 ) {
     const list = this;
+    window._list = list;
     // todo list 需要reactive
     // debugger;
     if (!jsx) return list.map(call);
@@ -50,6 +51,10 @@ export function map (
     // window.EndMap = EndMap;
     // window.scopeItems = scopeItems;
     list[util].scopeItems = scopeItems;
+    // list[util]._replaceScopeData = (newValue) => {
+    //     newValue[]
+    //     list = newValue;
+    // };
     // @ts-ignore
     list[util]._map = true; // ! 标识需要强制更新，从而更新map的index
     // @ts-ignore ! 此处用于在slice方法中获取 item
@@ -74,6 +79,7 @@ export function map (
         let child = call(scope[k], scope[ik] || i);
         // @ts-ignore
         let end: ITrueElement = child;
+        debugger;
         if (!child) {
             child = Renderer.createEmptyMountNode();
             end = child;
@@ -105,12 +111,16 @@ export function map (
         container.appendChild(child as any);
         EndMap[i] = end;
     }
+    debugger;
     watchArray(list, ({index, count, data, type}: IOprationAction) => {
         switch (type) {
             case OprateType.Push: {
+                console.log(index, count, data, type);
+                debugger;
                 const doc = Renderer.createDocumentFragment();
                 const length = list.length;
                 for (let i = 0; i < data.length; i++) {
+                    debugger;
                     const [child, end, scope] = createChild(data[i], length + i);
                     EndMap.push(end);
                     scopeItems.push(scope);
@@ -136,6 +146,8 @@ export function map (
                 // replaceItem(index, data[0]);
             };break;
             case OprateType.Remove: {
+                console.log(index, count, data, type);
+                debugger;
                 if (count === 0) break;
                 const startPos = index - 1;
                 const endPos = startPos + count;

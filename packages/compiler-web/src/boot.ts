@@ -9,18 +9,18 @@ import {parseWebAlins} from './parser';
 
 function onDOMContentLoaded () {
 
-    const names = ['alins', 'babel'];
+    const names = ['alins', 'alins-node', 'babel', 'babel-node'];
     for (const name of names) {
         const scripts = document.querySelectorAll(`script[type="text/${name}"]`);
         // @ts-ignore
         for (const item of scripts) {
             // @ts-ignore
-            onSingleScript(item);
+            onSingleScript(item, !name.endsWith('-node'));
         }
     }
 }
 
-async function onSingleScript (script: HTMLScriptElement) {
+async function onSingleScript (script: HTMLScriptElement, web = true) {
     let code = '';
     if (script.innerText.trim() === '') {
         if (script.src) {
@@ -34,10 +34,10 @@ async function onSingleScript (script: HTMLScriptElement) {
     } else {
         code = script.innerText;
     }
-    const output = parseWebAlins(code);
+    const output = parseWebAlins(code, {useImport: !web});
     // console.warn(code);
     // console.warn('============>');
-    // console.warn(output);
+    console.warn(output);
     // debugger;
     if (output) {
         // exeJs(output);

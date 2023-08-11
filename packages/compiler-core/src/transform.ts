@@ -7,7 +7,7 @@ import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
 import {createAlinsCtx, createEmptyString, createUnfInit, getT, initTypes, ModArrayFunc, parseFirstMemberObject} from './parse-utils';
 
-export function createNodeVisitor (t: IBabelType, isWeb = false) {
+export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
     return {
         Program: {
@@ -17,19 +17,23 @@ export function createNodeVisitor (t: IBabelType, isWeb = false) {
                 for (let i = 0; i < body.length; i++) {
                     if (body[i]?.type !== 'ImportDeclaration') {
                         body.splice(i, 0, createAlinsCtx());
+                        if (!useImport) {
+                            body.splice(i, 0, t.variableDeclaration('var', [
+                                t.variableDeclarator(t.identifier('_$$'), t.memberExpression(
+                                    t.memberExpression(t.identifier('window'), t.identifier('Alins')),
+                                    t.identifier('_$$'),
+                                ))
+                            ]));
+                        }
                         break;
                     }
                 }
 
-                const define = isWeb ? t.variableDeclaration('var', [
-                    t.variableDeclarator(t.identifier('_$$'), t.memberExpression(
-                        t.memberExpression(t.identifier('window'), t.identifier('Alins')),
-                        t.identifier('_$$'),
-                    ))
-                ]) : t.importDeclaration([
-                    t.importSpecifier(t.identifier('_$$'), t.identifier('_$$'))
-                ], t.stringLiteral('alins'));
-                body.unshift(define);
+                if (useImport) {
+                    body.unshift(t.importDeclaration([
+                        t.importSpecifier(t.identifier('_$$'), t.identifier('_$$'))
+                    ], t.stringLiteral('alins')));
+                }
             },
             exit () {
                 exitContext();
@@ -395,14 +399,11 @@ export function createNodeVisitor (t: IBabelType, isWeb = false) {
     } as TraverseOptions<Node>;
 }
 
-export function createBabelPluginAlins (isWeb?: boolean) {
-    return (data: any, args: any) => {
-        if (args.web === true) {
-            isWeb = true;
-        }
+export function createBabelPluginAlins () {
+    return (data: any, args?: {useImport?: boolean}) => { // {import: boolean}
         return {
             name: 'babel-plugin-alins',
-            visitor: createNodeVisitor(data.types, isWeb)
+            visitor: createNodeVisitor(data.types, args?.useImport)
         };
     };
 }

@@ -2,7 +2,7 @@
     "name": "eslint-config-alins",
     "version": "0.0.20-beta.1",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "index.js",
+    "main": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -18,7 +18,11 @@
     "license": "MIT",
     "type": "commonjs",
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/",
-        "tag": "beta"
+        "registry": "https://registry.npmjs.org/"
+    },
+    "typings": "src/index.ts",
+    "dependencies": {
+        "@typescript-eslint/parser": "^6.3.0",
+        "eslint-plugin-react": "^7.33.1"
     }
 }

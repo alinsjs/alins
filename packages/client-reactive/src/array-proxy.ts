@@ -128,6 +128,11 @@ const ArrayMap = {
         }
         return origin.call(target[util].proxy);
     },
+    replace (target: any, index: number, ov: any, v: any) {
+        // console.warn('replace=======', index, ov, v);
+        triggerOprationEvent(target, OprateType.Replace, index, [v, ov], 1);
+        target[index] = v;
+    },
     // sort (this: {target: IProxyData<any[]>, origin: any}, compareFn?: ((a: any, b: any) => number) | undefined) {
     //     const {target, origin} = this;
     //     const originData = [...target];
@@ -153,11 +158,6 @@ const ArrayMap = {
     //     }
     //     return result;
     // },
-    replace (target: any, index: number, ov: any, v: any) {
-        // console.warn('replace=======', index, ov, v);
-        triggerOprationEvent(target, OprateType.Replace, index, [v, ov], 1);
-        target[index] = v;
-    },
 };
 
 const mapFunc: any = {
@@ -210,6 +210,28 @@ export function replaceArrayItem (target: any, property: string, v: any) {
         return true;
     }
     return empty;
+}
+
+export function replaceWholeArray (origin: any[], v: any[]) {
+    // console.log(origin[trig], origin, v );
+    // debugger;
+    if (!origin[trig]) return;
+    v[trig] = origin[trig];
+    const on = origin.length, vn = v.length;
+    const min = Math.min(on, vn);
+
+    for (let i = 0; i < min; i++) {
+        triggerOprationEvent(origin, OprateType.Replace, i, [v[i], origin[i]], 1);
+    }
+
+    if (on === vn) return;
+
+    if (on > vn) {
+        // @ts-ignore
+        triggerOprationEvent(origin, OprateType.Remove, min, null, on - vn);
+    } else {
+        triggerOprationEvent(origin, OprateType.Push, min, v.slice(min), vn - on);
+    }
 }
 
 // function testSpliceRemove (flag = true) {

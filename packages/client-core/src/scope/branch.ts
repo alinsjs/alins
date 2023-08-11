@@ -24,7 +24,7 @@ export interface IBranchTarget {
 }
 
 export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
-    console.log('createBranchLink');
+    // console.log('createBranchLink');
     let stack: IBranchTarget[] = [];
     let id = 0;
     const Root = {anchor, parent: null};
@@ -59,7 +59,6 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
             isVisible (branch?: IBranchTarget|null) {
                 // console.warn('isVisible', this);
                 // 做一件事情：如果需要更新dom，则直接更新，否则清除祖先缓存
-                // debugger;
                 if (!branchMap) {
                     branchMap = new WeakMap();
                     let node: IBranchTarget|null = branch || currentBranch; // todo fix 这里的上一个分支逻辑有问题
@@ -69,7 +68,7 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                         branchMap.set(node, 1);
                         node = node.parent;
                     }
-                    console.log('branch debug:branchpath', path.toString());
+                    // console.log('branch debug:branchpath', path.toString());
                 }
                 /*
                     branchMap 为一条当前可见路径到顶层的路径
@@ -89,9 +88,6 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                         // console.warn('isVisible result false1');
                         break;
                     }
-                    // todo ! 是否需要
-                    // debugger;
-                    // cache.clearCache(parent.call); // 清除不可见分支的缓存
                     parent = parent.parent;
                 }
                 // console.warn('isVisible result false2');
@@ -111,7 +107,7 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
             // updateCache (from?: IBranchTarget) {
             updateCache () {
                 const nodes = anchor.getNodes();
-                console.log('branch debug: updateCache', this.id, nodes);
+                // console.log('branch debug: updateCache', this.id, nodes);
                 cache.setCache(this.call, nodes);
                 this.parent?.updateCache?.();
                 // if (this !== from) {
@@ -144,13 +140,13 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
         next (call: IReturnCall, anchor: ICtxAnchor, forward = false) {
             const target = createTarget(call, anchor, forward);
             forward ? stack.push(target) : (stack[stack.length - 1] = target);
-            console.warn(`branch debug:next:${target.id}:${forward}`, target.call.toString());
+            // console.warn(`branch debug:next:${target.id}:${forward}`, target.call.toString());
             // if (!window.bs) window.bs = [];
             // window.bs.push(target);
             return target;
         },
         back () {
-            console.warn(`branch:back`);
+            // console.warn(`branch:back`);
             
             const value = stack.pop();
             if (stack.length === 0) { // 当所有branch弹出 initializing 完成

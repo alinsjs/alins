@@ -1,1 +1,1 @@
-export default ["if-sample","increment","style-reactive","todo-list"];
+export default ["if-sample","increment","list","style-reactive","todo-list"];

@@ -9,7 +9,7 @@ import {
     IJson, IOnChange, IProxyData, IProxyListener, IProxyListenerMap,
     type, util
 } from 'alins-utils';
-import {arrayFuncProxy} from './array-proxy';
+import {arrayFuncProxy, replaceWholeArray} from './array-proxy';
 import {replaceArrayItem} from './array-proxy';
 import {empty, pureproxy} from 'alins-utils';
 
@@ -174,6 +174,7 @@ export function createProxy<T extends IJson> (data: T, {
                 // console.log('debug:Proxy.set', target, property, v);
                 // if (v.a === 2) debugger;
                 const origin = target[property];
+                // debugger;
                 if (v === origin && !target[util]?._map) return true;
                 if (set === null) { console.warn('Computed 不可设置'); return true;}
                 if (property === 'v' && set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
@@ -203,10 +204,16 @@ export function createProxy<T extends IJson> (data: T, {
 
                 let value: any = empty;
 
+
                 if (isArray && /^\d+$/.test(property)) {
                     const data = replaceArrayItem(target, property, v);
                     if (data !== empty) value = data;
                 }
+
+                if (Array.isArray(v) && Array.isArray(origin)) {
+                    replaceWholeArray(origin, v);
+                }
+
                 if (value === empty) value = Reflect.set(target, property, v, receiver);
                 // ! 执行依赖
                 // if (origin === undefined && property === '5') debugger;

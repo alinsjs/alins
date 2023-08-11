@@ -12,6 +12,11 @@ module.exports = {
         path: path.resolve(__dirname, 'dev'),
         filename: 'bundle.js',
     },
+    resolve: {
+        alias: {
+            'alins': path.resolve(__dirname, '../../packages/client-core/dist/alins.esm.min.js')
+        }
+    },
     module: {
         rules: [{
             test: /\.ts$/,
@@ -19,8 +24,8 @@ module.exports = {
         }, {
             test: /\.[jt]sx$/,
             use: [
-                // {loader: '../../packages/plugin-webpack/dist/alins-loader.cjs.min.js'},
-                {loader: 'alins-loader'},
+                {loader: '../../packages/plugin-webpack/dist/alins-loader.cjs.min.js'},
+                // {loader: 'alins-loader'},
             ]
         }]
     }

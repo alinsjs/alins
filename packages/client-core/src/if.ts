@@ -20,7 +20,7 @@ export interface IIfReturn {
 }
 
 export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfReturn {
-    console.log('branch debug:enter if', call.toString());
+    // console.log('branch debug:enter if', call.toString());
     const anchor = createAnchor(util.cache);
     // ! 最后一个branch是end
     const branchs: IBranchTarget[] = [];
@@ -33,12 +33,12 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         activeIndex = i;
         const branch = branchs[i];
         anchor.replaceBranch(branch);
-        console.warn('switch node', i);
+        // console.warn('switch node', i);
         // ! 编译时注入的returned
         return branch.call.returned !== false;
     };
     const onDataChange = (bs: boolean[]) => {
-        console.warn('if onDataChange', bs);
+        // console.warn('if onDataChange', bs);
         const n = bs.length;
         for (let i = 0; i < n; i++) {
             if (bs[i]) {

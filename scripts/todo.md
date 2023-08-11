@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-10 01:48:36
+ * @LastEditTime: 2023-08-10 16:44:39
 -->
 
 # 0.1.0
@@ -34,6 +34,7 @@ feat：
 - [x] 重新走一下测试脚本
 - [x] 编译 + 运行时 结合测试
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接被执行了
+- [ ] class支持对象
 - [ ] 发包脚本
 - [ ] 与react vue 性能比较
 - [ ] 文档 & 在线编译工具
@@ -42,6 +43,7 @@ feat：
 new feature
 
 - [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
+- [ ] For 支持结构
 - [ ] For Object 支持
 - [ ] $if $elif $else $case $default 属性支持
 - [ ] style 标签优化 处理 提高css可用性, style 值类型声明
@@ -68,6 +70,10 @@ fix
 - [x] fix: branch visible判断的逻辑问题，原因在于branch visit 时没有对
 - [x] fix: cache 节点 失效的问题，如何更新cache: 缓存的节点中有if，if节点变更导致缓存失效了(初步解决)
 - [x] fix: If 标签之后的节点不见了 (原因：if 编译时多删除了一个)
+- [ ] class 绑定数据有bug class = {bool?'a':'b'}
+- [ ] 数组直接赋值有bug，不能更新
+- [ ] 数组 swapRows 有bug
+- [ ] create 10000rows 有bug
 
 
 
