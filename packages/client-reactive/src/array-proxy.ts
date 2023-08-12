@@ -232,10 +232,12 @@ export function replaceWholeArray (origin: any[], v: any[]) {
     if (on > vn) {
         // @ts-ignore
         triggerOprationEvent(origin, OprateType.Remove, min, null, on - vn);
-        for (let i = min; i < origin.length; i++) {
-            const item = origin[i];
-            item[util].clearCache();
-        }
+        // // for (let i = min; i < origin.length; i++) {
+        // //     const item = origin[i];
+        // //     item.___clear_cache?.();
+        // // }
+        // window.ccc.forEach(f => f());
+        // window.ccc = null;
         origin.splice(min);
     } else {
         const data = v.slice(min);

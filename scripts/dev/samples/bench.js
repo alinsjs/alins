@@ -117,9 +117,9 @@ document.body.appendChild(_$$.ce('div', null, _$$.ce('div', {
 }, 'Swap Rows')))))), _$$.ce('table', {
     class: 'table table-hover table-striped test-data'
 }, _$$.ce('tbody', null, rows.v.map(($item, $index) => _$$.ce('', null, _$$.ce('tr', {
-    class: () => ({
-        danger: $item.v.id === selected.v
-    }),
+    // class: () => ({
+    //     danger: $item.v.id === selected.v
+    // }),
     'data-label': () => $item.v.label
 }, _$$.ce('td', {
     class: 'col-md-1'

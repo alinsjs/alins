@@ -7,7 +7,7 @@ import {addEvent, isEventAttr, IEventNames} from './event';
 import {IElement, IFragment, ITrueElement, Renderer} from './renderer';
 import {
     IBindingReactionEnable, reactiveBindingEnable,
-    reactiveClass, IChildren, reactiveBindingValue,
+    IChildren, reactiveBindingValue,
 } from './dom-util';
 import {IJson} from 'alins-utils';
 import {IBindingReaction, IBindingRef, isProxy} from 'alins-reactive';
@@ -47,6 +47,7 @@ export interface IJSXDomOptions {
     })
 //   $life?: any; // todo
 }
+
 
 export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
     let el: ITrueElement;
@@ -110,6 +111,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
             }
         }
     }
+    
     return el;
 }
 

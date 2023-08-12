@@ -20,8 +20,9 @@ export function isDepReactive () {
     return depReactive;
 }
 
-export function observe (fn: ()=>any, listener: IProxyListener = fn) {
+export function observe (fn: ()=>any, listener: IProxyListener) {
     // if (__DEBUG__) console.log('Start observe', fn, listener);
+    if (!listener) listener = fn;
     currentFn = listener;
     depReactive = false;
     const v = fn();
@@ -54,7 +55,10 @@ export function createUtils (
     const current = key ? [...path, key] : [...path];
     const isArray = Array.isArray(data);
     const triggerChange = (property: string, nv: any, old: any, remove?: boolean, isNew?: boolean) => {
-        const each = (fn: any) => {fn(nv, old, `${current.join('.')}.${property}`, property, remove);};
+        const each = (fn: any) => {
+            debugger;
+            fn(nv, old, `${current.join('.')}.${property}`, property, remove);
+        };
         // ! todo 此处在数据删除时 需要手动清空 commonLns、lns、extraLns，不然会有内存泄露
         if (isNew) data[util].commonLns?.forEach(each);
         data[util].lns[property]?.forEach(each);
@@ -62,16 +66,23 @@ export function createUtils (
             item[property]?.forEach(each);
         });
     };
-    const clearCache = () => {
-        // @ts-ignore
-        data[util].commonLns = null;
-        // @ts-ignore
-        data[util].lns = null;
-        // @ts-ignore
-        data[util].extraLns = null;
-        // @ts-ignore
-        data[util] = null;
-    };
+    // const clearCache = () => {
+    //     // @ts-ignore
+    //     data[util].commonLns = null;
+    //     const lns = data[util].lns;
+
+    //     for (const k in lns) {
+    //         lns[k].clear();
+    //         // @ts-ignore
+    //         lns[k] = null;
+    //     }
+    //     // @ts-ignore
+    //     data[util].lns = null;
+    //     // @ts-ignore
+    //     data[util].extraLns = null;
+    //     // @ts-ignore
+    //     data[util] = null;
+    // };
     const forceUpdate = () => {
         for (const k in data) {
             // @ts-ignore
@@ -105,7 +116,7 @@ export function createUtils (
         subscribe,
         isArray,
         forceUpdate,
-        clearCache,
+        // clearCache,
     });
 }
 
@@ -153,11 +164,25 @@ export function createProxy<T extends IJson> (data: T, {
     createUtils(data, key, path);
 
     // @ts-ignore
-    const {triggerChange, isArray} = data[util];
+    let {triggerChange, isArray} = data[util];
+
+    let __clearCache = () => {
+        data[util].clearCache();
+        triggerChange = null;
+        isArray = null;
+        // @ts-ignore
+        __clearCache = null;
+        // @ts-ignore
+        data[util] = null;
+    };
 
     // @ts-ignore
     const proxy = new Proxy(data, {
+        // ! 闭包
         get (target: IJson, property, receiver) {
+            if (property === '___clear_cache') {
+                return __clearCache;
+            }
             const isFunc = typeof target[property] === 'function';
             if (isArray && isFunc) {
                 // console.log('Proxy function', property, target[property]);
@@ -181,6 +206,7 @@ export function createProxy<T extends IJson> (data: T, {
             }
             return Reflect.get(target, property, receiver);
         },
+        // ! 闭包
         set (target: IJson, property, v, receiver) {
             if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
                 // console.log('debug:Proxy.set', target, property, v);
@@ -233,7 +259,9 @@ export function createProxy<T extends IJson> (data: T, {
             }
             return Reflect.set(target, property, v, receiver);
         },
+        // ! 闭包
         deleteProperty (target: IJson, property) {
+            console.log('deleteProperty', property);
             // console.log('deleteProperty', target, property);
             triggerChange(property as string, undefined, target[property], true);
             // todo 释放内存

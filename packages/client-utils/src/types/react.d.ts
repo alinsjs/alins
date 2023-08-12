@@ -23,7 +23,7 @@ export interface IProxyUtils {
   isArray: boolean;
   shallow: boolean;
   forceUpdate: ()=>void;
-  clearCache: ()=>void;
+  // clearCache: ()=>void;
   proxy: IProxyData<any>;
   scopeItems?: any[];
   replaceLns?: boolean;
