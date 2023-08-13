@@ -1,6 +1,6 @@
 {
     "name": "alins-utils",
-    "version": "0.0.20-beta.5",
+    "version": "0.0.21",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
     "typings": "src/index.ts",
@@ -21,7 +21,7 @@
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
-    "unpkg": "dist/alins-utils.iife.min.js",
-    "jsdelivr": "dist/alins-utils.iife.min.js",
+    "unpkg": "dist/alins-client-utils.min.js",
+    "jsdelivr": "dist/alins-client-utils.min.js",
     "module": "dist/alins-utils.esm.min.js"
 }
