@@ -2,8 +2,8 @@
     "name": "alins-reactive",
     "version": "0.0.21",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-reactive.umd.min.js",
+    "typings": "dist/alins-reactive.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -24,7 +24,7 @@
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
-    "unpkg": "dist/alins-client-reactive.min.js",
-    "jsdelivr": "dist/alins-client-reactive.min.js",
+    "unpkg": "dist/alins-reactive.iife.min.js",
+    "jsdelivr": "dist/alins-reactive.iife.min.js",
     "module": "dist/alins-reactive.esm.min.js"
 }
