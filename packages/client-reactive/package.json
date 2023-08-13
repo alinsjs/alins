@@ -1,9 +1,9 @@
 {
     "name": "alins-reactive",
-    "version": "0.0.21-beta.0",
+    "version": "0.0.21",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-client-reactive.esm.js",
+    "typings": "dist/alins-client-reactive.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -19,7 +19,7 @@
     "license": "MIT",
     "type": "module",
     "dependencies": {
-        "alins-utils": "^0.0.21-beta.0"
+        "alins-utils": "^0.0.21"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"

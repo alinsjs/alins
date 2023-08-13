@@ -1,8 +1,8 @@
 {
     "name": "eslint-config-alins",
-    "version": "0.0.21-beta.0",
+    "version": "0.0.21",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
+    "main": "dist/alins-plugin-eslint.esm.js",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -24,7 +24,7 @@
         "@typescript-eslint/parser": "^6.3.0",
         "eslint-plugin-react": "^7.33.1"
     },
-    "typings": "src/index.ts",
+    "typings": "dist/alins-plugin-eslint.d.ts",
     "unpkg": "dist/alins-plugin-eslint.min.js",
     "jsdelivr": "dist/alins-plugin-eslint.min.js"
 }
