@@ -1,0 +1,44 @@
+<!--
+ * @Author: chenzhongsheng
+ * @Date: 2023-06-02 00:27:15
+ * @Description: Coding something
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <div>111</div>
+    <div>
+      <span>111</span>
+      <span>222</span>
+      <span>333</span>
+    </div>
+  </div>
+</body>
+<script>
+  const list = [111, 222, 333]
+
+  div(111,
+    div(
+      span.for(list)(item => item)
+    )
+  );
+
+  function comp(){
+    div('');
+    div('', ()=>{
+      for(let item in list){
+        span(item, ()=>div());
+      }
+    });
+    
+  }
+
+</script>
+</html>
