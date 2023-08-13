@@ -3,7 +3,7 @@
  * @Date: 2023-07-02 21:55:39
  * @Description: Coding something
  */
-import {IWatchRefTarget, watch} from 'alins-reactive';
+import {IWatchRefTarget, watch, getCurCleaner, useCurCleaner} from 'alins-reactive';
 import {
     IReturnCall, ICtxUtil
 } from './type';
@@ -11,7 +11,6 @@ import {IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {empty} from 'alins-utils';
 import {IBranchTarget} from './scope/branch';
 import {createAnchor} from './scope/anchor';
-import {getCurCleaner, useCurCleaner} from './scope/cleaner';
 
 export type IIfTarget = IWatchRefTarget<boolean>;
 export interface IIfReturn {

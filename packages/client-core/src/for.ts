@@ -6,12 +6,12 @@
 
 import {
     createProxy, isProxy, watchArray,
-    IOprationAction, OprateType, registArrayMap
+    IOprationAction, OprateType, registArrayMap,
+    createCleaner, ICleaner
 } from 'alins-reactive';
 import {IProxyData, util} from 'alins-utils';
 import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {getParent} from './utils';
-import {createCleaner, ICleaner} from './scope/cleaner';
 
 /*
  赋值的话是 状态替换

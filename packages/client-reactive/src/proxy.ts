@@ -12,7 +12,7 @@ import {
 import {arrayFuncProxy, replaceWholeArray} from './array-proxy';
 import {replaceArrayItem} from './array-proxy';
 import {empty, pureproxy} from 'alins-utils';
-import {getCurCleaner} from '../../client-core/src/scope/cleaner';
+import {getCurCleaner} from './cleaner';
 
 let currentFn: any = null;
 let depReactive = false; // 当前表达式是否依赖响应数据
