@@ -12,6 +12,7 @@ import {
 import {arrayFuncProxy, replaceWholeArray} from './array-proxy';
 import {replaceArrayItem} from './array-proxy';
 import {empty, pureproxy} from 'alins-utils';
+import {getCurCleanner} from '../../client-core/src/scope/cleanner';
 
 let currentFn: any = null;
 let depReactive = false; // 当前表达式是否依赖响应数据
@@ -56,7 +57,6 @@ export function createUtils (
     const isArray = Array.isArray(data);
     const triggerChange = (property: string, nv: any, old: any, remove?: boolean, isNew?: boolean) => {
         const each = (fn: any) => {
-            debugger;
             fn(nv, old, `${current.join('.')}.${property}`, property, remove);
         };
         // ! todo 此处在数据删除时 需要手动清空 commonLns、lns、extraLns，不然会有内存泄露
@@ -193,8 +193,21 @@ export function createProxy<T extends IJson> (data: T, {
                 // ! 收集依赖
                 if (currentFn) {
                     if (!depReactive) depReactive = true;
+                    if (!lns[property]) lns[property] = new Set();
+                    let listener = currentFn;
+                    // 移除被删除的dom的引用释放内存
+                    const clean = () => {
+                        // console.log('clear', target, property);
+                        // debugger;
+                        lns[property].delete(listener);
+                        listener = null;
+                    };
+                    // console.log('collect', target[util], property);
+                    // debugger;
+                    getCurCleanner()?.collect(target[util], clean);
+                    listener.__clear = clean;
                     // if (__DEBUG__) console.log('收集依赖', property);
-                    lns[property]?.add(currentFn) || (lns[property] = new Set([currentFn]));
+                    lns[property].add(listener);
                     // if (__DEBUG__) console.log('收集依赖222', lns[property]);
                     // ! 当在依赖搜集时 返回缓存的值
                     return Reflect.get(target, property, receiver);
@@ -261,7 +274,7 @@ export function createProxy<T extends IJson> (data: T, {
         },
         // ! 闭包
         deleteProperty (target: IJson, property) {
-            console.log('deleteProperty', property);
+            // console.log('deleteProperty', property);
             // console.log('deleteProperty', target, property);
             triggerChange(property as string, undefined, target[property], true);
             // todo 释放内存

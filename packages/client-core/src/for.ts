@@ -10,7 +10,8 @@ import {
 } from 'alins-reactive';
 import {IProxyData, util} from 'alins-utils';
 import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
-import {getParent} from './utils';
+import {getParent, removeDom} from './utils';
+import {createCleanner, ICleanner} from './scope/cleanner';
 
 /*
  赋值的话是 状态替换
@@ -43,14 +44,15 @@ export function map (
     // const proxy = list[util].proxy;
     const ScopeEnd = Renderer.createEmptyMountNode();
     const EndMap: ITrueElement[] = [];
+    const Cleanners: ICleanner[] = [];
 
 
     let head: ITrueElement;
 
-    const scopeItems: IProxyData<{item: any, index: number}>[] = [];
+    const ScopeItems: IProxyData<{item: any, index: number}>[] = [];
     // window.EndMap = EndMap;
-    // window.scopeItems = scopeItems;
-    list[util].scopeItems = scopeItems;
+    // window.ScopeItems = ScopeItems;
+    list[util].scopeItems = ScopeItems;
     // list[util]._replaceScopeData = (newValue) => {
     //     newValue[]
     //     list = newValue;
@@ -58,8 +60,8 @@ export function map (
     // @ts-ignore
     list[util]._map = true; // ! 标识需要强制更新，从而更新map的index
     // @ts-ignore ! 此处用于在slice方法中获取 item
-    scopeItems.key = k;
-    // window.scope = scopeItems;
+    ScopeItems.key = k;
+    // window.scope = ScopeItems;
     // window.EndMap = EndMap;
 
     const createScope = (item: any, i: number): IProxyData<any> => {
@@ -72,11 +74,21 @@ export function map (
         return scope;
     };
 
-    const createChild = (item: any, i: number): [ITrueElement, ITrueElement, IProxyData<any>] => {
-        // console.log('createChild', item, i);
+    const createChild = (
+        item: any,
+        i: number,
+        scopes = ScopeItems,
+        ends = EndMap,
+        cleanners = Cleanners,
+    ): ITrueElement => {
+        // console.log('cc', item, i);
         const scope = createScope(item, i);
 
+        cleanners.push(createCleanner());
+
         let child = call(scope[k], scope[ik] || i);
+
+
         // @ts-ignore
         let end: ITrueElement = child;
         if (!child) {
@@ -101,14 +113,16 @@ export function map (
         }
         // if(i===0)debugger;
         // console.log(head, i);
-        return [child, end, scope];
+        
+        scopes.push(scope);
+        ends.push(end);
+        
+        return child;
     };
     for (let i = 0; i < n; i++) {
         const item = list[i];
-        const [child, end, scope] = createChild(item, i);
-        scopeItems[i] = scope;
+        const child = createChild(item, i);
         container.appendChild(child as any);
-        EndMap[i] = end;
     }
     watchArray(list, ({index, count, data, type}: IOprationAction) => {
         switch (type) {
@@ -117,9 +131,7 @@ export function map (
                 const doc = Renderer.createDocumentFragment();
                 const length = list.length;
                 for (let i = 0; i < data.length; i++) {
-                    const [child, end, scope] = createChild(data[i], length + i);
-                    EndMap.push(end);
-                    scopeItems.push(scope);
+                    const child = createChild(data[i], length + i);
                     // @ts-ignore
                     doc.appendChild(child);
                 }
@@ -127,17 +139,17 @@ export function map (
                 getParent(ScopeEnd, container).insertBefore(doc, ScopeEnd);
             };break;
             case OprateType.Replace: {
-                if (!scopeItems[index]) {
+                if (!ScopeItems[index]) {
                     // console.warn('【debug: watch array replace1', index, JSON.stringify(data));
-                    scopeItems[index] = createScope(data[0], index);
+                    ScopeItems[index] = createScope(data[0], index);
                 } else {
                     // console.warn('【debug: watch array replace2', index, JSON.stringify(data));
                     // const v = isProxy(data[0]) ? data[0].v : data[0];
-                    if (data[0] !== scopeItems[index][k].v) {
+                    if (data[0] !== ScopeItems[index][k].v) {
                         // console.log('debug: watch array replace------------');
-                        scopeItems[index][k].v = data[0];
+                        ScopeItems[index][k].v = data[0];
                     }
-                    if (ik) scopeItems[index][ik].v = index;
+                    if (ik) ScopeItems[index][ik].v = index;
                 }
                 // replaceItem(index, data[0]);
             };break;
@@ -152,7 +164,7 @@ export function map (
                 // if (endDom === ScopeEnd) debugger; // debug
 
 
-                const startDom = ((startPos < 0) ? (head || ScopeEnd) :  EndMap[startPos]) as Node;
+                const startDom = ((startPos < 0) ? (head || ScopeEnd) : EndMap[startPos]) as Node;
 
                 while (startDom.nextSibling && startDom.nextSibling !== endDom) {
                     startDom.nextSibling.remove();
@@ -171,7 +183,10 @@ export function map (
                 }
 
                 EndMap.splice(index, count);
-                scopeItems.splice(index, count);
+                ScopeItems.splice(index, count);
+                Cleanners.splice(index, count).forEach(cleanner => {
+                    cleanner.clean();
+                });
                 // items.forEach(item => item[util].release());
                 // console.warn('【watch array remove】', index, count, data);
             };break;
@@ -181,14 +196,14 @@ export function map (
                 const mountNode = index === 0 ? (head || ScopeEnd) : EndMap[index - 1].nextSibling;
                 const ends: any[] = [];
                 const scopes: any[] = [];
+                const cleanners: any[] = [];
                 data.forEach((item, i) => {
-                    const [child, end, scope] = createChild(item, index + i);
+                    const child = createChild(item, index + i, scopes, ends, cleanners);
                     getParent(mountNode, container).insertBefore(child, mountNode);
-                    scopes.push(scope);
-                    ends.push(end);
                 });
-                scopeItems.splice(index, 0, ...scopes);
+                ScopeItems.splice(index, 0, ...scopes);
                 EndMap.splice(index, 0, ...ends);
+                Cleanners.splice(index, 0, ...cleanners);
                 // console.warn('【watch array insert】', index, count, data);
             };break;
         }
@@ -198,5 +213,6 @@ export function map (
     container.appendChild(ScopeEnd as any);
     return container;
 }
+
 registArrayMap(map);
 

@@ -116,7 +116,6 @@ function reactiveBinding<T=string> (bind: IBindingReaction, onchange: IProxyList
         // @ts-ignore
         return typeof bind === 'string' ? bind : bind.toString();
     } catch (e) {
-        debugger;
         throw new Error(e);
     }
 }

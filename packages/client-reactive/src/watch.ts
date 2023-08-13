@@ -4,8 +4,8 @@
  * @Description: Coding something
  */
 import {IProxyListener, IProxyData, util, IRefData, trig} from 'alins-utils';
-import {isProxy} from './proxy';
-import {computed} from './computed';
+import {isProxy, observe} from './proxy';
+// import {computed} from './computed';
 import {IOprationAction} from './array-proxy';
 
 export type IWatchRefTarget<T> = (()=>T)|IRefData<T>|{v:T};
@@ -40,14 +40,26 @@ export function watch<T> (
     deep = true,
 ): IProxyData<T>|IRefData<T>|{v:T} {
     if (typeof target === 'function') {
-        target = computed(target);
-        // 防止多次重复触发watch
-        const origin = cb;
-        cb = (v, nv, path, p, remove) => {
-            if (!isValueEqual(v, nv)) {
-                origin(v, nv, path, p, remove);
+        let before = observe(target, (v, nv, path, p, remove) => {
+            const after = target();
+            if (!isValueEqual(before, after)) {
+                // console.log(after, before, path, p, remove);
+                cb(after, before, path, p, remove);
+                before = after;
             }
-        };
+        });
+
+        return {v: before};
+
+        // target = computed(target);
+        // // 防止多次重复触发watch
+        // const origin = cb;
+        // cb = (v, nv, path, p, remove) => {
+        //     console.log(v, nv, path, p, remove);
+        //     if (!isValueEqual(v, nv)) {
+        //         origin(v, nv, path, p, remove);
+        //     }
+        // };
     } else if (!isProxy(target)) {
         // ! 兼容computed(()=>1+1)情况
         return target;

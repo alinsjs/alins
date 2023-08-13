@@ -11,6 +11,7 @@ import {IGeneralElement, ITrueElement, Renderer} from './element/renderer';
 import {empty} from 'alins-utils';
 import {IBranchTarget} from './scope/branch';
 import {createAnchor} from './scope/anchor';
+import {getCurCleanner, setCurCleanner, useCurCleanner} from './scope/cleanner';
 
 export type IIfTarget = IWatchRefTarget<boolean>;
 export interface IIfReturn {
@@ -21,6 +22,7 @@ export interface IIfReturn {
 
 export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfReturn {
     // console.log('branch debug:enter if', call.toString());
+    const cleanner = getCurCleanner();
     const anchor = createAnchor(util.cache);
     // ! 最后一个branch是end
     const branchs: IBranchTarget[] = [];
@@ -32,7 +34,10 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         if (activeIndex === i) return true;
         activeIndex = i;
         const branch = branchs[i];
-        anchor.replaceBranch(branch);
+        useCurCleanner(cleanner, () => {
+            anchor.replaceBranch(branch);
+        });
+        // setCurCleanner(cleanner);
         // console.warn('switch node', i);
         // ! 编译时注入的returned
         return branch.call.returned !== false;
