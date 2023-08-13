@@ -1,9 +1,9 @@
 {
     "name": "alins",
-    "version": "0.0.20-beta.5",
+    "version": "0.0.21-beta.0",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "dist/alins.d.ts",
+    "main": "dist/alins-client-core.esm.js",
+    "typings": "dist/alins-client-core.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -19,14 +19,13 @@
     "license": "MIT",
     "type": "module",
     "dependencies": {
-        "alins-reactive": "^0.0.20-beta.5",
-        "alins-utils": "^0.0.20-beta.5"
+        "alins-reactive": "^0.0.21-beta.0",
+        "alins-utils": "^0.0.21-beta.0"
     },
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/",
-        "tag": "beta"
+        "registry": "https://registry.npmjs.org/"
     },
     "module": "dist/alins.esm.min.js",
-    "unpkg": "dist/alins.iife.min.js",
-    "jsdelivr": "dist/alins.iife.min.js"
+    "unpkg": "dist/alins-client-core.min.js",
+    "jsdelivr": "dist/alins-client-core.min.js"
 }

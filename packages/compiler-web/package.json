@@ -1,9 +1,9 @@
 {
     "name": "alins-compiler-web",
-    "version": "0.0.20-beta.5",
+    "version": "0.0.21-beta.0",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-compiler-web.esm.js",
+    "typings": "dist/alins-compiler-web.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -23,10 +23,10 @@
     },
     "dependencies": {
         "@babel/standalone": "^7.22.9",
-        "alins": "^0.0.20-beta.5",
-        "alins-compiler-core": "^0.0.20-beta.5"
+        "alins": "^0.0.21-beta.0",
+        "alins-compiler-core": "^0.0.21-beta.0"
     },
-    "unpkg": "dist/alins-compiler-web.iife.min.js",
-    "jsdelivr": "dist/alins-compiler-web.iife.min.js",
+    "unpkg": "dist/alins-compiler-web.min.js",
+    "jsdelivr": "dist/alins-compiler-web.min.js",
     "module": "dist/alins-compiler-web.esm.min.js"
 }

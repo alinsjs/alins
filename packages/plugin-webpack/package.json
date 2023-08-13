@@ -1,9 +1,9 @@
 {
     "name": "alins-loader",
-    "version": "0.0.20-beta.7",
+    "version": "0.0.21-beta.0",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "dist/alins-loader.cjs.min.js",
-    "typings": "dist/alins-loader.d.ts",
+    "main": "dist/alins-plugin-webpack.esm.js",
+    "typings": "dist/alins-plugin-webpack.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -19,11 +19,12 @@
     "license": "MIT",
     "type": "commonjs",
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/",
-        "tag": "beta"
+        "registry": "https://registry.npmjs.org/"
     },
     "dependencies": {
-        "alins-compiler-node": "^0.0.20-beta.5"
+        "alins-compiler-node": "^0.0.21-beta.0"
     },
-    "module": "dist/alins-loader.esm.min.js"
+    "module": "dist/alins-loader.esm.min.js",
+    "unpkg": "dist/alins-plugin-webpack.min.js",
+    "jsdelivr": "dist/alins-plugin-webpack.min.js"
 }
