@@ -24,7 +24,5 @@
         "@typescript-eslint/parser": "^6.3.0",
         "eslint-plugin-react": "^7.33.1"
     },
-    "typings": "src/index.ts",
-    "unpkg": "dist/alins-plugin-eslint.min.js",
-    "jsdelivr": "dist/alins-plugin-eslint.min.js"
+    "typings": "src/index.ts"
 }

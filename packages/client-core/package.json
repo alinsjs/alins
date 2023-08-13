@@ -26,6 +26,6 @@
         "registry": "https://registry.npmjs.org/"
     },
     "module": "dist/alins.esm.min.js",
-    "unpkg": "dist/alins-client-core.min.js",
-    "jsdelivr": "dist/alins-client-core.min.js"
+    "unpkg": "dist/alins.iife.min.js",
+    "jsdelivr": "dist/alins.iife.min.js"
 }

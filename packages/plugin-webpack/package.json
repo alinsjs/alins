@@ -24,7 +24,5 @@
     "dependencies": {
         "alins-compiler-node": "^0.0.21"
     },
-    "module": "dist/alins-loader.esm.min.js",
-    "unpkg": "dist/alins-plugin-webpack.min.js",
-    "jsdelivr": "dist/alins-plugin-webpack.min.js"
+    "module": "dist/alins-loader.esm.min.js"
 }

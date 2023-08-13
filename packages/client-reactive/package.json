@@ -24,7 +24,7 @@
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
-    "unpkg": "dist/alins-client-reactive.min.js",
-    "jsdelivr": "dist/alins-client-reactive.min.js",
+    "unpkg": "dist/alins-reactive.iife.min.js",
+    "jsdelivr": "dist/alins-reactive.iife.min.js",
     "module": "dist/alins-reactive.esm.min.js"
 }

@@ -24,7 +24,5 @@
     "dependencies": {
         "alins-compiler-node": "^0.0.21"
     },
-    "module": "dist/vite-plugin-alins.esm.min.js",
-    "unpkg": "dist/alins-plugin-vite.min.js",
-    "jsdelivr": "dist/alins-plugin-vite.min.js"
+    "module": "dist/vite-plugin-alins.esm.min.js"
 }

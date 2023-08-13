@@ -21,7 +21,7 @@
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
-    "unpkg": "dist/alins-client-utils.min.js",
-    "jsdelivr": "dist/alins-client-utils.min.js",
+    "unpkg": "dist/alins-utils.iife.min.js",
+    "jsdelivr": "dist/alins-utils.iife.min.js",
     "module": "dist/alins-utils.esm.min.js"
 }

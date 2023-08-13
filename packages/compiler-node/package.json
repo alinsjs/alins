@@ -6,6 +6,9 @@
     "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
+    "scripts": {
+        "build": "node ../../scripts/build/build.js compiler-node"
+    },
     "keywords": [
         "alins",
         "all-in-js",

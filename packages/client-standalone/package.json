@@ -21,8 +21,8 @@
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
-    "unpkg": "dist/alins-client-standalone.min.js",
-    "jsdelivr": "dist/alins-client-standalone.min.js",
+    "unpkg": "dist/alins-standalone.iife.min.js",
+    "jsdelivr": "dist/alins-standalone.iife.min.js",
     "dependencies": {
         "alins": "^0.0.21"
     },

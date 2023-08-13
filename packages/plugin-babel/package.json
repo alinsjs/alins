@@ -24,7 +24,5 @@
     "dependencies": {
         "alins-compiler-core": "^0.0.21"
     },
-    "module": "dist/babel-plugin-alins.esm.min.js",
-    "unpkg": "dist/alins-plugin-babel.min.js",
-    "jsdelivr": "dist/alins-plugin-babel.min.js"
+    "module": "dist/babel-plugin-alins.esm.min.js"
 }

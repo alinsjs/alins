@@ -25,7 +25,5 @@
         "@babel/types": "^7.22.5",
         "@types/babel__traverse": "^7.20.1"
     },
-    "module": "dist/alins-compiler-core.esm.min.js",
-    "unpkg": "dist/alins-compiler-core.min.js",
-    "jsdelivr": "dist/alins-compiler-core.min.js"
+    "module": "dist/alins-compiler-core.esm.min.js"
 }

@@ -26,7 +26,7 @@
         "alins": "^0.0.21",
         "alins-compiler-core": "^0.0.21"
     },
-    "unpkg": "dist/alins-compiler-web.min.js",
-    "jsdelivr": "dist/alins-compiler-web.min.js",
+    "unpkg": "dist/alins-compiler-web.iife.min.js",
+    "jsdelivr": "dist/alins-compiler-web.iife.min.js",
     "module": "dist/alins-compiler-web.esm.min.js"
 }

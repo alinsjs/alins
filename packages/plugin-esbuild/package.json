@@ -7,7 +7,7 @@
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
-        "build": "node ../../scripts/build/build.js plugin-webpack"
+        "build": "node ../../scripts/build/build.js plugin-esbuild"
     },
     "keywords": [
         "alins",
