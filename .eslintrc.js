@@ -1,7 +1,8 @@
 module.exports = {
     // "parser": '@typescript-eslint/parser', // 启用会导致vue文件eslint错误
     extends: [
-        'plugin:vue/vue3-recommended'
+        'plugin:vue/vue3-recommended',
+        // 'eslint:alins',
     ],
     'plugins': [
         '@typescript-eslint',
@@ -42,6 +43,7 @@ module.exports = {
         'console': true,
         'require': true,
         'module': true,
+        __DEBUG__: true,
     },
     'rules': {
     // 'no-var': "error",

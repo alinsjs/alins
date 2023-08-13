@@ -22,7 +22,7 @@ jobs:
       - name: Determine npm cache directory
         id: npm-cache
         run: |
-          echo "::set-output name=dir::$(npm config get cache)"
+          echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
 
       - name: Restore npm cache
         uses: actions/cache@v3
@@ -35,7 +35,7 @@ jobs:
       - name: Npm Install pnpm
         run: npm install -g pnpm
 
-      - name: pnpm Install
+      - name: pnpm Install --no-frozen-lockfile
         run: pnpm i
 
       - name: Version
@@ -43,45 +43,50 @@ jobs:
         run: |
           tag=${GITHUB_REF/refs\/tags\//}
           version=${tag#v}
-          echo "::set-output name=version::${version}"
+          echo "version=${version}" >> $GITHUB_OUTPUT
 
-      - name: Build # build npm
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      - name: Version
+        id: version
         run: |
-            git config --global user.email "1506282385@qq.com"
-            git config --global user.name "theajack"
-            git checkout master
-            npx lerna bootstrap
-            npx lerna version ${{ steps.version.outputs.version }} --no-git-tag-version --force-publish --yes
-            npm run build
-            git add .
-            git commit -m "feat: Version ${{ steps.version.outputs.version }} Build"
-            npx lerna publish from-package --yes
-            npm run init:mono -- ${{ steps.version.outputs.version }}
-            git add .
-            git commit -m "feat: Version ${{ steps.version.outputs.version }} Publish"
-            git push origin master
+          echo "${steps.version.outputs.version}"
 
-      # - name: Pages # github pages
-      #   uses: JamesIves/github-pages-deploy-action@v4.3.0
-      #   with:
-      #     branch: gh-pages
-      #     folder: docs
-      
-      - name: Release # release
-        uses: release-drafter/release-drafter@v5
-        with:
-          version: ${{ steps.version.outputs.version }}
-          publish: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
-      # - name: Publish # npm publish
+      # - name: Build # build npm
       #   env:
+      #     GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       #     NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
-      #   run: npm run eb:publish -- ${{ steps.version.outputs.version }}
+      #   run: |
+      #       git config --global user.email "1506282385@qq.com"
+      #       git config --global user.name "theajack"
+      #       git checkout master
+      #       npx lerna bootstrap
+      #       npx lerna version ${{ steps.version.outputs.version }} --no-git-tag-version --force-publish --yes
+      #       npm run build
+      #       git add .
+      #       git commit -m "feat: Version ${{ steps.version.outputs.version }} Build"
+      #       npx lerna publish from-package --yes
+      #       npm run init:mono -- ${{ steps.version.outputs.version }}
+      #       git add .
+      #       git commit -m "feat: Version ${{ steps.version.outputs.version }} Publish"
+      #       git push origin master
+
+      # # - name: Pages # github pages
+      # #   uses: JamesIves/github-pages-deploy-action@v4.3.0
+      # #   with:
+      # #     branch: gh-pages
+      # #     folder: docs
       
-      - name: Purge # purge cdn
-        run: npm run eb:purge -- ${{ steps.version.outputs.version }}
+      # - name: Release # release
+      #   uses: release-drafter/release-drafter@v5
+      #   with:
+      #     version: ${{ steps.version.outputs.version }}
+      #     publish: true
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+      # # - name: Publish # npm publish
+      # #   env:
+      # #     NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      # #   run: npm run eb:publish -- ${{ steps.version.outputs.version }}
+      
+      # - name: Purge # purge cdn
+      #   run: npm run eb:purge -- ${{ steps.version.outputs.version }}

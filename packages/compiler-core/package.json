@@ -1,0 +1,30 @@
+{
+    "name": "alins-compiler-core",
+    "version": "0.0.20-beta.5",
+    "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
+    "main": "dist/alins-compiler-core.cjs.min.js",
+    "typings": "dist/alins-compiler-core.d.ts",
+    "repository": "git@github.com:alinsjs/alins.git",
+    "author": "tackchen <theajack@qq.com>",
+    "scripts": {
+        "build": "node ../../scripts/build/build.js compiler-core"
+    },
+    "keywords": [
+        "alins",
+        "all-in-js",
+        "alins-style",
+        "css-in-js",
+        "web-ui-framework"
+    ],
+    "license": "MIT",
+    "type": "commonjs",
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "tag": "beta"
+    },
+    "dependencies": {
+        "@babel/types": "^7.22.5",
+        "@types/babel__traverse": "^7.20.1"
+    },
+    "module": "dist/alins-compiler-core.esm.min.js"
+}

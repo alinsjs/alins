@@ -41,7 +41,145 @@
 
 ### 🚀 [Alins](https://github.com/alinsjs/alins): `Al`l-`in`-j`s` web ui框架，无 jsx/template/vdom/css/html
 
+<!-- ### 🚀 [Alins](https://github.com/alinsjs/alins): 最简洁优雅的Web UI 框架 -->
+
 **[English](https://github.com/alinsjs/alins/blob/master/README.md) | [文档](https://alinsjs.github.io/docs-cn) | [更新日志](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [反馈错误/缺漏](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [留言板](https://theajack.github.io/message-board/?app=alins)**
+
+<!-- 
+## 0 比较
+
+### 0.1 代码比较
+
+#### 1. 一个计数器
+
+React
+
+```jsx
+let [count, setCount] = useState(1);
+
+function increase() {
+    setCount(count + 1)
+}
+
+<button onClick={increase}>
+	add {count}
+</button>
+```
+
+Vue3
+
+```html
+<script setup>
+	let count = ref(0);
+	function increase() {
+		count.value ++;
+	}
+</script>
+
+<button @click={increase}>
+	add {{count}}
+</button>
+```
+
+Svelte
+
+```html
+<script>
+	let count = 0;
+	function increase() {
+		count ++;
+	}
+</script>
+
+<button on:click={increase}>
+	add {count}
+</button>
+```
+
+Alins
+
+```jsx
+let count = 0;
+function increase() {
+    count ++;
+}
+
+<button onclick={increase}>
+	add {count}
+</button>
+```
+
+#### 2. 计算属性
+
+
+
+#### 3. 条件分支
+
+React
+
+```jsx
+let [count, setCount] = useState(1);
+
+function increase() {
+    setCount(count + 1)
+}
+
+<button onClick={increase}>
+	add {count}
+</button>
+```
+
+Vue3
+
+```html
+<script setup>
+	let count = ref(0);
+	function increase() {
+		count.value ++;
+	}
+</script>
+
+<button @click={increase}>
+	add {{count}}
+</button>
+```
+
+Svelte
+
+```html
+<script>
+	let list = [
+		{ id: 'id1', name: 'name1' },
+		{ id: 'id2', name: 'name2' },
+	];
+</script>
+
+<ul>
+	{#each cats as { id, name }, i}
+		<li>{i+1} {name}</li>
+	{/each}
+</ul>
+```
+
+Alins
+
+```jsx
+let count = 0;
+function increase() {
+    count ++;
+}
+
+<button onclick={increase}>
+	add {count}
+</button>
+```
+
+
+
+
+#### 4. For 循环
+ -->
+
 
 ## 0 快速开始
 
