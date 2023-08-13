@@ -12,6 +12,7 @@
         "buildmulti": "node scripts/build/build-multi.js",
         "info": "node ./scripts/info.js",
         "boot": "npx lerna bootstrap",
+        "clear-dist": "node scripts/clear-dist.js",
         "init:package": "node ./scripts/init-packages-info.js",
         "init:mono": "node ./scripts/init-packages-info.js dev",
         "release": "node scripts/push-release.js",
