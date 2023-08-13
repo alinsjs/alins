@@ -45,8 +45,8 @@ jobs:
           version=${tag#v}
           echo "version=${version}" >> $GITHUB_OUTPUT
 
-      - name: Version
-        id: version
+      - name: Version2
+        id: version2
         run: |
           echo "${steps.version.outputs.version}"
 
