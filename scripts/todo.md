@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-10 16:44:39
+ * @LastEditTime: 2023-08-13 16:00:11
 -->
 
 # 0.1.0
@@ -34,14 +34,16 @@ feat：
 - [x] 重新走一下测试脚本
 - [x] 编译 + 运行时 结合测试
 - [x] class支持对象
+- [x] 与react vue 性能比较
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
-- [ ] 与react vue 性能比较
 - [ ] 文档 & 在线编译工具
 - [ ] eslint-config-alins 验证
 
 next Version new feature
 
+- [ ] 内存优化
+- [ ] 运行时间 优化
 - [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
 - [ ] For 支持结构
 - [ ] For Object 支持
@@ -74,8 +76,7 @@ fix
 - [x] 数组直接赋值有bug，不能更新
 - [x] 数组 swapRows 有bug
 - [x] create 10000rows 有bug
-- [ ] 内存泄漏的问题 导致内存占用
-- [ ] 运行时间 优化
+- [x] 内存泄漏的问题 导致内存占用
 
 
 

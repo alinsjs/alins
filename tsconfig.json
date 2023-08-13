@@ -32,8 +32,9 @@
         "src/**/*",
         "global.d.ts",
         "playground/**/*.js",
+        "playground/**/*.jsx",
         "playground/**/*.ts",
-        "packages/plugin-eslint/*.js"
+        "packages/plugin-eslint/*.js",
         // "**/*.ts"
     ],
     "exclude": [

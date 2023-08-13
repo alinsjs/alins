@@ -37,11 +37,10 @@ function parseBuildConfig () {
     const BuildMap = {
         'client-core': {
             packageName: 'alins',
-            // type: 'web',
+            type: 'web',
             umdName: 'Alins',
-            // format: 'umd esm iife',
-            format: 'iife',
-            external: false,
+            // format: 'iife',
+            // external: false,
         },
         'client-reactive': {
             packageName: 'alins-reactive',
@@ -85,7 +84,7 @@ function parseBuildConfig () {
         },
         'plugin-eslint': {
             packageName: 'eslint-config-alins',
-            type: 'cjs',
+            format: 'cjs',
         },
         'plugin-babel-preset': {
             packageName: 'babel-preset-alins',
@@ -99,19 +98,16 @@ function parseBuildConfig () {
         },
         'plugin-webpack': {
             packageName: 'alins-loader',
-            // format: 'esm cjs',
-            // type: 'node',
-            format: 'cjs',
+            type: 'node',
+            // format: 'cjs',
             // external: false,
         },
         'plugin-esbuild': {
             packageName: 'esbuild-plugin-alins',
-            // format: 'esm cjs',
             type: 'node',
         },
         'plugin-rollup': {
             packageName: 'rollup-plugin-alins',
-            // format: 'esm cjs',
             type: 'node',
         },
     };
@@ -176,9 +172,6 @@ if (packageName === 'eslint-config-alins') {
     process.exit(0);
 }
 
-
-const isWebAndNodePkg = ['alins-compiler-core'].includes(packageName);
-
 console.log('external', external);
 
 const packageInfo = {
@@ -186,7 +179,6 @@ const packageInfo = {
     type: 'module',
     'publishConfig': {
         'registry': 'https://registry.npmjs.org/',
-        tag: 'beta',
     },
 };
 
@@ -272,6 +264,9 @@ modifyPackage(pkg => {
     if (!isWebPackage) {
         delete pkg.unpkg;
         delete pkg.jsdelivr;
+    }
+    if (pkg.version.includes('beta')) {
+        pkg.publishConfig.tag = 'beta';
     }
 });
 

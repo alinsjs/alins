@@ -4,33 +4,33 @@
  * @Description: Coding something
  */
 
-export interface ICleanner {
+export interface ICleaner {
     clean(): void;
     collect(currentFn: any, clean: any): void;
 }
 
-let curCleanner: ICleanner|null = null;
+let curCleaner: ICleaner|null = null;
 
-export function setCurCleanner (cleanner: ICleanner|null) {
-    curCleanner = cleanner;
+export function setCurCleaner (cleaner: ICleaner|null) {
+    curCleaner = cleaner;
 }
 
-export function getCurCleanner () {
-    return curCleanner;
+export function getCurCleaner () {
+    return curCleaner;
 }
 
-export function useCurCleanner (cleanner: ICleanner|null, callback: ()=>void) {
-    setCurCleanner(cleanner);
+export function useCurCleaner (cleaner: ICleaner|null, callback: ()=>void) {
+    setCurCleaner(cleaner);
     callback();
-    setCurCleanner(null);
+    setCurCleaner(null);
 }
 
 // 收集dom元素依赖的watch，在元素remove时主动释放掉所有watch
-export function createCleanner () {
+export function createCleaner () {
     
     let cleanMap: Map<any, ()=>void> = new Map();
 
-    const cleanner: ICleanner = {
+    const cleaner: ICleaner = {
         clean () {
             const keys = cleanMap.keys();
             for (const key of keys) {
@@ -47,7 +47,7 @@ export function createCleanner () {
         }
     };
 
-    curCleanner = cleanner;
+    curCleaner = cleaner;
 
-    return curCleanner;
+    return curCleaner;
 }

@@ -12,7 +12,7 @@ import {
 import {arrayFuncProxy, replaceWholeArray} from './array-proxy';
 import {replaceArrayItem} from './array-proxy';
 import {empty, pureproxy} from 'alins-utils';
-import {getCurCleanner} from '../../client-core/src/scope/cleanner';
+import {getCurCleaner} from '../../client-core/src/scope/cleaner';
 
 let currentFn: any = null;
 let depReactive = false; // 当前表达式是否依赖响应数据
@@ -204,7 +204,7 @@ export function createProxy<T extends IJson> (data: T, {
                     };
                     // console.log('collect', target[util], property);
                     // debugger;
-                    getCurCleanner()?.collect(target[util], clean);
+                    getCurCleaner()?.collect(target[util], clean);
                     listener.__clear = clean;
                     // if (__DEBUG__) console.log('收集依赖', property);
                     lns[property].add(listener);

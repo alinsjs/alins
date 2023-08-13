@@ -10,8 +10,8 @@ import {
 } from 'alins-reactive';
 import {IProxyData, util} from 'alins-utils';
 import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
-import {getParent, removeDom} from './utils';
-import {createCleanner, ICleanner} from './scope/cleanner';
+import {getParent} from './utils';
+import {createCleaner, ICleaner} from './scope/cleaner';
 
 /*
  赋值的话是 状态替换
@@ -44,7 +44,7 @@ export function map (
     // const proxy = list[util].proxy;
     const ScopeEnd = Renderer.createEmptyMountNode();
     const EndMap: ITrueElement[] = [];
-    const Cleanners: ICleanner[] = [];
+    const Cleaners: ICleaner[] = [];
 
 
     let head: ITrueElement;
@@ -79,12 +79,12 @@ export function map (
         i: number,
         scopes = ScopeItems,
         ends = EndMap,
-        cleanners = Cleanners,
+        cleaners = Cleaners,
     ): ITrueElement => {
         // console.log('cc', item, i);
         const scope = createScope(item, i);
 
-        cleanners.push(createCleanner());
+        cleaners.push(createCleaner());
 
         let child = call(scope[k], scope[ik] || i);
 
@@ -184,8 +184,8 @@ export function map (
 
                 EndMap.splice(index, count);
                 ScopeItems.splice(index, count);
-                Cleanners.splice(index, count).forEach(cleanner => {
-                    cleanner.clean();
+                Cleaners.splice(index, count).forEach(cleaner => {
+                    cleaner.clean();
                 });
                 // items.forEach(item => item[util].release());
                 // console.warn('【watch array remove】', index, count, data);
@@ -196,14 +196,14 @@ export function map (
                 const mountNode = index === 0 ? (head || ScopeEnd) : EndMap[index - 1].nextSibling;
                 const ends: any[] = [];
                 const scopes: any[] = [];
-                const cleanners: any[] = [];
+                const cleaners: any[] = [];
                 data.forEach((item, i) => {
-                    const child = createChild(item, index + i, scopes, ends, cleanners);
+                    const child = createChild(item, index + i, scopes, ends, cleaners);
                     getParent(mountNode, container).insertBefore(child, mountNode);
                 });
                 ScopeItems.splice(index, 0, ...scopes);
                 EndMap.splice(index, 0, ...ends);
-                Cleanners.splice(index, 0, ...cleanners);
+                Cleaners.splice(index, 0, ...cleaners);
                 // console.warn('【watch array insert】', index, count, data);
             };break;
         }
