@@ -2,8 +2,8 @@
     "name": "esbuild-plugin-alins",
     "version": "0.0.21-beta.0",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "dist/alins-plugin-esbuild.esm.js",
-    "typings": "dist/alins-plugin-esbuild.d.ts",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
