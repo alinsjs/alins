@@ -1,9 +1,9 @@
 {
     "name": "alins-standalone",
-    "version": "0.0.21",
+    "version": "0.0.22",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-standalone.umd.min.js",
+    "typings": "dist/alins-standalone.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -24,7 +24,7 @@
     "unpkg": "dist/alins-standalone.iife.min.js",
     "jsdelivr": "dist/alins-standalone.iife.min.js",
     "dependencies": {
-        "alins": "^0.0.21"
+        "alins": "^0.0.22"
     },
     "module": "dist/alins-standalone.esm.min.js"
 }

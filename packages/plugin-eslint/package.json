@@ -1,8 +1,8 @@
 {
     "name": "eslint-config-alins",
-    "version": "0.0.21",
+    "version": "0.0.22",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
+    "main": "index.js",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -23,6 +23,5 @@
     "dependencies": {
         "@typescript-eslint/parser": "^6.3.0",
         "eslint-plugin-react": "^7.33.1"
-    },
-    "typings": "src/index.ts"
+    }
 }
