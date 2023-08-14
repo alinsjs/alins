@@ -29,6 +29,6 @@ export function parseAlins (code: string, {
         if (filename) options.filename = filename;
     }
 
-    const output = transform(code, );
+    const output = transform(code, options);
     return output.code || '';
 }
