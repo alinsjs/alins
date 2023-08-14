@@ -24,5 +24,6 @@
         "@typescript-eslint/parser": "^6.3.0",
         "eslint-plugin-react": "^7.33.1"
     },
-    "typings": "src/index.ts"
+    "typings": "src/index.ts",
+    "module": "src/index.ts"
 }

@@ -32,11 +32,15 @@ export function createCleaner () {
 
     const cleaner: ICleaner = {
         clean () {
-            const keys = cleanMap.keys();
-            for (const key of keys) {
-                // @ts-ignore
-                cleanMap.get(key)();
-            }
+            cleanMap.forEach(clean => {
+                clean();
+            });
+            // ! 使用for of 部分打包工具会转译成 普通for语句 导致元素没有被遍历到，没有释放内存
+            // const keys = cleanMap.keys();
+            // for (const key of keys) {
+            //     // @ts-ignore
+            //     cleanMap.get(key)();
+            // }
             cleanMap.clear();
             // @ts-ignore
             cleanMap = null;

@@ -26,5 +26,5 @@
     },
     "unpkg": "dist/alins-reactive.iife.min.js",
     "jsdelivr": "dist/alins-reactive.iife.min.js",
-    "module": "dist/alins-reactive.esm.min.js"
+    "module": "src/index.ts"
 }

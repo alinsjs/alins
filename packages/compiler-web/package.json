@@ -28,5 +28,5 @@
     },
     "unpkg": "dist/alins-compiler-web.iife.min.js",
     "jsdelivr": "dist/alins-compiler-web.iife.min.js",
-    "module": "dist/alins-compiler-web.esm.min.js"
+    "module": "src/index.ts"
 }

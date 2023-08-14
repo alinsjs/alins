@@ -26,5 +26,5 @@
     "dependencies": {
         "alins": "^0.0.22"
     },
-    "module": "dist/alins-standalone.esm.min.js"
+    "module": "src/index.ts"
 }

@@ -1,1 +1,1 @@
-export default ["bench","data","if-sample","increment","list","style-reactive","todo-list"];
+export default ["bench","data","if-sample","increment","list","rfc","style-reactive","todo-list","vjsx"];

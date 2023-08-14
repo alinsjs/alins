@@ -24,5 +24,5 @@
     "dependencies": {
         "alins-compiler-node": "^0.0.22"
     },
-    "module": "dist/alins-loader.esm.min.js"
+    "module": "src/index.ts"
 }

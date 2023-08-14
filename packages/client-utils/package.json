@@ -23,5 +23,5 @@
     },
     "unpkg": "dist/alins-utils.iife.min.js",
     "jsdelivr": "dist/alins-utils.iife.min.js",
-    "module": "dist/alins-utils.esm.min.js"
+    "module": "src/index.ts"
 }
