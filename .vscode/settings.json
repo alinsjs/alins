@@ -1,5 +1,5 @@
 {
-  "editor.tabSize": 2,
+  "editor.tabSize": 4,
   "editor.formatOnSave": false, // 每次保存的时候将代码按eslint格式进行修复
   "eslint.validate": [
     //开启对.vue文件中错误的检查

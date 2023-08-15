@@ -1,3 +1,8 @@
+<!--
+ * @Author: chenzhongsheng
+ * @Date: 2023-02-04 10:31:48
+ * @Description: Coding something
+-->
 
 ## 1. [pnpm](https://zhuanlan.zhihu.com/p/373935751)
 
@@ -43,3 +48,11 @@ http://www.febeacon.com/lerna-docs-zh-cn/routes/commands/version.html#preid
 查看包之间的依赖关系
 
 yarn workspaces info 
+
+## dev
+
+npm run buildmulti
+
+npx lerna version 0.0.20-beta.8 --no-git-tag-version --force-publish --yes
+
+npx lerna add xx --scope=xxx

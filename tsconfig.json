@@ -9,7 +9,7 @@
         "allowJs": true,
         "noUnusedLocals": true,
         "strictNullChecks": true,
-        "noImplicitAny": true,
+        // "noImplicitAny": true,
         "noImplicitThis": true,
         "experimentalDecorators": true,
         "resolveJsonModule": true,
@@ -20,14 +20,22 @@
         "types": ["node"],
         "rootDir": ".",
         "noEmit": false,
-        "paths": {}
+        "paths": {},
+        "noImplicitAny": false,
     },
     "include": [
         "packages/*/src/**/*",
+        "packages/*/v1/**/*",
         ".eslintrc.js",
         "babel.config.js",
         "scripts/**/*",
-        "src/**/*"
+        "src/**/*",
+        "global.d.ts",
+        "playground/**/*.js",
+        "playground/**/*.jsx",
+        "playground/**/*.ts",
+        "packages/plugin-eslint/*.js",
+        // "**/*.ts"
     ],
     "exclude": [
         "./node_modules"

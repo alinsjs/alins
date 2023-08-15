@@ -1,0 +1,30 @@
+{
+    "name": "babel-preset-alins",
+    "version": "0.0.24",
+    "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
+    "repository": "git@github.com:alinsjs/alins.git",
+    "author": "tackchen <theajack@qq.com>",
+    "scripts": {
+        "build": "node ../../scripts/build/build.js plugin-babel-preset"
+    },
+    "keywords": [
+        "alins",
+        "all-in-js",
+        "alins-style",
+        "css-in-js",
+        "web-ui-framework"
+    ],
+    "license": "MIT",
+    "type": "commonjs",
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
+    },
+    "dependencies": {
+        "@babel/preset-react": "^7.22.5",
+        "@babel/preset-typescript": "^7.22.5",
+        "babel-plugin-alins": "^0.0.24"
+    },
+    "module": "src/index.ts"
+}

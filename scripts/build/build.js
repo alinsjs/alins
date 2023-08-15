@@ -8,8 +8,6 @@ const execa = require('execa');
 const {resolveRootPath} = require('./utils');
 
 const dirName = process.argv[2];
- 
-console.log(`dirName=${dirName}`);
 
 async function build () {
     await execa(
@@ -19,7 +17,7 @@ async function build () {
             resolveRootPath('scripts/build/rollup.config.js'),
             '--environment',
             [
-                `PACKAGE_NAME:${dirName}`,
+                `DIR_NAME:${dirName}`,
             ],
         ],
         {stdio: 'inherit'},

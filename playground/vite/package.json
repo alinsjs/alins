@@ -1,0 +1,20 @@
+{
+  "name": "vite-plugin-playground",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "protocol-buffers-schema": "^3.6.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.2.3",
+    "vite-plugin-alins": "0.0.20-beta.5"
+  },
+  "type": "module",
+  "dependencies": {
+    "@types/node": "^18.11.18",
+    "alins": "0.0.20-beta.1"
+  }
+}

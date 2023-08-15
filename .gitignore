@@ -3,6 +3,6 @@ dist
 cdn
 lerna-debug.log
 .pnpm-debug.log
-bundle.js
-bundle.js.map
+bundle.min.js
+bundle.min.js.map
 .DS_Store

@@ -22,7 +22,7 @@ jobs:
       - name: Determine npm cache directory
         id: npm-cache
         run: |
-          echo "::set-output name=dir::$(npm config get cache)"
+          echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
 
       - name: Restore npm cache
         uses: actions/cache@v3
@@ -35,7 +35,7 @@ jobs:
       - name: Npm Install pnpm
         run: npm install -g pnpm
 
-      - name: pnpm Install
+      - name: pnpm Install --no-frozen-lockfile
         run: pnpm i
 
       - name: Version
@@ -43,7 +43,7 @@ jobs:
         run: |
           tag=${GITHUB_REF/refs\/tags\//}
           version=${tag#v}
-          echo "::set-output name=version::${version}"
+          echo "version=${version}" >> $GITHUB_OUTPUT
 
       - name: Build # build npm
         env:
