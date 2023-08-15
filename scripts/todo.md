@@ -35,6 +35,7 @@ feat：
 - [x] 编译 + 运行时 结合测试
 - [x] class支持对象
 - [x] 与react vue 性能比较
+- [x] 利用 MutationObserver 实现生命周期
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
@@ -77,6 +78,7 @@ fix
 - [x] 数组 swapRows 有bug
 - [x] create 10000rows 有bug
 - [x] 内存泄漏的问题 导致内存占用
+- [x] 非数组非json大数据代理问题导致的性能问题 
 
 
 

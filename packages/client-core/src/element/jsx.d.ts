@@ -647,6 +647,7 @@ declare namespace Alins {
     interface IControlAttributes {
         $parent?: HTMLElement|Node|DocumentFragment;
         $show?: boolean|(()=>boolean);
+
     }
 
     interface IAttributes extends IBaseAttributes, IControlAttributes {
@@ -654,7 +655,11 @@ declare namespace Alins {
             [prop in keyof IBaseAttributes]?: IAttributes[prop];
         } & {
             [prop: string]: any;
-        }
+        };
+        $created?: (dom: HTMLElement)=>void;
+        $appended?: (dom: HTMLElement)=>void;
+        $mounted?: (dom: HTMLElement)=>void;
+        $removed?: (dom: HTMLElement)=>void;
         'value:string'?: any;
         'value:number'?: any;
         'value:boolean'?: any;

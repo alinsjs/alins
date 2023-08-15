@@ -17,6 +17,7 @@ import {parseModel} from './model';
 import {getParent} from '../utils';
 import {parseAttributes} from './attributes';
 import {parseClassName} from './class';
+import { initMutationObserver } from './mutation-observer';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -78,14 +79,32 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         //     delete opt.$life;
         // }
         if (isDom) {
+
+            // @ts-ignore
+            let $appended = opt.attributes.$appended;
+
             for (const k in opt.attributes) {
                 const v = opt.attributes[k];
                 if (isEventAttr(el as IElement, k, v)) {
                     addEvent(el as IElement, k, v);
                     continue;
                 }
-                if (k === '$parent') {
+                if(k === '$created'){
+                    v(el);
+                }else if(k === '$appended'){
+                    // @ts-ignore
+                    el.__$appended = $appended;
+                    continue;
+                }else if(k === '$removed'){
+                    // @ts-ignore
+                    el.__$removed = v;
+                }else if(k === '$mounted'){
+                    // @ts-ignore
+                    el.__$mounted = v;
+                }else if (k === '$parent') {
                     v.appendChild(el);
+                    // todo 此处有可能还没有append到document中
+                    if($appended) $appended(el);
                 } else if (k === '$attributes') {
                     // @ts-ignore
                     parseAttributes(el, v);
@@ -125,7 +144,11 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
         }
 
         if (Renderer.isElement(item)) {
+            if(item.__$mounted || item.__$removed){
+                initMutationObserver(parent);
+            }
             parent.appendChild(item as any);
+            item.__$appended?.(item);
             continue;
         }
 
@@ -140,6 +163,7 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
         const dom = transformOptionsToElement(options);
         // @ts-ignore
         parent.appendChild(dom);
+        
     }
 }
 
@@ -150,21 +174,24 @@ export function isJSXElement (item: any) {
 export const JSX = {
     createElement (
         tag: string | ((
-            attributes: Record<string, any>, children: ITrueElement[]
+            attributes: IAttributes|null, children: ITrueElement[]
         )=>ITrueElement|Promise<ITrueElement>),
-        attributes: any = null,
+        attributes: IAttributes|null = null,
         ...children: any[]
     ): ITrueElement {
         if (typeof tag === 'function') {
-            const $parent = attributes.$parent;
-            delete attributes.$parent;
-            // console.log('createComponent', result);
-            for (const k in attributes) {
-                const v = attributes[k];
-                if (!isProxy(v)) {
-                    attributes[k] = {v};
+            let $parent: any = null;
+            if(attributes){
+                $parent = attributes.$parent;
+                delete attributes.$parent;
+                // console.log('createComponent', result);
+                for (const k in attributes) {
+                    const v = attributes[k];
+                    if (!isProxy(v)) {
+                        attributes[k] = {v};
+                    }
+                    // if(typeof v === 'function')
                 }
-                // if(typeof v === 'function')
             }
 
             const dom = tag(attributes, children);
@@ -175,6 +202,7 @@ export const JSX = {
             }
             return result;
         }
+        // @ts-ignore
         const result: IJSXDomOptions = {tag, attributes, children, jsx: true};
         // console.log('createElement', result);
         return transformOptionsToElement(result);

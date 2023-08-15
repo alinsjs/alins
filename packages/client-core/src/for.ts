@@ -167,7 +167,7 @@ export function map (
                 const startDom = ((startPos < 0) ? (head || ScopeEnd) : EndMap[startPos]) as Node;
 
                 while (startDom.nextSibling && startDom.nextSibling !== endDom) {
-                    startDom.nextSibling.remove();
+                    Renderer.removeElement(startDom.nextSibling);
                 }
 
                 if (startPos < 0) {
@@ -176,7 +176,7 @@ export function map (
                         // @ts-ignore
                         head = startDom.nextSibling;
                         // @ts-ignore
-                        startDom.remove();
+                        Renderer.removeElement(startDom);
                     } else {
                         head = ScopeEnd;
                     }

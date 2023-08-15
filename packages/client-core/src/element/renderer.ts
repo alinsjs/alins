@@ -74,6 +74,9 @@ export const Renderer = {
     },
     isElement (el: any) {
         return this.isFragment(el) || this.isOriginElement(el);
+    },
+    removeElement(el: any){ 
+        el.remove();
     }
 };
 

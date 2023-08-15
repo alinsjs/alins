@@ -120,6 +120,12 @@ export function createUtils (
     });
 }
 
+function isArrayOrJson (o: any) {
+    const data = o.constructor.name;
+    if(data === 'Object' || data === 'Array') return true;
+    return false;
+}
+
 export function createProxy<T extends IJson> (data: T, {
     commonLns,
     lns = {}, // lns=>listeners
@@ -137,6 +143,10 @@ export function createProxy<T extends IJson> (data: T, {
     key?: string;
     commonLns?: Set<IProxyListener>
 } = {}): IProxyData<T> {
+
+    if(!isArrayOrJson(data)) {
+        return data;
+    }
 
     // @ts-ignore
     if (!data[type]) data[type] = AlinsType.Proxy;
