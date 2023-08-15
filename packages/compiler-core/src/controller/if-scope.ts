@@ -1,5 +1,5 @@
 import type {Identifier, IfStatement, Statement} from '@babel/types';
-import {getT, Names, traverseIfStatement} from '../parse-utils';
+import {getT, markMNR, Names, traverseIfStatement} from '../parse-utils';
 import {ControlScope} from './control-scope';
 
 /*
@@ -19,15 +19,25 @@ export class IfScope extends ControlScope<IfStatement> {
 
         let anchor = null;
 
+        const end = map.end;
+
         const setAnchor = (
             object: any, id: Identifier, args: any[],
         ) => {
+            const bodyFn = args[args.length - 1];
+            if (id.name !== 'end') {
+                args[args.length - 1] = markMNR(bodyFn);
+            } else {
+                end._mnr = (fn: any) => {
+                    args[args.length - 1] = markMNR(fn);
+                };
+            }
             // @ts-ignore
             anchor = t.callExpression(
                 t.memberExpression(object, id),
                 args
             );
-            args[args.length - 1]._call = anchor;
+            bodyFn._call = anchor;
         };
 
         setAnchor(t.identifier(Names.Ctx), map.if.id, [ map.if.test, map.if.fn ]);
@@ -40,8 +50,6 @@ export class IfScope extends ControlScope<IfStatement> {
             setAnchor(anchor, map.else.id, [ map.else.fn ]);
         }
 
-        const end = map.end;
-
         setAnchor(anchor, end.id, [ end.fn ]);
 
         this.replaceEnd = (nodes: Statement[]) => {
@@ -52,6 +60,8 @@ export class IfScope extends ControlScope<IfStatement> {
                 end.fn.body._setAsync?.();
             }
             end.fn.body = block;
+            // ! end 的 mnr 需要在结束的时候做
+            end._mnr?.(end.fn);
             // @ts-ignore
             this.replaceEnd = null;
         };

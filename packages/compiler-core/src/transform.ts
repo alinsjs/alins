@@ -5,7 +5,7 @@ import type {IBabelType} from './types';
 import {parseCommentReactive} from './comment';
 import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
-import {createAlinsCtx, createEmptyString, createUnfInit, getT, initTypes, ModArrayFunc, parseFirstMemberObject} from './parse-utils';
+import {createAlinsCtx, createEmptyString, createUnfInit, getT, initTypes, ModArrayFunc, parseFirstMemberObject, skipNode} from './parse-utils';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
@@ -59,6 +59,8 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 if (path.node.type === 'FunctionDeclaration') {
                     // @ts-ignore
                     ctx.checkJsxComponent(path);
+                    // @ts-ignore
+                    ctx.curScope?.collectFuncVar(path);
                 }
 
                 // if (path.node.body.type !== 'BlockStatement') {
@@ -88,7 +90,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 // if (path.node.async === true) {
                 //     ctx.curScope.enterAsyncFunc(path);
                 // }
-                ctx.enterScope(path);
+                ctx.enterScope(path, true);
             },
             exit (path) {
                 // @ts-ignore
@@ -210,12 +212,19 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             }
         },
         AssignmentExpression (path) {
-            if (path.node.right.type === 'Identifier') {
+            const rightType = path.node.right.type;
+            if (rightType === 'Identifier') {
                 path.node.right._isReplace = true;
                 // path.node.left._isReplace = true;
             }
             if (!ctx.enter(path)) return;
-            if (path.node._isForUpdate) return;
+            if (rightType === 'JSXElement') {
+                // @ts-ignore
+                path.node._skipAssign = true;
+                return;
+            }
+            // @ts-ignore
+            if (path.node._isForUpdate || path.node._skipAssign) return;
             // @ts-ignore
             const node = parseFirstMemberObject(path.node.left);
             ctx.markVarChange(node.name);
@@ -230,6 +239,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             //     node?.type === 'JSXElement' || node?.type === 'JSXFragment'
             // )) {
                 ctx.mapScope?.markReturnJsx();
+                ctx.curScope?.markReturnJsx();
             }
         },
         MemberExpression (path) {

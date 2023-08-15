@@ -15,7 +15,6 @@ export class SwitchScope extends ControlScope<SwitchStatement> {
 
         this.newNode = node;
 
-
         if (!this.top) {
             this.newNode = getT().returnStatement(this.newNode);
         }

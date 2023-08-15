@@ -48,12 +48,13 @@ export class Module {
             this.ctx.remove();
         }
     }
-    enterScope (path: NodePath<Node>) {
+    enterScope (path: NodePath<Node>, isFunc = false) {
+
         // iii ++;
         // console.log('SCOPE_DEBUG: enterScope', this.curScope?.inJsxTrans, path.toString(), iii);
         // ! 对于在jsx转换后的函数中 不需要进行scope处理 因为在jsx阶段已经处理过了
         if (this.curScope?.inJsxTrans) return;
-        const newScope = new Scope(path, this);
+        const newScope = new Scope(path, this, isFunc);
         newScope.parent = this.curScope;
         newScope.deep = this.curScope ? (this.curScope.deep + 1) : 0;
         this.curScope = newScope;

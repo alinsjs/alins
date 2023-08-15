@@ -21,8 +21,7 @@ const entry = ({
 
 if (mode === 'dev_web') {
     const files = fs.readdirSync(resolveRootPath('scripts/dev/samples'));
-    const arr = files.map(name => name.substring(0, name.indexOf('.')));
-    fs.writeFileSync(resolveRootPath('scripts/dev/samples-list.ts'), `export default ${JSON.stringify(arr)};`, 'utf8');
+    fs.writeFileSync(resolveRootPath('scripts/dev/samples-list.ts'), `export default ${JSON.stringify(files)};`, 'utf8');
 }
 
 main(
