@@ -112,10 +112,5 @@ function reactiveBinding<T=string> (bind: IBindingReaction, onchange: IProxyList
     if (typeof bind === 'function' || (isProxy(bind) && typeof bind.v !== 'undefined')) {
         return watch(bind, onchange).v;
     }
-    try {
-        // @ts-ignore
-        return typeof bind === 'string' ? bind : bind.toString();
-    } catch (e) {
-        throw new Error(e);
-    }
+    return bind;
 }

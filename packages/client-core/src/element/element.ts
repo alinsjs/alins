@@ -78,7 +78,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         //     // todo
         //     delete opt.$life;
         // }
-        if (isDom) {
+        if (isDom && opt.attributes) {
 
             // @ts-ignore
             let $appended = opt.attributes.$appended;

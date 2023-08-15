@@ -32,7 +32,7 @@ export function parseClassName (
     } else if (typeof value === 'object') {
         for (const k in value) {
             // !todo style value 编译 + func包裹 ()=>{}
-        // @ts-ignore
+            // @ts-ignore
             reactiveBindingEnable(value[k], (v) => {
                 dom.classList[v ? 'add' : 'remove'](k);
             });

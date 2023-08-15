@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-15 09:55:20
+ * @LastEditTime: 2023-08-15 23:16:47
 -->
 
 # 0.1.0
@@ -36,6 +36,7 @@ feat：
 - [x] class支持对象
 - [x] 与react vue 性能比较
 - [x] 利用 MutationObserver 实现生命周期
+- [ ] 函数的reactive传递 const isActive = (i: number) => naviIndex === i; isActive => ()=>isActive
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
