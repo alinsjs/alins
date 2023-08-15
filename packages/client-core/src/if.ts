@@ -57,19 +57,24 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     };
     let index = 0;
     let returnEle: ITrueElement|(typeof empty) = empty;
+    let matched = false;
     const refs: IIfTarget[] = [];
-    const acceptIf = (ref: IIfTarget, call: IReturnCall, init = false) => {
+    const acceptIf = (ref: IIfTarget, call: IReturnCall, init = false, isEnd = false) => {
         const currentIndex = index;
         const id = index ++;
         // console.warn('accept if', id);
         branchs[id] = util.branch.next(call, anchor, init);
         refs[id] = ref;
-        if (returnEle === empty) {
+
+        if (returnEle !== empty) return;
+        
+        if (!matched || isEnd) {
             const value = typeof ref === 'function' ? ref() : ref.v;
             if (value) {
+                matched = true;
+                if (!isEnd) activeIndex = currentIndex;
                 const dom = util.cache.call(branchs[id], anchor);
-                if (call.returned !== false) { // ! 编译时注入的returned
-                    activeIndex = currentIndex;
+                if (returnEle === empty && call.returned !== false) { // ! 编译时注入的returned
                     returnEle = dom;
                 }
             }
@@ -88,7 +93,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         },
         // ! if判断会引起finally执行与否
         end (call = () => {}) {
-            acceptIf(() => true, call);
+            acceptIf(() => true, call, false, true);
             // console.warn('if end', refs);
             watch<boolean[]>(() => (
                 refs.map(item => typeof item === 'function' ? item() : item.v)

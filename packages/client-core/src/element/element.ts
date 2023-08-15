@@ -17,7 +17,7 @@ import {parseModel} from './model';
 import {getParent} from '../utils';
 import {parseAttributes} from './attributes';
 import {parseClassName} from './class';
-import { initMutationObserver } from './mutation-observer';
+import {initMutationObserver} from './mutation-observer';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -78,10 +78,10 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         //     // todo
         //     delete opt.$life;
         // }
-        if (isDom) {
+        if (isDom && opt.attributes) {
 
             // @ts-ignore
-            let $appended = opt.attributes.$appended;
+            const $appended = opt.attributes.$appended;
 
             for (const k in opt.attributes) {
                 const v = opt.attributes[k];
@@ -89,22 +89,22 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     addEvent(el as IElement, k, v);
                     continue;
                 }
-                if(k === '$created'){
+                if (k === '$created') {
                     v(el);
-                }else if(k === '$appended'){
+                } else if (k === '$appended') {
                     // @ts-ignore
                     el.__$appended = $appended;
                     continue;
-                }else if(k === '$removed'){
+                } else if (k === '$removed') {
                     // @ts-ignore
                     el.__$removed = v;
-                }else if(k === '$mounted'){
+                } else if (k === '$mounted') {
                     // @ts-ignore
                     el.__$mounted = v;
-                }else if (k === '$parent') {
+                } else if (k === '$parent') {
                     v.appendChild(el);
                     // todo 此处有可能还没有append到document中
-                    if($appended) $appended(el);
+                    if ($appended) $appended(el);
                 } else if (k === '$attributes') {
                     // @ts-ignore
                     parseAttributes(el, v);
@@ -144,7 +144,7 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
         }
 
         if (Renderer.isElement(item)) {
-            if(item.__$mounted || item.__$removed){
+            if (item.__$mounted || item.__$removed) {
                 initMutationObserver(parent);
             }
             parent.appendChild(item as any);
@@ -181,7 +181,7 @@ export const JSX = {
     ): ITrueElement {
         if (typeof tag === 'function') {
             let $parent: any = null;
-            if(attributes){
+            if (attributes) {
                 $parent = attributes.$parent;
                 delete attributes.$parent;
                 // console.log('createComponent', result);

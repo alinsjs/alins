@@ -386,14 +386,7 @@ export function createSetAsyncArrowFunc (body: BlockStatement) {
         node.async = true;
         // @ts-ignore
         const args = node._call.arguments;
-        const fn = args[args.length - 1];
-        if (!isBlockReturned(fn.body)) {
-            // ! 标注是否有返回值
-            args[args.length - 1] = t.callExpression(
-                createMemberExp(Names.CtxFn, 'mnr'),
-                [ args[args.length - 1] ]
-            );
-        }
+        args[args.length - 1] = markMNR(args[args.length - 1]);
         // @ts-ignore
         node._call = null;
         // @ts-ignore
@@ -462,3 +455,17 @@ export function createEmptyString () {
 //     }
 //     return <div>end</div>;
 //   }
+
+export function markMNR (fn: any) {
+    if (fn._mnrMarked) return fn;
+
+    if (!isBlockReturned(fn.body)) {
+        fn._mnrMarked = true;
+        // ! 标注是否有返回值
+        return t.callExpression(
+            createMemberExp(Names.CtxFn, 'mnr'),
+            [ fn ]
+        );
+    }
+    return fn;
+}
