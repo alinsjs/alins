@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-13 16:00:11
+ * @LastEditTime: 2023-08-15 09:55:20
 -->
 
 # 0.1.0
@@ -43,16 +43,22 @@ feat：
 
 next Version new feature
 
+- [ ] For 类型提示
+- [ ] Async Data 类型标注
+- [ ] alins-router - 官方路由库 （尽可能通用 能够直接使用原生js调用）
+- [ ] alins-ssr - 服务端渲染（尽可能通用 能够直接使用原生js调用）
+- [ ] alins-ui - 官方ui库
+- [ ] alins-store - 状态库
+- [ ] alins-renderer - 利用自定义 renderer 实现跨平台
+- [ ] alins-style style 标签优化 处理 提高css可用性, style 值类型声明 （能够使用reactive库配合着使用原生js使用）
+- [ ] alins-cli、alins-template （base on vite、vite-plugin-alins、eslint-config）
 - [ ] 内存优化
 - [ ] 运行时间 优化
 - [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
-- [ ] For 支持结构
+- [ ] For 支持解构
+- [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
 - [ ] For Object 支持
 - [ ] $if $elif $else $case $default 属性支持
-- [ ] style 标签优化 处理 提高css可用性, style 值类型声明
-- [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
-- [ ] SSR
-- [ ] 利用自定义 renderer 实现跨平台
 
 fix
 
