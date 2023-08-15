@@ -59,6 +59,8 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 if (path.node.type === 'FunctionDeclaration') {
                     // @ts-ignore
                     ctx.checkJsxComponent(path);
+                    // @ts-ignore
+                    ctx.curScope?.collectFuncVar(path);
                 }
 
                 // if (path.node.body.type !== 'BlockStatement') {
@@ -88,7 +90,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 // if (path.node.async === true) {
                 //     ctx.curScope.enterAsyncFunc(path);
                 // }
-                ctx.enterScope(path);
+                ctx.enterScope(path, true);
             },
             exit (path) {
                 // @ts-ignore
@@ -237,6 +239,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             //     node?.type === 'JSXElement' || node?.type === 'JSXFragment'
             // )) {
                 ctx.mapScope?.markReturnJsx();
+                ctx.curScope?.markReturnJsx();
             }
         },
         MemberExpression (path) {

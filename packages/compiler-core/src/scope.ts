@@ -7,6 +7,7 @@
 import type {NodePath} from '@babel/traverse';
 import type {
     Expression,
+    FunctionDeclaration,
     Identifier,
     IfStatement,
     Node,
@@ -21,7 +22,7 @@ import {isStaticNode, createReact, createComputed, createJsxCompute, createReadV
 import {SwitchScope} from './controller/switch-scope';
 import {Module} from './context';
 import {INodeTypeMap} from './types';
-// import { AsyncScope } from './controller/async';
+import {FuncReactiveScope} from './controller/func-reactive';
 
 const NodeNeedHandleVarMap: INodeTypeMap = {
     'JSXElement': 1,
@@ -35,6 +36,7 @@ export interface IScopeVariable {
     path: NodePath<VariableDeclarator>,
     name: string,
     isReactive: boolean,
+    isFunc?: boolean, // 是否是函数
     isFromImport?: boolean,
     isStatic: boolean,
     isComputed: boolean,
@@ -61,9 +63,12 @@ export interface IScopeWatchJSXExpression {
 
 let newNodeId = -1;
 
+// window.s = [];
+
 // 作用域
 export class Scope {
 
+    funcScope: FuncReactiveScope;
 
     parent: Scope|null = null;
 
@@ -73,6 +78,7 @@ export class Scope {
     path: NodePath<Node>;
 
     module: Module;
+
 
     // ctx: NodePath<Node>; // ! 当前的 alins ctx 用不到的话需要移除出去
 
@@ -110,11 +116,14 @@ export class Scope {
 
     deep = 0; // 深度
 
+    isFunc = false;
+
     get isTopScope () {
         return this.deep === 0;
     }
 
-    constructor (path: NodePath<Node>, module: Module) {
+    constructor (path: NodePath<Node>, module: Module, isFunc: boolean) {
+        this.isFunc = isFunc;
         this.module = module;
         const node = path.node;
         if (typeof node.start !== 'number') {
@@ -126,6 +135,11 @@ export class Scope {
         this.path = path;
         this.node = node;
         this.jsxScope = new JsxScope(module);
+        // @ts-ignore
+        if (isFunc && path.node._variable) {
+            this.funcScope = new FuncReactiveScope(this, path);
+        }
+        // window.s.push(this);
         // window.scope ? window.scope.push(this) : window.scope = [ this ];
     }
 
@@ -194,11 +208,25 @@ export class Scope {
             if (type.startsWith('JSX')) variable.isJSX = true;
             this.curVarNode = variable;
         }
+        if (node.init?.type === 'ArrowFunctionExpression' || node.init?.type === 'FunctionExpression') {
+            variable.isFunc = true;
+            // @ts-ignore
+            variable.path.node.init._variable = variable;
+        }
         // if (name === 'c') debugger;
         this.variableMap[name] = variable;
-
         // console.log(JSON.stringify(Object.keys(this.variableMap)));
+    }
 
+    collectFuncVar (path: NodePath<FunctionDeclaration>) {
+        const name = path.node.id?.name;
+        if (!name) throw new Error('collectFuncVar, name is undefined');
+        const variable = this.createVariable('let', name, path);
+        variable.isFunc = true;
+        variable.skipReadV = true;
+        this.variableMap[name] = variable;
+        // @ts-ignore
+        variable.path.node._variable = variable;
     }
 
     private createVariable (
@@ -349,7 +377,7 @@ export class Scope {
     }
 
     // ! 更新某个变量的所有引用 和 computed依赖
-    private _updateDependIdentifier (v: IScopeVariable) {
+    _updateDependIdentifier (v: IScopeVariable, action = true) {
         // console.log('---_updateDependIdentifier', v.name, v.usedIds.length);
         v.usedIds.forEach((path) => {
             this._replaceReadValuePath(path, v);
@@ -357,7 +385,7 @@ export class Scope {
         v.dependComputed.forEach((cnode) => {
             this.handleComputed(cnode);
         });
-        v.dependActions?.forEach(fn => fn());
+        if (action) v.dependActions?.forEach(fn => fn());
         // ! jsx 已经被转译之后不再需要对原始对象进行更新
         // debugger;
         v.dependTransJsx.forEach((xnode) => {
@@ -398,7 +426,6 @@ export class Scope {
         const variable = this.findVarDeclare(node.name);
         // console.log('collectIdentifier222', this.module.inMap, path.node.name, variable?.name);
 
-
         // if (variable?.path.node.name === 'a') debugger;
         if (!variable) {
             // debugger;
@@ -422,8 +449,9 @@ export class Scope {
         } else if (this.curVarNode) {
             this.processComputedNode(variable);
         }
-
-        // console.log('---variable.isReactive', variable.isReactive);
+        this.funcScope?.collectIdentifier(variable);
+        // if (variable.name === 'fn2') debugger;
+        // console.log('---variable.isReactive', variable.isReactive, variable.name, path.toString());
         if (variable.isReactive) { //
             this._replaceReadValuePath(path, variable);
             return;
@@ -590,25 +618,6 @@ export class Scope {
         this.onExitQueue = null;
     }
 
-    // async Scope
-
-    // asyncScope: AsyncScope|null = null;
-
-    // enterAsyncFunc (path: NodePath<FunctionDeclaration>) {
-    //     const newAsyncScope = new AsyncScope(path);
-    //     if (this.asyncScope) {
-    //         newAsyncScope.parent = this.asyncScope;
-    //     }
-    //     this.asyncScope = newAsyncScope;
-    // }
-
-    // exitAsyncFunc () {
-    //     if (!this.asyncScope) return;
-    // }
-
-    // enterAwaitExpression () {
-
-    // }
     isAsync = false;
     awaitRecorded = false;
     startRecordAwait () {
