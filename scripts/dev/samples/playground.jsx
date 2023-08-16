@@ -29,8 +29,19 @@ a.a.a++;
 
 // <div a={fn()}></div>;
 
-// const dom = test();
+// const examples = [ {
+//     name: 'test',
+//     code: 'console.log("Hello")'
+// } ];
 
-// console.log(dom);
+// function switchExample (code) {
+//     console.log(code);
+// }
+
+// export function ExamplesList () {
+//     return <For data={examples}>
+//         <div onclick={() => switchExample($item.code)}>{$item.name}</div>
+//     </For>;
+// }
 
 // document.body.appendChild(dom);
