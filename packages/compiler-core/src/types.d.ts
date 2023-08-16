@@ -16,9 +16,14 @@ declare module '@babel/types' {
     // 这里拿不到 Node 的基类 BaseNode, 只能重写所有上层类
     // Node 也是 type，无法扩展
     interface CommonNode {
-        _a: 1
         _isReplace?: boolean; // 是否是完全赋值 const a=b;
-        _isForUpdate?: boolean; // 是否是for循环的初始化
+        _isForUpdate?: boolean; // 是否是for循环的初始化_isCtx
+        _isCtx?: boolean; // ! 是否是生成的alins ctx
+        _shouldRemoved?: boolean; // 是否需要标记在exit时删除node
+        _importReactive?: '' | '*' | string[]; // import 语句标记是否是reactive
+        _isComReact?: boolean; // 是否标记为reactive
+        _isComStatic?: boolean; // 是否标记为static
+        _isShallow?: boolean; // 是否是浅reactive
     }
 
     interface AnyTypeAnnotation extends CommonNode {}

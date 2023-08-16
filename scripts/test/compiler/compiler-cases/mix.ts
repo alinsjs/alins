@@ -219,7 +219,7 @@ document.body.appendChild(_$$.ce(async () => {
     `
     },
     {
-        name: 'async component',
+        name: '赋值与替换',
         disabled: false,
         input: `
 const a = 1;
@@ -245,6 +245,39 @@ const d4 = a;
 const d5 = _$$.c(() => a.v().a);
     `
     },
-
+    {
+        name: '函数热active传递',
+        disabled: false,
+        input: `
+const a = 0;
+const fn = () => a + 1;
+function fn2 () {
+    return a + 1;
+}
+fn();
+const c = fn();
+const c2 = fn2();
+const c3 = c + 1;
+const dom = <div a={fn()}></div>;
+a ++;
+`,
+        output: `
+const a = _$$.r({
+  v: 0
+});
+const fn = () => a.v + 1;
+function fn2() {
+  return a.v + 1;
+}
+fn();
+const c = _$$.c(() => fn());
+const c2 = _$$.c(() => fn2());
+const c3 = _$$.c(() => c.v + 1);
+const dom = _$$.ce("div", {
+  a: () => fn()
+});
+a.v++;
+  `
+    },
     
 ] as ICodeMap[];

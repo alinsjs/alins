@@ -195,7 +195,7 @@ export class Scope {
         const name: string = node.id.name;
 
         // 这种类型不可赋值
-        const isStatic = (isStaticNode(node.init as Expression) && type === 'const');
+        const isStatic = node._isComStatic || (isStaticNode(node.init as Expression) && type === 'const');
 
         const variable = this.createVariable(type, name, path);
         variable.isStatic = isStatic;
@@ -211,9 +211,12 @@ export class Scope {
             // @ts-ignore
             variable.path.node.init._variable = variable;
         }
-        // if (name === 'c') debugger;
         this.variableMap[name] = variable;
         // console.log(JSON.stringify(Object.keys(this.variableMap)));
+
+        if (node._isComReact) {
+            this.markVariableReactive(name);
+        }
     }
 
     collectFuncVar (path: NodePath<FunctionDeclaration>) {
@@ -356,7 +359,7 @@ export class Scope {
     // 变量被赋值了 转化变量以及其依赖项
     markVariableReactive (name: string, force = false) {
         const variable = this.findVarDeclare(name);
-        if (!variable) {
+        if (!variable || variable.isStatic) {
             return; // console.warn(`markVariableReactive:未找到变量声明${name}`);
         }
         if (variable.handled && !force) return;

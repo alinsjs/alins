@@ -2,10 +2,10 @@
 import type {NodePath, TraverseOptions} from '@babel/traverse';
 import type {Program} from '@babel/types';
 import type {IBabelType} from './types';
-import {parseCommentReactive} from './comment';
+import {parseCommentMulti, parseVarDeclCommentReactive} from './comment';
 import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
-import {createAlinsCtx, createEmptyString, createUnfInit, getT, initTypes, ModArrayFunc, parseFirstMemberObject, skipNode} from './parse-utils';
+import {createAlinsCtx, createEmptyString, createImportAlins, createUnfInit, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, skipNode} from './parse-utils';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
@@ -18,31 +18,22 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                     if (body[i]?.type !== 'ImportDeclaration') {
                         body.splice(i, 0, createAlinsCtx());
                         if (!useImport) {
-                            body.splice(i, 0, t.variableDeclaration('var', [
-                                t.variableDeclarator(t.identifier('_$$'), t.memberExpression(
-                                    t.memberExpression(t.identifier('window'), t.identifier('Alins')),
-                                    t.identifier('_$$'),
-                                ))
-                            ]));
+                            body.splice(i, 0, createImportAlins(useImport));
                         }
                         break;
                     }
                 }
 
                 if (useImport) {
-                    body.unshift(t.importDeclaration([
-                        t.importSpecifier(t.identifier('_$$'), t.identifier('_$$'))
-                    ], t.stringLiteral('alins')));
+                    createImportAlins();
                 }
             },
             exit () {
                 exitContext();
-                // window.aaa?.();
             }
         },
         ImportDeclaration: (path) => {
-            // @ts-ignore
-            path.node._importReactive = parseCommentReactive(path.node);
+            path.node._importReactive = parseCommentMulti(path.node);
         },
         'ImportDefaultSpecifier|ImportSpecifier|ImportNamespaceSpecifier' (path) {
             ctx.curScope.collectImportVar(path);
@@ -62,17 +53,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                     // @ts-ignore
                     ctx.curScope?.collectFuncVar(path);
                 }
-
-                // if (path.node.body.type !== 'BlockStatement') {
-                //     const t = getT();
-                //     const b = t.arrowFunctionExpression(
-                //         path.node.params,
-                //         t.blockStatement([ t.returnStatement(path.node.body) ])
-                //     );
-
-                //     // b._skip = false;
-                //     path.replaceWith(b);
-                // }
 
                 // 标注是函数参数
                 // @ts-ignore
@@ -105,15 +85,10 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         BlockStatement: {
             enter (path) {
                 if (!ctx.enter(path)) return;
-                // console.log('BlockStatement', path.toString());
                 // @ts-ignore
                 if (!path.parent._scopeEntry) { // ! 父元素不是一个scope（不是函数）
                     ctx.enterScope(path);
                 }
-                // // ! 函数作用域
-                // if (!ctx.curScope.inJsxTrans && path.parent.type.includes('Function')) {
-                //     path.unshiftContainer('body', createAlinsCtx());
-                // }
             },
             exit (path) {
                 // @ts-ignore
@@ -129,9 +104,10 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                     path.skip();
                     return;
                 }
-                // @ts-ignore
+                
+                parseVarDeclCommentReactive(path.node);
+
                 if (path.node._isCtx) { // ! 是否是生成的alins ctx
-                // @ts-ignore
                     path.node._isCtx = false;
                     ctx.ctx = path;
                 }
@@ -139,36 +115,10 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
 
                 // @ts-ignore
                 ctx.checkJsxComponent(path);
-
                 // ! computed set 解析
-                const next = path.getNextSibling();
-                const nnode = next.node;
-                // 是否是一个label（set: watch:）
-                if (nnode && nnode.type === 'LabeledStatement') {
-                    if (nnode.label.name === 'set') {
-                        // @ts-ignore
-                        path.node.declarations.forEach(node => {
-                            // @ts-ignore
-                            node._computedSet = nnode.body;
-                        });
-                        // next.remove();
-                        // @ts-ignore
-                        nnode._shouldRemoved = true;
-                    }
-                } else if (path.parent.type === 'ExportNamedDeclaration') {
-                    // @ts-ignore
-                    path.node.declarations.forEach(node => {
-                        // @ts-ignore
-                        node._export = true;
-                        // @ts-ignore
-                        node._parentPath = path;
-                    });
-                }
-
+                parseComputedSet(path);
                 // console.log('NEXT', path.getNextSibling().node);
-                // debugger;
                 ctx.enterVariableDeclaration(path.node);
-                // add(path, 'VariableDeclaration', true);
             },
             exit (path) {
                 ctx.exitJsxComponent(path);
@@ -176,7 +126,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         LabeledStatement: {
             exit (path) {
-                // @ts-ignore
                 if (path.node._shouldRemoved) { // ! 移除需要删除的label
                     path.remove();
                 }

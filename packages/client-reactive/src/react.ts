@@ -31,3 +31,7 @@ export function react<T extends IJson> (
     }
     return createProxy<T>(wrapReactive(data) as T);
 }
+
+export function reactive<T extends IJson> (data: T, shallow = false): IProxyData<T> {
+    return createProxy<T>(wrapReactive(data) as T, {shallow});
+}

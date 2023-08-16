@@ -10,37 +10,79 @@
 3. // @static 标注数据不为响应式
 */
 
-import type {Node} from '@babel/types';
+import type {Node, VariableDeclaration, VariableDeclarator} from '@babel/types';
 
 // import {a} from '/aa'; // @reactive[a,b]
-// const a = 1;
+// import { VariableDeclarator } from '@babel/types';
+const a = 1;
 // const b = a + 1; set:() => {
 
 // };
 
 function parseComment (node: Node) {
+    const comments: string[] = [];
     const before = node.leadingComments?.[node.leadingComments.length - 1];
-    if (before) return before;
+    if (before) {
+        comments.push(before.value);
+    }
     const after = node.trailingComments?.[0];
 
     if (after && after.loc && after.loc.start.line === node.loc?.start.line) {
-        return after;
+        comments.push(after.value);
     }
-    return null;
+    return comments.join('\n');
 }
 
-export function parseCommentReactive (node: Node) {
+const RegMap = {
+    React: /@reactive(\((.*?)\))?/i,
+    Static: /@static(\((.*?)\))?/i,
+    Shallow: /@shallow/i,
+};
+
+export function parseCommentMulti (node: Node, reg = RegMap.React) {
     const comment = parseComment(node);
     if (!comment) return '';
 
-    const result = comment.value.match(/@reactive(\((.*?)\))?/i);
+    const result = comment.match(reg);
     if (!result) return '';
     if (!result[2]) return '*';
     return result[2].split(',').map(s => s.trim());
 }
 
-export function parseCommentShallow (node: Node) {
+export function parseCommentSingle (node: Node, reg = RegMap.Shallow) {
     const comment = parseComment(node);
     if (!comment) return false;
-    return /@shallow/i.test(comment.value);
+    return reg.test(comment);
+}
+
+export function parseVarDeclCommentReactive (node: VariableDeclaration) {
+    const comment = parseCommentMulti(node);
+    let isStatic = false;
+    if (comment) {
+        handleDeclarations(comment, node, node => {node._isComReact = true;});
+    } else {
+        // 不同同时被指定为 @reactive 和 @static
+        const comment = parseCommentMulti(node, RegMap.Static);
+        if (comment) {
+            isStatic = true;
+            handleDeclarations(comment, node, node => {node._isComStatic = true;});
+        }
+    }
+    if (!isStatic) {
+        const boolean = parseCommentSingle(node);
+        if (boolean) {
+            node.declarations.forEach(dec => {dec._isShallow = true;});
+        }
+    }
+}
+
+function handleDeclarations (comment: any, node: VariableDeclaration, handle: (node: VariableDeclarator)=>void) {
+    node.declarations.forEach(dec => {
+        if (dec.id.type === 'Identifier') {
+            const name = dec.id.name;
+            if (comment === '*' || comment.includes(name)) {
+                handle(dec);
+            }
+        }
+    });
 }

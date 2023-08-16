@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-16 01:29:22
+ * @LastEditTime: 2023-08-16 22:18:43
 -->
 
 # 0.1.0
@@ -39,6 +39,7 @@ feat：
 - [x] if switch 的 mnr 包裹
 - [x] 当赋值是jsx时 无需reactive
 - [x] 函数的reactive传递 const isActive = (i: number) => naviIndex === i; isActive => ()=>isActive
+- [x] 增加变量定义的 reactive 注解，支持static注解
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
@@ -90,6 +91,7 @@ fix
 - [x] 内存泄漏的问题 导致内存占用
 - [x] 非数组非json大数据代理问题导致的性能问题 
 - [x] fix 对象类型 Update操作时没有reactive的问题
+- [x] fix comment reactive 标注
 
 
 

@@ -208,20 +208,22 @@ export function createReact (node: VariableDeclarator) {
     // );
     // debugger;
     // console.log('wrap react-------', node.id.name);
+    const args: any[] = [
+        t.objectExpression(
+            [ t.objectProperty(
+                t.identifier(Names.Value),
+                node.init as any
+            ) ]
+        )
+    ];
+    if (node._isShallow) {
+        args.push(t.booleanLiteral(true));
+    }
     return skipNode(t.variableDeclarator(
         node.id,
         t.callExpression(
             createMemberExp(Names.CtxFn, Names.ReactFn),
-            // t.identifier('react'),
-            [
-                t.objectExpression(
-                    [ t.objectProperty(
-                        t.identifier(Names.Value),
-                        node.init as any
-                    ) ]
-                )
-            ]
-            // [ node.init as any ]
+            args
         ),
     ));
 }
@@ -468,4 +470,44 @@ export function markMNR (fn: any) {
         );
     }
     return fn;
+}
+
+export function createImportAlins (useImport = true) {
+    return useImport ?
+        t.importDeclaration([
+            t.importSpecifier(t.identifier('_$$'), t.identifier('_$$'))
+        ], t.stringLiteral('alins')) :
+        t.variableDeclaration('var', [
+            t.variableDeclarator(t.identifier('_$$'), t.memberExpression(
+                t.memberExpression(t.identifier('window'), t.identifier('Alins')),
+                t.identifier('_$$'),
+            ))
+        ]);
+}
+
+export function parseComputedSet (path: NodePath<VariableDeclaration>) {
+    // ! computed set 解析
+    const next = path.getNextSibling();
+    const nnode = next.node;
+    // 是否是一个label（set: watch:）
+    if (nnode && nnode.type === 'LabeledStatement') {
+        if (nnode.label.name === 'set') {
+            // @ts-ignore
+            path.node.declarations.forEach(node => {
+                // @ts-ignore
+                node._computedSet = nnode.body;
+            });
+            // next.remove();
+            // @ts-ignore
+            nnode._shouldRemoved = true;
+        }
+    } else if (path.parent.type === 'ExportNamedDeclaration') {
+        // @ts-ignore
+        path.node.declarations.forEach(node => {
+            // @ts-ignore
+            node._export = true;
+            // @ts-ignore
+            node._parentPath = path;
+        });
+    }
 }

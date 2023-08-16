@@ -5,7 +5,7 @@
  */
 
 import {IIfTarget, _if} from './if';
-import {computed, react, watch} from 'alins-reactive';
+import {computed, reactive, watch} from 'alins-reactive';
 import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
 import './for';
 import {ICtxUtil, IReturnCall} from './type';
@@ -45,7 +45,7 @@ export const ContextTool = {
         fn.returned = false;
         return fn;
     },
-    r: react,
+    r: reactive,
     c: computed,
     w: watch,
     cc (get: any, set: any) { // 简写，减少编译代码量

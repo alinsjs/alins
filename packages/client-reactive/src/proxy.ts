@@ -122,7 +122,7 @@ export function createUtils (
 
 function isArrayOrJson (o: any) {
     const data = o.constructor.name;
-    if(data === 'Object' || data === 'Array') return true;
+    if (data === 'Object' || data === 'Array') return true;
     return false;
 }
 
@@ -144,8 +144,8 @@ export function createProxy<T extends IJson> (data: T, {
     commonLns?: Set<IProxyListener>
 } = {}): IProxyData<T> {
 
-    if(!isArrayOrJson(data)) {
-        return data;
+    if (!isArrayOrJson(data)) {
+        return data as any;
     }
 
     // @ts-ignore
