@@ -94,7 +94,9 @@ function parseBuildConfig () {
         'plugin-vite': {
             packageName: 'vite-plugin-alins',
             // format: 'esm cjs',
-            type: 'node',
+            // type: 'node',
+            format: 'esm',
+            external: false,
         },
         'plugin-webpack': {
             packageName: 'alins-loader',

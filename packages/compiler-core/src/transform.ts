@@ -239,7 +239,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             //     node?.type === 'JSXElement' || node?.type === 'JSXFragment'
             // )) {
                 ctx.mapScope?.markReturnJsx();
-                ctx.curScope?.markReturnJsx();
+                ctx.curScope?.funcScope.markReturnJsx();
             }
         },
         MemberExpression (path) {

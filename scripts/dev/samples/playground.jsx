@@ -15,27 +15,38 @@
 
 // return <div>33</div>;
 
-const a = 0;
+// const a = 0;
 
-const fn = () => a + 1;
+// const fn = () => a + 1;
 
-function fn2 () {
-    return a + 1;
-}
+// function fn2 () {
+//     return a + 1;
+// }
 
-fn();
+// fn();
 
-const c = fn();
-const c2 = fn2();
+// const c = fn();
+// const c2 = fn2();
 
-const c3 = c + 1;
+// const c3 = c + 1;
 
-const dom = <div a={fn()}></div>;
+// const dom = <div a={fn()}></div>;
 // a ++;
 
 
-// const dom = test();
+// const examples = [ {
+//     name: 'test',
+//     code: 'console.log("Hello")'
+// } ];
 
-// console.log(dom);
+// function switchExample (code) {
+//     console.log(code);
+// }
 
-// document.body.appendChild(dom);
+// export function ExamplesList () {
+//     return <For data={examples}>
+//         <div onclick={() => switchExample($item.code)}>{$item.name}</div>
+//     </For>;
+// }
+
+const a = {a: 1};

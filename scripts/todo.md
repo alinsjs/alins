@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-16 01:29:22
+ * @LastEditTime: 2023-08-16 21:05:42
 -->
 
 # 0.1.0
@@ -39,6 +39,7 @@ feat：
 - [x] if switch 的 mnr 包裹
 - [x] 当赋值是jsx时 无需reactive
 - [x] 函数的reactive传递 const isActive = (i: number) => naviIndex === i; isActive => ()=>isActive
+- [ ] 对变量 // @reactive 
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
