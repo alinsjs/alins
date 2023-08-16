@@ -477,7 +477,7 @@ export function createImportAlins (useImport = true) {
         t.importDeclaration([
             t.importSpecifier(t.identifier('_$$'), t.identifier('_$$'))
         ], t.stringLiteral('alins')) :
-        t.variableDeclaration('var', [
+        t.variableDeclaration('const', [
             t.variableDeclarator(t.identifier('_$$'), t.memberExpression(
                 t.memberExpression(t.identifier('window'), t.identifier('Alins')),
                 t.identifier('_$$'),

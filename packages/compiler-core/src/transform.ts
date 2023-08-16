@@ -28,7 +28,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 }
 
                 if (useImport) {
-                    createImportAlins();
+                    body.unshift(createImportAlins());
                 }
             },
             exit () {
