@@ -43,14 +43,15 @@ export interface IScopeVariable {
     isParam: boolean, // 是否是函数参数 ! 作用是阻止向上查询变量
     usedIds: NodePath<Identifier>[], // 当前变量的所有引用处
     dependComputed: IScopeVariable[]; // 依赖当前变量的所有计算表达式
-    dependJsx: IScopeWatchJSXExpression[]; // 依赖当前变量的所有jsx表达式
-    dependTransJsx: IScopeWatchJSXExpression[]; // 依赖当前变量的所有jsxTrans表达式
+    // dependJsx: IScopeWatchJSXExpression[]; // 依赖当前变量的所有jsx表达式
+    // dependTransJsx: IScopeWatchJSXExpression[]; // 依赖当前变量的所有jsxTrans表达式
     dependActions?: (()=>void)[];
     handled: boolean;
     isJSX?: boolean;
     alias?: string;
     isProps?: boolean;
     skipReadV?: boolean;
+    _func_scope?: FuncReactiveScope;
 }
 
 export interface IScopeWatchJSXExpression {
@@ -249,8 +250,8 @@ export class Scope {
             isParam: false,
             usedIds: [],
             dependComputed: [],
-            dependJsx: [],
-            dependTransJsx: [],
+            // dependJsx: [],
+            // dependTransJsx: [],
             handled: false,
             skipReadV: !!NodeNeedHandleVarMap[initType],
         };
@@ -349,7 +350,6 @@ export class Scope {
         // if (!node._needJsxRefeat) {
         xnode.handled = true;
         // 防止重复处理
-        // @ts-ignore
         if (!node._handled) {
             xnode.path.replaceWith(createJsxCompute(node, xnode.isComp));
         }
@@ -387,18 +387,18 @@ export class Scope {
             this.handleComputed(cnode);
         });
         if (action) v.dependActions?.forEach(fn => fn());
-        // ! jsx 已经被转译之后不再需要对原始对象进行更新
-        // debugger;
-        v.dependTransJsx.forEach((xnode) => {
-            this.handleJsx(xnode);
-        });
-        v.dependJsx.forEach((xnode) => {
-            // debugger;
-        // @ts-ignore
-            if (!xnode.path.node._removed) {
-                this.handleJsx(xnode);
-            }
-        });
+        // // ! jsx 已经被转译之后不再需要对原始对象进行更新
+        // // debugger;
+        // v.dependTransJsx.forEach((xnode) => {
+        //     this.handleJsx(xnode);
+        // });
+        // v.dependJsx.forEach((xnode) => {
+        //     // debugger;
+        // // @ts-ignore
+        //     if (!xnode.path.node._removed) {
+        //         this.handleJsx(xnode);
+        //     }
+        // });
     }
 
     collectDependAction (name: string, fn: ()=>void) {
@@ -491,13 +491,16 @@ export class Scope {
         // console.log(xnode.path.toString(),
         //     v.path.toString(), xnode.isDynamic, v.isReactive);
 
-        if (!xnode.isDynamic) {
-            if (v.isReactive) {
-                xnode.isDynamic = true;
-            } else {
-                // if (v.name === 'index') debugger;
-                (this.inJsxTrans ? v.dependTransJsx : v.dependJsx).push(xnode);
-            }
+        // if (!xnode.isDynamic) {
+        //     if (v.isReactive) {
+        //         xnode.isDynamic = true;
+        //     } else {
+        //         (this.inJsxTrans ? v.dependTransJsx : v.dependJsx).push(xnode);
+        //     }
+        // }
+        // ! 此处放宽jsx转译条件
+        if (!xnode.isDynamic && !v.isStatic) {
+            xnode.isDynamic = true;
         }
     }
     enterJSXExpression (path: NodePath<Expression>) {

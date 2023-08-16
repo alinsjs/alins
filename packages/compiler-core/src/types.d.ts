@@ -24,6 +24,7 @@ declare module '@babel/types' {
         _isComReact?: boolean; // 是否标记为reactive
         _isComStatic?: boolean; // 是否标记为static
         _isShallow?: boolean; // 是否是浅reactive
+        _handled?: boolean; // 是否已经被处理过
     }
 
     interface AnyTypeAnnotation extends CommonNode {}

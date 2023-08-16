@@ -279,5 +279,43 @@ const dom = _$$.ce("div", {
 a.v++;
   `
     },
+    {
+        name: '标注comment',
+        disabled: false,
+        input: `
+const a = {a: {a: 1}}; // @shallow
+a.a.a++;
+const a2 = {a: {a: 1}}; // @static
+a2.a.a++;
+const a3 = {a: {a: 1}}; // @reactive
+`,
+        output: `
+        `
+    },
+    {
+        name: '放宽jsx转译条件',
+        disabled: false,
+        input: `
+const data = useState();
+<div a={data.a()} b={data.b}>{data.c}</div>;
+`,
+        output: `
+        `
+    },
+    {
+        name: '放宽jsx转译条件',
+        disabled: false,
+        input: `
+const data = useState();
+<div a={data.a()} b={data.b}>{data.c}</div>;
+`,
+        output: `
+const data = useState();
+_$$.ce("div", {
+  a: () => data.a(),
+  b: () => data.b
+}, () => data.c);
+        `
+    },
     
 ] as ICodeMap[];

@@ -15,10 +15,6 @@
 // return <div>33</div>;
 
 
-const a = {a: {a: 1}}; // @shallow
-
-a.a.a++;
-
 // @shallow
 
 // let a = 1;
@@ -45,3 +41,7 @@ a.a.a++;
 // }
 
 // document.body.appendChild(dom);
+
+const data = useState();
+
+<div a={data.a()} b={data.b}>{data.c}</div>;

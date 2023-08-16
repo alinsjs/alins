@@ -5,7 +5,10 @@ import type {IBabelType} from './types';
 import {parseCommentMulti, parseVarDeclCommentReactive} from './comment';
 import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
-import {createAlinsCtx, createEmptyString, createImportAlins, createUnfInit, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, skipNode} from './parse-utils';
+import {
+    createAlinsCtx, createEmptyString, createImportAlins, createUnfInit,
+    getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
+} from './parse-utils';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
