@@ -89,6 +89,7 @@ fix
 - [x] create 10000rows 有bug
 - [x] 内存泄漏的问题 导致内存占用
 - [x] 非数组非json大数据代理问题导致的性能问题 
+- [x] fix 对象类型 Update操作时没有reactive的问题
 
 
 

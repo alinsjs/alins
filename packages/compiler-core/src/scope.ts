@@ -196,9 +196,7 @@ export class Scope {
 
         // 这种类型不可赋值
         const isStatic = (isStaticNode(node.init as Expression) && type === 'const');
-        // {
-        //     var a=1;
-        // }
+
         const variable = this.createVariable(type, name, path);
         variable.isStatic = isStatic;
 

@@ -283,8 +283,15 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         UpdateExpression (path) {
             if (!ctx.enter(path)) return;
             if (path.node._isForUpdate) return;
-            // @ts-ignore
-            ctx.markVarChange(path.node.argument.name);
+            const arg = path.node.argument;
+            if (arg.type === 'MemberExpression') {
+                const id = parseFirstMemberObject(arg);
+                ctx.markVarChange(id.name);
+            } else if (arg.type === 'Identifier') {
+                ctx.markVarChange(arg.name);
+            } else {
+                console.warn('unknown UpdateExpression');
+            }
         },
         Expression: {
             enter (path) {
