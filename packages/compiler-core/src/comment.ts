@@ -71,7 +71,10 @@ export function parseVarDeclCommentReactive (node: VariableDeclaration) {
     if (!isStatic) {
         const boolean = parseCommentSingle(node);
         if (boolean) {
-            node.declarations.forEach(dec => {dec._isShallow = true;});
+            node.declarations.forEach(dec => {
+                // if(dec.id.name)
+                dec._isShallow = true;
+            });
         }
     }
 }

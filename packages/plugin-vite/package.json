@@ -2,7 +2,7 @@
     "name": "vite-plugin-alins",
     "version": "0.0.24",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
+    "main": "dist/vite-plugin-alins.cjs.min.js",
     "typings": "dist/vite-plugin-alins.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",

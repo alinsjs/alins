@@ -9,7 +9,7 @@ import {
     IProxyData,
     isStringTemplateArray,
 } from 'alins-utils';
-import {createProxy, wrapReactive} from './proxy';
+import {createProxy, isProxy, wrapReactive} from './proxy';
 import {createBinding, IBindingReaction, IReactBindingResult} from './binding';
 
 
@@ -33,5 +33,8 @@ export function react<T extends IJson> (
 }
 
 export function reactive<T extends IJson> (data: T, shallow = false): IProxyData<T> {
+
+    if (isProxy(data.v)) return data as any;
+
     return createProxy<T>(wrapReactive(data) as T, {shallow});
 }

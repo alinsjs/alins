@@ -6,12 +6,15 @@
 // import {parseAlins} from 'packages/compiler-node';
 import {parseAlins} from 'packages/compiler-node/dist/alins-compiler-node.esm.min';
 
-console.log(parseAlins(`
-import {createContext as _$$} from '../../../packages/client-core/dist/alins.esm.min'
-window._$$ = _$$;
-let count = 1;
+// console.log(parseAlins(`
+// let count = 1;
 
-<button
-    $parent={document.body}
-    onclick={() => {count++;}}
->click:{count}</button>;`));
+// <button
+//     $parent={document.body}
+//     onclick={() => {count++;}}
+// >click:{count}</button>;`));
+
+console.log(parseAlins(`
+const data = useState();
+data.a = 1;
+<div a={data.a()} b={data.b}>{data.c}</div>;`));

@@ -195,8 +195,12 @@ export class Scope {
         // @ts-ignore
         const name: string = node.id.name;
 
+        const isReactive = node._isComReact || name[0] === '$';
+
+        // _ 开头的变量表示 static $ 开头的变量表示 reactive
+
         // 这种类型不可赋值
-        const isStatic = node._isComStatic || (isStaticNode(node.init as Expression) && type === 'const');
+        const isStatic = isReactive ? false : (node._isComStatic || name[0] === '_' || (isStaticNode(node.init as Expression) && type === 'const'));
 
         const variable = this.createVariable(type, name, path);
         variable.isStatic = isStatic;
@@ -215,7 +219,10 @@ export class Scope {
         this.variableMap[name] = variable;
         // console.log(JSON.stringify(Object.keys(this.variableMap)));
 
-        if (node._isComReact) {
+        if (node._isComReact || name[0] === '$') {
+            if (name[0] === '$' && name[1] === '$') {
+                node._isShallow = true;
+            }
             this.markVariableReactive(name);
         }
     }

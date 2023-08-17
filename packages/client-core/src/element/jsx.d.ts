@@ -17,11 +17,11 @@ declare namespace Alins {
     // self：只有event.target是当前操作的元素时才触发事件；
     type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self';
     type IEventObjectDeco = {
-        listener: (e: Event)=>any;
+        listener: (e: any)=>any;
     } & {
         [decorator in TEventDecorator]?: boolean;
     }
-    type IEventObject = ((e: Event)=>any) | IEventObjectDeco;
+    type IEventObject = ((e: any)=>any) | IEventObjectDeco;
     // | {
     //     v: (e: Event)=>any;
     //     __deco: TEventDecorator;

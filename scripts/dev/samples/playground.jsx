@@ -42,6 +42,9 @@
 
 // document.body.appendChild(dom);
 
-const data = useState();
 
-<div a={data.a()} b={data.b}>{data.c}</div>;
+export function DragBar () {
+
+    const $_isDown = 1;
+
+}
