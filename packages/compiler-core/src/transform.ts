@@ -7,8 +7,10 @@ import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
 import {
     createAlinsCtx, createEmptyString, createImportAlins, createUnfInit,
-    getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
+    extendCallee,
+    getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
 } from './parse-utils';
+import {isJsxExtendCall, isJsxExtendDef} from './is';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
@@ -21,18 +23,23 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                     if (body[i]?.type !== 'ImportDeclaration') {
                         body.splice(i, 0, createAlinsCtx());
                         if (!useImport) {
-                            body.splice(i, 0, createImportAlins(useImport));
+                            ImportScope.regist(() => {
+                                body.splice(i, 0, createImportAlins(useImport));
+                            });
                         }
                         break;
                     }
                 }
 
                 if (useImport) {
-                    body.unshift(createImportAlins());
+                    ImportScope.regist(() => {
+                        body.unshift(createImportAlins());
+                    });
                 }
             },
             exit () {
                 exitContext();
+                ImportScope.trigger();
             }
         },
         ImportDeclaration: (path) => {
@@ -46,6 +53,11 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression': {
             enter (path) {
+                if (isJsxExtendDef(path.node)) {
+                    console.log(path.toString());
+                    debugger;
+                    return path.remove();
+                }
                 // debugger;
                 // console.log('ArrowFunctionExpression', path.toString());
                 if (!ctx.enter(path)) return;
@@ -191,7 +203,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             //     node?.type === 'JSXElement' || node?.type === 'JSXFragment'
             // )) {
                 ctx.mapScope?.markReturnJsx();
-                ctx.curScope?.funcScope.markReturnJsx();
+                ctx.curScope?.funcScope?.markReturnJsx();
             }
         },
         MemberExpression (path) {
@@ -303,7 +315,10 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         CallExpression: {
             enter (path) {
-                // debugger;
+                if (isJsxExtendCall(path)) {
+                    path.node.callee = extendCallee();
+                    return;
+                }
                 if (!ctx.enter(path)) return;
                 const callee = path.node.callee;
                 if (callee.type === 'MemberExpression') {

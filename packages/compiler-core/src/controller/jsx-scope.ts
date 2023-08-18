@@ -88,12 +88,13 @@ export class JsxScope {
     private curAttr: string;
 
     enterJSXAttribute (path: NodePath<JSXAttribute>) {
+        // @ts-ignore
+        const expression = path.node.value?.expression;
+        if (!expression) return;
         // debugger;
         // ! React babel 不支持JSXNamespacedName
         const key = path.node.name;
         let name = '';
-        // @ts-ignore
-        const expression = path.node.value.expression;
 
         let newExpression: any = null;
         const t = getT();

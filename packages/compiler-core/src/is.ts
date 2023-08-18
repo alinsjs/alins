@@ -67,3 +67,33 @@ export function isNeedComputed (node: VariableDeclarator) {
     }
     return true;
 }
+
+export function isJsxExtendDef (node: any) {
+    if (
+        node.type === 'FunctionDeclaration' &&
+        node.id.name === '_extends' &&
+        typeof node.start !== 'number'
+    ) {
+        return true;
+    }
+    return false;
+}
+
+export function isJsxExtendCall (path: NodePath<CallExpression>) {
+    const callee = path.node.callee;
+    if (
+        callee.type === 'Identifier' &&
+        callee.name === '_extends'
+    ) {
+        const pcallee = path.parent?.callee;
+        if (
+            pcallee &&
+            pcallee.object?.name === '_$$' &&
+            pcallee.property?.name === 'ce'
+        ) {
+            return true;
+        }
+
+    }
+    return false;
+}

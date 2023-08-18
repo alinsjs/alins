@@ -14,3 +14,4 @@ export * from 'alins-utils';
 export * from './array-proxy';
 
 export * from './cleaner';
+export * from './extends';

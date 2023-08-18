@@ -69,8 +69,8 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         //     // @ts-ignore
         //     reactiveBindingValue(opt.html, (v) => {el.innerHTML = v;});
         // } else
-        if (opt.children) {
-            if(opt.attributes?.$html){
+        if (opt.children && opt.children.length > 0) {
+            if (opt.attributes?.$html) {
                 console.warn('$html 属性的元素的子元素将失效');
             } else {
                 appendChildren(el, opt.children);
@@ -106,7 +106,13 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     // @ts-ignore
                     el.__$mounted = v;
                 } else if (k === '$parent') {
-                    v.appendChild(el);
+                    let dom = v;
+                    if (typeof dom === 'string') {
+                        // @ts-ignore
+                        dom = document.querySelector(dom);
+                    }
+                    if (!dom) throw new Error('$parent is not a Element');
+                    dom.appendChild(el);
                     // todo 此处有可能还没有append到document中
                     if ($appended) $appended(el);
                 } else if (k === '$html') {

@@ -5,7 +5,7 @@
  */
 
 import {IIfTarget, _if} from './if';
-import {computed, reactive, watch} from 'alins-reactive';
+import {assignData, computed, reactive, watch} from 'alins-reactive';
 import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
 import './for';
 import {ICtxUtil, IReturnCall} from './type';
@@ -50,7 +50,8 @@ export const ContextTool = {
     w: watch,
     cc (get: any, set: any) { // 简写，减少编译代码量
         return computed({get, set});
-    }
+    },
+    e: assignData,
 };
 
 Object.assign(createContext, ContextTool);

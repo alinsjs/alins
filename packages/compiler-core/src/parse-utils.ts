@@ -20,12 +20,35 @@ import type {
 import type {IBabelType} from './types';
 import {isBlockReturned} from './is';
 
+export const ImportScope = (() => {
+    let fn: any = null;
+    let used = false;
+    return {
+        regist (_fn: any) {
+            fn = _fn;
+        },
+        use () {
+            if (!used) used = true;
+        },
+        trigger () {
+            debugger;
+            if (used)fn?.();
+            fn = null;
+        },
+    };
+})();
+
 let currentCtx: any = null;
 
 export const Names = {
     _Ctx: '_$',
     AliasPrefix: '_$',
-    CtxFn: '_$$',
+    _CtxFn: '_$$',
+    get CtxFn () {
+        debugger;
+        ImportScope.use();
+        return this._CtxFn;
+    },
     ReactFn: 'r',
     ComputedFn: 'c',
     ComputedFullFn: 'cc',
@@ -33,6 +56,7 @@ export const Names = {
     CreateElementFn: 'ce',
     Value: 'v',
     TempResult: '_$R',
+    ExtendFn: 'e',
     get Ctx () {
         // 部分使用ctx时候并不是在当前作用域
         // 比如因为有赋值导致的react和computed
@@ -510,4 +534,8 @@ export function parseComputedSet (path: NodePath<VariableDeclaration>) {
             node._parentPath = path;
         });
     }
+}
+
+export function extendCallee () {
+    return createMemberExp(Names.CtxFn, Names.ExtendFn);
 }
