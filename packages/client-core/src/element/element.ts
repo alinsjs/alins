@@ -70,7 +70,11 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         //     reactiveBindingValue(opt.html, (v) => {el.innerHTML = v;});
         // } else
         if (opt.children) {
-            appendChildren(el, opt.children);
+            if(opt.attributes?.$html){
+                console.warn('$html 属性的元素的子元素将失效');
+            } else {
+                appendChildren(el, opt.children);
+            }
         }
 
         // // 生命周期
@@ -105,6 +109,11 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     v.appendChild(el);
                     // todo 此处有可能还没有append到document中
                     if ($appended) $appended(el);
+                } else if (k === '$html') {
+                    reactiveBindingEnable(v, (v) => {
+                        // @ts-ignore
+                        el.innerHTML = v || '';
+                    });
                 } else if (k === '$attributes') {
                     // @ts-ignore
                     parseAttributes(el, v);

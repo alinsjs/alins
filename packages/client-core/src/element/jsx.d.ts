@@ -660,6 +660,7 @@ declare namespace Alins {
         $appended?: (dom: HTMLElement)=>void;
         $mounted?: (dom: HTMLElement)=>void;
         $removed?: (dom: HTMLElement)=>void;
+        $html?: any;
         'value:string'?: any;
         'value:number'?: any;
         'value:boolean'?: any;

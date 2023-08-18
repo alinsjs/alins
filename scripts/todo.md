@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-16 23:18:02
+ * @LastEditTime: 2023-08-18 09:09:18
 -->
 
 # 0.1.0
@@ -41,6 +41,7 @@ feat：
 - [x] 函数的reactive传递 const isActive = (i: number) => naviIndex === i; isActive => ()=>isActive
 - [x] 增加变量定义的 reactive 注解，支持static注解
 - [x] 下划线开头的变量表示 static
+- [ ] import 的header没有使用到就删除掉
 - [ ] if 和 switch 优化
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
@@ -66,6 +67,7 @@ next Version new feature
 - [ ] For Object 支持
 - [ ] $if $elif $else $case $default 属性支持
 - [ ] source-map 支持
+- [ ] 代码重构
 
 fix
 
