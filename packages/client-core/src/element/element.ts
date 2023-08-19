@@ -16,7 +16,7 @@ import {parseStyle} from './style';
 import {parseModel} from './model';
 import {getParent} from '../utils';
 import {parseAttributes} from './attributes';
-import {parseClassName} from './class';
+import {parseClassName, parseClassSuffix} from './class';
 import {initMutationObserver} from './mutation-observer';
 
 export type IAttributeNames = keyof IAttributes;
@@ -132,13 +132,14 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                 } else if (k === 'class') {
                     // @ts-ignore
                     parseClassName(el, v);
+                } else if (
+                    (k === 'style' && parseStyle(el as any, v)) ||
+                    parseModel(el as any, v, k) ||
+                    parseClassSuffix(el as any, k, v)
+                ) {
+                    continue;
                 } else {
-                    // @ts-ignore
-                    if (k === 'style' && parseStyle(el as HTMLElement, v)) continue;
-                    // @ts-ignore
-                    else if (parseModel(el as HTMLElement, v, k)) continue;
                     reactiveBindingEnable(v, (v) => {
-                        debugger;
                         // @ts-ignore
                         v === null ? el.removeAttribute(k) : el.setAttribute(k, v);
                     });
@@ -160,10 +161,12 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
         }
 
         if (Renderer.isElement(item)) {
+            // @ts-ignore
             if (item.__$mounted || item.__$removed) {
                 initMutationObserver(parent);
             }
             parent.appendChild(item as any);
+            // @ts-ignore
             item.__$appended?.(item);
             continue;
         }

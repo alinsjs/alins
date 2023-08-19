@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-19 08:12:25
+ * @LastEditTime: 2023-08-19 08:32:21
 -->
 
 # 0.1.0
@@ -42,9 +42,9 @@ feat：
 - [x] 增加变量定义的 reactive 注解，支持static注解
 - [x] 下划线开头的变量表示 static
 - [x] 属性扩展运算符处理
+- [x] class:a=true 支持
 - [ ] import 的header没有使用到就删除掉
-- [ ] class:a=true 支持
-- [ ] if 和 switch 优化
+- [ ] if 和 switch 优化 (没有返回jsx的if和switch 且 数据不是reactive的不进行处理)
 - [ ] 事件简化处理 onclick={a(1)} onclick={a++}
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
@@ -100,7 +100,7 @@ fix
 - [x] fix 对象类型 Update操作时没有reactive的问题
 - [x] fix comment reactive 标注
 - [x] 空属性会报错
-- [ ] style={`color: ${status.syntaxError ? '#f44' : 'inherit'}`} 有bug
+- [x] style={`color: ${status.syntaxError ? '#f44' : 'inherit'}`} 有bug
 
 
 

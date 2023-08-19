@@ -18,6 +18,8 @@ b = 2; // ! 导致此处变更不能修改之前的结构
 JsxScope 是先从最里层遍历的
     */
 
+const ExcludeDecoMap = {class: 1, style: 1};
+
 const ModelTag = {
     input: 1, select: 1, textarea: 1,
 };
@@ -102,17 +104,20 @@ export class JsxScope {
         if (key.type === 'JSXNamespacedName') {
             // 利用命名空间做一个语法糖
             name = key.namespace.name;
-            // path.insertAfter(
-            //     skipNode(t.jsxAttribute(t.jsxIdentifier(`$${name}_${key.name.name}`)))
-            // );
-
-            expression._deco = true;
-
-            newExpression = t.objectExpression([
-                t.objectProperty(t.identifier('v'), expression),
-                t.objectProperty(t.identifier('__deco'), t.stringLiteral(key.name.name))
-            ]);
-            debugger;
+            if (ExcludeDecoMap[name]) {
+                name = `${name}$${key.name.name}`;
+                path.replaceWith(t.jsxAttribute(
+                    t.jsxIdentifier(name),
+                    path.node.value,
+                ));
+            } else {
+                expression._deco = true;
+    
+                newExpression = t.objectExpression([
+                    t.objectProperty(t.identifier('v'), expression),
+                    t.objectProperty(t.identifier('__deco'), t.stringLiteral(key.name.name))
+                ]);
+            }
 
         } else {
             name = key.name;

@@ -53,3 +53,12 @@ export function parseStyle (
     }
     return true;
 }
+
+export function parseStyleSuffix (el: HTMLElement, key: string, value: any|(()=>any)): boolean {
+    if (!key.startsWith('style$')) return false;
+    const name = key.substring('style$'.length);
+    reactiveBindingEnable(value, (v) => {
+        el.style[name] = v === null ? '' : v;
+    });
+    return true;
+}

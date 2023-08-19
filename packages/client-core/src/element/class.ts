@@ -48,3 +48,12 @@ export function parseClassName (
     }
     return true;
 }
+
+export function parseClassSuffix (el: HTMLElement, key: string, value: boolean|(()=>boolean)): boolean {
+    if (!key.startsWith('class$')) return false;
+    const name = key.substring('class$'.length);
+    reactiveBindingEnable(value, (v) => {
+        el.classList[v ? 'add' : 'remove'](name);
+    });
+    return true;
+}
