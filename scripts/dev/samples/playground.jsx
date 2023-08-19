@@ -8,5 +8,5 @@ import function from '../../../packages/plugin-babel-preset/src/index';
 let a = 1;
 
 a++;
-<div $$body a={a + 1} onclick:stop-pure={aa()}></div>;
+<div $parent='#App'></div>;
 

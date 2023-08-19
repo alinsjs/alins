@@ -125,12 +125,14 @@ export class JsxScope {
     private _pureReg = /(-|^)pure(-|$)/i;
 
     enterJSXAttribute (path: NodePath<JSXAttribute>) {
-        // @ts-ignore
-        const expression = path.node.value?.expression;
-        if (!expression) {
+        const nodeValue = path.node.value;
+        if (!nodeValue) {
             this.parseShortAttr(path);
             return;
         }
+        // @ts-ignore
+        const expression = nodeValue?.expression;
+        if (!expression) return;
         // debugger;
         let name = '';
 
