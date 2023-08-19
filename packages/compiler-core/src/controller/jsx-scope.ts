@@ -4,10 +4,11 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import {createJsxAttr, createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator} from '../parse-utils';
+import {createJsxAttr, createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator, skipNode} from '../parse-utils';
 import type {JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment} from '@babel/types';
 import type {Module} from '../context';
 import {isJSXComponent} from '../is';
+import {isEventAttr} from '../is';
 
 // ! 此处是因为 jsx 被转译之后无法根据原始path replace
 /*
@@ -89,53 +90,97 @@ export class JsxScope {
     // @ts-ignore
     private curAttr: string;
 
-    enterJSXAttribute (path: NodePath<JSXAttribute>) {
+    private replaceAttr (path: NodePath<JSXAttribute>, name: string, value: any, wrap = false) {
+        const t = getT();
+        if (typeof value === 'string') {
+            value = t.jsxExpressionContainer(t.identifier(value));
+        } else if (wrap) {
+            value = t.jsxExpressionContainer(value);
+        }
+        path.replaceWith(createJsxAttr(name, value));
+    }
+
+    private parseShortAttr (path: NodePath<JSXAttribute>) {
         const key = path.node.name;
+        if (key.type === 'JSXNamespacedName') {
+            this.replaceAttr(path, key.namespace.name, key.name.name);
+        } else {
+            let name = key.name;
+            if (name[0] === '$') {
+                if (name[1] === '$') {
+                    name = name.substring(2);
+                    if (name === 'body') {
+                        this.replaceAttr(path, '$parent', createMemberExp('document', 'body'), true);
+                    } else {
+                        this.replaceAttr(path, '$parent', getT().stringLiteral(`#${name}`), true);
+                    }
+                } else {
+                    name = name.substring(1);
+                    this.replaceAttr(path, name, name);
+                }
+            }
+        }
+    }
+
+    private _pureReg = /(-|^)pure(-|$)/i;
+
+    enterJSXAttribute (path: NodePath<JSXAttribute>) {
         // @ts-ignore
         const expression = path.node.value?.expression;
         if (!expression) {
-            const t = getT();
-            if (key.type === 'JSXNamespacedName') {
-                path.replaceWith(createJsxAttr(
-                    key.namespace.name,
-                    t.jsxExpressionContainer(t.identifier(key.name.name))
-                ));
-            } else {
-                let name = key.name;
-                if (name[0] === '$') {
-                    name = name.substring(1);
-                    path.replaceWith(createJsxAttr(
-                        name,
-                        t.jsxExpressionContainer(t.identifier(name))
-                    ));
-                }
-            }
+            this.parseShortAttr(path);
             return;
         }
         // debugger;
         let name = '';
 
-        let newExpression: any = null;
+        let newExpression: any = expression;
 
+        const key = path.node.name;
         const t = getT();
+
+        let deco = '';
+
+        let isEvent = false;
+        
+        // ! 处理事件包裹
+        const checkEventAttr = () => {
+            if (isEventAttr(name)) {
+                isEvent = true;
+                expression._isEventAttr = true;
+                // 表示事件是一个函数 不需要包括包裹
+                if (!this._pureReg.test(deco) && expression.type !== 'Identifier') {
+                    if (!expression?._handled) {
+                        newExpression = t.arrowFunctionExpression([], newExpression);
+                        newExpression._handled = true;
+                    }
+                }
+            }
+        };
+
         // ! React babel 不支持JSXNamespacedName
         if (key.type === 'JSXNamespacedName') {
             // 利用命名空间做一个语法糖
             name = key.namespace.name;
             if (ExcludeDecoMap[name]) {
+                // ! class:a={true} style:color={aa};
                 name = `${name}$${key.name.name}`;
-                path.replaceWith(createJsxAttr(name, path.node.value));
+                this.replaceAttr(path, name, path.node.value);
             } else {
                 expression._deco = true;
+                deco = key.name.name;
+                checkEventAttr();
                 newExpression = t.objectExpression([
-                    t.objectProperty(t.identifier('v'), expression),
-                    t.objectProperty(t.identifier('__deco'), t.stringLiteral(key.name.name))
+                    t.objectProperty(t.identifier('v'), newExpression),
+                    t.objectProperty(t.identifier('__deco'), t.stringLiteral(deco))
                 ]);
+                // 装饰器修饰过的节点不再二次处理
+                newExpression._handled = true;
             }
 
         } else {
             name = key.name;
-            // if(name.s)
+            checkEventAttr();
         }
         this.curAttr = name;
 
@@ -159,7 +204,7 @@ export class JsxScope {
                                 t.arrowFunctionExpression([t.identifier('v')], t.assignmentExpression('=', expression, t.identifier('v'))),
                             ]
                         );
-                        if (!newExpression) {
+                        if (newExpression === expression) {
                             newExpression = computedExp;
                         } else {
                             newExpression.properties[0].value = computedExp;
@@ -169,11 +214,14 @@ export class JsxScope {
             }
         }
 
-        if (newExpression) {
-            path.replaceWith(t.jsxAttribute(
-                t.jsxIdentifier(name),
-                t.jsxExpressionContainer(newExpression)
-            ));
+
+        if (newExpression !== expression) {
+            path.replaceWith(
+                skipNode(t.jsxAttribute(
+                    t.jsxIdentifier(name),
+                    t.jsxExpressionContainer(newExpression)
+                ), isEvent)
+            );
         }
     }
     exitJSXAttribute () {

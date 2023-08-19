@@ -3,7 +3,7 @@
  * @Date: 2023-06-26 15:31:14
  * @Description: Coding something
  */
-import {IProxyListener, IProxyData, util, IRefData, trig} from 'alins-utils';
+import {IProxyListener, IProxyData, util, IRefData, trig, empty} from 'alins-utils';
 import {isProxy, observe} from './proxy';
 // import {computed} from './computed';
 import {IOprationAction} from './array-proxy';
@@ -40,12 +40,17 @@ export function watch<T> (
     deep = true,
 ): IProxyData<T>|IRefData<T>|{v:T} {
     if (typeof target === 'function') {
-        let before = observe(target, (v, nv, path, p, remove) => {
-            const after = target();
+        let before: any = empty;
+        before = observe(target, (v, nv, path, p, remove) => {
+            // ! 对于 UpdateExpression 直接用v作为新值 如果通过target会循环调用 (Maximum call stack size excee)
+            // @ts-ignore
+            const after = target._update ? v : target();
             if (!isValueEqual(before, after)) {
                 // console.log(after, before, path, p, remove);
                 cb(after, before, path, p, remove);
                 before = after;
+            } else {
+                return after;
             }
         });
 

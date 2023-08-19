@@ -22,16 +22,19 @@ import {isBlockReturned} from './is';
 
 export const ImportScope = (() => {
     let fn: any = null;
-    let used = false;
+    let count = 0;
     return {
         regist (_fn: any) {
             fn = _fn;
         },
         use () {
-            if (!used) used = true;
+            count ++;
+        },
+        unuse () {
+            count --;
         },
         trigger () {
-            if (used)fn?.();
+            if (count > 0)fn?.();
             fn = null;
         },
     };
@@ -148,10 +151,7 @@ export function createElementMember () {
 }
 
 export function replaceJsxDomCreator (path: NodePath<CallExpression>) {
-    return t.callExpression(
-        createMemberExp(Names.CtxFn, Names.CreateElementFn),
-        path.node.arguments,
-    );
+    return createCtxCall(Names.CreateElementFn, path.node.arguments);
 }
 
 // ! 暂时先全部用v包裹 后续优化
@@ -186,10 +186,13 @@ export function createComputed (node: VariableDeclarator) {
 }
 
 function createComputeCall (fn?: any) {
+    return createCtxCall(Names.ComputedFn, [fn]);
+}
+
+function createCtxCall (name: string, args: any[]) {
     return t.callExpression(
-        createMemberExp(Names.CtxFn, Names.ComputedFn),
-        // t.identifier('computed'),
-        [ fn ]
+        createMemberExp(Names.CtxFn, name),
+        args
     );
 }
 
@@ -203,10 +206,15 @@ export function createJsxCompute (node: Expression|JSXExpressionContainer, isCom
     // );
     const isContainer = node.type === 'JSXExpressionContainer';
     const exp = isContainer ? node.expression as any : node as any;
-    const call = t.arrowFunctionExpression(
+    let call: any = t.arrowFunctionExpression(
         [], exp
     );
 
+    if (exp.type === 'UpdateExpression') {
+        call = createCtxCall('mu', [call]);
+    }
+
+    // 标注当前是否在JSX组件中，组件中需要被转成 _$$.c()
     const computed = isComp ? createComputeCall(call) : call;
     const result = isContainer ? t.jsxExpressionContainer(computed) : computed;
     // @ts-ignore
@@ -217,9 +225,9 @@ export function createJsxCompute (node: Expression|JSXExpressionContainer, isCom
     return result;
 }
 
-export function skipNode<T> (node: T): T {
+export function skipNode<T> (node: T, _skip = true): T {
     // @ts-ignore
-    node._skip = true;
+    node._skip = _skip;
     return node;
 }
 
@@ -243,10 +251,7 @@ export function createReact (node: VariableDeclarator) {
     }
     return skipNode(t.variableDeclarator(
         node.id,
-        t.callExpression(
-            createMemberExp(Names.CtxFn, Names.ReactFn),
-            args
-        ),
+        createCtxCall(Names.ReactFn, args),
     ));
 }
 
@@ -326,14 +331,11 @@ export function createExportAliasInit (alias: string, name: string) {
     // _$.w(()=> x.v, (v)=>x=v, false).v;
     const v = Names.Value;
     return t.memberExpression(
-        t.callExpression(
-            createMemberExp(Names.CtxFn, Names.WatchFn),
-            [
-                t.arrowFunctionExpression([], createMemberExp(alias, v)),
-                t.arrowFunctionExpression([], t.assignmentExpression('=', t.identifier(name), t.identifier(v))),
-                t.booleanLiteral(false),
-            ]
-        ),
+        createCtxCall(Names.WatchFn, [
+            t.arrowFunctionExpression([], createMemberExp(alias, v)),
+            t.arrowFunctionExpression([], t.assignmentExpression('=', t.identifier(name), t.identifier(v))),
+            t.booleanLiteral(false),
+        ]),
         t.identifier(v),
     );
 }
@@ -352,7 +354,7 @@ export function createExportAliasInit (alias: string, name: string) {
 function transformToBlock (body: any) {
     // 对于没有{}的语句 进行block包裹
     if (body.type !== 'BlockStatement') {
-        body = t.blockStatement([ body ]);
+        body = t.blockStatement(Array.isArray(body) ? body : [ body ]);
     }
     // body._noBreak = true;
     return body;
@@ -374,7 +376,6 @@ export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i
                 id: t.identifier('else'),
                 fn: createSetAsyncArrowFunc(elseBody),
             };
-            // if (returned) returned = isBlockReturned(elseBody);
         }
     } else {
         //
@@ -387,7 +388,6 @@ export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i
         fn: createSetAsyncArrowFunc(body),
     };
     // ! 只要为false 则不需要再检查其他分支
-    // if (returned) returned = isBlockReturned(body);
     if (i === 0) {
         item.id.name = 'if';
         map.if = item;
@@ -419,13 +419,22 @@ export function createSetAsyncArrowFunc (body: BlockStatement) {
     return node;
 }
 
-export function traverseSwitchStatement (node: SwitchStatement) {
+export function traverseSwitchStatement (node: SwitchStatement, returnJsxCall?: ()=>void) {
     const discr = t.arrowFunctionExpression([], node.discriminant);
-
     const cases = t.arrayExpression(node.cases.map(item => {
         const {test, consequent: cons} = item;
-        let body = cons.length === 1 ? cons[0] : t.blockStatement(cons);
+        let body: any = [];
+        for (const single of cons) {
+            if (single.type === 'BlockStatement') {
+                body.push(...single.body);
+            } else if (single.type === 'EmptyStatement') {
+                continue;
+            } else {
+                body.push(single);
+            }
+        }
         body = transformToBlock(body);
+        isBlockReturned(body, returnJsxCall);
         let result = t.objectExpression([
             // @ts-ignore
             t.objectProperty(t.identifier('c'), t.arrowFunctionExpression([], body)),
@@ -480,16 +489,13 @@ export function createEmptyString () {
 //     return <div>end</div>;
 //   }
 
-export function markMNR (fn: any) {
+export function markMNR (fn: any, returnJsxCall?: ()=>void) {
     if (fn._mnrMarked) return fn;
 
-    if (!isBlockReturned(fn.body)) {
+    if (!isBlockReturned(fn.body, returnJsxCall)) {
         fn._mnrMarked = true;
         // ! 标注是否有返回值
-        return t.callExpression(
-            createMemberExp(Names.CtxFn, 'mnr'),
-            [ fn ]
-        );
+        return createCtxCall('mnr', [fn]);
     }
     return fn;
 }

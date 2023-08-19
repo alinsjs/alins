@@ -5,6 +5,7 @@
  */
 import type {NodePath} from '@babel/traverse';
 import type {Identifier, JSXAttribute, JSXElement, JSXOpeningElement, Node} from '@babel/types';
+import {isOriginJSXElement} from '../is';
 import {getT, Names} from '../parse-utils';
 
 const CompNames = {
@@ -197,7 +198,8 @@ function parseSwitch (path: NodePath<JSXElement>) {
 
     for (const item of node.children) {
         if (isEmptyText(item)) continue;
-        if (item.type !== 'JSXElement') throw new Error('switch 中只能包含jsxElement');
+        if (!isOriginJSXElement(item.type))  throw new Error('switch 中只能包含jsxElement');
+        // @ts-ignore
         const el = item.openingElement;
         // @ts-ignore
         const name = el.name.name;
@@ -205,6 +207,7 @@ function parseSwitch (path: NodePath<JSXElement>) {
             const properties: any[] = [];
             properties.push(t.objectProperty(
                 t.identifier('c'),
+                // @ts-ignore
                 wrapChildren(item.children)
             ));
             if (name === CompNames.Case) {
@@ -275,26 +278,32 @@ function parseShow (path: NodePath<JSXElement>) {
     const exp = getExp(node.openingElement);
 
     const t = getT();
-    node.children.forEach(item => {
-        if (item.type === 'JSXElement') {
-            const attrs = item.openingElement.attributes;
-            // @ts-ignore
-            const show = attrs.find(attr => attr.name.name === '$show') as JSXAttribute;
 
-            if (!show) {
-                attrs.push(t.jsxAttribute(
-                    t.jsxIdentifier('$show'),
-                    t.jsxExpressionContainer(exp),
-                ));
-            } else {
-                if (show.value?.type === 'JSXExpressionContainer') {
-                    show.value.expression = exp;
+    const parseChildren = (children: any[]) => {
+        children.forEach(item => {
+            if (item.type === 'JSXElement') {
+                const attrs = item.openingElement.attributes;
+                // @ts-ignore
+                const show = attrs.find(attr => attr.name.name === '$show') as JSXAttribute;
+        
+                if (!show) {
+                    attrs.push(t.jsxAttribute(
+                        t.jsxIdentifier('$show'),
+                        t.jsxExpressionContainer(exp),
+                    ));
                 } else {
-                    show.value = t.jsxExpressionContainer(exp);
+                    if (show.value?.type === 'JSXExpressionContainer') {
+                        show.value.expression = exp;
+                    } else {
+                        show.value = t.jsxExpressionContainer(exp);
+                    }
                 }
+            } else if (item.type === 'JSXExpressionContainer') {
+                parseChildren(item.children);
             }
-        }
-    });
+        });
+    };
+    parseChildren(node.children);
 
     path.replaceWith(wrapChildren(node.children, null));
 }

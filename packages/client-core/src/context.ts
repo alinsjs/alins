@@ -52,6 +52,11 @@ export const ContextTool = {
         return computed({get, set});
     },
     e: assignData,
+    // markUpdateExpression: true
+    mu (fn:any) {
+        fn._update = true;
+        return fn;
+    }
 };
 
 Object.assign(createContext, ContextTool);

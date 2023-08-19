@@ -1,28 +1,12 @@
 /*
+import function from '../../../packages/plugin-babel-preset/src/index';
  * @Author: chenzhongsheng
- * @Date: 2023-08-17 20:19:34
+ * @Date: 2023-08-19 00:06:37
  * @Description: Coding something
  */
 
-const a = {a: true};
+let a = 1;
 
-a.a = false;
+a++;
+<div $$body a={a + 1} onclick:stop-pure={aa()}></div>;
 
-window.a = a;
-
-// <div $parent={document.body} style={`color: ${a.a ? '#f44' : '#111'}`}>111</div>;
-// <div $parent={document.body} style={{
-//     backgroundColor: `${a.a ? '#f44' : '#111'}`
-// }}>111</div>;
-
-
-{/* <div $parent={document.body} class={`def ${a.a ? 'a' : ''}`}>111</div>;
-<div $parent={document.body} class={{
-    b: () => a.a
-}} class:cc={a.a} $src>111</div>; */}
-
-let src = '111';
-
-src = '222';
-
-<div $parent={document.body} aa:src $src>11</div>;

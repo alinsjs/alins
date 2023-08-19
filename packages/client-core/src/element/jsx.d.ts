@@ -15,13 +15,13 @@ declare namespace Alins {
     // once：事件只触发一次（常用）；
     // capture：使用事件的捕获模式；
     // self：只有event.target是当前操作的元素时才触发事件；
-    type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self';
+    type TEventDecorator = 'prevent' | 'stop' | 'capture' | 'once' | 'self' | 'pure';
     type IEventObjectDeco = {
         listener: (e: any)=>any;
     } & {
         [decorator in TEventDecorator]?: boolean;
     }
-    type IEventObject = ((e: any)=>any) | IEventObjectDeco;
+    type IEventObject = ((e: any)=>any) | any | IEventObjectDeco;
     // | {
     //     v: (e: Event)=>any;
     //     __deco: TEventDecorator;

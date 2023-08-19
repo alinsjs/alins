@@ -205,20 +205,22 @@ export function createProxy<T extends IJson> (data: T, {
                     if (!depReactive) depReactive = true;
                     if (!lns[property]) lns[property] = new Set();
                     let listener = currentFn;
-                    // 移除被删除的dom的引用释放内存
-                    const clean = () => {
-                        // console.log('clear', target, property);
+                    if (!lns[property].has(listener)) {
+                        // 移除被删除的dom的引用释放内存
+                        const clean = () => {
+                            // console.log('clear', target, property);
+                            // debugger;
+                            lns[property].delete(listener);
+                            listener = null;
+                        };
+                        // console.log('collect', target[util], property);
                         // debugger;
-                        lns[property].delete(listener);
-                        listener = null;
-                    };
-                    // console.log('collect', target[util], property);
-                    // debugger;
-                    getCurCleaner()?.collect(target[util], clean);
-                    listener.__clear = clean;
-                    // if (__DEBUG__) console.log('收集依赖', property);
-                    lns[property].add(listener);
-                    // if (__DEBUG__) console.log('收集依赖222', lns[property]);
+                        getCurCleaner()?.collect(target[util], clean);
+                        listener.__clear = clean;
+                        // if (__DEBUG__) console.log('收集依赖', property);
+                        lns[property].add(listener);
+                        // if (__DEBUG__) console.log('收集依赖222', lns[property]);
+                    }
                     // ! 当在依赖搜集时 返回缓存的值
                     return Reflect.get(target, property, receiver);
                 }

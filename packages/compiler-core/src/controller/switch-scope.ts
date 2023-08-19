@@ -7,11 +7,17 @@ import type {Statement, SwitchStatement} from '@babel/types';
 import {getT, traverseSwitchStatement} from '../parse-utils';
 
 import {ControlScope} from './control-scope';
+import {createScopeStack} from './scope-stack';
 
 export class SwitchScope extends ControlScope<SwitchStatement> {
 
+    static ScopeStack = createScopeStack<SwitchScope>();
+
     _init () {
-        const {endFunc, node} = traverseSwitchStatement(this.path.node);
+        SwitchScope.ScopeStack.newNode(this);
+        const {endFunc, node} = traverseSwitchStatement(this.path.node, () => {
+            this.markScopeReturnJsx();
+        });
 
         this.newNode = node;
 
@@ -28,5 +34,10 @@ export class SwitchScope extends ControlScope<SwitchStatement> {
             // @ts-ignore
             this.replaceEnd = null;
         };
+    }
+
+    exit () {
+        SwitchScope.ScopeStack.pop();
+        return super.exit();
     }
 }

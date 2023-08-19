@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-19 08:46:13
+ * @LastEditTime: 2023-08-19 17:02:54
 -->
 
 # 0.1.0
@@ -44,9 +44,10 @@ feat：
 - [x] 属性扩展运算符处理
 - [x] class:a=true 支持
 - [x] $src => src={src} // 简化写法
-- [ ] import 的header没有使用到就删除掉
-- [ ] if 和 switch 优化 (没有返回jsx的if和switch 且 数据不是reactive的不进行处理)
-- [ ] 事件简化处理 onclick={a(1)} onclick={a++}
+- [x] $parent 简化写法; $$App $$body
+- [x] if 和 switch 优化 (没有返回jsx的if和switch不进行处理)
+- [x] import的header没有使用到就删除掉
+- [x] 事件简化处理 onclick={a(1)} onclick={a++} 要考虑 a(1) 返回值是函数的情况 (pure 装饰器标注的不会处理)
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
@@ -102,6 +103,9 @@ fix
 - [x] fix comment reactive 标注
 - [x] 空属性会报错
 - [x] style={`color: ${status.syntaxError ? '#f44' : 'inherit'}`} 有bug
+- [x] 修复 UpdateExpression 在jsx属性中引起循环引用的问题  <div  a={a++}></div>;
+
+
 
 
 

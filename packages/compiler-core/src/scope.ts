@@ -18,7 +18,11 @@ import type {
 import {IfScope} from './controller/if-scope';
 import {isNeedComputed, isObjectAssignDeclarator} from './is';
 import {JsxScope} from './controller/jsx-scope';
-import {isStaticNode, createReact, createComputed, createJsxCompute, createReadValue, Names, createVarDeclarator, createVarDeclaration, createExportAliasInit, getT, skipNode} from './parse-utils';
+import {
+    isStaticNode, createReact, createComputed, createJsxCompute, createReadValue,
+    Names, createVarDeclarator, createVarDeclaration, createExportAliasInit, getT,
+    skipNode
+} from './parse-utils';
 import {SwitchScope} from './controller/switch-scope';
 import {Module} from './context';
 import {INodeTypeMap} from './types';
@@ -59,7 +63,7 @@ export interface IScopeWatchJSXExpression {
     isDynamic: boolean; // 是否依赖了其他响应式数据
     handled: boolean;
     skip: boolean;
-    isComp?: boolean;
+    isComp?: boolean; // 标注当前是否在JSX组件中，组件中需要被转成 _$$.c()
 }
 
 let newNodeId = -1;
@@ -506,7 +510,7 @@ export class Scope {
         //     }
         // }
         // ! 此处放宽jsx转译条件
-        if (!xnode.isDynamic && !v.isStatic) {
+        if (!xnode.isDynamic && !v.isStatic && (!xnode.path.node._handled)) {
             xnode.isDynamic = true;
         }
     }
@@ -562,6 +566,7 @@ export class Scope {
             // const nodes = this.path.node.body.slice(index + 1);
             // ! 使用unshift可以保证从后面先开始收入end
             this.onExitQueue.unshift(() => {
+                if (!newScope.isReturnJsx) return;
                 // 将if之后的节点全部放到end中
                 const nodes = body.splice(index + 1);
                 newScope?.replaceEnd(nodes);
@@ -602,6 +607,7 @@ export class Scope {
             // const nodes = this.path.node.body.slice(index + 1);
             // ! 使用unshift可以保证从后面先开始收入end
             this.onExitQueue.unshift(() => {
+                if (!newScope.isReturnJsx) return;
                 // 将if之后的节点全部放到end中
                 const nodes = body.splice(index + 1);
                 newScope?.replaceEnd(nodes);
@@ -611,7 +617,6 @@ export class Scope {
         Scope.switchScopeDeep ++;
     }
     exitSwitchScope (path: NodePath<SwitchStatement>) {
-        // debugger;
         if (!this.switchScope) return;
         if (path !== this.switchScope.path) return;
         this.switchScope = this.switchScope.exit();

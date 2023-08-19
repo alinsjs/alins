@@ -12,13 +12,6 @@
 
 import type {Node, VariableDeclaration, VariableDeclarator} from '@babel/types';
 
-// import {a} from '/aa'; // @reactive[a,b]
-// import { VariableDeclarator } from '@babel/types';
-const a = 1;
-// const b = a + 1; set:() => {
-
-// };
-
 function parseComment (node: Node) {
     const comments: string[] = [];
     const before = node.leadingComments?.[node.leadingComments.length - 1];

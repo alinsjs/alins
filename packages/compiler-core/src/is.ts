@@ -35,10 +35,14 @@ export function isObjectAssignDeclarator (node:VariableDeclarator) {
     return callee.type === 'MemberExpression' && callee.object?.name === 'Object' && callee.property?.name === 'assign';
 }
 
-export function isBlockReturned (block: BlockStatement) {
+export function isBlockReturned (block: BlockStatement, returnJsxCall?: ()=>void) {
     const list = block.body;
     for (let i = list.length - 1; i >= 0; i--) {
         if (list[i].type === 'ReturnStatement') {
+            // @ts-ignore
+            if (isOriginJSXElement(list[i]?.argument.type)) {
+                returnJsxCall?.();
+            }
             return true;
         }
     }
@@ -85,6 +89,7 @@ export function isJsxExtendCall (path: NodePath<CallExpression>) {
         callee.type === 'Identifier' &&
         callee.name === '_extends'
     ) {
+        // @ts-ignore
         const pcallee = path.parent?.callee;
         if (
             pcallee &&
@@ -96,4 +101,95 @@ export function isJsxExtendCall (path: NodePath<CallExpression>) {
 
     }
     return false;
+}
+export function isOriginJSXElement (type?: string) {
+    return type === 'JSXElement' || type === 'JSXFragment';
+}
+
+const EventNameMap = {
+    onclick: 1,
+    onmousedown: 1,
+    onmouseenter: 1,
+    onmouseleave: 1,
+    onmousemove: 1,
+    onmouseover: 1,
+    onmouseup: 1,
+    ontouchend: 1,
+    ontouchmove: 1,
+    ontouchstart: 1,
+    onwheel: 1,
+    oninput: 1,
+    onchange: 1,
+    onfullscreenchange: 1,
+    onfullscreenerror: 1,
+    oncopy: 1,
+    oncut: 1,
+    onpaste: 1,
+    onabort: 1,
+    onauxclick: 1,
+    onbeforeinput: 1,
+    onblur: 1,
+    oncanplay: 1,
+    oncanplaythrough: 1,
+    onclose: 1,
+    oncompositionend: 1,
+    oncompositionstart: 1,
+    oncompositionupdate: 1,
+    oncontextmenu: 1,
+    oncuechange: 1,
+    ondblclick: 1,
+    ondrag: 1,
+    ondragend: 1,
+    ondragenter: 1,
+    ondragleave: 1,
+    ondragover: 1,
+    ondragstart: 1,
+    ondrop: 1,
+    ondurationchange: 1,
+    onemptied: 1,
+    onended: 1,
+    onerror: 1,
+    onfocus: 1,
+    onfocusin: 1,
+    onfocusout: 1,
+    onformdata: 1,
+    ongotpointercapture: 1,
+    oninvalid: 1,
+    onkeydown: 1,
+    onkeypress: 1,
+    onkeyup: 1,
+    onload: 1,
+    onloadeddata: 1,
+    onloadedmetadata: 1,
+    onloadstart: 1,
+    onlostpointercapture: 1,
+    onmouseout: 1,
+    onpause: 1,
+    onplay: 1,
+    onplaying: 1,
+    onpointercancel: 1,
+    onpointerdown: 1,
+    onpointerenter: 1,
+    onpointerleave: 1,
+    onpointermove: 1,
+    onpointerout: 1,
+    onpointerover: 1,
+    onpointerup: 1,
+    onprogress: 1,
+    onratechange: 1,
+    onreset: 1,
+    onresize: 1,
+    onscroll: 1,
+    onselect: 1,
+    onselectionchange: 1,
+    onselectstart: 1,
+    onsubmit: 1,
+    onsuspend: 1,
+    ontimeupdate: 1,
+    ontoggle: 1,
+    ontouchcancel: 1,
+};
+
+export function isEventAttr (name: string) {
+    return !!EventNameMap[name];
 }

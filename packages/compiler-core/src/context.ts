@@ -7,6 +7,7 @@ import type {NodePath} from '@babel/traverse';
 import type {CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator} from '@babel/types';
 import {MapScope} from './controller/map';
 import {isJsxCallee} from './is';
+import {ImportScope} from './parse-utils';
 import {Scope} from './scope';
 import {INodeTypeMap} from './types';
 
@@ -45,6 +46,7 @@ export class Module {
     exitModule () {
         // @ts-ignore
         if (this.ctx && !this.ctx.node._used) {
+            ImportScope.unuse();
             this.ctx.remove();
         }
     }

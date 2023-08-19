@@ -10,7 +10,7 @@ import {
     extendCallee,
     getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
 } from './parse-utils';
-import {isJsxExtendCall, isJsxExtendDef} from './is';
+import {isJsxExtendCall, isJsxExtendDef, isOriginJSXElement} from './is';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
@@ -180,7 +180,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 // path.node.left._isReplace = true;
             }
             if (!ctx.enter(path)) return;
-            if (rightType === 'JSXElement') {
+            if (isOriginJSXElement(rightType)) {
                 // @ts-ignore
                 path.node._skipAssign = true;
                 return;
@@ -194,12 +194,8 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         ReturnStatement (path) {
             if (!ctx.enter(path)) return;
             const node = path.node.argument;
-            // debugger;
             // @ts-ignore
-            if (node?.type === 'JSXElement' || node?.type === 'JSXFragment') {
-            // if (isJSXElement(node) || (
-            //     node?.type === 'JSXElement' || node?.type === 'JSXFragment'
-            // )) {
+            if (isOriginJSXElement(node?.type)) {
                 ctx.mapScope?.markReturnJsx();
                 ctx.curScope?.funcScope?.markReturnJsx();
             }
@@ -303,6 +299,8 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         JSXAttribute: {
             enter (path) {
+                // @ts-ignore
+                if (path.node._skip) return;
                 // console.log('JSXAttr_Debug enter', path.toString());
                 ctx.curScope.jsxScope.enterJSXAttribute(path);
             },

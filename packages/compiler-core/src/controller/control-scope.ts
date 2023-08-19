@@ -14,6 +14,11 @@ export abstract class ControlScope<NodeType> {
     newNode: any;
     top = false;
 
+    isReturnJsx = false;
+    markScopeReturnJsx () {
+        this.isReturnJsx = true;
+        this.parent?.markScopeReturnJsx();
+    }
 
     // todo 根据 if test 中是否是响应数据来决定是否需要 replace if 暂时先全部replace处理
     // isReactive = true;
@@ -54,8 +59,12 @@ export abstract class ControlScope<NodeType> {
             })
         }
         */
-        if (this.newNode)
+        if (this.newNode && this.isReturnJsx) {
             this.path.replaceWith(this.newNode);
+            // @ts-ignore
+            this.newNode = null;
+        }
+        
         // this.path.replaceWith(this.newNode);
 
         // if (!this.top) {

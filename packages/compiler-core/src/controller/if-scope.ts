@@ -1,6 +1,7 @@
 import type {Identifier, IfStatement, Statement} from '@babel/types';
 import {getT, markMNR, Names, traverseIfStatement} from '../parse-utils';
 import {ControlScope} from './control-scope';
+import {createScopeStack} from './scope-stack';
 
 /*
  * @Author: chenzhongsheng
@@ -11,7 +12,10 @@ import {ControlScope} from './control-scope';
 
 export class IfScope extends ControlScope<IfStatement> {
 
+    static ScopeStack = createScopeStack<IfScope>();
+
     _init () {
+        IfScope.ScopeStack.newNode(this);
         const node = this.path.node;
         const map = traverseIfStatement(node);
 
@@ -26,7 +30,9 @@ export class IfScope extends ControlScope<IfStatement> {
         ) => {
             const bodyFn = args[args.length - 1];
             if (id.name !== 'end') {
-                args[args.length - 1] = markMNR(bodyFn);
+                args[args.length - 1] = markMNR(bodyFn, () => {
+                    this.markScopeReturnJsx();
+                });
             } else {
                 end._mnr = (fn: any) => {
                     args[args.length - 1] = markMNR(fn);
@@ -55,7 +61,6 @@ export class IfScope extends ControlScope<IfStatement> {
         this.replaceEnd = (nodes: Statement[]) => {
             const block = t.blockStatement(nodes);
             // 只要end有返回，则肯定有返回
-            // if (!this.returned) this.returned = isBlockReturned(block);
             if (this.parentScope.awaitRecorded) {
                 end.fn.body._setAsync?.();
             }
@@ -75,5 +80,10 @@ export class IfScope extends ControlScope<IfStatement> {
         }
         // this.returned = map.returned;
         this.newNode = anchor;
+    }
+
+    exit () {
+        IfScope.ScopeStack.pop();
+        return super.exit();
     }
 }

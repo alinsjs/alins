@@ -7,12 +7,11 @@
 
 import type {CallExpression} from '@babel/types';
 import type {Module} from '../context';
+import {isOriginJSXElement} from '../is';
 import {getT} from '../parse-utils';
 import {ControlScope} from './control-scope';
 
 export class MapScope extends ControlScope<CallExpression> {
-
-    isReturnJsx = false;
 
     recordAwait = false; // ! 关闭后续的await收集
 
@@ -79,8 +78,7 @@ export class MapScope extends ControlScope<CallExpression> {
         this.keyName = params[0].name;
         this.indexKeyName = params[1]?.name || '';
         if (
-            arg.type === 'ArrowFunctionExpression' &&
-            (arg.body.type === 'JSXElement' || arg.body.type === 'JSXFragment')
+            arg.type === 'ArrowFunctionExpression' && isOriginJSXElement(arg.body.type)
         ) {
             // debugger;
             this.isArrowFnReturnJsx = true;
