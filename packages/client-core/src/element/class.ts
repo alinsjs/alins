@@ -22,7 +22,13 @@ export function parseClassName (
                 dom.classList[(remove || v == false) ? 'remove' : 'add'](prop);
                 return;
             }
-            for (const k in v) dom.classList[(v[k] === false) ? 'remove' : 'add'](k);
+            for (const k in v) {
+                let value = v[k];
+                if (typeof value === 'function') {
+                    value = value();
+                }
+                dom.classList[(value === false) ? 'remove' : 'add'](k);
+            }
             for (const k in ov)
                 if (typeof v[k] === 'undefined')
                     dom.classList.remove(k);

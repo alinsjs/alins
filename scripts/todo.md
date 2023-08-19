@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-18 23:03:56
+ * @LastEditTime: 2023-08-19 08:12:25
 -->
 
 # 0.1.0
@@ -100,6 +100,7 @@ fix
 - [x] fix 对象类型 Update操作时没有reactive的问题
 - [x] fix comment reactive 标注
 - [x] 空属性会报错
+- [ ] style={`color: ${status.syntaxError ? '#f44' : 'inherit'}`} 有bug
 
 
 

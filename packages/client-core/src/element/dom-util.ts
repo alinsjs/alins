@@ -10,7 +10,6 @@ import {
 import {AlinsType, IJson, IProxyListener, IRefData, type} from 'alins-utils';
 import {IElement, ITextNode} from './renderer';
 
-
 export interface IElementBuilder {
     // @ts-ignore
     [type]: AlinsType.ElementBuilder;
@@ -18,7 +17,6 @@ export interface IElementBuilder {
     mount(parent: IElementLike): void;
     appendChild(parent: IElementLike): void;
 }
-
 
 export type IElementLike = ITextNode|IElement;
 

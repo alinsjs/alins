@@ -138,6 +138,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     // @ts-ignore
                     else if (parseModel(el as HTMLElement, v, k)) continue;
                     reactiveBindingEnable(v, (v) => {
+                        debugger;
                         // @ts-ignore
                         v === null ? el.removeAttribute(k) : el.setAttribute(k, v);
                     });

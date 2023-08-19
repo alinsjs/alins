@@ -11,19 +11,29 @@ export function parseStyle (
     dom: HTMLElement,
     value: IStyle | string | (()=>string)
 ): boolean {
+    debugger;
     if (value === null || typeof value === 'undefined') return false;
     if (typeof value === 'function' || isProxy(value)) {
+        const isFunc = typeof value === 'function';
         // @ts-ignore
         reactiveBindingEnable(value, (v: any, ov: any, path, prop, remove) => {
+            console.log(v, ov, path, prop, isFunc, isProxy(value));
             if (typeof v === 'string') {
-                if (!prop || prop === 'v') {
+                if (isFunc) {
+                // if (!prop || prop === 'v') {
                     dom.setAttribute('style', v);
                 } else {
                     dom.style[prop] = !!remove ? '' : v;
                 }
                 return;
             }
-            for (const k in v) dom.style[k] = v[k];
+            for (const k in v) {
+                let value = v[k];
+                if (typeof value === 'function') {
+                    value = value();
+                }
+                dom.style[k] = value;
+            }
             for (const k in ov)
                 if (typeof v[k] === 'undefined')
                     dom.style[k] = '';

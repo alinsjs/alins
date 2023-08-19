@@ -31,7 +31,6 @@ export const ImportScope = (() => {
             if (!used) used = true;
         },
         trigger () {
-            debugger;
             if (used)fn?.();
             fn = null;
         },
@@ -45,7 +44,6 @@ export const Names = {
     AliasPrefix: '_$',
     _CtxFn: '_$$',
     get CtxFn () {
-        debugger;
         ImportScope.use();
         return this._CtxFn;
     },

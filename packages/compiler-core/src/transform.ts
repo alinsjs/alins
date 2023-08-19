@@ -54,8 +54,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression': {
             enter (path) {
                 if (isJsxExtendDef(path.node)) {
-                    console.log(path.toString());
-                    debugger;
                     return path.remove();
                 }
                 // debugger;
