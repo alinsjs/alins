@@ -16,7 +16,13 @@ window.a = a;
 // }}>111</div>;
 
 
-<div $parent={document.body} class={`def ${a.a ? 'a' : ''}`}>111</div>;
+{/* <div $parent={document.body} class={`def ${a.a ? 'a' : ''}`}>111</div>;
 <div $parent={document.body} class={{
     b: () => a.a
-}} class:cc={a.a}>111</div>;
+}} class:cc={a.a} $src>111</div>; */}
+
+let src = '111';
+
+src = '222';
+
+<div $parent={document.body} aa:src $src>11</div>;

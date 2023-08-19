@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-19 08:32:21
+ * @LastEditTime: 2023-08-19 08:46:13
 -->
 
 # 0.1.0
@@ -43,6 +43,7 @@ feat：
 - [x] 下划线开头的变量表示 static
 - [x] 属性扩展运算符处理
 - [x] class:a=true 支持
+- [x] $src => src={src} // 简化写法
 - [ ] import 的header没有使用到就删除掉
 - [ ] if 和 switch 优化 (没有返回jsx的if和switch 且 数据不是reactive的不进行处理)
 - [ ] 事件简化处理 onclick={a(1)} onclick={a++}

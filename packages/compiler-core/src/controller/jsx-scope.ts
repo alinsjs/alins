@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import {createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator} from '../parse-utils';
+import {createJsxAttr, createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator} from '../parse-utils';
 import type {JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment} from '@babel/types';
 import type {Module} from '../context';
 import {isJSXComponent} from '../is';
@@ -90,29 +90,43 @@ export class JsxScope {
     private curAttr: string;
 
     enterJSXAttribute (path: NodePath<JSXAttribute>) {
+        const key = path.node.name;
         // @ts-ignore
         const expression = path.node.value?.expression;
-        if (!expression) return;
+        if (!expression) {
+            const t = getT();
+            if (key.type === 'JSXNamespacedName') {
+                path.replaceWith(createJsxAttr(
+                    key.namespace.name,
+                    t.jsxExpressionContainer(t.identifier(key.name.name))
+                ));
+            } else {
+                let name = key.name;
+                if (name[0] === '$') {
+                    name = name.substring(1);
+                    path.replaceWith(createJsxAttr(
+                        name,
+                        t.jsxExpressionContainer(t.identifier(name))
+                    ));
+                }
+            }
+            return;
+        }
         // debugger;
-        // ! React babel 不支持JSXNamespacedName
-        const key = path.node.name;
         let name = '';
 
         let newExpression: any = null;
-        const t = getT();
 
+        const t = getT();
+        // ! React babel 不支持JSXNamespacedName
         if (key.type === 'JSXNamespacedName') {
             // 利用命名空间做一个语法糖
             name = key.namespace.name;
             if (ExcludeDecoMap[name]) {
                 name = `${name}$${key.name.name}`;
-                path.replaceWith(t.jsxAttribute(
-                    t.jsxIdentifier(name),
-                    path.node.value,
-                ));
+                path.replaceWith(createJsxAttr(name, path.node.value));
             } else {
                 expression._deco = true;
-    
                 newExpression = t.objectExpression([
                     t.objectProperty(t.identifier('v'), expression),
                     t.objectProperty(t.identifier('__deco'), t.stringLiteral(key.name.name))
@@ -121,6 +135,7 @@ export class JsxScope {
 
         } else {
             name = key.name;
+            // if(name.s)
         }
         this.curAttr = name;
 

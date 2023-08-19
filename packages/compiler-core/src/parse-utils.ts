@@ -537,3 +537,10 @@ export function parseComputedSet (path: NodePath<VariableDeclaration>) {
 export function extendCallee () {
     return createMemberExp(Names.CtxFn, Names.ExtendFn);
 }
+
+export function createJsxAttr (name: string, value: any) {
+    return t.jsxAttribute(
+        t.jsxIdentifier(name),
+        value,
+    );
+}
