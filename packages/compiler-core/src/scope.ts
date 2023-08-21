@@ -16,7 +16,7 @@ import type {
     VariableDeclarator,
 } from '@babel/types';
 import {IfScope} from './controller/if-scope';
-import {isNeedComputed, isObjectAssignDeclarator} from './is';
+import {isFuncExpression, isNeedComputed, isObjectAssignDeclarator} from './is';
 import {JsxScope} from './controller/jsx-scope';
 import {
     isStaticNode, createReact, createComputed, createJsxCompute, createReadValue,
@@ -215,7 +215,7 @@ export class Scope {
             if (type.startsWith('JSX')) variable.isJSX = true;
             this.curVarNode = variable;
         }
-        if (node.init?.type === 'ArrowFunctionExpression' || node.init?.type === 'FunctionExpression') {
+        if (isFuncExpression(node.init)) {
             variable.isFunc = true;
             // @ts-ignore
             variable.path.node.init._variable = variable;

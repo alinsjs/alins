@@ -6,7 +6,7 @@
 import type {NodePath} from '@babel/traverse';
 import type {CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator} from '@babel/types';
 import {MapScope} from './controller/map';
-import {isJsxCallee} from './is';
+import {isFuncExpression, isJsxCallee} from './is';
 import {ImportScope} from './parse-utils';
 import {Scope} from './scope';
 import {INodeTypeMap} from './types';
@@ -230,8 +230,7 @@ export class Module {
             // @ts-ignore
             name = path.node.id?.name;
         } else {
-            const init = path.node.init;
-            if (init?.type === 'ArrowFunctionExpression' || init?.type === 'FunctionExpression') {
+            if (isFuncExpression(path.node.init)) {
                 // debugger;
                 // @ts-ignore
                 name = path.node.id;

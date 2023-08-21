@@ -7,7 +7,7 @@ import type {NodePath} from '@babel/traverse';
 import {createJsxAttr, createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator, skipNode} from '../parse-utils';
 import type {JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment} from '@babel/types';
 import type {Module} from '../context';
-import {isJSXComponent} from '../is';
+import {isFuncExpression, isJSXComponent} from '../is';
 import {isEventAttr} from '../is';
 
 // ! 此处是因为 jsx 被转译之后无法根据原始path replace
@@ -147,7 +147,7 @@ export class JsxScope {
         
         // ! 处理事件包裹
         const checkEventAttr = () => {
-            if (isEventAttr(name)) {
+            if (!isFuncExpression(expression) && isEventAttr(name)) {
                 isEvent = true;
                 expression._isEventAttr = true;
                 // 表示事件是一个函数 不需要包括包裹

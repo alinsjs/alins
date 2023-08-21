@@ -8,5 +8,5 @@ import function from '../../../packages/plugin-babel-preset/src/index';
 let a = 1;
 
 a++;
-<div $parent='#App'></div>;
+<div $parent='#App' onclick={()=>a++}></div>;
 

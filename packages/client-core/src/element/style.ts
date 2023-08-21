@@ -11,13 +11,11 @@ export function parseStyle (
     dom: HTMLElement,
     value: IStyle | string | (()=>string)
 ): boolean {
-    debugger;
     if (value === null || typeof value === 'undefined') return false;
     if (typeof value === 'function' || isProxy(value)) {
         const isFunc = typeof value === 'function';
         // @ts-ignore
         reactiveBindingEnable(value, (v: any, ov: any, path, prop, remove) => {
-            console.log(v, ov, path, prop, isFunc, isProxy(value));
             if (typeof v === 'string') {
                 if (isFunc) {
                 // if (!prop || prop === 'v') {

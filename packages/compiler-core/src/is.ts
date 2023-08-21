@@ -193,3 +193,7 @@ const EventNameMap = {
 export function isEventAttr (name: string) {
     return !!EventNameMap[name];
 }
+
+export function isFuncExpression (node: any) {
+    return (node?.type === 'ArrowFunctionExpression' || node?.type === 'FunctionExpression')
+}
