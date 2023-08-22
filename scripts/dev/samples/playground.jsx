@@ -1,14 +1,12 @@
 /*
-import function from '../../../packages/plugin-babel-preset/src/index';
  * @Author: chenzhongsheng
- * @Date: 2023-08-19 00:06:37
+ * @Date: 2023-08-22 11:03:06
  * @Description: Coding something
  */
+const msg = 'World';
+let a = { a () {alert(111);} };
+a.a = ()=>{};
 
-const a = {a: 1};
-
-let dom;
-
-<div $dom={dom} style={{
-    alignItems: a.a
-}} {...a}></div>;
+<div onclick={a.a} $$App>Hello {msg}!</div>;
+// $$App is short for $parennt='#App'
+// Or use `document.getElementById('App').appendChild(<div/>)`

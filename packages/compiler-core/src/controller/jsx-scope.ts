@@ -173,11 +173,18 @@ export class JsxScope {
                 isEvent = true;
                 expression._isEventAttr = true;
                 // 表示事件是一个函数 不需要包括包裹
-                if (!this._pureReg.test(deco) && expression.type !== 'Identifier') {
-                    if (!expression?._handled) {
+                if (
+                    !this._pureReg.test(deco) && 
+                    expression.type !== 'Identifier'
+                    // expression.type !== 'MemberExpression'
+                ) {
+                    if (!expression._handled) {
                         newExpression = t.arrowFunctionExpression([], newExpression);
                         newExpression._handled = true;
                     }
+                } else {
+                    // 事件类型不需要jsx转译处理了
+                    // nodeValue._handled = expression._handled = true;
                 }
             }
         };
