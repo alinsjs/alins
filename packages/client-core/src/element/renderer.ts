@@ -39,6 +39,9 @@ export interface IElement {
     set innerHTML(value: string);
     get innerText(): string;
     set innerText(value: string);
+    __$appended: any;
+    __$removed: any;
+    __$mounted: any;
 }
 export interface ITextNode {
     // @ts-ignore
@@ -75,7 +78,7 @@ export const Renderer = {
     isElement (el: any) {
         return this.isFragment(el) || this.isOriginElement(el);
     },
-    removeElement(el: any){ 
+    removeElement (el: any) {
         el.remove();
     }
 };

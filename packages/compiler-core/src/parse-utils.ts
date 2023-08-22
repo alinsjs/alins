@@ -36,6 +36,7 @@ export const ImportScope = (() => {
         trigger () {
             if (count > 0)fn?.();
             fn = null;
+            count = 0;
         },
     };
 })();
@@ -58,6 +59,7 @@ export const Names = {
     Value: 'v',
     TempResult: '_$R',
     ExtendFn: 'e',
+    ExtendCompFn: 'es',
     get Ctx () {
         // 部分使用ctx时候并不是在当前作用域
         // 比如因为有赋值导致的react和computed
@@ -540,8 +542,15 @@ export function parseComputedSet (path: NodePath<VariableDeclaration>) {
     }
 }
 
-export function extendCallee () {
-    return createMemberExp(Names.CtxFn, Names.ExtendFn);
+export function extendCallee (isComp: boolean) {
+    return createMemberExp(Names.CtxFn, isComp ? Names.ExtendCompFn : Names.ExtendFn);
+}
+
+export function createExtendCalleeWrap (arg: any, isComp: boolean) {
+    return t.callExpression(
+        extendCallee(isComp),
+        [arg]
+    );
 }
 
 export function createJsxAttr (name: string, value: any) {

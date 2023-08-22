@@ -122,12 +122,28 @@ export class JsxScope {
         }
     }
 
+    private handleDomRef (path: NodePath<JSXAttribute>) {
+        if (path.node.name.name === '$dom') {
+            const t = getT();
+            const v = path.node.value as any;
+            if (v?.expression) {
+                v.expression = t.arrowFunctionExpression(
+                    [t.identifier('_$dom')],
+                    skipNode(t.assignmentExpression('=', v.expression, t.identifier('_$dom')))
+                );
+            }
+            return true;
+        }
+        return false;
+    }
+
     private _pureReg = /(-|^)pure(-|$)/i;
 
     enterJSXAttribute (path: NodePath<JSXAttribute>) {
         const nodeValue = path.node.value;
         if (!nodeValue) {
             this.parseShortAttr(path);
+            this.handleDomRef(path);
             return;
         }
         // @ts-ignore
@@ -139,6 +155,12 @@ export class JsxScope {
         let newExpression: any = expression;
 
         const key = path.node.name;
+
+        if (this.handleDomRef(path)) {
+            return;
+        }
+
+
         const t = getT();
 
         let deco = '';

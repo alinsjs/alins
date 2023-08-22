@@ -5,7 +5,7 @@
  */
 
 import {IIfTarget, _if} from './if';
-import {assignData, computed, reactive, watch} from 'alins-reactive';
+import {assignCompData, assignData, computed, reactive, watch} from 'alins-reactive';
 import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
 import './for';
 import {ICtxUtil, IReturnCall} from './type';
@@ -52,6 +52,7 @@ export const ContextTool = {
         return computed({get, set});
     },
     e: assignData,
+    es: assignCompData,
     // markUpdateExpression: true
     mu (fn:any) {
         fn._update = true;

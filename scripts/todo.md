@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-20 01:10:28
+ * @LastEditTime: 2023-08-22 09:31:00
 -->
 
 # 0.1.0
@@ -48,7 +48,9 @@ feat：
 - [x] if 和 switch 优化 (没有返回jsx的if和switch不进行处理)
 - [x] import的header没有使用到就删除掉
 - [x] 事件简化处理 onclick={a(1)} onclick={a++} 要考虑 a(1) 返回值是函数的情况 (pure 装饰器标注的不会处理)
-- [ ] $ref实现
+- [x] 只有 扩展属性fix；component 扩展属性加 computed
+- [x] $ref实现
+- [x] style 支持数字 （默认px）
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
@@ -64,6 +66,7 @@ next Version new feature
 - [ ] alins-store - 状态库
 - [ ] alins-renderer - 利用自定义 renderer 实现跨平台
 - [ ] alins-style style 标签优化 处理 提高css可用性, style 值类型声明 （能够使用reactive库配合着使用原生js使用）
+- [ ] alins-style 支持兼容性扩展
 - [ ] alins-cli、alins-template （base on vite、vite-plugin-alins、eslint-config）
 - [ ] 内存优化
 - [ ] 运行时间 优化

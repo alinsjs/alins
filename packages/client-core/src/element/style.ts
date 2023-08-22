@@ -7,6 +7,15 @@ import {isProxy} from 'alins-reactive';
 import {reactiveBindingEnable} from './dom-util';
 import {IStyle} from './jsx';
 
+export const OnlyNumberMap = {'zIndex': 1, 'opacity': 1, 'flex': 1, 'flexGrow': 1, 'flexShrink': 1};
+
+function setStyle (dom: HTMLElement, prop: string, v: any, remove?: boolean) {
+    if (typeof v === 'number' && !OnlyNumberMap[prop]) {
+        v = `${v}px`;
+    }
+    dom.style[prop] = !!remove ? '' : v;
+}
+
 export function parseStyle (
     dom: HTMLElement,
     value: IStyle | string | (()=>string)
@@ -21,7 +30,7 @@ export function parseStyle (
                 // if (!prop || prop === 'v') {
                     dom.setAttribute('style', v);
                 } else {
-                    dom.style[prop] = !!remove ? '' : v;
+                    setStyle(dom, prop, v, remove);
                 }
                 return;
             }
@@ -30,11 +39,11 @@ export function parseStyle (
                 if (typeof value === 'function') {
                     value = value();
                 }
-                dom.style[k] = value;
+                setStyle(dom, k, value);
             }
             for (const k in ov)
                 if (typeof v[k] === 'undefined')
-                    dom.style[k] = '';
+                    setStyle(dom, k, '');
         });
     // } else if(isProxy(value)){
     //     reactiveBindingEnable(value, (v,))
@@ -43,7 +52,7 @@ export function parseStyle (
             // !todo style value 编译 + func包裹 ()=>{}
         // @ts-ignore
             reactiveBindingEnable(value[k], (v) => {
-                dom.style[k] = v === null ? '' : v;
+                setStyle(dom, k, v, v === null);
             });
         }
     } else {
@@ -56,7 +65,7 @@ export function parseStyleSuffix (el: HTMLElement, key: string, value: any|(()=>
     if (!key.startsWith('style$')) return false;
     const name = key.substring('style$'.length);
     reactiveBindingEnable(value, (v) => {
-        el.style[name] = v === null ? '' : v;
+        setStyle(el, name, v, v === null);
     });
     return true;
 }

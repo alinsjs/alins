@@ -5,8 +5,10 @@ import function from '../../../packages/plugin-babel-preset/src/index';
  * @Description: Coding something
  */
 
-let a = 1;
+const a = {a: 1};
 
-a++;
-<div $parent='#App' onclick={()=>a++}></div>;
+let dom;
 
+<div $dom={dom} style={{
+    alignItems: a.a
+}} {...a}></div>;

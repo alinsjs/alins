@@ -86,70 +86,56 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
 
             // @ts-ignore
             const $appended = opt.attributes.$appended;
-
+            
             for (const k in opt.attributes) {
                 const v = opt.attributes[k];
                 if (isEventAttr(el as IElement, k, v)) {
                     addEvent(el as IElement, k, v);
                     continue;
                 }
-                if (k === '$created') {
-                    v(el);
-                } else if (k === '$appended') {
-                    // @ts-ignore
-                    el.__$appended = $appended;
-                    continue;
-                } else if (k === '$removed') {
-                    // @ts-ignore
-                    el.__$removed = v;
-                } else if (k === '$mounted') {
-                    // @ts-ignore
-                    el.__$mounted = v;
-                } else if (k === '$parent') {
-                    let dom = v;
-                    if (typeof dom === 'string') {
-                        // @ts-ignore
-                        dom = document.querySelector(dom);
-                    }
-                    if (!dom) throw new Error('$parent is not a Element');
-                    dom.appendChild(el);
-                    // todo 此处有可能还没有append到document中
-                    if ($appended) $appended(el);
-                } else if (k === '$html') {
-                    reactiveBindingEnable(v, (v) => {
+                switch (k) {
+                    case '$created': v(el); break;
+                    case '$appended': (el as IElement).__$appended = $appended; break;
+                    case '$removed': (el as IElement).__$removed = v; break;
+                    case '$mounted': (el as IElement).__$mounted = v; break;
+                    case '$parent': {
+                        let dom = v;
+                        if (typeof dom === 'string') dom = document.querySelector(dom);
+                        if (!dom) throw new Error('$parent is not a Element');
+                        dom.appendChild(el);
+                        if ($appended) $appended(el); // todo 此处有可能还没有append到document中
+                    }; break;
+                    case '$html': reactiveBindingEnable(v, (v) => {
                         // @ts-ignore
                         el.innerHTML = v || '';
-                    });
-                } else if (k === '$attributes') {
-                    // @ts-ignore
-                    parseAttributes(el, v);
-                } else if (k === '$show') {
-                    // @ts-ignore
-                    reactiveBindingEnable(v, (v) => {
+                    }); break;
+                    case '$dom': v(el); break;
+                    case '$attributes': parseAttributes(el as any, v); break;
+                    case '$show': reactiveBindingEnable(v, (v) => {
                         // @ts-ignore
                         el.style.display = v ? '' : 'none';
-                    });
-                } else if (k === 'class') {
-                    // @ts-ignore
-                    parseClassName(el, v);
-                } else if (
-                    (k === 'style' && parseStyle(el as any, v)) ||
-                    parseModel(el as any, v, k) ||
-                    parseClassSuffix(el as any, k, v)
-                ) {
-                    continue;
-                } else {
-                    reactiveBindingEnable(v, (v) => {
-                        // @ts-ignore
-                        v === null ? el.removeAttribute(k) : el.setAttribute(k, v);
-                    });
-                }
+                    }); break;
+                    case 'class': parseClassName(el as any, v); break;
+                    default: {
+                        if (
+                            (k === 'style' && parseStyle(el as any, v)) ||
+                            parseModel(el as any, v, k) ||
+                            parseClassSuffix(el as any, k, v)) {
+                            break;
+                        } else {
+                            reactiveBindingEnable(v, (v) => {
+                                // @ts-ignore
+                                v === null ? el.removeAttribute(k) : el.setAttribute(k, v);
+                            });
+                        }
+                    }; break;
+                };
             }
         }
     }
-    
     return el;
 }
+
 
 export function appendChildren (parent: IElement|IFragment, children: (IChildren|IJSXDomOptions)[]) {
     for (const item of children) {

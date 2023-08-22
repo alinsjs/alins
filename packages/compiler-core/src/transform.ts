@@ -6,9 +6,8 @@ import {parseCommentMulti, parseVarDeclCommentReactive} from './comment';
 import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
 import {
-    createAlinsCtx, createEmptyString, createImportAlins, createUnfInit,
-    extendCallee,
-    getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
+    createAlinsCtx, createEmptyString, createExtendCalleeWrap, createImportAlins, createUnfInit,
+    extendCallee, getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
 } from './parse-utils';
 import {isJsxExtendCall, isJsxExtendDef, isOriginJSXElement} from './is';
 
@@ -297,6 +296,15 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 ctx.curScope.jsxScope.exitJsxElement(path);
             }
         },
+        'JSXSpreadAttribute' (path) {
+            // @ts-ignore
+            if (path.parent.attributes?.length === 1) {
+                path.node.argument = createExtendCalleeWrap(
+                    path.node.argument,
+                    ctx.curScope.jsxScope.isJSXComp
+                );
+            }
+        },
         JSXAttribute: {
             enter (path) {
                 // @ts-ignore
@@ -312,7 +320,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         CallExpression: {
             enter (path) {
                 if (isJsxExtendCall(path)) {
-                    path.node.callee = extendCallee();
+                    path.node.callee = extendCallee(ctx.curScope.jsxScope.isJSXComp);
                     return;
                 }
                 if (!ctx.enter(path)) return;
@@ -358,7 +366,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 ctx.curScope.exitJSXExpression();
             }
         },
-
         IfStatement: {
             enter (path) {
                 // console.log('Expression', path.toString());
