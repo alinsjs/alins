@@ -3,21 +3,21 @@
  * @Date: 2023-06-25 22:31:56
  * @Description: Coding something
  */
-import {addEvent, isEventAttr, IEventNames} from './event';
-import {IElement, IFragment, ITrueElement, Renderer} from './renderer';
+import { addEvent, isEventAttr, IEventNames } from './event';
+import { IElement, IFragment, ITrueElement, Renderer } from './renderer';
 import {
     IBindingReactionEnable, reactiveBindingEnable,
     IChildren, reactiveBindingValue,
 } from './dom-util';
-import {IJson} from 'alins-utils';
-import {IBindingReaction, IBindingRef, isProxy} from 'alins-reactive';
-import {IAttributes} from './jsx';
-import {parseStyle} from './style';
-import {parseModel} from './model';
-import {getParent} from '../utils';
-import {parseAttributes} from './attributes';
-import {parseClassName, parseClassSuffix} from './class';
-import {initMutationObserver} from './mutation-observer';
+import { IJson } from 'alins-utils';
+import { IBindingReaction, IBindingRef, isProxy } from 'alins-reactive';
+import { IAttributes } from './jsx';
+import { parseStyle } from './style';
+import { parseModel } from './model';
+import { getParent } from '../utils';
+import { parseAttributes } from './attributes';
+import { parseClassName, parseClassSuffix } from './class';
+import { initMutationObserver } from './mutation-observer';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -86,7 +86,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
 
             // @ts-ignore
             const $appended = opt.attributes.$appended;
-            
+
             for (const k in opt.attributes) {
                 const v = opt.attributes[k];
                 if (isEventAttr(el as IElement, k, v)) {
@@ -162,13 +162,13 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
             // @ts-ignore 是 domOptions
             options = item;
         } else {
-            options = {text: item, isText: true};
+            options = { text: item, isText: true };
         }
-        
+
         const dom = transformOptionsToElement(options);
         // @ts-ignore
         parent.appendChild(dom);
-        
+
     }
 }
 
@@ -193,7 +193,7 @@ export const JSX = {
                 for (const k in attributes) {
                     const v = attributes[k];
                     if (!isProxy(v)) {
-                        attributes[k] = {v};
+                        attributes[k] = { v };
                     }
                     // if(typeof v === 'function')
                 }
@@ -203,12 +203,13 @@ export const JSX = {
             // if (dom.toString() === '[object Promise]') {
             const result = transformAsyncDom(dom) as any;
             if ($parent) {
+                if (typeof $parent === 'string') $parent = document.querySelector($parent);
                 $parent.appendChild(result);
             }
             return result;
         }
         // @ts-ignore
-        const result: IJSXDomOptions = {tag, attributes, children, jsx: true};
+        const result: IJSXDomOptions = { tag, attributes, children, jsx: true };
         // console.log('createElement', result);
         return transformOptionsToElement(result);
     }
