@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import {createJsxAttr, createMemberExp, getT, Names, parseFirstMemberObject, replaceJsxDomCreator, skipNode} from '../parse-utils';
+import {createMemberExp, getT, Names, parseFirstMemberObject, parseJsxAttrShort, createWrapAttr, replaceJsxDomCreator, skipNode} from '../parse-utils';
 import type {JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment} from '@babel/types';
 import type {Module} from '../context';
 import {isFuncExpression, isJSXComponent} from '../is';
@@ -90,38 +90,6 @@ export class JsxScope {
     // @ts-ignore
     private curAttr: string;
 
-    private replaceAttr (path: NodePath<JSXAttribute>, name: string, value: any, wrap = false) {
-        const t = getT();
-        if (typeof value === 'string') {
-            value = t.jsxExpressionContainer(t.identifier(value));
-        } else if (wrap) {
-            value = t.jsxExpressionContainer(value);
-        }
-        path.replaceWith(createJsxAttr(name, value));
-    }
-
-    private parseShortAttr (path: NodePath<JSXAttribute>) {
-        const key = path.node.name;
-        if (key.type === 'JSXNamespacedName') {
-            this.replaceAttr(path, key.namespace.name, key.name.name);
-        } else {
-            let name = key.name;
-            if (name[0] === '$') {
-                if (name[1] === '$') {
-                    name = name.substring(2);
-                    if (name === 'body') {
-                        this.replaceAttr(path, '$parent', createMemberExp('document', 'body'), true);
-                    } else {
-                        this.replaceAttr(path, '$parent', getT().stringLiteral(`#${name}`), true);
-                    }
-                } else {
-                    name = name.substring(1);
-                    this.replaceAttr(path, name, name);
-                }
-            }
-        }
-    }
-
     private handleDomRef (path: NodePath<JSXAttribute>) {
         if (path.node.name.name === '$dom') {
             const t = getT();
@@ -140,12 +108,11 @@ export class JsxScope {
     private _pureReg = /(-|^)pure(-|$)/i;
 
     enterJSXAttribute (path: NodePath<JSXAttribute>) {
-        const nodeValue = path.node.value;
-        if (!nodeValue) {
-            this.parseShortAttr(path);
+        if (parseJsxAttrShort(path)) {
             this.handleDomRef(path);
             return;
         }
+        const nodeValue = path.node.value;
         // @ts-ignore
         const expression = nodeValue?.expression;
         if (!expression) return;
@@ -174,9 +141,9 @@ export class JsxScope {
                 expression._isEventAttr = true;
                 // 表示事件是一个函数 不需要包括包裹
                 if (
-                    !this._pureReg.test(deco) && 
-                    expression.type !== 'Identifier'
-                    // expression.type !== 'MemberExpression'
+                    !this._pureReg.test(deco) &&
+                    expression.type !== 'Identifier' &&
+                    expression.type !== 'MemberExpression'
                 ) {
                     if (!expression._handled) {
                         newExpression = t.arrowFunctionExpression([], newExpression);
@@ -184,7 +151,7 @@ export class JsxScope {
                     }
                 } else {
                     // 事件类型不需要jsx转译处理了
-                    // nodeValue._handled = expression._handled = true;
+                    nodeValue._handled = expression._handled = true;
                 }
             }
         };
@@ -196,7 +163,7 @@ export class JsxScope {
             if (ExcludeDecoMap[name]) {
                 // ! class:a={true} style:color={aa};
                 name = `${name}$${key.name.name}`;
-                this.replaceAttr(path, name, path.node.value);
+                path.replaceWith(createWrapAttr(name, path.node.value));
             } else {
                 expression._deco = true;
                 deco = key.name.name;

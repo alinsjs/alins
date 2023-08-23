@@ -8,7 +8,7 @@
 import type {CallExpression} from '@babel/types';
 import type {Module} from '../context';
 import {isOriginJSXElement} from '../is';
-import {getT} from '../parse-utils';
+import {getT, parseFirstMemberObject} from '../parse-utils';
 import {ControlScope} from './control-scope';
 
 export class MapScope extends ControlScope<CallExpression> {
@@ -29,7 +29,6 @@ export class MapScope extends ControlScope<CallExpression> {
     dataName: string;
 
     markReturnJsx () {
-        // debugger;
         if (this.isReturnJsx || this.skip) return;
         const scope = this.module.curScope; // 缓存当前的scope
         this.parentScope.collectDependAction(this.dataName, () => {
@@ -44,7 +43,6 @@ export class MapScope extends ControlScope<CallExpression> {
         if (this.isReturnJsx) {
             // @ts-ignore
             this.path.node._isMap = true;
-            // debugger;
             this.parentScope.collectDependAction(this.dataName, () => {
                 const t = getT();
                 this.path.node.arguments.push(
@@ -60,8 +58,23 @@ export class MapScope extends ControlScope<CallExpression> {
         // @ts-ignore
         this._replaceQueue = [];
         const node = this.path.node;
+
         // @ts-ignore
-        this.dataName = node.callee?.object.name || '';
+        const object = node.callee?.object;
+
+        if (object) {
+            if (object.type === 'Identifier') {
+                this.dataName = object.name || '';
+            } else if (object.type === 'MemberExpression') {
+                this.dataName = parseFirstMemberObject(object).name || '';
+            }
+        }
+
+        if (!this.dataName) {
+            throw new Error('Map parse data error');
+        }
+
+        // this.dataName = node.callee?.object.name || '';
         const arg = node.arguments[0];
         // console.log('map node', node);
         // @ts-ignore

@@ -98,25 +98,14 @@ export function Switch (condition: IValueCond<any>, generator: IDomGenerator) {
     return _switch(condition, generator, createContext()).end();
 }
 
-interface ICaseItem {
-    v?: any,
-    c: IDomGenerator,
-    b?: boolean
+
+type ICaseItem = [any, IDomGenerator, boolean|undefined];
+
+export function Case (value: any, generator: IDomGenerator, brk?: boolean): ICaseItem {
+    return [value, generator, brk];
 }
-export function Case (value: any, generator: IDomGenerator, brk?: boolean) {
-    const data: ICaseItem = {
-        v: value,
-        c: generator,
-    };
-    if (typeof brk === 'boolean') {
-        data.b = brk;
-    }
-    return data;
-}
-export function Default (generator: IDomGenerator, brk?: boolean) {
-    const data: ICaseItem = {c: generator};
-    if (typeof brk === 'boolean') data.b = brk;
-    return data;
+export function Default (generator: IDomGenerator, brk?: boolean): ICaseItem {
+    return [null, generator, brk];
 }
 
 

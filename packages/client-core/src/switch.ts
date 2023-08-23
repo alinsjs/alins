@@ -16,11 +16,8 @@ import {createAnchor} from './scope/anchor';
 
 export type ISwitchTarget = IWatchRefTarget<ISimpleValue>;
 
-export interface ISwitchCase {
-    value?: any;
-    brk?: boolean;
-    call?: ()=>any;
-}
+export type ISwitchCase = [any, (()=>any)|null, boolean];
+// value, call, break,
 
 export type ISwitchCaseList = ISwitchCase[];
 
@@ -34,7 +31,6 @@ enum SwitchResult {
 // ! 编译时 return; return null; => return <></>
 
 export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util: ICtxUtil) {
-
     const anchor = createAnchor(util.cache);
     let endCall: IReturnCall;
 
@@ -46,7 +42,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
 
     // let returnEl: any = null;
 
-    const execSingle = ({call, brk}: ISwitchCase) => {
+    const execSingle = ([, call, brk]: ISwitchCase) => {
         if (call) {
             const branch = branchMap.get(call);
             if (!branch) throw new Error('empty branch');
@@ -71,8 +67,13 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
             if (macthed) {
                 if (el = execSingle(item)) break;
             } else {
+                const caseValue = item[0];
                 // 没有value表示为default
-                if (item.value === value || !('value' in item)) { // 命中或走default
+                if (
+                    (Array.isArray(caseValue) && caseValue.includes(value)) ||
+                    caseValue === value ||
+                    caseValue === null
+                ) { // 命中或走default
                     macthed = true;
                     if (el = execSingle(item)) break;
                 }
@@ -90,8 +91,9 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
     const initSwitchBranches = () => {
         let first = true;
         for (const item of caseList) {
-            if (item.call) {
-                branchMap.set(item.call, util.branch.next(item.call, anchor, first));
+            const call = item[1];
+            if (call) {
+                branchMap.set(call, util.branch.next(call, anchor, first));
                 if (first) first = false;
             }
         }
@@ -104,7 +106,6 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
             endCall = call;
             // console.warn('switch end');
             const init = watch(target, (value) => {
-                // if (value === 3) debugger;
                 run(value);
             });
             initSwitchBranches();

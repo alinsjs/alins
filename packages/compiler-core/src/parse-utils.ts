@@ -15,10 +15,12 @@ import type {
     SwitchStatement,
     VariableDeclaration,
     VariableDeclarator,
-    Node
+    Node,
+    JSXAttribute
 } from '@babel/types';
 import type {IBabelType} from './types';
 import {isBlockReturned} from './is';
+import type {Module} from './context';
 
 export const ImportScope = (() => {
     let fn: any = null;
@@ -77,9 +79,17 @@ export let t: IBabelType;
 export function getT () {
     return t;
 }
-
 export function initTypes (types: IBabelType) {
     t = types;
+}
+
+let currentModule: Module;
+
+export function getCurModule () {
+    return currentModule;
+}
+export function initCurModule (m: Module) {
+    currentModule = m;
 }
 
 /**
@@ -437,25 +447,20 @@ export function traverseSwitchStatement (node: SwitchStatement, returnJsxCall?: 
         }
         body = transformToBlock(body);
         isBlockReturned(body, returnJsxCall);
-        let result = t.objectExpression([
-            // @ts-ignore
-            t.objectProperty(t.identifier('c'), t.arrowFunctionExpression([], body)),
+        let array = t.arrayExpression([
+            // ! !test 为 default
+            !test ? t.nullLiteral() : test,
+            body.length === 0 ? t.nullLiteral() : t.arrowFunctionExpression([], body),
         ]);
-        if (test !== null) { // ! default 分支处理
-            // @ts-ignore
-            result.properties.push(t.objectProperty(t.identifier('v'), test));
-        }
         // @ts-ignore
         item._setBrk = () => {
-            result.properties.push(
-                t.objectProperty(t.identifier('b'), t.booleanLiteral(true)),
-            );
+            array.elements.push(t.booleanLiteral(true));
             // @ts-ignore
             item._setBrk = null;
             // @ts-ignore
-            result = null;
+            array = null;
         };
-        return result;
+        return array;
     }));
 
     const endFunc = createSetAsyncArrowFunc(t.blockStatement([]));
@@ -558,4 +563,66 @@ export function createJsxAttr (name: string, value: any) {
         t.jsxIdentifier(name),
         value,
     );
+}
+
+export function parseAttributes (attrs: JSXAttribute[], handleReactive?: boolean) {
+    for (let i = 0; i < attrs.length; i++) {
+        const attr = attrs[i];
+        if (attr.type === 'JSXAttribute') {
+            const newAttr = createNewJSXAttribute(attr, handleReactive);
+            if (newAttr) {
+                attrs[i] = newAttr;
+            }
+        }
+    }
+}
+
+export function parseJsxAttrShort (path: NodePath<JSXAttribute>) {
+    const nodeValue = path.node.value;
+    if (nodeValue) return false;
+        
+    const newAttr = createNewJSXAttribute(path.node);
+    if (newAttr) {
+        path.replaceWith(newAttr);
+        return true;
+    }
+    return false;
+}
+
+function createNewJSXAttribute (node: JSXAttribute, handleReactive?: boolean) {
+    const key = node.name;
+    if (key.type === 'JSXNamespacedName') {
+        return createWrapAttr(key.namespace.name, key.name.name, false, handleReactive);
+    } else {
+        let name = key.name;
+        if (name[0] === '$') {
+            if (name[1] === '$') {
+                name = name.substring(2);
+                if (name === 'body') {
+                    return createWrapAttr('$parent', createMemberExp('document', 'body'), true);
+                } else {
+                    return createWrapAttr('$parent', getT().stringLiteral(`#${name}`), true);
+                }
+            } else {
+                name = name.substring(1);
+                return createWrapAttr(name, name);
+            }
+        }
+    }
+    return null;
+}
+
+export function createWrapAttr (name: string, value: any, wrap = false, handleReactive?: boolean) {
+    const t = getT();
+    if (typeof value === 'string') {
+        value = t.jsxExpressionContainer(t.identifier(value));
+        if (handleReactive) {
+            getCurModule().curScope.checkIdentifier(value.expression, (newNode) => {
+                value.expression = newNode;
+            });
+        }
+    } else if (wrap) {
+        value = t.jsxExpressionContainer(value);
+    }
+    return createJsxAttr(name, value);
 }

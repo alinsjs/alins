@@ -698,7 +698,6 @@ declare namespace Alins {
     interface IControlAttributes {
         $parent?: HTMLElement|Node|DocumentFragment;
         $show?: boolean|(()=>boolean);
-
     }
 
     interface IAttributes extends IBaseAttributes, IControlAttributes {
@@ -753,16 +752,6 @@ declare global {
         // interface IntrinsicClassAttributes { href?: string }
 
         interface IntrinsicElements {
-            // // HTML
-            // for: {data: any[], item?: string; index?: string},
-            // if: {data: boolean},
-            // elseif: {data: boolean},
-            // else: {},
-            // switch: {data: any},
-            // case: {data: any, break?: boolean|null},
-            // default: {break?: boolean|null},
-            // async: {data: Promise<any>, name?: string},
-            // show: {data: boolean},
 
             div: Alins.IAttributes,
             a: Alins.IAttributes;
@@ -836,17 +825,17 @@ declare global {
         }
     }
 
-    type JSXInnerComp<T> = (attrs: T) => JSX.Element;
+    type JSXInnerComp<T> = (attrs: T & {[prop: string]:any}) => JSX.Element;
 
-    const For: JSXInnerComp<{data: any[], item?: string, index?: string}>;
-    const If: JSXInnerComp<{data: boolean}>;
-    const ElseIf: JSXInnerComp<{data: boolean}>;
+    const For: JSXInnerComp<{data?: any[], item?: string, index?: string}>;
+    const If: JSXInnerComp<{data?: boolean}>;
+    const ElseIf: JSXInnerComp<{data?: boolean}>;
     const Else: JSXInnerComp<{}>;
-    const Switch: JSXInnerComp<{data: any}>;
-    const Case: JSXInnerComp<{data: any, break?: boolean|null}>;
+    const Switch: JSXInnerComp<{data?: any}>;
+    const Case: JSXInnerComp<{data?: any, break?: boolean|null}>;
     const Default: JSXInnerComp<{break?: boolean|null}>;
-    const Async: JSXInnerComp<{data: Promise<any>, name?: string}>;
-    const Show: JSXInnerComp<{data: boolean}>;
+    const Async: JSXInnerComp<{data?: Promise<any>, name?: string}>;
+    const Show: JSXInnerComp<{data?: boolean}>;
     const Frag: (attrs: Alins.IControlAttributes) => JSX.Element;
 
     let $item: any;

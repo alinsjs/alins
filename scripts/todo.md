@@ -51,6 +51,7 @@ feat：
 - [x] 只有 扩展属性fix；component 扩展属性加 computed
 - [x] $ref实现
 - [x] style 支持数字 （默认px）
+- [x] 支持了逻辑组件的属性简写 
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
@@ -108,6 +109,7 @@ fix
 - [x] 空属性会报错
 - [x] style={`color: ${status.syntaxError ? '#f44' : 'inherit'}`} 有bug
 - [x] 修复 UpdateExpression 在jsx属性中引起循环引用的问题  <div  a={a++}></div>;
+- [x] 修复 for component 使用嵌套数据无法正确编译的bug 
 
 
 

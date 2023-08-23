@@ -276,11 +276,10 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         JSXElement: {
             enter (path) {
-                // if(path.node)
                 // console.log('SCOPE_DEBUG_JSX JSXElement', path.toString());
                 // @ts-ignore
                 if (parseInnerComponent(path)) {
-                // @ts-ignore
+                    // @ts-ignore
                     path.node._innerComp = true;
                     return;
                 }

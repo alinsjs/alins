@@ -6,7 +6,7 @@
 import type {NodePath} from '@babel/traverse';
 import type {Identifier, JSXAttribute, JSXElement, JSXOpeningElement, Node} from '@babel/types';
 import {isOriginJSXElement} from '../is';
-import {getT, Names} from '../parse-utils';
+import {getT, Names, parseAttributes} from '../parse-utils';
 
 const CompNames = {
     For: 'For',
@@ -56,13 +56,20 @@ function getExp (openinigEl: JSXOpeningElement) {
     const attrs = openinigEl.attributes as JSXAttribute[];
     const data = attrs.find(attr => attr.name.name === 'data');
     // @ts-ignore
-    if (!data) throw new Error(`${openinigEl.name.name}: 缺少data属性`);
+    if (!data) {
+        // @ts-ignore
+        const name = openinigEl.name.name;
+        if (name === 'Default') return null;
+        throw new Error(`${name}: 缺少data属性`);
+    }
     // @ts-ignore
     return data.value.expression;
 };
 
 function parseFor (path: NodePath<JSXElement>) {
     const attrs = path.node.openingElement.attributes as JSXAttribute[];
+
+    parseComponentAttr(path.node, true);
 
     let arrId: Identifier|null = null;
     let itemName = '$item';
@@ -134,6 +141,7 @@ function parseIf (path: NodePath<JSXElement>) {
         let removed = true;
         switch (name) {
             case CompNames.If: {
+                parseComponentAttr(node);
                 object = t.identifier(Names.Ctx);
                 id = t.identifier('if');
                 args = [
@@ -143,6 +151,7 @@ function parseIf (path: NodePath<JSXElement>) {
                 removed = false;
             };break;
             case CompNames.ElseIf: {
+                parseComponentAttr(node);
                 object = anchor;
                 id = t.identifier('elif');
                 args = [
@@ -192,6 +201,7 @@ function parseIf (path: NodePath<JSXElement>) {
 function parseSwitch (path: NodePath<JSXElement>) {
 
     const node = path.node;
+    parseComponentAttr(node);
 
     const array: any = [];
     const t = getT();
@@ -199,31 +209,25 @@ function parseSwitch (path: NodePath<JSXElement>) {
     for (const item of node.children) {
         if (isEmptyText(item)) continue;
         if (!isOriginJSXElement(item.type))  throw new Error('switch 中只能包含jsxElement');
+
+        parseComponentAttr(item);
         // @ts-ignore
         const el = item.openingElement;
         // @ts-ignore
         const name = el.name.name;
         if (name === CompNames.Case || name === CompNames.Default) {
-            const properties: any[] = [];
-            properties.push(t.objectProperty(
-                t.identifier('c'),
+            const exp = getExp(el);
+            const elements: any[] = [
+                !exp ? t.nullLiteral() : exp,
                 // @ts-ignore
-                wrapChildren(item.children)
-            ));
-            if (name === CompNames.Case) {
-                properties.push(t.objectProperty(
-                    t.identifier('v'),
-                    getExp(el)
-                ));
-            }
+                wrapChildren(item.children || []),
+            ];
             // @ts-ignore
             const brk = !!el.attributes.find(item => item.name.name === 'break');
-            if (brk)
-                properties.push(t.objectProperty(
-                    t.identifier('b'),
-                    t.booleanLiteral(true)
-                ));
-            array.push(t.objectExpression(properties));
+            if (brk) {
+                elements.push(t.booleanLiteral(true));
+            }
+            array.push(t.arrayExpression(elements));
             if (name === CompNames.Default) break;
         } else {
             throw new Error('switch 中只能包含case和default');
@@ -247,6 +251,7 @@ function parseSwitch (path: NodePath<JSXElement>) {
 
 function parseAsync (path: NodePath<JSXElement>) {
     const node = path.node;
+    parseComponentAttr(node);
     const el = node.openingElement;
     const t = getT();
     // @ts-ignore
@@ -266,14 +271,13 @@ function parseAsync (path: NodePath<JSXElement>) {
 
     path.replaceWith(t.callExpression(
         t.memberExpression(t.identifier(Names.CtxFn), t.identifier('ce')),
-        [
-            t.arrowFunctionExpression([], body, true)
-        ]
+        [ t.arrowFunctionExpression([], body, true) ]
     ));
 }
 
 function parseShow (path: NodePath<JSXElement>) {
     const node = path.node;
+    parseComponentAttr(node);
 
     const exp = getExp(node.openingElement);
 
@@ -285,7 +289,6 @@ function parseShow (path: NodePath<JSXElement>) {
                 const attrs = item.openingElement.attributes;
                 // @ts-ignore
                 const show = attrs.find(attr => attr.name.name === '$show') as JSXAttribute;
-        
                 if (!show) {
                     attrs.push(t.jsxAttribute(
                         t.jsxIdentifier('$show'),
@@ -326,4 +329,8 @@ export function parseInnerComponent (path: NodePath<JSXElement>) {
         default: return false;
     }
     return true;
+}
+
+function parseComponentAttr (node: any, handleReactive?: boolean) {
+    parseAttributes(node.openingElement.attributes, handleReactive);
 }

@@ -7,7 +7,7 @@ import type {NodePath} from '@babel/traverse';
 import type {CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator} from '@babel/types';
 import {MapScope} from './controller/map';
 import {isFuncExpression, isJsxCallee} from './is';
-import {ImportScope} from './parse-utils';
+import {ImportScope, initCurModule} from './parse-utils';
 import {Scope} from './scope';
 import {INodeTypeMap} from './types';
 
@@ -20,6 +20,7 @@ const NoNeedCollectIdentifierMap: INodeTypeMap = {
     // 'AssignmentExpression': 1,
     // 'FunctionDeclaration': 1,
     'JSXExpressionContainer': 1,
+    'ObjectMethod': 1,
 };
 const NoNeedHandleJsxTypes: INodeTypeMap = {
     // 'JSXExpressionContainer': 1,
@@ -131,18 +132,16 @@ export class Module {
     enterIdentifier (path: NodePath<Identifier>) {
         // @ts-ignore
         if (path.node._deco) return; // 装饰器jsx直接表达式需要跳过 ! value:number={a}
-        if (!!NoNeedCollectIdentifierMap[path.parent.type]) {
-            return;
-        }
-        if (path.parent.type === 'ObjectProperty' && path.parent.key === path.node) {
+        const ptype = path.parent.type;
+        if (
+            !!NoNeedCollectIdentifierMap[ptype] ||
+            (ptype === 'ObjectProperty' && path.parent.key === path.node) ||
+            // @ts-ignore 非首个member identify
+            (ptype === 'MemberExpression' && !path.node._firstMember)
+        ) {
             return;
         }
         const scope = this.curScope;
-        // 非首个member identify
-        // @ts-ignore
-        if (path.parent.type === 'MemberExpression' && !path.node._firstMember) {
-            return;
-        }
         // @ts-ignore
         if (path.node._fnArg === true) {
             // 函数参数
@@ -280,12 +279,14 @@ export function enterContext (path: NodePath<Program>) {
         currentModule.dependencies.push(newModule);
     }
     currentModule = newModule;
+    initCurModule(currentModule);
 }
 
 export function exitContext () {
     currentModule.exitScope();
     currentModule.exitModule();
     currentModule = currentModule.parent;
+    initCurModule(currentModule);
 }
 
 

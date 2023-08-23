@@ -472,6 +472,21 @@ export class Scope {
         }
     }
 
+    // ! 用于某些生成出来的新的id，如 For组件的 data:list 用中的 list
+    checkIdentifier (id: Identifier, onReplace: (node: any)=>void) {
+        const variable = this.findVarDeclare(id.name);
+        if (!variable) return null;
+        if (variable.isReactive) { //
+            onReplace(createReadValue(variable.alias || variable.name));
+            return;
+        } else {
+            if (!variable.dependActions) variable.dependActions = [];
+            variable.dependActions.push(() => {
+                onReplace(createReadValue(variable.alias || variable.name));
+            });
+        }
+    }
+
     private _replaceReadValuePath (path: NodePath, variable: IScopeVariable) {
         // console.log('---_replaceReadValuePath', variable.skipReadV);
         if (variable.skipReadV) return;
