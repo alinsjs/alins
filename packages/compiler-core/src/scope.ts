@@ -525,6 +525,8 @@ export class Scope {
         //     }
         // }
         // ! 此处放宽jsx转译条件
+        // console.log(xnode.path.toString(), xnode.path.node._handled);
+        // debugger;
         if (!xnode.isDynamic && !v.isStatic && (!xnode.path.node._handled)) {
             xnode.isDynamic = true;
         }
@@ -547,16 +549,14 @@ export class Scope {
     exitJSXExpression () {
         const xnode = this.currentJSXExpression as IScopeWatchJSXExpression;
         if (!this.currentJSXExpression) return;
-        // debugger;
         if (this.currentJSXExpression.skip) {
             this.currentJSXExpression = null;
             return;
         }
-        // console.log('FOR_DEBUG', xnode.path.toString());
+        // console.log(xnode.path.toString(), xnode.isDynamic);
+        // debugger;
         if (xnode.isDynamic) {
             this.handleJsx(xnode);
-        } else {
-            // debugger;
         }
         this.currentJSXExpression = null;
     }

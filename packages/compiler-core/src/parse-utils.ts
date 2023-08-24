@@ -19,7 +19,7 @@ import type {
     JSXAttribute
 } from '@babel/types';
 import type {IBabelType} from './types';
-import {isBlockReturned} from './is';
+import {isBlockReturned, isEventEmptyDeco} from './is';
 import type {Module} from './context';
 
 export const ImportScope = (() => {
@@ -592,6 +592,13 @@ export function parseJsxAttrShort (path: NodePath<JSXAttribute>) {
 function createNewJSXAttribute (node: JSXAttribute, handleReactive?: boolean) {
     const key = node.name;
     if (key.type === 'JSXNamespacedName') {
+        const name = key.namespace.name;
+        const deco = key.name.name;
+        // ! 处理 onclick:stop
+        if (isEventEmptyDeco(name, deco, node.value)) {
+            node.value = t.jsxExpressionContainer(t.arrowFunctionExpression([], t.blockStatement([])));
+            return;
+        }
         return createWrapAttr(key.namespace.name, key.name.name, false, handleReactive);
     } else {
         let name = key.name;

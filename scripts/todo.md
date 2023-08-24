@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-22 09:31:00
+ * @LastEditTime: 2023-08-24 09:36:35
 -->
 
 # 0.1.0
@@ -52,6 +52,7 @@ feat：
 - [x] $ref实现
 - [x] style 支持数字 （默认px）
 - [x] 支持了逻辑组件的属性简写 
+- [x] 支持 使用 onclick:stop 不带事件名
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具

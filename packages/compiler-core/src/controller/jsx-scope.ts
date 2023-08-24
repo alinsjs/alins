@@ -116,7 +116,6 @@ export class JsxScope {
         // @ts-ignore
         const expression = nodeValue?.expression;
         if (!expression) return;
-        // debugger;
         let name = '';
 
         let newExpression: any = expression;
@@ -151,7 +150,7 @@ export class JsxScope {
                     }
                 } else {
                     // 事件类型不需要jsx转译处理了
-                    nodeValue._handled = expression._handled = true;
+                    nodeValue._handled = newExpression._handled = true;
                 }
             }
         };
@@ -165,7 +164,7 @@ export class JsxScope {
                 name = `${name}$${key.name.name}`;
                 path.replaceWith(createWrapAttr(name, path.node.value));
             } else {
-                expression._deco = true;
+                expression._deco = newExpression._deco = true;
                 deco = key.name.name;
                 checkEventAttr();
                 newExpression = t.objectExpression([
@@ -181,8 +180,6 @@ export class JsxScope {
             checkEventAttr();
         }
         this.curAttr = name;
-
-        // debugger;
 
         // const name = path.node.name.name as string;
         // this.curAttr = name;
@@ -214,10 +211,12 @@ export class JsxScope {
 
 
         if (newExpression !== expression) {
+            const container = t.jsxExpressionContainer(newExpression);
+            container._handled = true;
             path.replaceWith(
                 skipNode(t.jsxAttribute(
                     t.jsxIdentifier(name),
-                    t.jsxExpressionContainer(newExpression)
+                    container
                 ), isEvent)
             );
         }

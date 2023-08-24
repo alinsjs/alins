@@ -195,5 +195,14 @@ export function isEventAttr (name: string) {
 }
 
 export function isFuncExpression (node: any) {
-    return (node?.type === 'ArrowFunctionExpression' || node?.type === 'FunctionExpression')
+    return (node?.type === 'ArrowFunctionExpression' || node?.type === 'FunctionExpression');
+}
+
+const DecoMap = {
+    'prevent': 1, 'stop': 1, 'capture': 1,
+    'once': 1, 'self': 1, 'pure': 1,
+};
+
+export function isEventEmptyDeco (name: string, deco: string, value: any) {
+    return isEventAttr(name) && DecoMap[deco] && !value;
 }
