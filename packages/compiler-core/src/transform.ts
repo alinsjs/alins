@@ -261,6 +261,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             exit (path) {
                 // @ts-ignore
                 if (ctx.curScope?.inJsxTrans && path.node._needJsxRefeat) {
+                    // console.log('Expression', path.toString());
                     ctx.curScope.exitJSXExpression();
                 }
             }
@@ -359,7 +360,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 // console.log('JSX-DEBUG:', `JSXExpressionContainer: ${path.toString()}`);
                 ctx.enterJSXExpContainer(path);
             },
-            // @ts-ignore
             exit () {
                 // console.log('JSX-DEBUG:', `exit JSXExpressionContainer: ${path.toString()}`);
                 ctx.curScope.exitJSXExpression();

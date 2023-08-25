@@ -16,7 +16,7 @@ import type {
     VariableDeclarator,
 } from '@babel/types';
 import {IfScope} from './controller/if-scope';
-import {isFuncExpression, isNeedComputed, isObjectAssignDeclarator} from './is';
+import {isArrayMapCall, isFuncExpression, isNeedComputed, isObjectAssignDeclarator} from './is';
 import {JsxScope} from './controller/jsx-scope';
 import {
     isStaticNode, createReact, createComputed, createJsxCompute, createReadValue,
@@ -355,6 +355,7 @@ export class Scope {
     }
 
     private handleJsx (xnode: IScopeWatchJSXExpression) {
+        // console.log('handleJsx', xnode.path.toString(), xnode.handled);
         if (xnode.handled) return;
         const node = xnode.path.node;
         // ! 如果是react转译之后的JsxCompute 停止后续继续遍历
@@ -425,7 +426,7 @@ export class Scope {
     }
 
     collectIdentifier (path: NodePath<Identifier>) {
-        // console.log('---collectIdentifier', path.node.name);
+        console.log('---collectIdentifier', path.node.name);
         const node = path.node;
         // @ts-ignore
         if (typeof node.start !== 'undefined' && path.parent.id === node.start) {
@@ -493,11 +494,13 @@ export class Scope {
         if (variable.isProps) {
             // @ts-ignore
             const sp = path.node._secondPath;
-            const t = getT();
-            sp.replaceWith(skipNode(t.memberExpression(
-                sp.node,
-                t.identifier(Names.Value)
-            )));
+            if (sp) {
+                const t = getT();
+                sp.replaceWith(skipNode(t.memberExpression(
+                    sp.node,
+                    t.identifier(Names.Value)
+                )));
+            }
         } else {
             // @ts-ignore
             if (!path.node._isReplace) {
@@ -524,16 +527,21 @@ export class Scope {
         //         (this.inJsxTrans ? v.dependTransJsx : v.dependJsx).push(xnode);
         //     }
         // }
+        const node = xnode.path.node;
         // ! 此处放宽jsx转译条件
         // console.log(xnode.path.toString(), xnode.path.node._handled);
-        // debugger;
-        if (!xnode.isDynamic && !v.isStatic && (!xnode.path.node._handled)) {
+        if (
+            !xnode.isDynamic &&
+            !v.isStatic &&
+            (!node._handled) &&
+            // ! 此处修复 a.map(item=><div>{item}</div>) 情况下 会被带上 ()=>
+            (!isArrayMapCall(node as any))
+        ) {
             xnode.isDynamic = true;
         }
     }
     enterJSXExpression (path: NodePath<Expression>) {
-        // console.log(path.toString());
-        // debugger;
+        // console.log('enterJSXExpression', this.id, path.toString());
         const exp = {
             __proto__: null,
             path,
@@ -548,13 +556,12 @@ export class Scope {
     }
     exitJSXExpression () {
         const xnode = this.currentJSXExpression as IScopeWatchJSXExpression;
+        // console.log('exitJSXExpression', this.id, this.currentJSXExpression?.skip, xnode?.path.toString(), xnode?.isDynamic);
         if (!this.currentJSXExpression) return;
         if (this.currentJSXExpression.skip) {
             this.currentJSXExpression = null;
             return;
         }
-        // console.log(xnode.path.toString(), xnode.isDynamic);
-        // debugger;
         if (xnode.isDynamic) {
             this.handleJsx(xnode);
         }

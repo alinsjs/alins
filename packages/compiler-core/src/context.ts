@@ -133,6 +133,7 @@ export class Module {
         // @ts-ignore
         if (path.node._deco) return; // 装饰器jsx直接表达式需要跳过 ! value:number={a}
         const ptype = path.parent.type;
+        console.log('enterIdentifier', path.toString());
         if (
             !!NoNeedCollectIdentifierMap[ptype] ||
             (ptype === 'ObjectProperty' && path.parent.key === path.node) ||
@@ -141,6 +142,7 @@ export class Module {
         ) {
             return;
         }
+        console.log('enterIdentifier2', path.toString(), path.node._fnArg);
         const scope = this.curScope;
         // @ts-ignore
         if (path.node._fnArg === true) {
@@ -235,6 +237,7 @@ export class Module {
                 name = path.node.id;
             }
         }
+        debugger;
         let isComp = false;
         if (name) {
             if (name.charCodeAt(0) <= 90) {
@@ -248,9 +251,7 @@ export class Module {
                             isComp = true;
                         }
                     } else if (firstArg.type === 'ObjectPattern') {
-                        firstArg.properties.forEach(item => {
-                            item.value._isReactive = true;
-                        });
+                        this._parseCompObjectPattern(firstArg.properties);
                         isComp = true;
                     }
                 }
@@ -262,6 +263,16 @@ export class Module {
             path.node._jsxComp = true;
         }
         return isComp;
+    }
+    private _parseCompObjectPattern (properties: any[]) {
+        properties.forEach(item => {
+            if (item.type !== 'ObjectProperty') return;
+
+            const value = item.value;
+            if (value.type === 'Identifier') {
+                value._isReactive = true;
+            }
+        });
     }
     exitJsxComponent (path: any) {
         if (path.node._jsxComp) {

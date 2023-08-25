@@ -5,14 +5,14 @@
  */
 
 // todo MutationObserver跨平台
-export function initMutationObserver(el: any){
+export function initMutationObserver (el: any) {
 
-    if(el.__$m_observer) return;
+    if (el.__$m_observer) return;
 
     el.__$m_observer = new MutationObserver(entries => {
         entries.forEach(item => {
             if (item.type === 'childList') {
-                const { addedNodes, removedNodes } = item;
+                const {addedNodes, removedNodes} = item;
 
                 addedNodes.forEach(node => {
                     // @ts-ignore

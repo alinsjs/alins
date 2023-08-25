@@ -94,7 +94,7 @@ export class JsxScope {
         if (path.node.name.name === '$dom') {
             const t = getT();
             const v = path.node.value as any;
-            if (v?.expression) {
+            if (v?.expression && v.expression.type === 'Identifier') {
                 v.expression = t.arrowFunctionExpression(
                     [t.identifier('_$dom')],
                     skipNode(t.assignmentExpression('=', v.expression, t.identifier('_$dom')))

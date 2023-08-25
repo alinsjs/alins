@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-24 09:36:35
+ * @LastEditTime: 2023-08-25 09:25:20
 -->
 
 # 0.1.0
@@ -53,6 +53,7 @@ feat：
 - [x] style 支持数字 （默认px）
 - [x] 支持了逻辑组件的属性简写 
 - [x] 支持 使用 onclick:stop 不带事件名
+- [ ] 组件属性结构
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
@@ -70,15 +71,14 @@ next Version new feature
 - [ ] alins-style style 标签优化 处理 提高css可用性, style 值类型声明 （能够使用reactive库配合着使用原生js使用）
 - [ ] alins-style 支持兼容性扩展
 - [ ] alins-cli、alins-template （base on vite、vite-plugin-alins、eslint-config）
-- [ ] 内存优化
-- [ ] 运行时间 优化
 - [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
 - [ ] For 支持解构
 - [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
 - [ ] For Object 支持
 - [ ] $if $elif $else $case $default 属性支持
 - [ ] source-map 支持
-- [ ] 代码重构
+- [ ] 编译器代码重构 - 分两步编译 第一步进行jsx解析；第二部进行alins reactive； 支持 ssr
+- [ ] 运行时代码重构 - 优化内存空间占用和运行时间
 
 fix
 
@@ -111,6 +111,9 @@ fix
 - [x] style={`color: ${status.syntaxError ? '#f44' : 'inherit'}`} 有bug
 - [x] 修复 UpdateExpression 在jsx属性中引起循环引用的问题  <div  a={a++}></div>;
 - [x] 修复 for component 使用嵌套数据无法正确编译的bug 
+- [x] 组件属性 结构 与响应式fix
+- [ ] store 支持 数组 for
+- [ ] style:xxx 切换时报错
 
 
 

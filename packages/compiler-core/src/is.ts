@@ -206,3 +206,8 @@ const DecoMap = {
 export function isEventEmptyDeco (name: string, deco: string, value: any) {
     return isEventAttr(name) && DecoMap[deco] && !value;
 }
+
+export function isArrayMapCall (node: CallExpression) {
+    // @ts-ignore
+    return node.callee?.property?.name === 'map';
+}
