@@ -5,7 +5,7 @@
  */
 
 import {IIfTarget, _if} from './if';
-import {assignCompData, assignData, computed, reactive, watch} from 'alins-reactive';
+import {assignCompData, assignData, computed, isProxy, mockRef, reactive, watch} from 'alins-reactive';
 import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
 import './for';
 import {ICtxUtil, IReturnCall} from './type';
@@ -14,6 +14,7 @@ import {createAnchor} from './scope/anchor';
 import {createCallCache} from './scope/cache';
 import {createBranchLink} from './scope/branch';
 import {JSX} from './element/element';
+import {mockMap} from './for';
 
 export function createContext () {
     const cache = createCallCache();
@@ -45,7 +46,9 @@ export const ContextTool = {
         fn.returned = false;
         return fn;
     },
-    r: reactive,
+    r (data: any) {
+        return reactive(data, isProxy(data.v));
+    },
     c: computed,
     w: watch,
     cc (get: any, set: any) { // 简写，减少编译代码量
@@ -57,7 +60,9 @@ export const ContextTool = {
     mu (fn:any) {
         fn._update = true;
         return fn;
-    }
+    },
+    mf: mockRef,
+    mm: mockMap,
 };
 
 Object.assign(createContext, ContextTool);

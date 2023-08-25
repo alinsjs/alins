@@ -9,15 +9,15 @@ import {
     IBindingReactionEnable, reactiveBindingEnable,
     IChildren, reactiveBindingValue,
 } from './dom-util';
-import {IJson} from 'alins-utils';
+import {AlinsType, IJson, type} from 'alins-utils';
 import {IBindingReaction, IBindingRef, isProxy} from 'alins-reactive';
 import {IAttributes} from './jsx';
-import {parseStyle} from './style';
+import {parseStyle, parseStyleSuffix} from './style';
 import {parseModel} from './model';
 import {getParent} from '../utils';
 import {parseAttributes} from './attributes';
 import {parseClassName, parseClassSuffix} from './class';
-import {initMutationObserver} from './mutation-observer';
+import {initMountedObserver, initMutationObserver, initRemovedObserver} from './mutation-observer';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -123,7 +123,9 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         if (
                             (k === 'style' && parseStyle(el as any, v)) ||
                             parseModel(el as any, v, k) ||
-                            parseClassSuffix(el as any, k, v)) {
+                            parseClassSuffix(el as any, k, v) ||
+                            parseStyleSuffix(el as any, k, v)
+                        ) {
                             break;
                         } else {
                             reactiveBindingEnable(v, (v) => {
@@ -151,9 +153,9 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
 
         if (Renderer.isElement(item)) {
             // @ts-ignore
-            if (item.__$mounted || item.__$removed) {
-                initMutationObserver(parent);
-            }
+            if (item.__$mounted) initMountedObserver(parent);
+            // @ts-ignore
+            if (item.__$removed) initRemovedObserver(item);
             parent.appendChild(item as any);
             // @ts-ignore
             item.__$appended?.(item);
@@ -196,7 +198,7 @@ export const JSX = {
                 for (const k in attributes) {
                     const v = attributes[k];
                     if (!isProxy(v)) {
-                        attributes[k] = {v};
+                        attributes[k] = {v, [type]: AlinsType.Ref}; // ! 模拟ref
                     }
                     // if(typeof v === 'function')
                 }

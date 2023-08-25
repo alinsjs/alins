@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-25 09:25:20
+ * @LastEditTime: 2023-08-25 16:23:42
 -->
 
 # 0.1.0
@@ -53,7 +53,7 @@ feat：
 - [x] style 支持数字 （默认px）
 - [x] 支持了逻辑组件的属性简写 
 - [x] 支持 使用 onclick:stop 不带事件名
-- [ ] 组件属性结构
+- [x] 组件属性结构
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
@@ -112,8 +112,10 @@ fix
 - [x] 修复 UpdateExpression 在jsx属性中引起循环引用的问题  <div  a={a++}></div>;
 - [x] 修复 for component 使用嵌套数据无法正确编译的bug 
 - [x] 组件属性 结构 与响应式fix
-- [ ] store 支持 数组 for
-- [ ] style:xxx 切换时报错
+- [x] style:xxx 报错
+- [x] a[x] 其中的 x不支持 .v 期望 a[x.v]
+- [x] store 支持 数组 for
+- [x] fix lifecycles
 
 
 

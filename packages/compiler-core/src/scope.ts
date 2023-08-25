@@ -426,7 +426,7 @@ export class Scope {
     }
 
     collectIdentifier (path: NodePath<Identifier>) {
-        console.log('---collectIdentifier', path.node.name);
+        // console.log('---collectIdentifier', path.node.name);
         const node = path.node;
         // @ts-ignore
         if (typeof node.start !== 'undefined' && path.parent.id === node.start) {

@@ -7,7 +7,7 @@ import {parseInnerComponent} from './component/component';
 import {currentModule as ctx, enterContext, exitContext} from './context';
 import {
     createAlinsCtx, createEmptyString, createExtendCalleeWrap, createImportAlins, createUnfInit,
-    extendCallee, getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
+    extendCallee, getObjectPropValue, getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
 } from './parse-utils';
 import {isJsxExtendCall, isJsxExtendDef, isOriginJSXElement} from './is';
 
@@ -73,7 +73,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 path.node.params.forEach(node => {
                     if (node.type === 'ObjectPattern') {
                         node.properties.forEach(item => {
-                            item.value._fnArg = true;
+                            getObjectPropValue(item)._fnArg = true;
                         });
                     } else {
                         node._fnArg = true;
@@ -125,8 +125,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 }
                 if (!ctx.enter(path)) return;
 
-                // @ts-ignore
-                ctx.checkJsxComponent(path);
                 // ! computed set 解析
                 parseComputedSet(path);
                 // console.log('NEXT', path.getNextSibling().node);
@@ -161,6 +159,8 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                     path.node.init._isReplace = true;
                     // path.node.id._isReplace = true;
                 }
+                // @ts-ignore
+                ctx.checkJsxComponent(path);
                 // console.log(path.node.init);
                 // console.log('VariableDeclaration:', path.toString());
                 if (!ctx.enter(path)) return;
@@ -235,7 +235,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         Identifier (path) {
             if (!ctx.enter(path)) return;
             ctx.enterIdentifier(path);
-
         },
         UpdateExpression (path) {
             if (!ctx.enter(path)) return;

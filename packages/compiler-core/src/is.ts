@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import type {BlockStatement, CallExpression, JSXElement, Node, VariableDeclarator} from '@babel/types';
+import type {BlockStatement, CallExpression, FunctionDeclaration, JSXElement, Node, VariableDeclarator} from '@babel/types';
 
 // export function isFuncParameter (path: NodePath<Identifier>) {
 
@@ -35,18 +35,53 @@ export function isObjectAssignDeclarator (node:VariableDeclarator) {
     return callee.type === 'MemberExpression' && callee.object?.name === 'Object' && callee.property?.name === 'assign';
 }
 
-export function isBlockReturned (block: BlockStatement, returnJsxCall?: ()=>void) {
+export enum BlockReturnType {
+    None = 0,
+    Common = 1,
+    Jsx = 2,
+}
+
+export function isBlockReturned (block: BlockStatement|any): BlockReturnType {
+    if (block.type !== 'BlockStatement') {
+        return (isOriginJSXElement(block.type)) ? BlockReturnType.Jsx : BlockReturnType.Common;
+    }
     const list = block.body;
     for (let i = list.length - 1; i >= 0; i--) {
         if (list[i].type === 'ReturnStatement') {
             // @ts-ignore
-            if (isOriginJSXElement(list[i]?.argument.type)) {
-                returnJsxCall?.();
-            }
-            return true;
+            return (isOriginJSXElement(list[i]?.argument.type)) ? BlockReturnType.Jsx : BlockReturnType.Common;
         }
     }
-    return false;
+    return 0;
+}
+
+export function isComponentFunc (node: FunctionDeclaration|VariableDeclarator) {
+    let name = '';
+    let block: BlockStatement|null = null;
+    // @ts-ignore
+    if (node.type === 'FunctionDeclaration') {
+        // @ts-ignore
+        name = node.id?.name;
+        block = node.body;
+    } else {
+        if (isFuncExpression(node.init)) {
+            // @ts-ignore
+            name = node.id.name;
+            // @ts-ignore
+            block = (node as VariableDeclarator).init?.body;
+        }
+    }
+    let isComp = false;
+    if (name) {
+        if (name.charCodeAt(0) <= 90) {
+            isComp = true;
+        } else if (block) {
+            if (isBlockReturned(block) === BlockReturnType.Jsx) {
+                isComp = true;
+            }
+        }
+    }
+    return isComp;
 }
 
 // export function isFuncReturnJsx () {

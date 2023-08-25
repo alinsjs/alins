@@ -40,6 +40,10 @@ export function isProxy (data: any): boolean {
     return t === AlinsType.Proxy || t === AlinsType.Ref;
 }
 
+export function mockRef (data: any) {
+    return {v: data, [type]: AlinsType.Ref};
+}
+
 export function wrapReactive (data: any, force = false) {
     if (force || !data || typeof data !== 'object') {
         // @ts-ignore

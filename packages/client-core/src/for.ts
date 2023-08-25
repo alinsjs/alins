@@ -7,7 +7,7 @@
 import {
     createProxy, isProxy, watchArray,
     IOprationAction, OprateType, registArrayMap,
-    createCleaner, ICleaner
+    createCleaner, ICleaner, mockRef
 } from 'alins-reactive';
 import {IProxyData, util} from 'alins-utils';
 import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
@@ -28,7 +28,6 @@ export function map (
     const list = this;
     // window._list = list;
     // todo list 需要reactive
-    // debugger;
     if (!jsx) return list.map(call);
     // list.map
     const container = Renderer.createDocumentFragment();
@@ -36,7 +35,8 @@ export function map (
     const n = list.length;
     if (!isReactive) {
         for (let i = 0; i < n; i++) {
-            const child = call(list[i], i);
+            // ! 此处是为了兼容编译阶段不知道是否是reactive数据的情况
+            const child = call(mockRef(list[i]), mockRef(i) as any);
             if (child) container.appendChild(child as any);
         }
         return container;
@@ -124,6 +124,7 @@ export function map (
         const child = createChild(item, i);
         container.appendChild(child as any);
     }
+    container.appendChild(ScopeEnd as any);
     watchArray(list, ({index, count, data, type}: IOprationAction) => {
         switch (type) {
             case OprateType.Push: {
@@ -154,6 +155,7 @@ export function map (
                 // replaceItem(index, data[0]);
             };break;
             case OprateType.Remove: {
+                debugger;
                 // console.log(index, count, data, type);
                 if (count === 0) break;
                 const startPos = index - 1;
@@ -165,8 +167,8 @@ export function map (
 
 
                 const startDom = ((startPos < 0) ? (head || ScopeEnd) : EndMap[startPos]) as Node;
-
-                while (startDom.nextSibling && startDom.nextSibling !== endDom) {
+                debugger;
+                while (startDom.nextSibling && startDom !== endDom && startDom.nextSibling !== endDom) {
                     Renderer.removeElement(startDom.nextSibling);
                 }
 
@@ -209,10 +211,19 @@ export function map (
         }
         // console.log('type=', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data, fromAssign);
     });
+    debugger;
     // EndMap.push(end);
-    container.appendChild(ScopeEnd as any);
     return container;
 }
 
 registArrayMap(map);
 
+export function mockMap (
+    list: any[],
+    call: (scope: any, i?: number)=>IGeneralElement,
+    jsx?: boolean,
+    k?: string,
+    ik?: string,
+) {
+    return map.call(list, call, jsx, k, ik);
+}

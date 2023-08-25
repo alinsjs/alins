@@ -49,7 +49,7 @@ export interface ITextNode {
     get textContent(): string;
     set textContent(value: string);
 }
-
+let id = 0;
 export const Renderer = {
     createElement (tag: string): IElement {
         const el = document.createElement(tag);
@@ -64,7 +64,7 @@ export const Renderer = {
         return el as ITextNode;
     },
     createEmptyMountNode (): IElement {
-        return document.createComment('') as any;
+        return document.createComment('' + (id++)) as any;
     },
     createDocumentFragment (): IFragment {
         return document.createDocumentFragment();

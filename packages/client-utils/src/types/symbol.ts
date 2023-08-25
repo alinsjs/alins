@@ -9,3 +9,5 @@ export const child = Symbol('c');
 export const empty = Symbol('e');
 export const trig = Symbol('t');
 export const pureproxy = Symbol('pp');
+
+window.util = util;

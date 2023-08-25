@@ -72,6 +72,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
             const value = typeof ref === 'function' ? ref() : ref.v;
             if (value) {
                 matched = true;
+                branchs[id].inited = true; // todo 待定
                 if (!isEnd) activeIndex = currentIndex;
                 const dom = util.cache.call(branchs[id], anchor);
                 if (returnEle === empty && call.returned !== false) { // ! 编译时注入的returned
@@ -95,6 +96,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         end (call = () => {}) {
             acceptIf(() => true, call, false, true);
             // console.warn('if end', refs);
+            debugger;
             watch<boolean[]>(() => (
                 refs.map(item => typeof item === 'function' ? item() : item.v)
             ), onDataChange, false);

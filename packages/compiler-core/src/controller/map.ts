@@ -8,7 +8,7 @@
 import type {CallExpression} from '@babel/types';
 import type {Module} from '../context';
 import {isOriginJSXElement} from '../is';
-import {getT, parseFirstMemberObject} from '../parse-utils';
+import {createCtxCall, getT, parseFirstMemberObject} from '../parse-utils';
 import {ControlScope} from './control-scope';
 
 export class MapScope extends ControlScope<CallExpression> {
@@ -31,9 +31,11 @@ export class MapScope extends ControlScope<CallExpression> {
     markReturnJsx () {
         if (this.isReturnJsx || this.skip) return;
         const scope = this.module.curScope; // 缓存当前的scope
-        this.parentScope.collectDependAction(this.dataName, () => {
-            scope.markMapVariable(this.keyName, this.indexKeyName);
-        });
+        // this.parentScope.collectDependAction(this.dataName, () => {
+        //     scope.markMapVariable(this.keyName, this.indexKeyName);
+        // });
+        // ! 此处是为了兼容编译阶段不知道是否是reactive数据的情况
+        scope.markMapVariable(this.keyName, this.indexKeyName);
         // @ts-ignore
         if (this.path.parent._jsxExp) this.path.parent._jsxExp.skip = true;
         this.isReturnJsx = true;
@@ -41,16 +43,34 @@ export class MapScope extends ControlScope<CallExpression> {
 
     onExit () {
         if (this.isReturnJsx) {
+            const node = this.path.node;
             // @ts-ignore
-            this.path.node._isMap = true;
-            this.parentScope.collectDependAction(this.dataName, () => {
-                const t = getT();
-                this.path.node.arguments.push(
+            node._isMap = true;
+            // this.parentScope.collectDependAction(this.dataName, () => {
+            //     const t = getT();
+            //     this.path.node.arguments.push(
+            //         t.booleanLiteral(true),
+            //         t.stringLiteral(this.keyName),
+            //         t.stringLiteral(this.indexKeyName),
+            //     );
+            // });
+            // ! 此处是为了兼容编译阶段不知道是否是reactive数据的情况
+            const t = getT();
+            // this.path.node.arguments.push(
+            //     t.booleanLiteral(true),
+            //     t.stringLiteral(this.keyName),
+            //     t.stringLiteral(this.indexKeyName),
+            // );
+            this.path.replaceWith(
+                createCtxCall('mm', [
+                    // @ts-ignore
+                    node.callee.object,
+                    ...this.path.node.arguments,
                     t.booleanLiteral(true),
                     t.stringLiteral(this.keyName),
                     t.stringLiteral(this.indexKeyName),
-                );
-            });
+                ])
+            );
         }
     }
 

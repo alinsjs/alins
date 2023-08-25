@@ -6,8 +6,8 @@
 import type {NodePath} from '@babel/traverse';
 import type {CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator} from '@babel/types';
 import {MapScope} from './controller/map';
-import {isFuncExpression, isJsxCallee} from './is';
-import {ImportScope, initCurModule} from './parse-utils';
+import {isComponentFunc, isFuncExpression, isJsxCallee} from './is';
+import {getObjectPropValue, ImportScope, initCurModule} from './parse-utils';
 import {Scope} from './scope';
 import {INodeTypeMap} from './types';
 
@@ -130,22 +130,24 @@ export class Module {
     }
 
     enterIdentifier (path: NodePath<Identifier>) {
+        const {node, parent} = path;
         // @ts-ignore
-        if (path.node._deco) return; // 装饰器jsx直接表达式需要跳过 ! value:number={a}
-        const ptype = path.parent.type;
-        console.log('enterIdentifier', path.toString());
+        if (node._deco) return; // 装饰器jsx直接表达式需要跳过 ! value:number={a}
+        const ptype = parent.type;
+        // console.log('enterIdentifier', path.parentPath.parentPath.toString(), path.toString());
+
         if (
             !!NoNeedCollectIdentifierMap[ptype] ||
-            (ptype === 'ObjectProperty' && path.parent.key === path.node) ||
-            // @ts-ignore 非首个member identify
-            (ptype === 'MemberExpression' && !path.node._firstMember)
+            (ptype === 'ObjectProperty' && parent.key === node) ||
+            // @ts-ignore 非首个member identify 非计算属性
+            (ptype === 'MemberExpression' && !parent.computed && !node._firstMember)
         ) {
             return;
         }
-        console.log('enterIdentifier2', path.toString(), path.node._fnArg);
+        // console.log('enterIdentifier2', path.parentPath.toString(), path.toString(), path.node._fnArg);
         const scope = this.curScope;
         // @ts-ignore
-        if (path.node._fnArg === true) {
+        if (node._fnArg === true) {
             // 函数参数
             // console.log('函数参数: path.parent === scope.node', path.node.name);
             scope.collectParam(path);
@@ -153,16 +155,6 @@ export class Module {
             // console.log('collectIdentifier 1111', path.toString());
             scope.collectIdentifier(path);
         }
-        // if (lastNodeType === 'MemberExpression') {
-        //     path.replaceWith(createReadValue(path.node.name));
-        //     path.skip();
-        // } else if (
-        //     path.parent.type !== 'CallExpression' &&
-        //     path.parent.type !== 'MemberExpression' &&
-        //     path.parent.type !== 'VariableDeclarator'
-        // ) {
-        //     path.replaceWith(createReadValue(path.node.name));
-        // }
 
     }
     enterJSXExpression (path: NodePath<Expression>) {
@@ -225,53 +217,30 @@ export class Module {
 
     jsxFlagStackDeep = 0;
     checkJsxComponent (path: NodePath<FunctionDeclaration|VariableDeclarator>) {
-        let name = '';
-        // @ts-ignore
-        if (path.node.type === 'FunctionDeclaration') {
+        
+        if (isComponentFunc(path.node)) {
+            // 首字母大写的函数
             // @ts-ignore
-            name = path.node.id?.name;
-        } else {
-            if (isFuncExpression(path.node.init)) {
-                // debugger;
-                // @ts-ignore
-                name = path.node.id;
-            }
-        }
-        debugger;
-        let isComp = false;
-        if (name) {
-            if (name.charCodeAt(0) <= 90) {
-                // 首字母大写的函数
-                // @ts-ignore
-                const firstArg = path.node.params[0];
-                if (firstArg) {
-                    if (firstArg.type === 'Identifier') {
-                        if (firstArg.name === 'props') {
-                            firstArg._isProps = true;
-                            isComp = true;
-                        }
-                    } else if (firstArg.type === 'ObjectPattern') {
-                        this._parseCompObjectPattern(firstArg.properties);
-                        isComp = true;
+            const firstArg = path.node.params[0];
+            if (firstArg) {
+                if (firstArg.type === 'Identifier') {
+                    if (firstArg.name === 'props') {
+                        firstArg._isProps = true;
                     }
+                } else if (firstArg.type === 'ObjectPattern') {
+                    this._parseCompObjectPattern(firstArg.properties);
                 }
             }
-        }
-        if (isComp) {
             this.jsxFlagStackDeep ++;
             // @ts-ignore
             path.node._jsxComp = true;
+            return true;
         }
-        return isComp;
+        return false;
     }
     private _parseCompObjectPattern (properties: any[]) {
         properties.forEach(item => {
-            if (item.type !== 'ObjectProperty') return;
-
-            const value = item.value;
-            if (value.type === 'Identifier') {
-                value._isReactive = true;
-            }
+            getObjectPropValue(item, true)._isReactive = true;
         });
     }
     exitJsxComponent (path: any) {

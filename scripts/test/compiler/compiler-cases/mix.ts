@@ -300,21 +300,57 @@ const data = useState();
 <div a={data.a()} b={data.b}>{data.c}</div>;
 `,
         output: `
-        `
-    },
-    {
-        name: '放宽jsx转译条件',
-        disabled: false,
-        input: `
-const data = useState();
-<div a={data.a()} b={data.b}>{data.c}</div>;
-`,
-        output: `
 const data = useState();
 _$$.ce("div", {
   a: () => data.a(),
   b: () => data.b
 }, () => data.c);
+        `
+    },
+    {
+        name: 'props',
+        disabled: false,
+        input: `
+function Component(props){
+  return <div>{props.a}{props.b+1}</div>
+}
+function Component2({a: A, b, c=1}){
+  let d = b+1;
+  return <div>{A}{b+1}{c}</div>
+}
+`,
+        output: `
+function Component(props) {
+  return _$$.ce("div", null, () => props.a.v, () => props.b.v + 1);
+}
+function Component2({
+  a: A,
+  b,
+  c = 1
+}) {
+  let d = _$$.c(() => b.v + 1);
+  return _$$.ce("div", null, A, () => b.v + 1, c);
+}
+        `
+    },
+    {
+        name: 'props',
+        disabled: false,
+        input: `
+const aa = {};
+let a = 1;
+aa[a];
+aa.a;
+a++;
+`,
+        output: `
+const aa = {};
+let a = _$$.r({
+  v: 1
+});
+aa[a.v];
+aa.a;
+a.v++;
         `
     },
     

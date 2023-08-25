@@ -15,9 +15,10 @@ export class SwitchScope extends ControlScope<SwitchStatement> {
 
     _init () {
         SwitchScope.ScopeStack.newNode(this);
-        const {endFunc, node} = traverseSwitchStatement(this.path.node, () => {
+        const {endFunc, node, isReturnJsx} = traverseSwitchStatement(this.path.node);
+        if (isReturnJsx) {
             this.markScopeReturnJsx();
-        });
+        }
 
         this.newNode = node;
 

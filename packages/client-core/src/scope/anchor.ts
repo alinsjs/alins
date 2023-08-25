@@ -97,6 +97,7 @@ export function createAnchor (cache: ICallCache) {
             // for (const k in window.bs) {
             //     console.log(k, window.bs[k].anchor.start());
             // }
+            debugger;
             if (!branch.inited) {
                 branch.inited = true;
                 this.replaceContent(dom, branch);
@@ -126,6 +127,7 @@ export function createAnchor (cache: ICallCache) {
                 return frag;
             }
             // console.log(element.textContent, element.outerHTML, end.parentElement);
+            debugger;
             const container = getParent(end, frag);
 
             if (container === element) return element;

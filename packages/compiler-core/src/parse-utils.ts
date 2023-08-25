@@ -16,10 +16,11 @@ import type {
     VariableDeclaration,
     VariableDeclarator,
     Node,
-    JSXAttribute
+    JSXAttribute,
+    ObjectProperty
 } from '@babel/types';
 import type {IBabelType} from './types';
-import {isBlockReturned, isEventEmptyDeco} from './is';
+import {BlockReturnType, isBlockReturned, isEventEmptyDeco} from './is';
 import type {Module} from './context';
 
 export const ImportScope = (() => {
@@ -201,7 +202,7 @@ function createComputeCall (fn?: any) {
     return createCtxCall(Names.ComputedFn, [fn]);
 }
 
-function createCtxCall (name: string, args: any[]) {
+export function createCtxCall (name: string, args: any[]) {
     return t.callExpression(
         createMemberExp(Names.CtxFn, name),
         args
@@ -431,8 +432,9 @@ export function createSetAsyncArrowFunc (body: BlockStatement) {
     return node;
 }
 
-export function traverseSwitchStatement (node: SwitchStatement, returnJsxCall?: ()=>void) {
+export function traverseSwitchStatement (node: SwitchStatement) {
     const discr = t.arrowFunctionExpression([], node.discriminant);
+    let isReturnJsx = false;
     const cases = t.arrayExpression(node.cases.map(item => {
         const {test, consequent: cons} = item;
         let body: any = [];
@@ -446,7 +448,9 @@ export function traverseSwitchStatement (node: SwitchStatement, returnJsxCall?: 
             }
         }
         body = transformToBlock(body);
-        isBlockReturned(body, returnJsxCall);
+        if (!isReturnJsx) {
+            isReturnJsx = (isBlockReturned(body) === BlockReturnType.Jsx);
+        }
         let array = t.arrayExpression([
             // ! !test 为 default
             !test ? t.nullLiteral() : test,
@@ -466,6 +470,7 @@ export function traverseSwitchStatement (node: SwitchStatement, returnJsxCall?: 
     const endFunc = createSetAsyncArrowFunc(t.blockStatement([]));
     return {
         endFunc,
+        isReturnJsx,
         node: t.callExpression(
             t.memberExpression(t.callExpression(
                 createMemberExp(Names.Ctx, 'switch'),
@@ -499,10 +504,13 @@ export function createEmptyString () {
 export function markMNR (fn: any, returnJsxCall?: ()=>void) {
     if (fn._mnrMarked) return fn;
 
-    if (!isBlockReturned(fn.body, returnJsxCall)) {
+    const returnType = isBlockReturned(fn.body);
+    if (!returnType) {
         fn._mnrMarked = true;
         // ! 标注是否有返回值
         return createCtxCall('mnr', [fn]);
+    } else if (returnType === BlockReturnType.Jsx) {
+        returnJsxCall?.();
     }
     return fn;
 }
@@ -632,4 +640,13 @@ export function createWrapAttr (name: string, value: any, wrap = false, handleRe
         value = t.jsxExpressionContainer(value);
     }
     return createJsxAttr(name, value);
+}
+
+export function getObjectPropValue (node: ObjectProperty, mock = false) {
+    const value = node.value;
+    if (value.type === 'AssignmentPattern') {
+        if (mock) value.right = createCtxCall('mf', [value.right]);
+        return value.left;
+    }
+    return value;
 }
