@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-25 16:23:42
+ * @LastEditTime: 2023-08-28 09:51:21
 -->
 
 # 0.1.0
@@ -116,6 +116,7 @@ fix
 - [x] a[x] 其中的 x不支持 .v 期望 a[x.v]
 - [x] store 支持 数组 for
 - [x] fix lifecycles
+- [x] fix if直接引用for的场景 <If><For>...</For></If>
 
 
 
