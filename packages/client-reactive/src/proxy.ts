@@ -162,7 +162,8 @@ export function createProxy<T extends IJson> (data: T, {
                 try {
                     data[k] = createProxy(v, {path, key: k});
                 } catch (e) {
-                    debugger;
+                    // debugger;
+                    console.warn(e);
                 }
             }
         }
@@ -173,6 +174,7 @@ export function createProxy<T extends IJson> (data: T, {
         commonLns,
         lns,
         shallow,
+        data,
     };
     // @ts-ignore
     createUtils(data, key, path);
@@ -189,6 +191,8 @@ export function createProxy<T extends IJson> (data: T, {
         // @ts-ignore
         data[util] = null;
     };
+
+    let prevLength = isArray ? data.length : null;
 
     // @ts-ignore
     const proxy = new Proxy(data, {
@@ -237,17 +241,45 @@ export function createProxy<T extends IJson> (data: T, {
         },
         // ! 闭包
         set (target: IJson, property, v, receiver) {
+
+            console.log('Set property', property, v);
+
+            const orginSet = () => {
+                console.log('aaa', v);
+                const value = Reflect.set(target, property, v, receiver);
+                if (isArray && property !== 'length' && lns.length?.size) {
+                    // 直接对数组赋值 arr[100] = 1; 会增加长度但是不会触发 length的proxy
+                    let len = data.length;
+                    // console.log('len !== prevLength', len !== prevLength);
+                    if (len !== prevLength) {
+                        Promise.resolve().then(() => {
+                            len = data.length;
+                            if (len !== prevLength) {
+                                triggerChange('length', len, prevLength, false, false);
+                                prevLength = len;
+                            }
+                        });
+                    }
+                }
+                return value;
+            };
+            
             if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
                 // console.log('debug:Proxy.set', target, property, v);
                 // if (v.a === 2) debugger;
-                const origin = target[property];
+                let origin: any = null;
+                if (isArray && property === 'length') {
+                    origin = prevLength;
+                    prevLength = data[property];
+                } else {
+                    origin =  target[property];
+                }
                 // debugger;
                 if (v === origin && !target[util]?._map) return true;
                 if (set === null) { console.warn('Computed 不可设置'); return true;}
                 if (property === 'v' && set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
                 // if (v.a === 0) debugger;
                 if (v && typeof v === 'object' && !shallow) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
-                    // debugger;
                     if (!isProxy(v)) {
                         if (origin) origin[util].removed = true;
                         v = createProxy(v, {
@@ -280,13 +312,13 @@ export function createProxy<T extends IJson> (data: T, {
                     value = replaceWholeArray(origin, v);
                 }
 
-                if (value === empty) value = Reflect.set(target, property, v, receiver);
+                if (value === empty) value = orginSet();
                 // ! 执行依赖
                 // if (origin === undefined && property === '5') debugger;
                 triggerChange(property as string, v, origin, false, typeof origin === 'undefined');
                 return value;
             }
-            return Reflect.set(target, property, v, receiver);
+            return orginSet();
         },
         // ! 闭包
         deleteProperty (target: IJson, property) {
@@ -302,7 +334,6 @@ export function createProxy<T extends IJson> (data: T, {
 }
 
 export function replaceLNS (nv: IProxyData<any>, origin: IProxyData<any>) {
-    // debugger;
     const ut = nv[util], out = origin[util];
     // console.log(`debug:replaceLNS new=${nv.a}[${ut.removed}];old=${origin.a}[${out.removed}]`);
 

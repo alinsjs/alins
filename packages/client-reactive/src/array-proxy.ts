@@ -56,8 +56,8 @@ function wrapArrayCall (target: IProxyData<any[]>, fn:()=>any) {
 
 const ArrayMap = {
     splice (this: {target: IProxyData<any[]>, origin: any}, start: number, count?: number, ...args: any[]) {
-        // if(this)
         const {target, origin} = this;
+        debugger;
         if (start >= target.length) {
             start = target.length;
             count = 0;
@@ -94,7 +94,6 @@ const ArrayMap = {
         // @ts-ignore
         const data = items?.slice(start, start + args.length).map(i => i[items.key].v);
         // const data = args;
-        // debugger;
         // @ts-ignore
         return wrapArrayCall(target, () => origin.call(target[util].proxy, start, count, ...data));
     },
@@ -129,7 +128,7 @@ const ArrayMap = {
         return origin.call(target[util].proxy);
     },
     replace (target: any, index: number, ov: any, v: any) {
-        // console.warn('replace=======', index, ov, v);
+        console.warn('replace=======', index, ov, v);
         triggerOprationEvent(target, OprateType.Replace, index, [v, ov], 1);
         target[index] = v;
     },
@@ -224,7 +223,7 @@ export function replaceWholeArray (origin: any[], v: any[]) {
 
     for (let i = 0; i < min; i++) {
         triggerOprationEvent(origin, OprateType.Replace, i, [v[i], origin[i]], 1);
-        origin[i] = v[i];
+        origin[util].data[i] = v[i];
     }
 
     if (on === vn) return true;
@@ -238,11 +237,11 @@ export function replaceWholeArray (origin: any[], v: any[]) {
         // // }
         // window.ccc.forEach(f => f());
         // window.ccc = null;
-        origin.splice(min);
+        origin[util].proxy.splice(min);
     } else {
         const data = v.slice(min);
         // triggerOprationEvent(origin, OprateType.Push, min, data, vn - on);
-        origin.push(...data);
+        origin[util].proxy.push(...data);
     }
     
     return true;

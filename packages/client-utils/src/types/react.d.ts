@@ -28,6 +28,7 @@ export interface IProxyUtils {
   scopeItems?: any[];
   replaceLns?: boolean;
   extraLns?: Set<IProxyListenerMap>;
+  data: any;
 }
 
 interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {

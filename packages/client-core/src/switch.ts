@@ -50,6 +50,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
             const dom = initilizing ? util.cache.call(branch, anchor) : anchor.replaceBranch(branch);
             if (dom) {
                 result = SwitchResult.Return;
+                branch.inited = true; // todo 待定
                 return dom;
             }
         }
@@ -82,6 +83,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         // @ts-ignore
         if (result !== SwitchResult.Return) { // 不是return;
             const branch = branchMap.get(endCall) as IBranchTarget;
+            branch.inited = true; // todo 待定
             el = initilizing ? util.cache.call(branch, anchor) : anchor.replaceBranch(branch);
         }
         return el;

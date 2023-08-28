@@ -11,6 +11,7 @@ import {
 } from 'alins-reactive';
 import {IProxyData, util} from 'alins-utils';
 import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
+import {createDomCacheManager} from './scope/cache';
 import {getParent} from './utils';
 
 /*
@@ -46,6 +47,7 @@ export function map (
     const EndMap: ITrueElement[] = [];
     const Cleaners: ICleaner[] = [];
 
+    const cacheManager = createDomCacheManager();
 
     let head: ITrueElement;
 
@@ -88,7 +90,6 @@ export function map (
 
         let child = call(scope[k], scope[ik] || i);
 
-
         // @ts-ignore
         let end: ITrueElement = child;
         if (!child) {
@@ -128,7 +129,7 @@ export function map (
     watchArray(list, ({index, count, data, type}: IOprationAction) => {
         switch (type) {
             case OprateType.Push: {
-                // console.log(index, count, data, type);
+                console.warn('OprateType.Push', index, count, data, type);
                 const doc = Renderer.createDocumentFragment();
                 const length = list.length;
                 for (let i = 0; i < data.length; i++) {
@@ -136,10 +137,12 @@ export function map (
                     // @ts-ignore
                     doc.appendChild(child);
                 }
+                debugger;
                 // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
-                getParent(ScopeEnd, container).insertBefore(doc, ScopeEnd);
+                cacheManager.insertBefore(doc, ScopeEnd, container);
             };break;
             case OprateType.Replace: {
+                console.warn('OprateType.Replace', index, count, data, type);
                 if (!ScopeItems[index]) {
                     // console.warn('【debug: watch array replace1', index, JSON.stringify(data));
                     ScopeItems[index] = createScope(data[0], index);
@@ -155,35 +158,35 @@ export function map (
                 // replaceItem(index, data[0]);
             };break;
             case OprateType.Remove: {
-                debugger;
-                // console.log(index, count, data, type);
-                if (count === 0) break;
-                const startPos = index - 1;
-                const endPos = startPos + count;
-                // @ts-ignore
-                const endDom = EndMap[endPos]?.nextSibling || ScopeEnd;
+
                 // debugger;
-                // if (endDom === ScopeEnd) debugger; // debug
+                // console.trace('Remove', index, count, data, type);
+                if (count === 0) break;
 
-
-                const startDom = ((startPos < 0) ? (head || ScopeEnd) : EndMap[startPos]) as Node;
-                debugger;
-                while (startDom.nextSibling && startDom !== endDom && startDom.nextSibling !== endDom) {
-                    Renderer.removeElement(startDom.nextSibling);
-                }
-
-                if (startPos < 0) {
+                const removeFunc = () => {
+                    const startPos = index - 1;
+                    const endPos = startPos + count;
                     // @ts-ignore
-                    if (startDom !== ScopeEnd) {
-                        // @ts-ignore
-                        head = startDom.nextSibling;
-                        // @ts-ignore
-                        Renderer.removeElement(startDom);
-                    } else {
-                        head = ScopeEnd;
+                    const endDom = EndMap[endPos]?.nextSibling || ScopeEnd;
+    
+                    const startDom = ((startPos < 0) ? (head || ScopeEnd) : EndMap[startPos]) as Node;
+                    while (startDom.nextSibling && startDom !== endDom && startDom.nextSibling !== endDom) {
+                        const dom = startDom.nextSibling;
+                        cacheManager.removeElement(dom);
                     }
-                }
-
+                    if (startPos < 0) {
+                        // @ts-ignore
+                        if (startDom !== ScopeEnd) {
+                            // @ts-ignore
+                            head = startDom.nextSibling;
+                            // @ts-ignore
+                            cacheManager.removeElement(startDom);
+                        } else {
+                            head = ScopeEnd;
+                        }
+                    }
+                };
+    
                 EndMap.splice(index, count);
                 ScopeItems.splice(index, count);
                 Cleaners.splice(index, count).forEach(cleaner => {
@@ -191,27 +194,44 @@ export function map (
                 });
                 // items.forEach(item => item[util].release());
                 // console.warn('【watch array remove】', index, count, data);
+
+                if (ScopeEnd.parentElement) {
+                    removeFunc();
+                } else {
+                    cacheManager.addTask(removeFunc);
+                }
+
             };break;
             case OprateType.Insert: {
                 // if (!EndMap[index - 1]) debugger;
-            // @ts-ignore
-                const mountNode = index === 0 ? (head || ScopeEnd) : EndMap[index - 1].nextSibling;
+                // @ts-ignore
                 const ends: any[] = [];
                 const scopes: any[] = [];
                 const cleaners: any[] = [];
+                const doc = Renderer.createDocumentFragment();
                 data.forEach((item, i) => {
                     const child = createChild(item, index + i, scopes, ends, cleaners);
-                    getParent(mountNode, container).insertBefore(child, mountNode);
+                    // @ts-ignore
+                    doc.appendChild(child);
                 });
                 ScopeItems.splice(index, 0, ...scopes);
                 EndMap.splice(index, 0, ...ends);
                 Cleaners.splice(index, 0, ...cleaners);
+                const insertFunc = () => {
+                    // @ts-ignore
+                    const mountNode = index === 0 ? (head || ScopeEnd) : EndMap[index - 1].nextSibling;
+                    getParent(mountNode, container).insertBefore(doc, mountNode);
+                };
+                if (ScopeEnd.parentElement) {
+                    insertFunc();
+                } else {
+                    cacheManager.addTask(insertFunc);
+                }
                 // console.warn('【watch array insert】', index, count, data);
             };break;
         }
         // console.log('type=', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data, fromAssign);
     });
-    debugger;
     // EndMap.push(end);
     return container;
 }

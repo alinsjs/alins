@@ -46,6 +46,10 @@ export function createCleaner () {
             cleanMap = null;
         },
         collect (key: any, clean: any) {
+            if (!cleanMap) {
+                console.warn('cleanMap is null');
+                return;
+            }
             if (cleanMap.has(key)) return;
             cleanMap.set(key, clean);
         }

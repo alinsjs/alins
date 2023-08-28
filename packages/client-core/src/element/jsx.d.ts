@@ -696,7 +696,7 @@ declare namespace Alins {
     }
 
     interface IControlAttributes {
-        $parent?: HTMLElement|Node|DocumentFragment;
+        $parent?: HTMLElement|Node|DocumentFragment|string;
         $show?: boolean|(()=>boolean);
     }
 

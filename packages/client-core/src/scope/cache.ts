@@ -7,6 +7,7 @@
 import {transformAsyncDom} from '../element/element';
 import {ITrueElement, IElement, ITextNode, Renderer, getFirstElement} from '../element/renderer';
 import type {IReturnCall} from '../type';
+import {getParent, insertBefore} from '../utils';
 import type {IBranchTarget} from './branch';
 
 // const DEFAULT_CACHE_KEY = createEmptyJson();
@@ -34,14 +35,20 @@ function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElem
     return d;
 }
 
+
 export function createCallCache () {
     // ! call => dom 的cache
     const cacheMap = new WeakMap<IReturnCall|Object, (IElement|ITextNode)[]|null>();
-    // window.cacheMap = cacheMap;
+    window.cacheMap = cacheMap;
     // 当前执行到的函数
     // const currentCall: IReturnCall|IAsyncReturnCall|null = null;
+    
+    let taskList: ((el: any, fn: any)=>void)[] = [];
 
     return {
+        addCacheTask (fn) {
+            taskList.push(fn);
+        },
         // ! 调用某个函数，缓存其结果
         // @ts-ignore
         call (branch: IBranchTarget, anchor?: any) {
@@ -51,10 +58,20 @@ export function createCallCache () {
             // ! 需要更新自己与父branch的cache
             // console.log('branch debug:item', branch.id, item);
             if (typeof item !== 'undefined') {
-                return transformCacheToElement(item);
+                const cacheElement = transformCacheToElement(item);
+
+                if (taskList.length > 0) {
+                    taskList.forEach(task => {
+                        task(cacheElement, fn);
+                    });
+                    taskList = [];
+                }
+                return cacheElement;
             }
+            curCache = this;
             // currentCall = fn;
             const origin = fn();
+            curCache = null;
             let element: any;
             if (fn.returned === false) {
             // @ts-ignore
@@ -85,6 +102,9 @@ export function createCallCache () {
             const doms = transformElementToCache(el);
             // console.log('branch debug: cacheMap set', branch.id, doms);
             cacheMap.set(branch.call, doms);
+            if (this.manager) {
+                this.manager.cacheArray = doms;
+            }
             // } else {
             //     branch.parent?.clearCache?.();
             // }
@@ -103,7 +123,60 @@ export function createCallCache () {
         // },
         _get (fn: any) {
             return cacheMap.get(fn);
-        }
+        },
+        manager: null as any as (ICacheManager|null),
     };
 }
 export type ICallCache = ReturnType<typeof createCallCache>
+
+let curCache: ICallCache|null = null;
+
+export function getCurCache () {
+    return curCache;
+}
+
+export function createDomCacheManager () {
+    const cache = curCache;
+
+    const manager = {
+        insertBefore (node: any, child:any, defParent: any) {
+            // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
+            const parent = getParent(child, defParent);
+            if (child.parentElement === parent) {
+                insertBefore(this.cacheArray, node, child);
+                parent.insertBefore(node, child);
+            } else {
+                cache!.addCacheTask((parent) => {
+                    insertBefore(this.cacheArray, node, child);
+                    try {
+                        parent.insertBefore(node, child);
+                    } catch (e) {
+                        debugger;
+                    }
+                });
+            }
+        },
+        removeElement (node: any) {
+            if (node.parentElement) {
+                Renderer.removeElement(node);
+                const index = this.cacheArray.indexOf(node);
+                this.cacheArray.splice(index, 1);
+            } else {
+                cache!.addCacheTask(() => {
+                    Renderer.removeElement(node);
+                    const index = this.cacheArray.indexOf(node);
+                    this.cacheArray.splice(index, 1);
+                });
+            }
+        },
+
+        addTask (fn: any) {
+            cache?.addCacheTask(fn);
+        },
+        cacheArray: [] as any[],
+    };
+    cache!.manager = manager;
+    return manager;
+}
+
+type ICacheManager = ReturnType<typeof createDomCacheManager>;
