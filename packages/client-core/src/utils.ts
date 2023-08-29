@@ -18,10 +18,9 @@ export function getParent (node: any, def: any = null) {
 
 export function insertBefore (array: any[], node: any, child: any) {
     const index = array.indexOf(child);
-    if (index === -1) throw new Error('insertBefore error');
+    if (index === -1) return;
 
     if (Renderer.isFragment(node)) {
-        debugger;
         node = Array.from(node.childNodes);
     } else {
         node = [node];

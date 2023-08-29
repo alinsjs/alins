@@ -49,7 +49,7 @@ export function isBlockReturned (block: BlockStatement|any): BlockReturnType {
     for (let i = list.length - 1; i >= 0; i--) {
         if (list[i].type === 'ReturnStatement') {
             // @ts-ignore
-            return (isOriginJSXElement(list[i]?.argument.type)) ? BlockReturnType.Jsx : BlockReturnType.Common;
+            return (isOriginJSXElement(list[i]?.argument?.type)) ? BlockReturnType.Jsx : BlockReturnType.Common;
         }
     }
     return 0;

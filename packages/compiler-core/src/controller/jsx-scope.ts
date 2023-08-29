@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import type {NodePath} from '@babel/traverse';
-import {createMemberExp, getT, Names, parseFirstMemberObject, parseJsxAttrShort, createWrapAttr, replaceJsxDomCreator, skipNode} from '../parse-utils';
+import {createMemberExp, getT, Names, parseFirstMemberObject, parseJsxAttrShort, createWrapAttr, replaceJsxDomCreator, skipNode, createUnfInit} from '../parse-utils';
 import type {JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment} from '@babel/types';
 import type {Module} from '../context';
 import {isFuncExpression, isJSXComponent} from '../is';
@@ -95,9 +95,26 @@ export class JsxScope {
             const t = getT();
             const v = path.node.value as any;
             if (v?.expression && v.expression.type === 'Identifier') {
+                const name = v.expression.name;
+                const variable = this.module.curScope.findVarDeclare(name);
+                let exp: any;
+                if (variable?.isReactive) {
+                    exp = t.memberExpression(v.expression, t.identifier('v'));
+                    variable.path.node.init = t.objectExpression([
+                        t.objectProperty(t.identifier('v'), createUnfInit())
+                    ]);
+                } else {
+                    exp = v.expression;
+                    variable!.isStatic = true;
+                }
+                // @ts-ignore
+                if (variable.path.parent?.kind === 'const') {
+                    // @ts-ignore
+                    variable.path.parent.kind = 'let';
+                }
                 v.expression = t.arrowFunctionExpression(
                     [t.identifier('_$dom')],
-                    skipNode(t.assignmentExpression('=', v.expression, t.identifier('_$dom')))
+                    skipNode(t.assignmentExpression('=', exp, t.identifier('_$dom')))
                 );
             }
             return true;
@@ -108,14 +125,19 @@ export class JsxScope {
     private _pureReg = /(-|^)pure(-|$)/i;
 
     enterJSXAttribute (path: NodePath<JSXAttribute>) {
+        debugger;
         if (parseJsxAttrShort(path)) {
             this.handleDomRef(path);
             return;
         }
         const nodeValue = path.node.value;
         // @ts-ignore
-        const expression = nodeValue?.expression;
-        if (!expression) return;
+        let expression = nodeValue?.expression;
+        if (!expression) {
+            if (nodeValue?.type !== 'StringLiteral') return;
+            // 对于 a:a = ''; 的处理
+            expression = nodeValue;
+        }
         let name = '';
 
         let newExpression: any = expression;
@@ -157,6 +179,7 @@ export class JsxScope {
 
         // ! React babel 不支持JSXNamespacedName
         if (key.type === 'JSXNamespacedName') {
+            debugger;
             // 利用命名空间做一个语法糖
             name = key.namespace.name;
             if (ExcludeDecoMap[name]) {

@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-28 09:51:21
+ * @LastEditTime: 2023-08-29 09:42:02
 -->
 
 # 0.1.0
@@ -117,6 +117,10 @@ fix
 - [x] store 支持 数组 for
 - [x] fix lifecycles
 - [x] fix if直接引用for的场景 <If><For>...</For></If>
+- [x] fix $dom reactive 影响；const 转换
+- [x] fix for-component cacheManager 
+- [ ] fix: style:padding='3px 5px'
+- [ ] fix switch cacheManager
 
 
 

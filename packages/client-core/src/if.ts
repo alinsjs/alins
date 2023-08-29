@@ -42,7 +42,7 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         return branch.call.returned !== false;
     };
     const onDataChange = (bs: boolean[]) => {
-        console.warn('if onDataChange', bs);
+        // console.warn('if onDataChange', bs);
         const n = bs.length;
         for (let i = 0; i < n; i++) {
             if (bs[i]) {

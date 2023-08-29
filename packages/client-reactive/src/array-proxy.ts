@@ -57,7 +57,6 @@ function wrapArrayCall (target: IProxyData<any[]>, fn:()=>any) {
 const ArrayMap = {
     splice (this: {target: IProxyData<any[]>, origin: any}, start: number, count?: number, ...args: any[]) {
         const {target, origin} = this;
-        debugger;
         if (start >= target.length) {
             start = target.length;
             count = 0;
@@ -128,7 +127,7 @@ const ArrayMap = {
         return origin.call(target[util].proxy);
     },
     replace (target: any, index: number, ov: any, v: any) {
-        console.warn('replace=======', index, ov, v);
+        // console.warn('replace=======', index, ov, v);
         triggerOprationEvent(target, OprateType.Replace, index, [v, ov], 1);
         target[index] = v;
     },

@@ -129,7 +129,7 @@ export function map (
     watchArray(list, ({index, count, data, type}: IOprationAction) => {
         switch (type) {
             case OprateType.Push: {
-                console.warn('OprateType.Push', index, count, data, type);
+                // console.warn('OprateType.Push', index, count, data, type);
                 const doc = Renderer.createDocumentFragment();
                 const length = list.length;
                 for (let i = 0; i < data.length; i++) {
@@ -137,12 +137,11 @@ export function map (
                     // @ts-ignore
                     doc.appendChild(child);
                 }
-                debugger;
                 // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
                 cacheManager.insertBefore(doc, ScopeEnd, container);
             };break;
             case OprateType.Replace: {
-                console.warn('OprateType.Replace', index, count, data, type);
+                // console.warn('OprateType.Replace', index, count, data, type);
                 if (!ScopeItems[index]) {
                     // console.warn('【debug: watch array replace1', index, JSON.stringify(data));
                     ScopeItems[index] = createScope(data[0], index);
@@ -209,6 +208,7 @@ export function map (
                 const scopes: any[] = [];
                 const cleaners: any[] = [];
                 const doc = Renderer.createDocumentFragment();
+                const originHead = head;
                 data.forEach((item, i) => {
                     const child = createChild(item, index + i, scopes, ends, cleaners);
                     // @ts-ignore
@@ -219,7 +219,7 @@ export function map (
                 Cleaners.splice(index, 0, ...cleaners);
                 const insertFunc = () => {
                     // @ts-ignore
-                    const mountNode = index === 0 ? (head || ScopeEnd) : EndMap[index - 1].nextSibling;
+                    const mountNode = index === 0 ? (originHead || ScopeEnd) : EndMap[index - 1].nextSibling;
                     getParent(mountNode, container).insertBefore(doc, mountNode);
                 };
                 if (ScopeEnd.parentElement) {

@@ -60,7 +60,6 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
 
     // window.branchMap = branchMap;
     const run = (value: any) => {
-        // console.warn('switch run');
         let macthed: boolean = false;
         result = SwitchResult.Init;
         let el: boolean|ITrueElement|null|undefined = null;
@@ -108,6 +107,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
             endCall = call;
             // console.warn('switch end');
             const init = watch(target, (value) => {
+                console.warn('switch change', value);
                 run(value);
             });
             initSwitchBranches();

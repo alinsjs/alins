@@ -241,11 +241,8 @@ export function createProxy<T extends IJson> (data: T, {
         },
         // ! 闭包
         set (target: IJson, property, v, receiver) {
-
-            console.log('Set property', property, v);
-
+            // console.log('Set property', property, v);
             const orginSet = () => {
-                console.log('aaa', v);
                 const value = Reflect.set(target, property, v, receiver);
                 if (isArray && property !== 'length' && lns.length?.size) {
                     // 直接对数组赋值 arr[100] = 1; 会增加长度但是不会触发 length的proxy

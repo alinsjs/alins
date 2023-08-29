@@ -142,11 +142,16 @@ export function createDomCacheManager () {
         insertBefore (node: any, child:any, defParent: any) {
             // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
             const parent = getParent(child, defParent);
+            if (!cache) {
+                parent.insertBefore(node, child);
+                return;
+            }
+            
             if (child.parentElement === parent) {
                 insertBefore(this.cacheArray, node, child);
                 parent.insertBefore(node, child);
             } else {
-                cache!.addCacheTask((parent) => {
+                cache?.addCacheTask((parent) => {
                     insertBefore(this.cacheArray, node, child);
                     try {
                         parent.insertBefore(node, child);
@@ -157,12 +162,18 @@ export function createDomCacheManager () {
             }
         },
         removeElement (node: any) {
+
+            if (!cache) {
+                Renderer.removeElement(node);
+                return;
+            }
+
             if (node.parentElement) {
                 Renderer.removeElement(node);
                 const index = this.cacheArray.indexOf(node);
                 this.cacheArray.splice(index, 1);
             } else {
-                cache!.addCacheTask(() => {
+                cache?.addCacheTask(() => {
                     Renderer.removeElement(node);
                     const index = this.cacheArray.indexOf(node);
                     this.cacheArray.splice(index, 1);
@@ -175,7 +186,7 @@ export function createDomCacheManager () {
         },
         cacheArray: [] as any[],
     };
-    cache!.manager = manager;
+    if (cache) cache.manager = manager;
     return manager;
 }
 

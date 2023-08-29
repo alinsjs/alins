@@ -446,7 +446,7 @@ export class Scope {
             return;
         }
 
-        if (variable.path.node.start === node.start) return;
+        if (typeof node.start !== 'undefined' && variable.path.node.start === node.start) return;
         // console.log(variable.path.getNextSibling().toString(), variable.path.toString());
         // console.log('collectIdentifier', variable.name, variable.isComputed, node.name);
         // // todo 这里map会无线循环函数参数

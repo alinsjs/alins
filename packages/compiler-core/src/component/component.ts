@@ -223,10 +223,8 @@ function parseSwitch (path: NodePath<JSXElement>) {
                 wrapChildren(item.children || []),
             ];
             // @ts-ignore
-            const brk = !!el.attributes.find(item => item.name.name === 'break');
-            if (brk) {
-                elements.push(t.booleanLiteral(true));
-            }
+            const brk = el.attributes.find(item => item.name.name === 'break');
+            elements.push(t.booleanLiteral(brk?.value?.expression.value !== false));
             array.push(t.arrayExpression(elements));
             if (name === CompNames.Default) break;
         } else {
