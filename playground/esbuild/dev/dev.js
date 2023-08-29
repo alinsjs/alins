@@ -35,7 +35,7 @@ async function main (entry, outfile) {
 // let React: any;
 
 // <button
-//     $parent={document.body}
+//     $mount={document.body}
 //     onclick={() => {count++;}}
 // >click:{count}</button>;
 // `, {

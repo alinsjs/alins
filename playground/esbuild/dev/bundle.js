@@ -815,7 +815,7 @@
             var e2 = n.attributes[t2];
             if (isEventAttr(r, t2, e2))
               return addEvent(r, t2, e2);
-            if ("$parent" === t2)
+            if ("$mount" === t2)
               e2.appendChild(r);
             else if ("$attributes" === t2)
               parseAttributes(r, e2);
@@ -861,8 +861,8 @@
       r[i - 2] = arguments[i];
     if ("function" != typeof e)
       return transformOptionsToElement({ tag: e, attributes: t, children: r, jsx: true });
-    var a, o = t.$parent;
-    for (a in delete t.$parent, t) {
+    var a, o = t.$mount;
+    for (a in delete t.$mount, t) {
       var c = t[a];
       isProxy(c) || (t[a] = { v: c });
     }
@@ -999,7 +999,7 @@
     v: 1
   });
   _$$.ce("button", {
-    $parent: document.body,
+    $mount: document.body,
     onclick: () => {
       count.v++;
     }

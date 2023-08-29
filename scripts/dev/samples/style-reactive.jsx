@@ -7,7 +7,7 @@
 // let count = 1;
 
 // <div
-//     $parent={document.body}
+//     $mount={document.body}
 //     onclick={() => {count++;}}
 // >click:{count}</div>;
 
@@ -18,7 +18,7 @@ const style = {
     color: '#f44',
     fontSize: '14px',
 };
-<div $parent={document.body}>
+<div $mount={document.body}>
     <div>
         <span>颜色:</span>
         <input type="text" value={style.color}/>

@@ -91,7 +91,7 @@ export class JsxScope {
     private curAttr: string;
 
     private handleDomRef (path: NodePath<JSXAttribute>) {
-        if (path.node.name.name === '$dom') {
+        if (path.node.name.name === '$ref') {
             const t = getT();
             const v = path.node.value as any;
             if (v?.expression && v.expression.type === 'Identifier') {
@@ -113,8 +113,8 @@ export class JsxScope {
                     variable.path.parent.kind = 'let';
                 }
                 v.expression = t.arrowFunctionExpression(
-                    [t.identifier('_$dom')],
-                    skipNode(t.assignmentExpression('=', exp, t.identifier('_$dom')))
+                    [t.identifier('_$ref')],
+                    skipNode(t.assignmentExpression('=', exp, t.identifier('_$ref')))
                 );
             }
             return true;

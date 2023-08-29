@@ -9,6 +9,6 @@ import {alins} from 'packages/client-standalone';
 const count = alins.react(1);
 
 alins.Dom('button', {
-    $parent: document.body,
+    $mount: document.body,
     onclick () {count.v++;}
 }, [count]);

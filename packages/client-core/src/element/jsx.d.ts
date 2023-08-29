@@ -696,7 +696,7 @@ declare namespace Alins {
     }
 
     interface IControlAttributes {
-        $parent?: HTMLElement|Node|DocumentFragment|string;
+        $mount?: HTMLElement|Node|DocumentFragment|string;
         $show?: boolean|(()=>boolean);
     }
 
@@ -711,7 +711,7 @@ declare namespace Alins {
         $mounted?: (dom: HTMLElement)=>void;
         $removed?: (dom: HTMLElement)=>void;
         $html?: any;
-        $dom?: any;
+        $ref?: any;
         'value:string'?: any;
         'value:number'?: any;
         'value:boolean'?: any;

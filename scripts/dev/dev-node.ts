@@ -10,7 +10,7 @@ import {parseAlins} from 'packages/compiler-node/dist/alins-compiler-node.esm.mi
 // let count = 1;
 
 // <button
-//     $parent={document.body}
+//     $mount={document.body}
 //     onclick={() => {count++;}}
 // >click:{count}</button>;`));
 

@@ -9,7 +9,7 @@ let count = _$$.r({
   v: 1
 });
 _$$.ce("button", {
-  $parent: document.body,
+  $mount: document.body,
   onclick: () => {
     count.v++;
   }

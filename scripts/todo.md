@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-29 09:42:02
+ * @LastEditTime: 2023-08-29 21:06:37
 -->
 
 # 0.1.0
@@ -44,7 +44,7 @@ feat：
 - [x] 属性扩展运算符处理
 - [x] class:a=true 支持
 - [x] $src => src={src} // 简化写法
-- [x] $parent 简化写法; $$App $$body
+- [x] $mount 简化写法; $$App $$body
 - [x] if 和 switch 优化 (没有返回jsx的if和switch不进行处理)
 - [x] import的header没有使用到就删除掉
 - [x] 事件简化处理 onclick={a(1)} onclick={a++} 要考虑 a(1) 返回值是函数的情况 (pure 装饰器标注的不会处理)
@@ -117,9 +117,11 @@ fix
 - [x] store 支持 数组 for
 - [x] fix lifecycles
 - [x] fix if直接引用for的场景 <If><For>...</For></If>
-- [x] fix $dom reactive 影响；const 转换
+- [x] fix $ref reactive 影响；const 转换
 - [x] fix for-component cacheManager 
-- [ ] fix: style:padding='3px 5px'
+- [x] fix: style:padding='3px 5px'
+- [ ] 重命名 $ref => $ref，$mount => $mount
+- [ ] 生命周期语法糖 $remove:el,xxx();
 - [ ] fix switch cacheManager
 
 

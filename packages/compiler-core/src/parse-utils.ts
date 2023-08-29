@@ -614,9 +614,9 @@ function createNewJSXAttribute (node: JSXAttribute, handleReactive?: boolean) {
             if (name[1] === '$') {
                 name = name.substring(2);
                 if (name === 'body') {
-                    return createWrapAttr('$parent', createMemberExp('document', 'body'), true);
+                    return createWrapAttr('$mount', createMemberExp('document', 'body'), true);
                 } else {
-                    return createWrapAttr('$parent', getT().stringLiteral(`#${name}`), true);
+                    return createWrapAttr('$mount', getT().stringLiteral(`#${name}`), true);
                 }
             } else {
                 name = name.substring(1);

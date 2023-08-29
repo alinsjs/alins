@@ -33,4 +33,4 @@ function Item ({item, index}, children) {
     </div>;
 }
 
-<List $parent={document.body}/>;
+<List $mount={document.body}/>;

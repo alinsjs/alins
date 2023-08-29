@@ -23,4 +23,4 @@
 //     </Switch>
 // </div>;
 
-<div style:padding='3px 5px'>Console is empty.</div>
+<div $$App style:padding='3px 5px'>Console is empty.</div>

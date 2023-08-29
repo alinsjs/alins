@@ -5,7 +5,7 @@
  */
 let i = 0;
 
-<div $parent={document.body}>
+<div $mount={document.body}>
     <button onclick={() => i++}>addCount({i})</button>
     <button onclick={() => i--}>minusCount({i})</button>
     <br/>

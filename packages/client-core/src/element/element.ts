@@ -101,10 +101,10 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     case '$appended': (el as IElement).__$appended = $appended; break;
                     case '$removed': (el as IElement).__$removed = v; break;
                     case '$mounted': (el as IElement).__$mounted = v; break;
-                    case '$parent': {
+                    case '$mount': {
                         let dom = v;
                         if (typeof dom === 'string') dom = document.querySelector(dom);
-                        if (!dom) throw new Error('$parent is not a Element');
+                        if (!dom) throw new Error('$mount is not a Element');
                         dom.appendChild(el);
                         if ($appended) $appended(el); // todo 此处有可能还没有append到document中
                     }; break;
@@ -112,7 +112,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         // @ts-ignore
                         el.innerHTML = v || '';
                     }); break;
-                    case '$dom': v(el); break;
+                    case '$ref': v(el); break;
                     case '$attributes': parseAttributes(el as any, v); break;
                     case '$show': reactiveBindingEnable(v, (v) => {
                         // @ts-ignore
@@ -190,10 +190,10 @@ export const JSX = {
         ...children: any[]
     ): ITrueElement {
         if (typeof tag === 'function') {
-            let $parent: any = null;
+            let $mount: any = null;
             if (attributes) {
-                $parent = attributes.$parent;
-                delete attributes.$parent;
+                $mount = attributes.$mount;
+                delete attributes.$mount;
                 // console.log('createComponent', result);
                 for (const k in attributes) {
                     const v = attributes[k];
@@ -206,9 +206,9 @@ export const JSX = {
             const dom = tag(attributes || {}, children);
             // if (dom.toString() === '[object Promise]') {
             const result = transformAsyncDom(dom) as any;
-            if ($parent) {
-                if (typeof $parent === 'string') $parent = document.querySelector($parent);
-                $parent.appendChild(result);
+            if ($mount) {
+                if (typeof $mount === 'string') $mount = document.querySelector($mount);
+                $mount.appendChild(result);
             }
             return result;
         }
