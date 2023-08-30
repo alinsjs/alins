@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-29 21:06:37
+ * @LastEditTime: 2023-08-30 09:42:07
 -->
 
 # 0.1.0
@@ -79,6 +79,7 @@ next Version new feature
 - [ ] source-map 支持
 - [ ] 编译器代码重构 - 分两步编译 第一步进行jsx解析；第二部进行alins reactive； 支持 ssr
 - [ ] 运行时代码重构 - 优化内存空间占用和运行时间
+- [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
 
 fix
 
@@ -120,8 +121,10 @@ fix
 - [x] fix $ref reactive 影响；const 转换
 - [x] fix for-component cacheManager 
 - [x] fix: style:padding='3px 5px'
-- [ ] 重命名 $ref => $ref，$mount => $mount
-- [ ] 生命周期语法糖 $remove:el,xxx();
+- [x] 重命名 $dom => $ref，$parent = $mount
+- [x] enable attribute;
+- [x] fix todo list 删除有问题
+- [x] fix 注释行号比对的bug 
 - [ ] fix switch cacheManager
 
 

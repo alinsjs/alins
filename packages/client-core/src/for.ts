@@ -159,7 +159,7 @@ export function map (
             case OprateType.Remove: {
 
                 // debugger;
-                // console.trace('Remove', index, count, data, type);
+                // console.log('Remove', index, count, data, type);
                 if (count === 0) break;
 
                 const removeFunc = () => {
@@ -184,13 +184,13 @@ export function map (
                             head = ScopeEnd;
                         }
                     }
+                    EndMap.splice(index, count);
+                    ScopeItems.splice(index, count);
+                    Cleaners.splice(index, count).forEach(cleaner => {
+                        cleaner.clean();
+                    });
                 };
     
-                EndMap.splice(index, count);
-                ScopeItems.splice(index, count);
-                Cleaners.splice(index, count).forEach(cleaner => {
-                    cleaner.clean();
-                });
                 // items.forEach(item => item[util].release());
                 // console.warn('【watch array remove】', index, count, data);
 

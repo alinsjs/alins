@@ -17,7 +17,7 @@ import {parseModel} from './model';
 import {getParent} from '../utils';
 import {parseAttributes} from './attributes';
 import {parseClassName, parseClassSuffix} from './class';
-import {initMountedObserver, initMutationObserver, initRemovedObserver} from './mutation-observer';
+import {initMountedObserver, initRemovedObserver} from './lifecycle';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -129,6 +129,9 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                             break;
                         } else {
                             reactiveBindingEnable(v, (v) => {
+                                if (typeof v === 'object') {
+                                    v = (!!v.enable) ? v.value : null;
+                                }
                                 // @ts-ignore
                                 v === null ? el.removeAttribute(k) : el.setAttribute(k, v);
                             });

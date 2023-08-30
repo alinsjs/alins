@@ -14,13 +14,14 @@ import type {Node, VariableDeclaration, VariableDeclarator} from '@babel/types';
 
 function parseComment (node: Node) {
     const comments: string[] = [];
+    const nodeLine = node.loc?.start.line || 0;
     const before = node.leadingComments?.[node.leadingComments.length - 1];
-    if (before) {
+    if (before && before.loc?.start.line === nodeLine - 1) {
         comments.push(before.value);
     }
     const after = node.trailingComments?.[0];
 
-    if (after && after.loc && after.loc.start.line === node.loc?.start.line) {
+    if (after && after.loc?.start.line === nodeLine) {
         comments.push(after.value);
     }
     return comments.join('\n');

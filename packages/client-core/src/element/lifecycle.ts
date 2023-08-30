@@ -19,9 +19,14 @@ export function initMountedObserver (parent: any) {
                     // @ts-ignore
                     if (node.__$mounted) {
                         // @ts-ignore
-                        node.__$mounted(node);
+                        const fn = node.__$mounted(node);
                         // @ts-ignore
                         node.__$mounted = null;
+                        if (typeof fn === 'function') {
+                            // @ts-ignore
+                            node.__$removed = fn;
+                            initRemovedObserver(node);
+                        }
                         parent.__$count --;
                         if (parent.__$count === 0) {
                             parent.__$m_observer.disconnect();
@@ -86,3 +91,14 @@ export function initRemovedObserver (el: any) {
         'subtree': true,
     });
 }
+
+// export function appended (el: Node, call: ((el: Node)=>void)) {
+//     (el as any).__$appended = call;
+// }
+// export function mounted (el: Node, call: ((el: Node)=>void)) {
+//     (el as any).__$mounted = call;
+// }
+// export function removed (el: Node, call: ((el: Node)=>void)) {
+//     (el as any).__$removed = call;
+//     initRemovedObserver(el);
+// }

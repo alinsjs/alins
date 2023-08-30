@@ -125,7 +125,6 @@ export class JsxScope {
     private _pureReg = /(-|^)pure(-|$)/i;
 
     enterJSXAttribute (path: NodePath<JSXAttribute>) {
-        debugger;
         if (parseJsxAttrShort(path)) {
             this.handleDomRef(path);
             return;
@@ -179,7 +178,6 @@ export class JsxScope {
 
         // ! React babel 不支持JSXNamespacedName
         if (key.type === 'JSXNamespacedName') {
-            debugger;
             // 利用命名空间做一个语法糖
             name = key.namespace.name;
             if (ExcludeDecoMap[name]) {

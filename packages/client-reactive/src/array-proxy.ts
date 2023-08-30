@@ -57,6 +57,7 @@ function wrapArrayCall (target: IProxyData<any[]>, fn:()=>any) {
 const ArrayMap = {
     splice (this: {target: IProxyData<any[]>, origin: any}, start: number, count?: number, ...args: any[]) {
         const {target, origin} = this;
+        // console.log('splice', start, count);
         if (start >= target.length) {
             start = target.length;
             count = 0;

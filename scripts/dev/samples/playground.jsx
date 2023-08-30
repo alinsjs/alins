@@ -1,26 +1,15 @@
+/*
+ * @Author: chenzhongsheng
+ * @Date: 2023-08-23 09:11:19
+ * @Description: Coding something
+ */
 
-// const data = use();
+const list = [1,2,4,5,6];
 
-// function use () {
-//     const $d = {list: []};
-//     return $d;
-// }
+list.push(3);
 
-// let $n = 0;
-
-// // todo if 和 for 冲突问题
-
-// <div id='d1' $$App>
-//     <Switch data={data.list.length}>
-//         <Case data={0}>
-//             <div id='d2'>Console is empty.</div>
-//         </Case>
-//         <Case data={1}>
-//             <For data={data.list}>
-//                 <div id='d3'>1:{$item}</div>
-//             </For>
-//         </Case>
-//     </Switch>
-// </div>;
-
-<div $$App style:padding='3px 5px'>Console is empty.</div>
+<div $$App>
+    <For data={list}>
+        <div id='d3'>{$item}</div>
+    </For>
+</div>;

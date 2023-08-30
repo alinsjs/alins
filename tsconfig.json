@@ -35,6 +35,7 @@
         "playground/**/*.jsx",
         "playground/**/*.ts",
         "packages/plugin-eslint/*.js",
+        ".eslintrc.js"
         // "**/*.ts"
     ],
     "exclude": [

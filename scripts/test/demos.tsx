@@ -29,3 +29,44 @@ export function forFunc(){
         </Else>
     </div>;
 }
+
+function SyncHeight(){
+    let height = 0;
+
+    function syncHeight(el){
+        const ro = new ResizeObserver(() => height = el.offsetHeight);
+        ro.observe(el);
+        return () => ro.disconnect();
+    }
+
+    <div $mount='#App'>
+        <textarea $mounted={syncHeight} />
+        <div>height is {height}</div>
+    </div>;
+}
+
+function seitchCase(){
+    const data = use();
+
+    function use () {
+        const $d = {list: []};
+        return $d;
+    }
+
+    let $n = 0;
+
+    // todo if 和 for 冲突问题
+
+    <div id='d1' $$App>
+        <Switch data={data.list.length}>
+            <Case data={0}>
+                <div id='d2'>Console is empty.</div>
+            </Case>
+            <Case data={1}>
+                <For data={data.list}>
+                    <div id='d3'>1:{$item}</div>
+                </For>
+            </Case>
+        </Switch>
+    </div>;
+}

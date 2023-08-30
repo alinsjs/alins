@@ -708,7 +708,7 @@ declare namespace Alins {
         };
         $created?: (dom: HTMLElement)=>void;
         $appended?: (dom: HTMLElement)=>void;
-        $mounted?: (dom: HTMLElement)=>void;
+        $mounted?: (dom: HTMLElement)=>void|((el: HTMLElement)=>any);
         $removed?: (dom: HTMLElement)=>void;
         $html?: any;
         $ref?: any;
