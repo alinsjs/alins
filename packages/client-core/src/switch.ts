@@ -45,7 +45,6 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         if (call) {
             const branch = branchMap.get(call);
             if (!branch) throw new Error('empty branch');
-            // if (!initilizing) debugger;
             const dom = initilizing ? util.cache.call(branch, anchor) : anchor.replaceBranch(branch);
             if (dom) {
                 result = SwitchResult.Return;
@@ -62,7 +61,6 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         let macthed: boolean = false;
         result = SwitchResult.Init;
         let el: boolean|ITrueElement|null|undefined = null;
-        debugger;
         for (const item of caseList) {
             if (macthed) {
                 if (el = execSingle(item)) break;

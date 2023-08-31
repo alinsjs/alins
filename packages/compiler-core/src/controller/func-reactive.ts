@@ -31,7 +31,8 @@ export class FuncReactiveScope {
         try {
             this.variable._func_scope = this;
         } catch (e) {
-            debugger;
+            // debugger;
+            console.warn('FuncReactiveScope', e);
         }
     }
     markReturnJsx () {
