@@ -15,6 +15,7 @@
         "clear-dist": "node scripts/clear-dist.js",
         "init:package": "node ./scripts/init-packages-info.js",
         "init:mono": "node ./scripts/init-packages-info.js dev",
+        "init:dev": "node ./scripts/init-packages-info.js dev",
         "release": "node scripts/push-release.js",
         "eb:purge": "node scripts/purge-cdn.js",
         "_serve": "npx nodemon scripts/dev/bundle.min.js",
@@ -67,6 +68,7 @@
         "rollup-plugin-uglify": "^6.0.4",
         "rollup-plugin-vue": "^6.0.0",
         "serve": "^13.0.2",
+        "tslib": "^2.6.2",
         "typescript": "^4.7.4"
     },
     "private": true

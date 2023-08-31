@@ -96,10 +96,12 @@ export function map (
             if (i === 0) head = child;
         } else if (Renderer.isFragment(child)) {
             child = child as IFragment;
+            // @ts-ignore
             const children = child.childNodes;
             const n = children.length;
             if (n === 0) {
                 end = Renderer.createEmptyMountNode();
+                // @ts-ignore
                 child.appendChild(end as any);
                 if (i === 0) head = end;
             } else {

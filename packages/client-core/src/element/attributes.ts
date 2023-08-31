@@ -20,7 +20,8 @@ export function parseAttributes (
                 if (!prop || prop === 'v') {
                     const r1 = v.matchAll(/(.*?)=(.*?)(&|$)/g);
                     v = {};
-                    for (const item of r1)v[item[1]] = item[2];
+                    // @ts-ignore
+                    for (const item of r1) v[item[1]] = item[2];
                     const r2 = ov.matchAll(/(.*?)=(.*?)(&|$)/g);
                     ov = {};
                     for (const item of r2) ov[item[1]] = item[2];

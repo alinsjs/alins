@@ -188,6 +188,12 @@ const packageInfo = {
     },
 };
 
+const replacement = {
+    '__DEV__': 'false',
+    '__DEBUG__': 'false',
+    '__VERSION__': `"${version}"`
+};
+
 const createBaseConfig = (format) => {
 
     const bundleName = `${packageName}.${format}.min.js`;
@@ -226,11 +232,7 @@ const createBaseConfig = (format) => {
                 extensions,
                 configFile: path.join(__dirname, './babel.config.js'),
             }),
-            replace({
-                '__DEV__': 'false',
-                '__DEBUG__': 'false',
-                '__VERSION__': `"${version}"`
-            })
+            replace(replacement)
         ],
         // external: [], // format === 'iife' ? [] : external,
         external: format === 'iife' ? [] : external,
@@ -252,7 +254,7 @@ function createDTSConfig (name) {
             file: resolvePackagePath(`${dirName}/dist/${name}.d.ts`),
             format: 'es',
         },
-        plugins: [dts(), json()],
+        plugins: [dts(), json(), replace(replacement)],
     };
 }
 
