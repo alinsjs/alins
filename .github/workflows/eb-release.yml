@@ -36,7 +36,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: pnpm Install --no-frozen-lockfile
-        run: pnpm i
+        run: pnpm i --no-frozen-lockfile
 
       - name: Version
         id: version
