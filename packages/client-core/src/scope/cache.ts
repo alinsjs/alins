@@ -6,7 +6,7 @@
 
 import {transformAsyncDom} from '../element/element';
 import {ITrueElement, IElement, ITextNode, Renderer, getFirstElement} from '../element/renderer';
-import type {IReturnCall} from '../type';
+import type {IAsyncReturnCall, IReturnCall} from '../type';
 import {getParent, insertBefore} from '../utils';
 import type {IBranchTarget} from './branch';
 
@@ -40,14 +40,31 @@ export function createCallCache () {
     // ! call => dom 的cache
     const cacheMap = new WeakMap<IReturnCall|Object, (IElement|ITextNode)[]|null>();
     window.cacheMap = cacheMap;
-    // 当前执行到的函数
-    // const currentCall: IReturnCall|IAsyncReturnCall|null = null;
     
     let taskList: ((el: any, fn: any)=>void)[] = [];
 
+    const managerMap = new WeakMap<IReturnCall, ICacheManager>;
+
+    // 当前执行到的函数
+    let curCall: IReturnCall|IAsyncReturnCall|null = null;
+
+    const execCacheCall = (fn: any, cache: ICallCache) => {
+        curCache = cache;
+        curCall = fn;
+        const origin = fn();
+        curCache = null;
+        curCall = null;
+        return origin;
+    };
+
     return {
-        addCacheTask (fn) {
+        cacheMap,
+        addCacheTask (fn: any) {
             taskList.push(fn);
+        },
+        initManager (manager: ICacheManager) {
+            if (!curCall) return;
+            managerMap.set(curCall, manager);
         },
         // ! 调用某个函数，缓存其结果
         // @ts-ignore
@@ -61,6 +78,7 @@ export function createCallCache () {
                 const cacheElement = transformCacheToElement(item);
 
                 if (taskList.length > 0) {
+                    debugger;
                     taskList.forEach(task => {
                         task(cacheElement, fn);
                     });
@@ -68,10 +86,7 @@ export function createCallCache () {
                 }
                 return cacheElement;
             }
-            curCache = this;
-            // currentCall = fn;
-            const origin = fn();
-            curCache = null;
+            const origin = execCacheCall(fn, this);
             let element: any;
             if (fn.returned === false) {
             // @ts-ignore
@@ -87,6 +102,9 @@ export function createCallCache () {
                 });
                 first = getFirstElement(element);
             }
+            if (typeof element === 'string') {
+                element = Renderer.createTextNode(element);
+            }
             // currentCall = null;
             // 有可能存在void的情况
             if (Renderer.isElement(element) || typeof element === 'undefined') {
@@ -97,34 +115,26 @@ export function createCallCache () {
             throw new Error('动态条件分支中不允许返回非元素类型');
         },
         modifyCache (branch: IBranchTarget, el: ITrueElement) {
-            if (!branch.call) return;
+            const key = branch.call;
+            if (!key) return;
             // if (el) {
             const doms = transformElementToCache(el);
-            // console.log('branch debug: cacheMap set', branch.id, doms);
-            cacheMap.set(branch.call, doms);
-            if (this.manager) {
-                this.manager.cacheArray = doms;
+            // console.log('branch debug: cacheMap set', branch.id, doms)
+            cacheMap.set(key, doms);
+            const manager = managerMap.get(key);
+            if (manager && !manager.cacheArray) {
+                debugger;
+                // @ts-ignore
+                manager.cacheArray = doms;
+                managerMap.delete(key);
             }
-            // } else {
-            //     branch.parent?.clearCache?.();
-            // }
         },
         setCache (call: any, doms: any[]) {
             cacheMap.set(call, doms);
         },
-        // getCurrentCall () {
-        //     return currentCall;
-        // },
-        // cacheDefault (el: ITrueElement) {
-        //     cacheMap.set(DEFAULT_CACHE_KEY, transformElementToCache(el));
-        // },
-        // clearCache (fn: IReturnCall) {
-        //     cacheMap.delete(fn);
-        // },
         _get (fn: any) {
             return cacheMap.get(fn);
         },
-        manager: null as any as (ICacheManager|null),
     };
 }
 export type ICallCache = ReturnType<typeof createCallCache>
@@ -135,12 +145,19 @@ export function getCurCache () {
     return curCache;
 }
 
+/*
+    ! cachemanager 为管理条件分支中不包含 父元素的 for循环中的缓存
+    如 <If data={xxx}>
+        <For data={xxx}><xx></For>
+    </If>
+    如果没有这个结构 就会导致 缓存异常
+*/
 export function createDomCacheManager () {
     const cache = curCache;
 
     const manager = {
         insertBefore (node: any, child:any, defParent: any) {
-            // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
+            // 如果没有父元素则 append到初始的frag上
             const parent = getParent(child, defParent);
             if (!cache) {
                 parent.insertBefore(node, child);
@@ -184,9 +201,10 @@ export function createDomCacheManager () {
         addTask (fn: any) {
             cache?.addCacheTask(fn);
         },
-        cacheArray: [] as any[],
+        // @ts-ignore
+        cacheArray: null as any[],
     };
-    if (cache) cache.manager = manager;
+    if (cache) cache.initManager(manager);
     return manager;
 }
 

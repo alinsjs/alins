@@ -141,7 +141,7 @@ export function map (
                 cacheManager.insertBefore(doc, ScopeEnd, container);
             };break;
             case OprateType.Replace: {
-                // console.warn('OprateType.Replace', index, count, data, type);
+                console.warn('OprateType.Replace', index, count, data, type);
                 if (!ScopeItems[index]) {
                     // console.warn('【debug: watch array replace1', index, JSON.stringify(data));
                     ScopeItems[index] = createScope(data[0], index);
@@ -157,9 +157,10 @@ export function map (
                 // replaceItem(index, data[0]);
             };break;
             case OprateType.Remove: {
+                debugger;
 
                 // debugger;
-                // console.log('Remove', index, count, data, type);
+                console.warn('Remove', index, count, data, type);
                 if (count === 0) break;
 
                 const removeFunc = () => {

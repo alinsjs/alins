@@ -208,7 +208,11 @@ function parseSwitch (path: NodePath<JSXElement>) {
 
     for (const item of node.children) {
         if (isEmptyText(item)) continue;
-        if (!isOriginJSXElement(item.type))  throw new Error('switch 中只能包含jsxElement');
+        if (!isOriginJSXElement(item.type))  {
+            // @ts-ignore
+            if (item?.expression.type === 'JSXEmptyExpression') continue;
+            throw new Error('switch 中只能包含jsxElement');
+        }
 
         parseComponentAttr(item);
         // @ts-ignore
