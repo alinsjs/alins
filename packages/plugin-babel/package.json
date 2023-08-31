@@ -2,8 +2,8 @@
     "name": "babel-plugin-alins",
     "version": "0.0.25",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "dist/babel-plugin-alins.cjs.min.js",
-    "typings": "dist/babel-plugin-alins.d.ts",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -24,5 +24,5 @@
     "dependencies": {
         "alins-compiler-core": "^0.0.25"
     },
-    "module": "dist/babel-plugin-alins.esm.min.js"
+    "module": "src/index.ts"
 }
