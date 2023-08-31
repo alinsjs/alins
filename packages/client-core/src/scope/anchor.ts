@@ -87,17 +87,11 @@ export function createAnchor (cache: ICallCache) {
             }
         },
         replaceBranch (branch: IBranchTarget) {
-            // console.log(start);
-            // branch.parent
             const current = branch.current(); // ! 缓存一下当前branch， call之后会被覆盖
             if (current === branch) return true;
             // const activeBranch = branch.getBottomChild();
             const dom = cache.call(branch);
             // console.log('branch debug:dom', dom);
-            // if (!window.bs) window.bs = {};
-            // for (const k in window.bs) {
-            //     console.log(k, window.bs[k].anchor.start());
-            // }
             if (!branch.inited) {
                 branch.inited = true;
                 this.replaceContent(dom, branch);

@@ -44,6 +44,8 @@ module.exports = {
         'require': true,
         'module': true,
         __DEBUG__: true,
+        __DEV__: true,
+        __VERSION__: true,
     },
     'rules': {
     // 'no-var': "error",
@@ -59,11 +61,11 @@ module.exports = {
         'prefer-const': 2,
         'no-useless-escape': 0,
         'no-useless-constructor': 0,
-        'no-trailing-spaces': [ 'error', { 'skipBlankLines': true } ],
+        'no-trailing-spaces': [ 'error', {'skipBlankLines': true} ],
         'indent': [ 'error', 4, {
             'SwitchCase': 1
         } ],
-        'space-infix-ops': [ 'error', { 'int32Hint': false } ],
+        'space-infix-ops': [ 'error', {'int32Hint': false} ],
         'space-before-function-paren': [ 'error', {
             'anonymous': 'always',
             'named': 'always',
@@ -80,7 +82,7 @@ module.exports = {
         'no-multiple-empty-lines': 'error',
         'no-unused-vars': 'error',
         'spaced-comment': 'error',
-        'quotes': [ 'error', 'single', { 'allowTemplateLiterals': true } ],
+        'quotes': [ 'error', 'single', {'allowTemplateLiterals': true} ],
         'no-unreachable': 'error',
         'keyword-spacing': 'error',
         'space-before-blocks': 'error',
@@ -97,7 +99,7 @@ module.exports = {
             'switchCase': 1
         } ],
         'vue/html-indent': [ 'error', 4 ],
-        'vue/html-quotes': [ 'error', 'single', { 'avoidEscape': true } ],
+        'vue/html-quotes': [ 'error', 'single', {'avoidEscape': true} ],
         'no-restricted-syntax': 'off',
     },
     'overrides': [

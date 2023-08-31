@@ -32,18 +32,13 @@ enum SwitchResult {
 
 export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util: ICtxUtil) {
     const anchor = createAnchor(util.cache);
-    // window._a = anchor;
     let endCall: IReturnCall;
 
     let initilizing = true;
 
     const branchMap = new WeakMap<IReturnCall, IBranchTarget>();
-    // window._b = branchMap;
-    // window._caseList = caseList;
 
     let result: SwitchResult = SwitchResult.Init;
-
-    // let returnEl: any = null;
 
     const execSingle = ([, call, brk]: ISwitchCase) => {
         // console.log('switch debug:execSingle', call, brk);
@@ -62,7 +57,6 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
         return !!brk;
     };
 
-    // window.branchMap = branchMap;
     const run = (value: any) => {
         // console.log('switch debug:run', value);
         let macthed: boolean = false;
@@ -113,7 +107,7 @@ export function _switch (target: ISwitchTarget, caseList: ISwitchCaseList, util:
             endCall = call;
             // console.warn('switch end');
             const init = watch(target, (value) => {
-                console.warn('switch debug: change', value);
+                // console.warn('switch debug: change', value);
                 run(value);
             });
             initSwitchBranches();
