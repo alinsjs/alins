@@ -41,6 +41,9 @@ async function main (entry, outfile) {
         platform: 'node',
         define: {
             'process.env.NODE_ENV': '"development"',
+            '__DEV__': 'true',
+            '__DEBUG__': 'true',
+            '__VERSION__': '"0.0.1-dev"'
         },
         plugins: [
         ],

@@ -73,6 +73,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
             if (opt.attributes?.$html) {
                 console.warn('$html 属性的元素的子元素将失效');
             } else {
+                // @ts-ignore
                 appendChildren(el, opt.children);
             }
         }

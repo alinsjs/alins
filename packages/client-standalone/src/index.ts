@@ -39,6 +39,7 @@ export function Dom (name: string, attributes: IAttributes = {}, children: any[]
         children = attributes;
         attributes = {};
     }
+    // @ts-ignore
     return ContextTool.ce(name, attributes, children);
 }
 // alins.component(fn, {}, [])

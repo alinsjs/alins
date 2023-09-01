@@ -14,6 +14,7 @@ import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/rend
 import {createDomCacheManager} from './scope/cache';
 import {getParent} from './utils';
 
+
 /*
  赋值的话是 状态替换
  通过函数调用的话特殊处理
@@ -26,6 +27,7 @@ export function map (
     k = 'item',
     ik = ''
 ) {
+    // console.log('__DEV__', __DEV__);
     const list = this;
     // window._list = list;
     // todo list 需要reactive
@@ -52,13 +54,9 @@ export function map (
     let head: ITrueElement;
 
     const ScopeItems: IProxyData<{item: any, index: number}>[] = [];
-    // window.EndMap = EndMap;
-    // window.ScopeItems = ScopeItems;
+
     list[util].scopeItems = ScopeItems;
-    // list[util]._replaceScopeData = (newValue) => {
-    //     newValue[]
-    //     list = newValue;
-    // };
+
     // @ts-ignore
     list[util]._map = true; // ! 标识需要强制更新，从而更新map的index
     // @ts-ignore ! 此处用于在slice方法中获取 item
@@ -98,10 +96,12 @@ export function map (
             if (i === 0) head = child;
         } else if (Renderer.isFragment(child)) {
             child = child as IFragment;
+            // @ts-ignore
             const children = child.childNodes;
             const n = children.length;
             if (n === 0) {
                 end = Renderer.createEmptyMountNode();
+                // @ts-ignore
                 child.appendChild(end as any);
                 if (i === 0) head = end;
             } else {
@@ -141,7 +141,7 @@ export function map (
                 cacheManager.insertBefore(doc, ScopeEnd, container);
             };break;
             case OprateType.Replace: {
-                console.warn('OprateType.Replace', index, count, data, type);
+                // console.warn('OprateType.Replace', index, count, data, type);
                 if (!ScopeItems[index]) {
                     // console.warn('【debug: watch array replace1', index, JSON.stringify(data));
                     ScopeItems[index] = createScope(data[0], index);
@@ -157,10 +157,9 @@ export function map (
                 // replaceItem(index, data[0]);
             };break;
             case OprateType.Remove: {
-                debugger;
-
                 // debugger;
-                console.warn('Remove', index, count, data, type);
+
+                // console.warn('Remove', index, count, data, type);
                 if (count === 0) break;
 
                 const removeFunc = () => {

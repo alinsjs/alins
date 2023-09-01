@@ -26,6 +26,7 @@ export function insertBefore (array: any[], node: any, child: any) {
         node = [node];
     }
     if (index === 0) {
+        // @ts-ignore
         array.unshift(...node);
     } else {
         array.splice(index - 1, 0, ...node);

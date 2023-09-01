@@ -16,6 +16,7 @@ import json from '@rollup/plugin-json';
 // import commonjs from '@rollup/plugin-commonjs'
 import path from 'path';
 import fs from 'fs';
+import replace from '@rollup/plugin-replace';
 
 const {
     extractSinglePackageInfo,
@@ -140,6 +141,8 @@ function parseBuildConfig () {
 
     // process.exit(0);
 
+    let version = '';
+
     let external = [];
     if (buildConfig.external !== false) {
         if (typeof buildConfig.external === 'string') {
@@ -147,19 +150,20 @@ function parseBuildConfig () {
         } else if (buildConfig.external !== false) {
             const packageInfo = extractSinglePackageInfo(dirName);
             external = packageInfo.dependencies;
+            version = packageInfo.version;
         }
     }
     console.log('external: ', external);
 
     return {
         packageName, umdName, dtsFormat, extensions,
-        inputFile, dirName, format, external
+        inputFile, dirName, format, external, version
     };
 }
 
 const {
     packageName, umdName, extensions,
-    inputFile, dirName, format, external
+    inputFile, dirName, format, external, version
 } = parseBuildConfig();
 
 if (packageName === 'eslint-config-alins') {
@@ -182,6 +186,12 @@ const packageInfo = {
     'publishConfig': {
         'registry': 'https://registry.npmjs.org/',
     },
+};
+
+const replacement = {
+    '__DEV__': 'false',
+    '__DEBUG__': 'false',
+    '__VERSION__': `"${version}"`
 };
 
 const createBaseConfig = (format) => {
@@ -222,6 +232,7 @@ const createBaseConfig = (format) => {
                 extensions,
                 configFile: path.join(__dirname, './babel.config.js'),
             }),
+            replace(replacement)
         ],
         // external: [], // format === 'iife' ? [] : external,
         external: format === 'iife' ? [] : external,
@@ -235,31 +246,17 @@ const config = [
     createDTSConfig(packageName),
 ];
 
-// if (isWebAndNodePkg) {
-//     config.push(createDTSConfig(`${packageName}.cjs.min`));
-// }
-
 function createDTSConfig (name) {
     return {
         // 生成 .d.ts 类型声明文件
         input: inputFile,
         output: {
-            // file: resolvePackagePath(`${dirName}/dist/${packageName}.${dtsFormat}.min.d.ts`),
             file: resolvePackagePath(`${dirName}/dist/${name}.d.ts`),
             format: 'es',
         },
-        plugins: [dts(), json()],
+        plugins: [dts(), json(), replace(replacement)],
     };
 }
-
-// if (dirName === 'style') {
-//     config.push({
-//         ...createBaseConfig({
-//             format: 'iife',
-//             input: resolveRootPath('scripts/build/style-all-cdn.ts')
-//         }),
-//     });
-// }
 
 modifyPackage(pkg => {
     Object.assign(pkg, packageInfo);

@@ -39,7 +39,7 @@ function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElem
 export function createCallCache () {
     // ! call => dom 的cache
     const cacheMap = new WeakMap<IReturnCall|Object, (IElement|ITextNode)[]|null>();
-    window.cacheMap = cacheMap;
+    // window.cacheMap = cacheMap;
     
     let taskList: ((el: any, fn: any)=>void)[] = [];
 

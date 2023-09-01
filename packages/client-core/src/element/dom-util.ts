@@ -110,5 +110,6 @@ function reactiveBinding<T=string> (bind: IBindingReaction, onchange: IProxyList
     if (typeof bind === 'function' || (isProxy(bind) && typeof bind.v !== 'undefined')) {
         return watch(bind, onchange).v;
     }
-    return bind;
+    // @ts-ignore
+    return bind as T;
 }
