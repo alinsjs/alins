@@ -251,14 +251,7 @@ export function createReact (node: VariableDeclarator) {
     // );
     // debugger;
     // console.log('wrap react-------', node.id.name);
-    const args: any[] = [
-        t.objectExpression(
-            [ t.objectProperty(
-                t.identifier(Names.Value),
-                node.init as any
-            ) ]
-        )
-    ];
+    const args: any[] = [node.init];
     if (node._isShallow) {
         args.push(t.booleanLiteral(true));
     }

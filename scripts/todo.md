@@ -54,7 +54,7 @@ feat：
 - [x] 支持了逻辑组件的属性简写 
 - [x] 支持 使用 onclick:stop 不带事件名
 - [x] 组件属性结构
-- [ ] 支持
+- [x] 去除 .r 需要v的包裹
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
@@ -127,6 +127,7 @@ fix
 - [x] fix todo list 删除有问题
 - [x] fix 注释行号比对的bug 
 - [x] fix switch cacheManager
+- [ ] fix if 多层嵌套的问题 cacheManager优化
 
 
 

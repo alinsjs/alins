@@ -46,8 +46,11 @@ export const ContextTool = {
         fn.returned = false;
         return fn;
     },
-    r (data: any) {
-        return reactive(data, isProxy(data.v));
+    r (v: any, shallow?: boolean) {
+        if (typeof shallow !== 'boolean') {
+            shallow = typeof v.v === 'object' && isProxy(v.v);
+        }
+        return reactive({v}, shallow);
     },
     c: computed,
     w: watch,
