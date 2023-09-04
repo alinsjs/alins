@@ -4,11 +4,11 @@
  * @Description: Coding something
  */
 
-import {IFragment, IGeneralElement, ITrueElement, Renderer, getFirstElement} from '../element/renderer';
-import {IElement} from '../element/renderer';
-import {getParent} from '../utils';
-import {IBranchTarget} from './branch';
-import {ICallCache} from './cache';
+import { IFragment, IGeneralElement, ITrueElement, Renderer, getFirstElement } from '../element/renderer';
+import { IElement } from '../element/renderer';
+import { getParent } from '../utils';
+import { IBranchTarget } from './branch';
+import { ICallCache } from './cache';
 /*
 dom 元素挂载的锚点
 firstElement => anchor 之前为组件的所有dom
@@ -86,19 +86,21 @@ export function createAnchor (cache: ICallCache) {
                 start = getFirstElement(newDom);
             }
         },
-        replaceBranch (branch: IBranchTarget) {
+        replaceBranch (branch: IBranchTarget, setStart = true) {
             const current = branch.current(); // ! 缓存一下当前branch， call之后会被覆盖
             if (current === branch) return true;
             // const activeBranch = branch.getBottomChild();
             const dom = cache.call(branch);
-            // console.log('branch debug:dom', dom);
+            console.log('branch debug:dom', dom);
             if (!branch.inited) {
                 branch.inited = true;
-                this.replaceContent(dom, branch);
+                this.replaceContent(dom, branch, setStart);
             } else {
                 if (dom) {
                     if (branch.isVisible(current)) {
-                        this.replaceContent(dom, branch);
+                        this.replaceContent(dom, branch, setStart);
+                    } else {
+                        branch.onUnvisible?.(branch);
                     }
                 } else {
                     // 目前branch为空则清除dom
@@ -115,7 +117,7 @@ export function createAnchor (cache: ICallCache) {
             // }
         },
         // 往当前组件替换dom元素
-        replaceContent (element?: IGeneralElement, branch?: IBranchTarget) {
+        replaceContent (element?: IGeneralElement, branch?: IBranchTarget, setStart = true) {
             if (!end || !start) {
                 frag = initFirstMount(element);
                 return frag;
@@ -137,6 +139,9 @@ export function createAnchor (cache: ICallCache) {
             const newEle = getFirstElement(element);
             const newStart = newEle || end;
             let parent = branch?.parent;
+
+            if (setStart)parent?.anchor.setStart(element);
+
             while (parent && parent.anchor.start() === start) {
                 parent.anchor.setStart(newStart);
                 // @ts-ignore

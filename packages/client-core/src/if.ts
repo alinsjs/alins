@@ -3,14 +3,15 @@
  * @Date: 2023-07-02 21:55:39
  * @Description: Coding something
  */
-import {IWatchRefTarget, watch, getCurCleaner, useCurCleaner} from 'alins-reactive';
+import { IWatchRefTarget, watch, getCurCleaner, useCurCleaner } from 'alins-reactive';
 import {
     IReturnCall, ICtxUtil
 } from './type';
-import {IGeneralElement, ITrueElement, Renderer} from './element/renderer';
-import {empty} from 'alins-utils';
-import {IBranchTarget} from './scope/branch';
-import {createAnchor} from './scope/anchor';
+import { IGeneralElement, ITrueElement, Renderer } from './element/renderer';
+import { empty } from 'alins-utils';
+import { IBranchTarget } from './scope/branch';
+import { createAnchor } from './scope/anchor';
+import { createDomCacheManager } from './scope/cache';
 
 export type IIfTarget = IWatchRefTarget<boolean>;
 export interface IIfReturn {
@@ -19,6 +20,11 @@ export interface IIfReturn {
     end(call?: IReturnCall): IGeneralElement|void;
 }
 
+// const _ifCMMap = [] as any[];
+// window._mm = _ifCMMap;
+// const _anchorMap = [] as any[];
+// window._am = _anchorMap;
+
 export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfReturn {
     // console.log('branch debug:enter if', call.toString());
     const cleaner = getCurCleaner();
@@ -26,6 +32,12 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
     // ! 最后一个branch是end
     const branchs: IBranchTarget[] = [];
     let activeIndex = -1;
+
+    const cacheManager = createDomCacheManager();
+
+    // _ifCMMap.push(cacheManager);
+    // _anchorMap.push(anchor);
+
     // console.log(branchs);
 
     // 返回当前接节点是否有返回值
@@ -34,15 +46,16 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         activeIndex = i;
         const branch = branchs[i];
         useCurCleaner(cleaner, () => {
+            console.log('If debug replacebranch');
             anchor.replaceBranch(branch);
         });
         // setCurCleaner(cleaner);
-        // console.warn('switch node', i);
+        console.warn('switch node', i);
         // ! 编译时注入的returned
         return branch.call.returned !== false;
     };
     const onDataChange = (bs: boolean[]) => {
-        // console.warn('if onDataChange', bs);
+        console.warn('if onDataChange', bs);
         const n = bs.length;
         for (let i = 0; i < n; i++) {
             if (bs[i]) {
@@ -64,10 +77,15 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
         const id = index ++;
         // console.warn('accept if', id);
         branchs[id] = util.branch.next(call, anchor, init);
+        branchs[id].onUnvisible = (branch) => {
+            cacheManager?.addTask(() => {
+                anchor.replaceBranch(branch, false);
+            });
+        };
         refs[id] = ref;
 
         if (returnEle !== empty) return;
-        
+
         if (!matched || isEnd) {
             const value = typeof ref === 'function' ? ref() : ref.v;
             if (value) {
@@ -113,9 +131,9 @@ export function _if (ref: IIfTarget, call: IReturnCall, util: ICtxUtil): IIfRetu
 
 // function aa () {
 //     const data = await aa();
-    
+
 //     a.a = data;
-    
+
 //     return xxx;
 
 //     return c.async(async () => {

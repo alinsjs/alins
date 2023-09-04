@@ -3,9 +3,9 @@
  * @Date: 2023-07-07 10:35:16
  * @Description: Coding something
  */
-import {IReturnCall} from '../type';
-import {ICtxAnchor} from './anchor';
-import {ICallCache} from './cache';
+import { IReturnCall } from '../type';
+import { ICtxAnchor } from './anchor';
+import { ICallCache } from './cache';
 
 export interface IBranchTarget {
     id: number;
@@ -21,13 +21,14 @@ export interface IBranchTarget {
     getBottomChild(): IBranchTarget;
     updateCache(): void;
     updateActiveCache(): void;
+    onUnvisible: null | ((branch: IBranchTarget)=>void);
 }
 
 export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
     // console.log('createBranchLink');
     let stack: IBranchTarget[] = [];
     let id = 0;
-    const Root = {anchor, parent: null};
+    const Root = { anchor, parent: null };
 
     let currentBranch: IBranchTarget|null = null;
 
@@ -93,12 +94,13 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
                 // console.warn('isVisible result false2');
                 return false;
             },
+            onUnvisible: null,
             visit () {
                 // ! 访问某个分支之后 将该分支作为stack起点 作为还未加载节点的父分支
                 // console.warn('visit branch', this);
                 if (currentBranch === this) return;
                 if (initialized) {
-                    stack = [this];
+                    stack = [ this ];
                 }
                 currentBranch = this;
                 if (this.parent) this.parent.activeChild = this;
@@ -145,7 +147,7 @@ export function createBranchLink (cache: ICallCache, anchor: ICtxAnchor) {
         },
         back () {
             // console.warn(`branch:back`);
-            
+
             const value = stack.pop();
             if (stack.length === 0) { // 当所有branch弹出 initializing 完成
                 initialized = true;

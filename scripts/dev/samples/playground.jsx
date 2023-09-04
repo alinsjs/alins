@@ -1,50 +1,29 @@
+let a = -1;
+
+a ++;
 /*
- * @Author: chenzhongsheng
- * @Date: 2023-08-23 09:11:19
- * @Description: Coding something
- */
-
-const data = {list: [1,2,4,5,6]};
-
-data.list.push(3);
-
+<If data={a < 1}>
+1: a &lt; 1
+</If>
+<Else>
+1: a &gt; 1
+</Else>
+*/
 <div $$App>
-    <Switch data={data.list.length}>
-        <Case data={0}>empty.</Case>
-        <Case data={1}>
-            <For data={data.list}>
-                <div id='d3'>=1:{$item}</div>
-            </For>
-        </Case>
-        <Default>
-            <For data={data.list}>
-                <div id='d3'>=2:{$item}</div>
-            </For>
-        </Default>
-        {/* <Case data={1}>
-            <For data={data.list}>
-                <div id='d3'>=1:{$item}</div>
-            </For>
-        </Case> */}
-        {/* <Case data={2}>
-            <For data={data.list}>
-                <div id='d3'>=2:{$item}</div>
-            </For>
-        </Case> */}
-    </Switch>
+    <If data={a < 2}>
+        <If data={a < 1}>
+            1: a &lt; 1
+        </If>
+        <Else>
+            1: a &gt; 1
+        </Else>
+    </If>
+    <Else>
+        <If data={a < 3}>
+            2:a &lt; 3
+        </If>
+        <Else>
+            2:a &gt; 3
+        </Else>
+    </Else>
 </div>;
-
-// const data = {list: [1,2,4,5,6]};
-
-// data.list.push(3);
-
-// <div $$App>
-//     <If data={data.list.length === 0}>
-//         <div id='d2'>Console is empty.</div>
-//     </If>
-//     <Else>
-//         <For data={data.list}>
-//             <div id='d3'>{$item}</div>
-//         </For>
-//     </Else>
-// </div>;

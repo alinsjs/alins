@@ -3,15 +3,15 @@
  * @Date: 2022-10-23 20:12:31
  * @Description: Coding something
  */
-import {nodeResolve} from '@rollup/plugin-node-resolve';
-import {babel} from '@rollup/plugin-babel';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { babel } from '@rollup/plugin-babel';
 import dts from 'rollup-plugin-dts';
 // import typescript from 'rollup-plugin-typescript2';
 import typescript from '@rollup/plugin-typescript';
 // import vuePlugin from 'rollup-plugin-vue';
 // import yaml from '@rollup/plugin-yaml';
 import commonjs from '@rollup/plugin-commonjs';
-import {uglify} from 'rollup-plugin-uglify';
+import { uglify } from 'rollup-plugin-uglify';
 import json from '@rollup/plugin-json';
 // import commonjs from '@rollup/plugin-commonjs'
 import path from 'path';
@@ -75,7 +75,7 @@ function parseBuildConfig () {
         'compiler-web': {
             packageName: 'alins-compiler-web',
             type: 'web',
-            // format: 'esm umd iife',
+            // format: 'iife',
             umdName: 'AlinsWeb',
         },
         'plugin-babel': {
@@ -95,9 +95,9 @@ function parseBuildConfig () {
         'plugin-vite': {
             packageName: 'vite-plugin-alins',
             // format: 'esm cjs',
-            // type: 'node',
-            format: 'esm',
-            external: false,
+            type: 'node',
+            // format: 'esm',
+            // external: false,
         },
         'plugin-webpack': {
             packageName: 'alins-loader',
@@ -114,9 +114,9 @@ function parseBuildConfig () {
             type: 'node',
         },
     };
-    
+
     const buildConfig = BuildMap[dirName];
-    
+
     const {
         packageName, umdName, type
     } = buildConfig;
@@ -129,13 +129,13 @@ function parseBuildConfig () {
             buildConfig.format = 'cjs esm';
         }
     }
-    
+
     const format = buildConfig.format.split(' ');
-    
+
     const dtsFormat = format[0];
-    
-    const extensions = ['.ts', '.d.ts', '.js'];
-    
+
+    const extensions = [ '.ts', '.d.ts', '.js' ];
+
     const inputFile = resolvePackagePath(`${dirName}/src/index.ts`);
     console.log(inputFile);
 
@@ -225,7 +225,7 @@ const createBaseConfig = (format) => {
             typescript(),
             commonjs(),
             nodeResolve({
-                extensions: ['.js'],
+                extensions: [ '.js' ],
             }),
             babel({
                 exclude: 'node_modules/**',
@@ -254,7 +254,7 @@ function createDTSConfig (name) {
             file: resolvePackagePath(`${dirName}/dist/${name}.d.ts`),
             format: 'es',
         },
-        plugins: [dts(), json(), replace(replacement)],
+        plugins: [ dts(), json(), replace(replacement) ],
     };
 }
 

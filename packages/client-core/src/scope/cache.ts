@@ -4,11 +4,11 @@
  * @Description: Coding something
  */
 
-import {transformAsyncDom} from '../element/element';
-import {ITrueElement, IElement, ITextNode, Renderer, getFirstElement} from '../element/renderer';
-import type {IAsyncReturnCall, IReturnCall} from '../type';
-import {getParent, insertBefore} from '../utils';
-import type {IBranchTarget} from './branch';
+import { transformAsyncDom } from '../element/element';
+import { ITrueElement, IElement, ITextNode, Renderer, getFirstElement } from '../element/renderer';
+import type { IAsyncReturnCall, IReturnCall } from '../type';
+import { getParent, insertBefore } from '../utils';
+import type { IBranchTarget } from './branch';
 
 // const DEFAULT_CACHE_KEY = createEmptyJson();
 
@@ -21,7 +21,7 @@ function transformElementToCache (element: ITrueElement|null|(IElement|ITextNode
         return element;
     }
     // @ts-ignore
-    return [element];
+    return [ element ];
 }
 
 function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElement|null {
@@ -35,12 +35,17 @@ function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElem
     return d;
 }
 
+const map = [];
+
+window._map = map;
+
 
 export function createCallCache () {
     // ! call => dom 的cache
     const cacheMap = new WeakMap<IReturnCall|Object, (IElement|ITextNode)[]|null>();
-    // window.cacheMap = cacheMap;
-    
+    map.push(cacheMap);
+    // window._map = map;
+
     let taskList: ((el: any, fn: any)=>void)[] = [];
 
     const managerMap = new WeakMap<IReturnCall, ICacheManager>;
@@ -72,6 +77,7 @@ export function createCallCache () {
             branch.visit();
             const fn = branch.call;
             const item = cacheMap.get(fn);
+            console.log('If Debug cacheMap get', item);
             // ! 需要更新自己与父branch的cache
             // console.log('branch debug:item', branch.id, item);
             if (typeof item !== 'undefined') {
@@ -123,7 +129,6 @@ export function createCallCache () {
             cacheMap.set(key, doms);
             const manager = managerMap.get(key);
             if (manager && !manager.cacheArray) {
-                debugger;
                 // @ts-ignore
                 manager.cacheArray = doms;
                 managerMap.delete(key);
@@ -153,6 +158,7 @@ export function getCurCache () {
     如果没有这个结构 就会导致 缓存异常
 */
 export function createDomCacheManager () {
+    if (!curCache) return null;
     const cache = curCache;
 
     const manager = {
@@ -163,7 +169,7 @@ export function createDomCacheManager () {
                 parent.insertBefore(node, child);
                 return;
             }
-            
+
             if (child.parentElement === parent) {
                 insertBefore(this.cacheArray, node, child);
                 parent.insertBefore(node, child);

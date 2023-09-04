@@ -3,7 +3,7 @@
  * @Date: 2022-11-05 12:19:34
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-08-30 09:42:07
+ * @LastEditTime: 2023-09-04 09:41:00
 -->
 
 # 0.1.0
@@ -55,23 +55,24 @@ feat：
 - [x] 支持 使用 onclick:stop 不带事件名
 - [x] 组件属性结构
 - [x] 去除 .r 需要v的包裹
+- [x] 发包脚本
+- [ ] 多层嵌套的if有问题； if switch 待重构
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
-- [ ] 发包脚本
 - [ ] 文档 & 在线编译工具
 - [ ] eslint-config-alins 验证
 
 next Version new feature
 
+- [x] create-alins
 - [ ] For 类型提示
 - [ ] Async Data 类型标注
 - [ ] alins-router - 官方路由库 （尽可能通用 能够直接使用原生js调用）
-- [ ] alins-ssr - 服务端渲染（尽可能通用 能够直接使用原生js调用）
 - [ ] alins-ui - 官方ui库
 - [ ] alins-store - 状态库
-- [ ] alins-renderer - 利用自定义 renderer 实现跨平台
 - [ ] alins-style style 标签优化 处理 提高css可用性, style 值类型声明 （能够使用reactive库配合着使用原生js使用）
 - [ ] alins-style 支持兼容性扩展
-- [ ] alins-cli、alins-template （base on vite、vite-plugin-alins、eslint-config）
+- [ ] alins-renderer - 利用自定义 renderer 实现跨平台
+- [ ] alins-ssr - 服务端渲染（尽可能通用 能够直接使用原生js调用）
 - [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
 - [ ] For 支持解构
 - [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
@@ -127,7 +128,6 @@ fix
 - [x] fix todo list 删除有问题
 - [x] fix 注释行号比对的bug 
 - [x] fix switch cacheManager
-- [ ] fix if 多层嵌套的问题 cacheManager优化
 
 
 

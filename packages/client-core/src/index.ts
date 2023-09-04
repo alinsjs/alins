@@ -20,6 +20,6 @@ export * from './element/renderer';
 
 export * from 'alins-reactive';
 
-export const version = __VERSION__;
+export const version = '__VERSION__';
 
 export {reactiveBindingEnable} from './element/dom-util';
