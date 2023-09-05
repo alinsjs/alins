@@ -4,17 +4,18 @@
  * @Description: Coding something
  */
 
-import {IIfTarget, _if} from './if';
-import {assignCompData, assignData, computed, isProxy, mockRef, reactive, watch} from 'alins-reactive';
-import {ISwitchCaseList, ISwitchTarget, _switch} from './switch';
+// import {IIfTarget, _if} from './if';
+import { IIfTarget, _if } from './branch/if';
+import { assignCompData, assignData, computed, isProxy, mockRef, reactive, watch } from 'alins-reactive';
+import { ISwitchCaseList, ISwitchTarget, _switch } from './switch';
 import './for';
-import {ICtxUtil, IReturnCall} from './type';
+import { ICtxUtil, IReturnCall } from './type';
 // import {createAnchor, createBranchLink, createCallCache} from './ctx-util';
-import {createAnchor} from './scope/anchor';
-import {createCallCache} from './scope/cache';
-import {createBranchLink} from './scope/branch';
-import {JSX} from './element/element';
-import {mockMap} from './for';
+import { createAnchor } from './scope/anchor';
+import { createCallCache } from './scope/cache';
+import { createBranchLink } from './scope/branch';
+import { JSX } from './element/element';
+import { mockMap } from './for';
 
 export function createContext () {
     const cache = createCallCache();
@@ -30,8 +31,11 @@ export function createContext () {
 
     const ctx = {
         util: ctxUtil,
+        // if: (cond: IIfTarget, call: IReturnCall) => {
+        //     return _if(cond, call, ctxUtil);
+        // },
         if: (cond: IIfTarget, call: IReturnCall) => {
-            return _if(cond, call, ctxUtil);
+            return _if(cond, call);
         },
         switch: (cond: ISwitchTarget, list: ISwitchCaseList) => _switch(cond, list, ctxUtil),
     };
@@ -50,12 +54,12 @@ export const ContextTool = {
         if (typeof shallow !== 'boolean') {
             shallow = typeof v.v === 'object' && isProxy(v.v);
         }
-        return reactive({v}, shallow);
+        return reactive({ v }, shallow);
     },
     c: computed,
     w: watch,
     cc (get: any, set: any) { // 简写，减少编译代码量
-        return computed({get, set});
+        return computed({ get, set });
     },
     e: assignData,
     es: assignCompData,
