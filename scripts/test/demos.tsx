@@ -3,11 +3,11 @@
  * @Date: 2023-08-28 22:19:57
  * @Description: Coding something
  */
-export function forFunc(){
+export function forFunc () {
     const data = use();
 
     function use () {
-        const $d = {list: []};
+        const $d = { list: [] };
         return $d;
     }
 
@@ -19,7 +19,7 @@ export function forFunc(){
 
     return <div id='d1' $$App>
         <If data={data.list.length === 0}>
-        {/* <If data={bool}> */}
+            {/* <If data={bool}> */}
             <div id='d2'>Console is empty.</div>
         </If>
         <Else>
@@ -30,10 +30,10 @@ export function forFunc(){
     </div>;
 }
 
-function SyncHeight(){
+function SyncHeight () {
     let height = 0;
 
-    function syncHeight(el){
+    function syncHeight (el) {
         const ro = new ResizeObserver(() => height = el.offsetHeight);
         ro.observe(el);
         return () => ro.disconnect();
@@ -45,15 +45,15 @@ function SyncHeight(){
     </div>;
 }
 
-function seitchCase(){
+function switchCase () {
     const data = use();
 
     function use () {
-        const $d = {list: []};
+        const $d = { list: [] };
         return $d;
     }
 
-    let $n = 0;
+    const $n = 0;
 
     // todo if 和 for 冲突问题
 
@@ -68,5 +68,39 @@ function seitchCase(){
                 </For>
             </Case>
         </Switch>
+    </div>;
+}
+
+export function multiIf () {
+    let a = 0;
+
+    a ++;
+
+    <div $$App>
+    11
+        <If data={a < 4}>
+        a &lt; 4;
+            <If data={a < 3}>
+            1: a &lt; 3;
+                <If data={a < 2}>
+                11: a = 1;
+                </If>
+                <Else>
+                11: a = 2
+                </Else>
+            </If>
+            <Else>
+            1: a = 3
+            </Else>
+        22
+        </If>
+        <Else>
+            <If data={a < 5}>
+            2:a = 4
+            </If>
+            <Else>
+            2:a &gt; 6
+            </Else>
+        </Else>
     </div>;
 }

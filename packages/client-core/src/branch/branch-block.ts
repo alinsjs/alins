@@ -36,10 +36,11 @@ const BranchTree = (() => {
         }
     };
 })();
-
+let id = 0;
 export class BranchBlock {
     start = Renderer.createEmptyMountNode();
     end = Renderer.createEmptyMountNode();
+    id = id++;
     cache: BranchCache;
 
     parent: BranchBlock|null = null;
@@ -100,7 +101,6 @@ export class BranchBlock {
         this.activeIndex = i;
         const result = this.getCache(call);
 
-
         this.refresh(result);
     }
 
@@ -111,8 +111,9 @@ export class BranchBlock {
                 this.end.parentElement?.insertBefore(result, this.end);
             }
             this.parent?.refreshCache(this);
-            // this.triggerRefresh();
+            this.triggerRefresh();
         } else {
+            // ! 对于不在dom树的元素 需要加入待刷新队列 后续刷新
             this.parent?.addRefreshCall(this.refresh.bind(this, result));
         }
     }
@@ -127,10 +128,12 @@ export class BranchBlock {
 
     triggerRefresh () {
         if (this.refreshList.length) {
-            this.refreshList.forEach(fn => {fn();});
-            this.refreshList = [];
+            const arr = this.refreshList;
+            this.refreshList = []; // ! 需要先清空后调用
+            arr.forEach(fn => {fn();});
+        } else {
+            this.parent?.triggerRefresh();
         }
-        this.parent?.triggerRefresh();
     }
 
     quit () {

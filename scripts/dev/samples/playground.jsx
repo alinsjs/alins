@@ -1,42 +1,24 @@
-let a = 0;
 
-a ++;
+const data = use();
 
-{/* <div $$App>
-    <If data={a < 1}>
-1: a &lt; 1
-    </If>
-    <Else>
-1: a &gt; 1
-    </Else>
-</div>; */}
-<div $$App>
-    11
-    <If data={a < 4}>
-        a &lt; 4;
-        <If data={a < 3}>
-            1: a &lt; 3;
-            <If data={a < 2}>
-                11: a = 1;
-            </If>
-            <Else>
-                11: a = 2
-            </Else>
-        </If>
-        <Else>
-            1: a = 3
-        </Else>
-        22
-    </If>
-    <Else>
-        <If data={a < 5}>
-            2:a = 4
-        </If>
-        <Else>
-            2:a &gt; 6
-        </Else>
-    </Else>
+function use () {
+    const $d = { list: [] };
+    return $d;
+}
+
+const $n = 0;
+
+// todo if 和 for 冲突问题
+
+<div id='d1' $$App>
+    <Switch data={data.list.length}>
+        <Case data={0}>
+            <div id='d2'>Console is empty.</div>
+        </Case>
+        <Case data={1}>
+            <For data={data.list}>
+                <div id='d3'>1:{$item}</div>
+            </For>
+        </Case>
+    </Switch>
 </div>;
-
-// a.v = 4
-// a.v = 1
