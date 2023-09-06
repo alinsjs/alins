@@ -5,9 +5,9 @@
  */
 import { IWatchRefTarget, watch, getCurCleaner, useCurCleaner } from 'alins-reactive';
 import {
-    IReturnCall, ICtxUtil
+    IReturnCall
 } from '../type';
-import { IGeneralElement, ITrueElement, Renderer } from '../element/renderer';
+import { IGeneralElement, Renderer } from '../element/renderer';
 import { empty } from 'alins-utils';
 import { BranchBlock } from './branch-block';
 
@@ -23,7 +23,7 @@ export interface IIfReturn {
 // const _anchorMap = [] as any[];
 // window._am = _anchorMap;
 
-export class IfBlock implements IIfReturn {
+class IfBlock implements IIfReturn {
     private branch: BranchBlock;
 
     private activeIndex = -1;
@@ -80,8 +80,8 @@ export class IfBlock implements IIfReturn {
             const value = typeof ref === 'function' ? ref() : ref.v;
             if (value) {
                 this.matched = true;
-                if (!isEnd) this.activeIndex = currentIndex; a;
-                const dom = this.branch.init(call);
+                if (!isEnd) this.activeIndex = currentIndex;
+                const dom = this.branch.replace(id);
                 if (this.returnEle === empty && this.branch.returned(call)) {
                     this.returnEle = dom;
                 }

@@ -3,7 +3,7 @@
  * @Date: 2023-06-29 15:18:14
  * @Description: Coding something
  */
-import type {NodePath} from '@babel/traverse';
+import type { NodePath } from '@babel/traverse';
 import type {
     BlockStatement,
     CallExpression,
@@ -19,9 +19,9 @@ import type {
     JSXAttribute,
     ObjectProperty
 } from '@babel/types';
-import type {IBabelType} from './types';
-import {BlockReturnType, isBlockReturned, isEventEmptyDeco} from './is';
-import type {Module} from './context';
+import type { IBabelType } from './types';
+import { BlockReturnType, isBlockBreak, isBlockReturned, isEventEmptyDeco } from './is';
+import type { Module } from './context';
 
 export const ImportScope = (() => {
     let fn: any = null;
@@ -199,7 +199,7 @@ export function createComputed (node: VariableDeclarator) {
 }
 
 function createComputeCall (fn?: any) {
-    return createCtxCall(Names.ComputedFn, [fn]);
+    return createCtxCall(Names.ComputedFn, [ fn ]);
 }
 
 export function createCtxCall (name: string, args: any[]) {
@@ -224,7 +224,7 @@ export function createJsxCompute (node: Expression|JSXExpressionContainer, isCom
     );
 
     if (exp.type === 'UpdateExpression') {
-        call = createCtxCall('mu', [call]);
+        call = createCtxCall('mu', [ call ]);
     }
 
     // 标注当前是否在JSX组件中，组件中需要被转成 _$$.c()
@@ -251,7 +251,7 @@ export function createReact (node: VariableDeclarator) {
     // );
     // debugger;
     // console.log('wrap react-------', node.id.name);
-    const args: any[] = [node.init];
+    const args: any[] = [ node.init ];
     if (node._isShallow) {
         args.push(t.booleanLiteral(true));
     }
@@ -366,7 +366,7 @@ function transformToBlock (body: any) {
     return body;
 }
 
-export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i = 0) {
+export function traverseIfStatement (node: IfStatement, map: any = { elif: [] }, i = 0) {
     // @ts-ignore
     node._traversed = true;
 
@@ -428,8 +428,13 @@ export function createSetAsyncArrowFunc (body: BlockStatement) {
 export function traverseSwitchStatement (node: SwitchStatement) {
     const discr = t.arrowFunctionExpression([], node.discriminant);
     let isReturnJsx = false;
+
+
+    let childrenList: any[][] = [];
+    let isLastBreak = true;
+
     const cases = t.arrayExpression(node.cases.map(item => {
-        const {test, consequent: cons} = item;
+        const { test, consequent: cons } = item;
         let body: any = [];
         for (const single of cons) {
             if (single.type === 'BlockStatement') {
@@ -440,23 +445,40 @@ export function traverseSwitchStatement (node: SwitchStatement) {
                 body.push(single);
             }
         }
+        const isBreak = isBlockBreak(body);
+
+        if (!isLastBreak) {
+            childrenList.forEach(item => {
+                item.push(...body);
+            });
+        }
+        if (!isBreak) {
+            childrenList.push(body);
+        } else {
+            childrenList = [];
+        }
+        isLastBreak = isBreak;
+
         body = transformToBlock(body);
         if (!isReturnJsx) {
             isReturnJsx = (isBlockReturned(body) === BlockReturnType.Jsx);
         }
-        let array = t.arrayExpression([
+        const array = t.arrayExpression([
             // ! !test 为 default
             !test ? t.nullLiteral() : test,
             body.length === 0 ? t.nullLiteral() : t.arrowFunctionExpression([], body),
         ]);
-        // @ts-ignore
-        item._setBrk = () => {
+        if (isBreak) {
             array.elements.push(t.booleanLiteral(true));
-            // @ts-ignore
-            item._setBrk = null;
-            // @ts-ignore
-            array = null;
-        };
+        }
+        // // @ts-ignore
+        // item._setBrk = () => {
+
+        //     // @ts-ignore
+        //     item._setBrk = null;
+        //     // @ts-ignore
+        //     array = null;
+        // };
         return array;
     }));
 
@@ -501,7 +523,7 @@ export function markMNR (fn: any, returnJsxCall?: ()=>void) {
     if (!returnType) {
         fn._mnrMarked = true;
         // ! 标注是否有返回值
-        return createCtxCall('mnr', [fn]);
+        return createCtxCall('mnr', [ fn ]);
     } else if (returnType === BlockReturnType.Jsx) {
         returnJsxCall?.();
     }
@@ -555,7 +577,7 @@ export function extendCallee (isComp: boolean) {
 export function createExtendCalleeWrap (arg: any, isComp: boolean) {
     return t.callExpression(
         extendCallee(isComp),
-        [arg]
+        [ arg ]
     );
 }
 
@@ -581,7 +603,7 @@ export function parseAttributes (attrs: JSXAttribute[], handleReactive?: boolean
 export function parseJsxAttrShort (path: NodePath<JSXAttribute>) {
     const nodeValue = path.node.value;
     if (nodeValue) return false;
-        
+
     const newAttr = createNewJSXAttribute(path.node);
     if (newAttr) {
         path.replaceWith(newAttr);
@@ -638,7 +660,7 @@ export function createWrapAttr (name: string, value: any, wrap = false, handleRe
 export function getObjectPropValue (node: ObjectProperty, mock = false) {
     const value = node.value;
     if (value.type === 'AssignmentPattern') {
-        if (mock) value.right = createCtxCall('mf', [value.right]);
+        if (mock) value.right = createCtxCall('mf', [ value.right ]);
         return value.left;
     }
     return value;

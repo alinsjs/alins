@@ -46,10 +46,11 @@ function SyncHeight () {
 }
 
 function switchCase () {
+
     const data = use();
 
     function use () {
-        const $d = { list: [] };
+        const $d = { list: [ 1 ] };
         return $d;
     }
 
@@ -59,16 +60,23 @@ function switchCase () {
 
     <div id='d1' $$App>
         <Switch data={data.list.length}>
-            <Case data={0}>
+            <Case data={1} break={false}>
                 <div id='d2'>Console is empty.</div>
             </Case>
-            <Case data={1}>
+            <Case data={2}>
                 <For data={data.list}>
                     <div id='d3'>1:{$item}</div>
                 </For>
             </Case>
+            <Case data={3} break={false}>
+    3333
+            </Case>
+            <Case data={4}>
+    44444
+            </Case>
         </Switch>
     </div>;
+
 }
 
 export function multiIf () {

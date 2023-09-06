@@ -36,11 +36,11 @@ const BranchTree = (() => {
         }
     };
 })();
-let id = 0;
+// let id = 0;
 export class BranchBlock {
     start = Renderer.createEmptyMountNode();
     end = Renderer.createEmptyMountNode();
-    id = id++;
+    // id = id++;
     cache: BranchCache;
 
     parent: BranchBlock|null = null;
@@ -53,9 +53,11 @@ export class BranchBlock {
 
     refreshList: any[] = [];
 
+    private initilized = false;
+
     constructor () {
         this.cache = new BranchCache();
-        this.start.__branch = this;
+        this.start.__branch = this; // todo 删除到这个地方的时候需要缓存一下
         BranchTree.next(this);
         if (!window.Root) window.Root = this;
     }
@@ -79,10 +81,7 @@ export class BranchBlock {
         return this.cache.get(call);
     }
 
-    init (call: IReturnCall) {
-        const dom = this.getCache(call);
-
-        this.activeIndex = this.branchCalls.indexOf(call);
+    private initAnchor (dom: any) {
 
         if (Renderer.isFragment(dom)) {
             // @ts-ignore
@@ -101,7 +100,13 @@ export class BranchBlock {
         this.activeIndex = i;
         const result = this.getCache(call);
 
-        this.refresh(result);
+        if (!this.initilized) {
+            this.initilized = true;
+            return this.initAnchor(result);
+        } else {
+            this.refresh(result);
+            return result;
+        }
     }
 
     refresh (result: any) {

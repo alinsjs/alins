@@ -1,15 +1,15 @@
 
-import type {NodePath, TraverseOptions} from '@babel/traverse';
-import type {Program} from '@babel/types';
-import type {IBabelType} from './types';
-import {parseCommentMulti, parseVarDeclCommentReactive} from './comment';
-import {parseInnerComponent} from './component/component';
-import {currentModule as ctx, enterContext, exitContext} from './context';
+import type { NodePath, TraverseOptions } from '@babel/traverse';
+import type { Program } from '@babel/types';
+import type { IBabelType } from './types';
+import { parseCommentMulti, parseVarDeclCommentReactive } from './comment';
+import { parseInnerComponent } from './component/component';
+import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
     createAlinsCtx, createEmptyString, createExtendCalleeWrap, createImportAlins, createUnfInit,
     extendCallee, getObjectPropValue, getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
 } from './parse-utils';
-import {isJsxExtendCall, isJsxExtendDef, isOriginJSXElement} from './is';
+import { isJsxExtendCall, isJsxExtendDef, isOriginJSXElement } from './is';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
@@ -116,7 +116,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                     path.skip();
                     return;
                 }
-                
+
                 parseVarDeclCommentReactive(path.node);
 
                 if (path.node._isCtx) { // ! 是否是生成的alins ctx
@@ -387,16 +387,16 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         BreakStatement (path) {
             // console.log(ctx.curScope);
             if (ctx.curScope.inIf || ctx.curScope.inSwitch) {
-                if (ctx.curScope.inSwitch) {
-                    if (path.parent.type === 'SwitchCase') {
-                        // @ts-ignore
-                        path.parent._setBrk?.();
-                    } else {
-                        const parent = path.findParent(node => node.type === 'SwitchCase');
-                        // @ts-ignore
-                        parent?.node._setBrk?.();
-                    }
-                }
+                // if (ctx.curScope.inSwitch) {
+                //     if (path.parent.type === 'SwitchCase') {
+                //         // @ts-ignore
+                //         path.parent._setBrk?.();
+                //     } else {
+                //         const parent = path.findParent(node => node.type === 'SwitchCase');
+                //         // @ts-ignore
+                //         parent?.node._setBrk?.();
+                //     }
+                // }
                 path.replaceWith(getT().returnStatement());
             }
         }

@@ -4,11 +4,11 @@
  * @Description: Coding something
  */
 
-import {createContext, version} from 'alins';
-import {parseWebAlins} from './parser';
+import { ContextTool, version } from 'alins';
+import { parseWebAlins } from './parser';
 
 function onDOMContentLoaded () {
-    const names = ['alins', 'babel'];
+    const names = [ 'alins', 'babel' ];
     for (const name of names) {
         const scripts = document.querySelectorAll(`script[type="text/${name}"]`);
         // @ts-ignore
@@ -34,7 +34,7 @@ async function onSingleScript (script: HTMLScriptElement, web = true, ts = false
     } else {
         code = script.innerText;
     }
-    const output = parseWebAlins(code, {useImport: !web, ts});
+    const output = parseWebAlins(code, { useImport: !web, ts });
     // console.warn(code);
     // console.warn('============>');
     if (__DEV__) console.warn('Compiler output:', output);
@@ -49,7 +49,7 @@ async function onSingleScript (script: HTMLScriptElement, web = true, ts = false
 
 if (typeof window !== 'undefined') {
     // @ts-ignore
-    window.Alins = {_$$: createContext, version};
+    window.Alins = { _$$: ContextTool, version };
     window.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 }
 

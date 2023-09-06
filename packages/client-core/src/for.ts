@@ -9,10 +9,9 @@ import {
     IOprationAction, OprateType, registArrayMap,
     createCleaner, ICleaner, mockRef
 } from 'alins-reactive';
-import {IProxyData, util} from 'alins-utils';
-import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
-import {createDomCacheManager} from './scope/cache';
-import {getParent} from './utils';
+import { IProxyData, util } from 'alins-utils';
+import { IFragment, IGeneralElement, ITrueElement, Renderer } from './element/renderer';
+import { getParent } from './utils';
 
 
 /*
@@ -49,7 +48,7 @@ export function map (
     const EndMap: ITrueElement[] = [];
     const Cleaners: ICleaner[] = [];
 
-    const cacheManager = createDomCacheManager();
+    const cacheManager = createDomCacheManager(); // todo
 
     let head: ITrueElement;
 
@@ -65,11 +64,11 @@ export function map (
     // window.EndMap = EndMap;
 
     const createScope = (item: any, i: number): IProxyData<any> => {
-        item = createProxy({v: item}, {shallow: true});
-        const scope = {[k]: item};
+        item = createProxy({ v: item }, { shallow: true });
+        const scope = { [k]: item };
 
         if (ik) { // 表示有第二个参数
-            scope[ik] = createProxy({v: i}, {shallow: true});
+            scope[ik] = createProxy({ v: i }, { shallow: true });
         }
         return scope;
     };
@@ -114,10 +113,10 @@ export function map (
         }
         // if(i===0)debugger;
         // console.log(head, i);
-        
+
         scopes.push(scope);
         ends.push(end);
-        
+
         return child;
     };
     for (let i = 0; i < n; i++) {
@@ -126,7 +125,7 @@ export function map (
         container.appendChild(child as any);
     }
     container.appendChild(ScopeEnd as any);
-    watchArray(list, ({index, count, data, type}: IOprationAction) => {
+    watchArray(list, ({ index, count, data, type }: IOprationAction) => {
         switch (type) {
             case OprateType.Push: {
                 // console.warn('OprateType.Push', index, count, data, type);
@@ -167,7 +166,7 @@ export function map (
                     const endPos = startPos + count;
                     // @ts-ignore
                     const endDom = EndMap[endPos]?.nextSibling || ScopeEnd;
-    
+
                     const startDom = ((startPos < 0) ? (head || ScopeEnd) : EndMap[startPos]) as Node;
                     while (startDom.nextSibling && startDom !== endDom && startDom.nextSibling !== endDom) {
                         const dom = startDom.nextSibling;
@@ -190,7 +189,7 @@ export function map (
                         cleaner.clean();
                     });
                 };
-    
+
                 // items.forEach(item => item[util].release());
                 // console.warn('【watch array remove】', index, count, data);
 
