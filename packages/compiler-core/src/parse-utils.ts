@@ -44,10 +44,7 @@ export const ImportScope = (() => {
     };
 })();
 
-let currentCtx: any = null;
-
 export const Names = {
-    _Ctx: '_$',
     AliasPrefix: '_$',
     _CtxFn: '_$$',
     get CtxFn () {
@@ -63,15 +60,6 @@ export const Names = {
     TempResult: '_$R',
     ExtendFn: 'e',
     ExtendCompFn: 'es',
-    get Ctx () {
-        // 部分使用ctx时候并不是在当前作用域
-        // 比如因为有赋值导致的react和computed
-        const ctx = currentCtx;
-        // console.log('AlinsCtx use', ctx);
-        // if (!ctx) debugger;
-        if (!ctx._used) ctx._used = true;
-        return this._Ctx;
-    },
 };
 
 
@@ -130,26 +118,6 @@ export function createVarDeclarator (id: string, init: any) {
         t.identifier(id),
         init,
     );
-}
-let id = 0;
-export function createAlinsCtx () {
-    // console.log('AlinsCtx 111', top);
-    currentCtx = t.variableDeclaration(
-        'const',
-        [
-            t.variableDeclarator(
-                t.identifier(Names._Ctx),
-                t.callExpression(
-                    t.identifier(Names.CtxFn),
-                    []
-                ),
-            )
-        ]
-    );
-    currentCtx._isCtx = true;
-    currentCtx.id = id++;
-    currentCtx._skip = false;
-    return currentCtx;
 }
 
 export function createMemberExp (id: string, prop: string) {
@@ -346,17 +314,6 @@ export function createExportAliasInit (alias: string, name: string) {
     );
 }
 
-// export function replaceIfStatement () {
-//     return t.callExpression(
-//         createMemberExp(Names.Ctx, 'if'),
-//         [
-//             t.arrowFunctionExpression([], createMemberExp(alias, v)),
-//             t.arrowFunctionExpression([], t.assignmentExpression('=', t.identifier(name), t.identifier(v))),
-//             t.booleanLiteral(false),
-//         ]
-//     );
-// }
-
 function transformToBlock (body: any) {
     // 对于没有{}的语句 进行block包裹
     if (body.type !== 'BlockStatement') {
@@ -435,34 +392,34 @@ export function traverseSwitchStatement (node: SwitchStatement) {
 
     const cases = t.arrayExpression(node.cases.map(item => {
         const { test, consequent: cons } = item;
-        let body: any = [];
+        const bodyArr: any = [];
         for (const single of cons) {
             if (single.type === 'BlockStatement') {
-                body.push(...single.body);
+                bodyArr.push(...single.body);
             } else if (single.type === 'EmptyStatement') {
                 continue;
             } else {
-                body.push(single);
+                bodyArr.push(single);
             }
         }
-        const isBreak = isBlockBreak(body);
+        const body = transformToBlock(bodyArr);
+        const returnType = isBlockReturned(body);
 
+        if (!isReturnJsx) {
+            isReturnJsx = (returnType === BlockReturnType.Jsx);
+        }
+
+        const isBreak = !!returnType || isBlockBreak(bodyArr);
         if (!isLastBreak) {
-            childrenList.forEach(item => {
-                item.push(...body);
-            });
+            childrenList.forEach(item => {item.push(...bodyArr);});
         }
         if (!isBreak) {
-            childrenList.push(body);
+            childrenList.push(bodyArr);
         } else {
             childrenList = [];
         }
         isLastBreak = isBreak;
 
-        body = transformToBlock(body);
-        if (!isReturnJsx) {
-            isReturnJsx = (isBlockReturned(body) === BlockReturnType.Jsx);
-        }
         const array = t.arrayExpression([
             // ! !test 为 default
             !test ? t.nullLiteral() : test,
@@ -488,7 +445,7 @@ export function traverseSwitchStatement (node: SwitchStatement) {
         isReturnJsx,
         node: t.callExpression(
             t.memberExpression(t.callExpression(
-                createMemberExp(Names.Ctx, 'switch'),
+                createMemberExp(Names.CtxFn, 'sw'),
                 [ discr, cases ]
             ), t.identifier('end')),
             [ endFunc ]

@@ -18,7 +18,6 @@ declare module '@babel/types' {
     interface CommonNode {
         _isReplace?: boolean; // 是否是完全赋值 const a=b;
         _isForUpdate?: boolean; // 是否是for循环的初始化_isCtx
-        _isCtx?: boolean; // ! 是否是生成的alins ctx
         _shouldRemoved?: boolean; // 是否需要标记在exit时删除node
         _importReactive?: '' | '*' | string[]; // import 语句标记是否是reactive
         _isComReact?: boolean; // 是否标记为reactive

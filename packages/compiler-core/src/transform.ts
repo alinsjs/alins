@@ -6,7 +6,7 @@ import { parseCommentMulti, parseVarDeclCommentReactive } from './comment';
 import { parseInnerComponent } from './component/component';
 import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
-    createAlinsCtx, createEmptyString, createExtendCalleeWrap, createImportAlins, createUnfInit,
+    createEmptyString, createExtendCalleeWrap, createImportAlins, createUnfInit,
     extendCallee, getObjectPropValue, getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
 } from './parse-utils';
 import { isJsxExtendCall, isJsxExtendDef, isOriginJSXElement } from './is';
@@ -20,7 +20,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 const body = path.node.body;
                 for (let i = 0; i < body.length; i++) {
                     if (body[i]?.type !== 'ImportDeclaration') {
-                        body.splice(i, 0, createAlinsCtx());
                         if (!useImport) {
                             ImportScope.regist(() => {
                                 body.splice(i, 0, createImportAlins(useImport));
@@ -119,10 +118,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
 
                 parseVarDeclCommentReactive(path.node);
 
-                if (path.node._isCtx) { // ! 是否是生成的alins ctx
-                    path.node._isCtx = false;
-                    ctx.ctx = path;
-                }
                 if (!ctx.enter(path)) return;
 
                 // ! computed set 解析

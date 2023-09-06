@@ -60,6 +60,8 @@ feat：
 - [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
 - [ ] 文档 & 在线编译工具
 - [ ] eslint-config-alins 验证
+- [ ] 重构branch、if、switch、ctx逻辑
+- [ ] 清理编译器ctx下相关逻辑
 
 next Version new feature
 

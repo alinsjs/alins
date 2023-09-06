@@ -1,7 +1,7 @@
-import type {Identifier, IfStatement, Statement} from '@babel/types';
-import {getT, markMNR, Names, traverseIfStatement} from '../parse-utils';
-import {ControlScope} from './control-scope';
-import {createScopeStack} from './scope-stack';
+import type { Identifier, IfStatement, Statement } from '@babel/types';
+import { getT, markMNR, Names, traverseIfStatement } from '../parse-utils';
+import { ControlScope } from './control-scope';
+import { createScopeStack } from './scope-stack';
 
 /*
  * @Author: chenzhongsheng
@@ -46,7 +46,7 @@ export class IfScope extends ControlScope<IfStatement> {
             bodyFn._call = anchor;
         };
 
-        setAnchor(t.identifier(Names.Ctx), map.if.id, [ map.if.test, map.if.fn ]);
+        setAnchor(t.identifier(Names.CtxFn), map.if.id, [ map.if.test, map.if.fn ]);
 
         for (const item of map.elif) {
             setAnchor(anchor, item.id, [ item.test, item.fn ]);
