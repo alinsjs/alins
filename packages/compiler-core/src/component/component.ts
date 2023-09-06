@@ -5,8 +5,9 @@
  */
 import type { NodePath } from '@babel/traverse';
 import type { Identifier, JSXAttribute, JSXElement, JSXOpeningElement, Node } from '@babel/types';
+import { AlinsVar, ImportManager } from '../controller/import-manager';
 import { isOriginJSXElement } from '../is';
-import { getT, Names, parseAttributes } from '../parse-utils';
+import { createCtxCall, getT, parseAttributes } from '../parse-utils';
 
 const CompNames = {
     For: 'For',
@@ -131,7 +132,7 @@ function parseIf (path: NodePath<JSXElement>) {
         object: any, id: Identifier, args: any[],
     ) => {
         anchor = t.callExpression(
-            t.memberExpression(object, id),
+            id ? t.memberExpression(object, id) : object,
             args
         );
         if (args.length > 0)args[args.length - 1]._call = anchor;
@@ -146,7 +147,7 @@ function parseIf (path: NodePath<JSXElement>) {
 
     const handleNext = (path: NodePath<JSXElement>) => {
         let end = false;
-        let object: any, id: Identifier, args: any[];
+        let object: any, id: Identifier|null, args: any[];
 
         const node = path.node;
 
@@ -156,8 +157,8 @@ function parseIf (path: NodePath<JSXElement>) {
         switch (name) {
             case CompNames.If: {
                 parseComponentAttr(node);
-                object = t.identifier(Names.Ctx);
-                id = t.identifier('if');
+                object = ImportManager.use(AlinsVar.If);
+                id = null;
                 args = [
                     t.arrowFunctionExpression([], getExp(node.openingElement)),
                     wrapChildren(node.children),
@@ -267,13 +268,10 @@ function parseSwitch (path: NodePath<JSXElement>) {
         }
     }
 
-    const switchNode = t.callExpression(
-        t.memberExpression(t.identifier(Names.Ctx), t.identifier('switch')),
-        [
-            t.arrowFunctionExpression([], getExp(node.openingElement)),
-            t.arrayExpression(array)
-        ]
-    );
+    const switchNode = createCtxCall(AlinsVar.Switch, [
+        t.arrowFunctionExpression([], getExp(node.openingElement)),
+        t.arrayExpression(array)
+    ]);
 
     path.replaceWith(t.callExpression(
         t.memberExpression(switchNode, t.identifier('end')),
@@ -301,10 +299,7 @@ function parseAsync (path: NodePath<JSXElement>) {
         t.returnStatement(wrapChildren(node.children, null))
     ]);
 
-    path.replaceWith(t.callExpression(
-        t.memberExpression(t.identifier(Names.CtxFn), t.identifier('ce')),
-        [ t.arrowFunctionExpression([], body, true) ]
-    ));
+    path.replaceWith(createCtxCall(AlinsVar.Create, [ t.arrowFunctionExpression([], body, true) ]));
 }
 
 function parseShow (path: NodePath<JSXElement>) {

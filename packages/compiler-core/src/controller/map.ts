@@ -5,11 +5,12 @@
  */
 // map 方法中有返回值为jsx时 对map进行转译
 
-import type {CallExpression} from '@babel/types';
-import type {Module} from '../context';
-import {isOriginJSXElement} from '../is';
-import {createCtxCall, getT, parseFirstMemberObject} from '../parse-utils';
-import {ControlScope} from './control-scope';
+import type { CallExpression } from '@babel/types';
+import type { Module } from '../context';
+import { isOriginJSXElement } from '../is';
+import { createCtxCall, getT, parseFirstMemberObject } from '../parse-utils';
+import { ControlScope } from './control-scope';
+import { AlinsVar } from './import-manager';
 
 export class MapScope extends ControlScope<CallExpression> {
 
@@ -62,7 +63,7 @@ export class MapScope extends ControlScope<CallExpression> {
             //     t.stringLiteral(this.indexKeyName),
             // );
             this.path.replaceWith(
-                createCtxCall('mm', [
+                createCtxCall(AlinsVar.MockMap, [
                     // @ts-ignore
                     node.callee.object,
                     ...this.path.node.arguments,

@@ -3,7 +3,7 @@
  * @Date: 2023-07-02 21:55:39
  * @Description: Coding something
  */
-import { IWatchRefTarget, watch, getCurCleaner, useCurCleaner } from 'alins-reactive';
+import { IWatchRefTarget, watch } from 'alins-reactive';
 import {
     IReturnCall
 } from '../type';
@@ -37,18 +37,13 @@ class IfBlock implements IIfReturn {
         if (this.activeIndex === i) return true;
         this.activeIndex = i;
         this.branch.replace(i);
-        // useCurCleaner(cleaner, () => {
-        //     console.log('If debug replacebranch');
-        //     anchor.replaceBranch(branch);
-        // });
-        // setCurCleaner(cleaner);
-        console.warn('switch node', i);
+        // console.warn('switch node', i);
         // ! 编译时注入的returned
         return this.branch.returned(i);
     }
 
     private onDataChange (bs: boolean[]) {
-        console.warn('if onDataChange', bs);
+        // console.warn('if onDataChange', bs);
         const n = bs.length;
         for (let i = 0; i < n; i++) {
             if (bs[i]) {

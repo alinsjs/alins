@@ -3,13 +3,14 @@
  * @Date: 2023-06-30 16:07:45
  * @Description: Coding something
  */
-import type {NodePath} from '@babel/traverse';
-import type {CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator} from '@babel/types';
-import {MapScope} from './controller/map';
-import {isComponentFunc, isFuncExpression, isJsxCallee} from './is';
-import {getObjectPropValue, ImportScope, initCurModule} from './parse-utils';
-import {Scope} from './scope';
-import {INodeTypeMap} from './types';
+import type { NodePath } from '@babel/traverse';
+import type { CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator } from '@babel/types';
+import { ImportManager } from './controller/import-manager';
+import { MapScope } from './controller/map';
+import { isComponentFunc, isJsxCallee } from './is';
+import { getObjectPropValue, initCurModule } from './parse-utils';
+import { Scope } from './scope';
+import { INodeTypeMap } from './types';
 
 export let currentModule: Module = null as any;
 
@@ -39,17 +40,12 @@ export class Module {
     curScope: Scope = null as any;
     curDeclarationType: VariableDeclaration['kind'] = 'var';
     id = 0;
-    ctx: NodePath<Node>; // ! 当前的 alins ctx 用不到的话需要移除出去
     constructor (path: NodePath<Program>) {
         this.id = moduleId++;
         this.enterScope(path);
     }
     exitModule () {
-        // @ts-ignore
-        if (this.ctx && !this.ctx.node._used) {
-            ImportScope.unuse();
-            this.ctx.remove();
-        }
+
     }
     enterScope (path: NodePath<Node>, isFunc = false) {
 
@@ -61,14 +57,11 @@ export class Module {
         newScope.parent = this.curScope;
         newScope.deep = this.curScope ? (this.curScope.deep + 1) : 0;
         this.curScope = newScope;
-        // console.log('AlinsCtx enterScope', newScope.id, newScope.deep, path.toString());
-        // debugger;
     }
     exitScope () {
         // iii --;
         // console.log('SCOPE_DEBUG: exitScope', this.curScope?.inJsxTrans, path?.toString(), iii);
         if (this.curScope.inJsxTrans) return;
-        // ! 没有使用到的 ctx 则删除
         const scope = this.curScope;
         // debugger;
         scope.exit();
@@ -130,7 +123,7 @@ export class Module {
     }
 
     enterIdentifier (path: NodePath<Identifier>) {
-        const {node, parent} = path;
+        const { node, parent } = path;
         // @ts-ignore
         if (node._deco) return; // 装饰器jsx直接表达式需要跳过 ! value:number={a}
         const ptype = parent.type;
@@ -217,7 +210,7 @@ export class Module {
 
     jsxFlagStackDeep = 0;
     checkJsxComponent (path: NodePath<FunctionDeclaration|VariableDeclarator>) {
-        
+
         if (isComponentFunc(path.node)) {
             // 首字母大写的函数
             // @ts-ignore

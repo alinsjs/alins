@@ -7,9 +7,10 @@
 import {
     createProxy, isProxy, watchArray,
     IOprationAction, OprateType, registArrayMap,
-    createCleaner, ICleaner, mockRef
+    createCleaner, ICleaner, mockRef, useCurCleaner
 } from 'alins-reactive';
 import { IProxyData, util } from 'alins-utils';
+import { createDomCacheManager } from './branch/branch-block';
 import { IFragment, IGeneralElement, ITrueElement, Renderer } from './element/renderer';
 import { getParent } from './utils';
 
@@ -47,6 +48,7 @@ export function map (
     const ScopeEnd = Renderer.createEmptyMountNode();
     const EndMap: ITrueElement[] = [];
     const Cleaners: ICleaner[] = [];
+    // window._Cleaners = Cleaners;
 
     const cacheManager = createDomCacheManager(); // todo
 
@@ -83,9 +85,11 @@ export function map (
         // console.log('cc', item, i);
         const scope = createScope(item, i);
 
-        cleaners.push(createCleaner());
+        const cleaner = createCleaner();
 
-        let child = call(scope[k], scope[ik] || i);
+        cleaners.push(cleaner);
+
+        let child = useCurCleaner(cleaner, () => call(scope[k], scope[ik] || i));
 
         // @ts-ignore
         let end: ITrueElement = child;
@@ -136,8 +140,8 @@ export function map (
                     // @ts-ignore
                     doc.appendChild(child);
                 }
-                // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
                 cacheManager.insertBefore(doc, ScopeEnd, container);
+                // getParent(ScopeEnd, container).insertBefore(doc, ScopeEnd);
             };break;
             case OprateType.Replace: {
                 // console.warn('OprateType.Replace', index, count, data, type);
@@ -171,6 +175,7 @@ export function map (
                     while (startDom.nextSibling && startDom !== endDom && startDom.nextSibling !== endDom) {
                         const dom = startDom.nextSibling;
                         cacheManager.removeElement(dom);
+                        // Renderer.removeElement(dom);
                     }
                     if (startPos < 0) {
                         // @ts-ignore
@@ -179,6 +184,7 @@ export function map (
                             head = startDom.nextSibling;
                             // @ts-ignore
                             cacheManager.removeElement(startDom);
+                            // Renderer.removeElement(startDom);
                         } else {
                             head = ScopeEnd;
                         }
@@ -186,6 +192,7 @@ export function map (
                     EndMap.splice(index, count);
                     ScopeItems.splice(index, count);
                     Cleaners.splice(index, count).forEach(cleaner => {
+                        // console.log('clean lns');
                         cleaner.clean();
                     });
                 };
@@ -197,6 +204,7 @@ export function map (
                     removeFunc();
                 } else {
                     cacheManager.addTask(removeFunc);
+                    // removeFunc();
                 }
 
             };break;
@@ -225,6 +233,7 @@ export function map (
                     insertFunc();
                 } else {
                     cacheManager.addTask(insertFunc);
+                    // insertFunc();
                 }
                 // console.warn('【watch array insert】', index, count, data);
             };break;

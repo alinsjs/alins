@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import type {NodePath} from '@babel/traverse';
+import type { NodePath } from '@babel/traverse';
 import type {
     Expression,
     FunctionDeclaration,
@@ -15,18 +15,19 @@ import type {
     VariableDeclaration,
     VariableDeclarator,
 } from '@babel/types';
-import {IfScope} from './controller/if-scope';
-import {isArrayMapCall, isFuncExpression, isNeedComputed, isObjectAssignDeclarator} from './is';
-import {JsxScope} from './controller/jsx-scope';
+import { IfScope } from './controller/if-scope';
+import { isArrayMapCall, isFuncExpression, isNeedComputed, isObjectAssignDeclarator } from './is';
+import { JsxScope } from './controller/jsx-scope';
 import {
     isStaticNode, createReact, createComputed, createJsxCompute, createReadValue,
-    Names, createVarDeclarator, createVarDeclaration, createExportAliasInit, getT,
+    createVarDeclarator, createVarDeclaration, createExportAliasInit, getT,
     skipNode
 } from './parse-utils';
-import {SwitchScope} from './controller/switch-scope';
-import {Module} from './context';
-import {INodeTypeMap} from './types';
-import {FuncReactiveScope} from './controller/func-reactive';
+import { SwitchScope } from './controller/switch-scope';
+import { Module } from './context';
+import { INodeTypeMap } from './types';
+import { FuncReactiveScope } from './controller/func-reactive';
+import { AlinsStr } from './controller/import-manager';
 
 const NodeNeedHandleVarMap: INodeTypeMap = {
     'JSXElement': 1,
@@ -332,7 +333,7 @@ export class Scope {
         const node = variable.path.node;
         // @ts-ignore
         if (node._export) {
-            variable.alias = `${Names.AliasPrefix}${variable.name}`;
+            variable.alias = `${AlinsPrefix}${variable.name}`;
             // @ts-ignore
             node._parentPath.insertBefore(
                 createVarDeclaration(variable.type, [ createVarDeclarator(variable.alias, newNode.init) ])
@@ -498,7 +499,7 @@ export class Scope {
                 const t = getT();
                 sp.replaceWith(skipNode(t.memberExpression(
                     sp.node,
-                    t.identifier(Names.Value)
+                    t.identifier(AlinsStr.Value)
                 )));
             }
         } else {

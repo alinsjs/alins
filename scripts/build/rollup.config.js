@@ -38,10 +38,10 @@ function parseBuildConfig () {
     const BuildMap = {
         'client-core': {
             packageName: 'alins',
-            type: 'web',
+            // type: 'web',
             umdName: 'Alins',
-            // format: 'iife',
-            // external: false,
+            format: 'esm',
+            external: false,
         },
         'client-reactive': {
             packageName: 'alins-reactive',
@@ -95,9 +95,9 @@ function parseBuildConfig () {
         'plugin-vite': {
             packageName: 'vite-plugin-alins',
             // format: 'esm cjs',
-            type: 'node',
-            // format: 'esm',
-            // external: false,
+            // type: 'node',
+            format: 'esm',
+            external: false,
         },
         'plugin-webpack': {
             packageName: 'alins-loader',

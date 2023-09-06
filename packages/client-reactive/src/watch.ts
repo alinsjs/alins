@@ -3,10 +3,10 @@
  * @Date: 2023-06-26 15:31:14
  * @Description: Coding something
  */
-import {IProxyListener, IProxyData, util, IRefData, trig, empty} from 'alins-utils';
-import {isProxy, observe} from './proxy';
+import { IProxyListener, IProxyData, util, IRefData, trig, empty } from 'alins-utils';
+import { isProxy, observe } from './proxy';
 // import {computed} from './computed';
-import {IOprationAction} from './array-proxy';
+import { IOprationAction } from './array-proxy';
 
 export type IWatchRefTarget<T> = (()=>T)|IRefData<T>|{v:T};
 export type IWatchTarget<T> = IWatchRefTarget<T>|(IProxyData<T>);
@@ -54,17 +54,7 @@ export function watch<T> (
             }
         });
 
-        return {v: before};
-
-        // target = computed(target);
-        // // 防止多次重复触发watch
-        // const origin = cb;
-        // cb = (v, nv, path, p, remove) => {
-        //     console.log(v, nv, path, p, remove);
-        //     if (!isValueEqual(v, nv)) {
-        //         origin(v, nv, path, p, remove);
-        //     }
-        // };
+        return { v: before };
     } else if (!isProxy(target)) {
         // ! 兼容computed(()=>1+1)情况
         return target;
@@ -79,12 +69,12 @@ export function watch<T> (
 
 export function watchArray (
     target: IProxyData<any[]>,
-    listener: ({index, count, data, type}: IOprationAction)=>void
+    listener: ({ index, count, data, type }: IOprationAction)=>void
 ) {
     // @ts-ignore
     if (!target[trig]) {
         // @ts-ignore
-        target[trig] = [listener];
+        target[trig] = [ listener ];
     } else {
         // @ts-ignore
         target[trig].push(listener);

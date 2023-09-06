@@ -6,7 +6,7 @@
 
 export interface ICleaner {
     clean(): void;
-    collect(currentFn: any, clean: any): void;
+    collect(key: any, clean: any, force?: boolean): void;
 }
 
 let curCleaner: ICleaner|null = null;
@@ -19,39 +19,36 @@ export function getCurCleaner () {
     return curCleaner;
 }
 
-export function useCurCleaner (cleaner: ICleaner|null, callback: ()=>void) {
+export function useCurCleaner<T> (cleaner: ICleaner|null, callback: ()=>T) {
     setCurCleaner(cleaner);
-    callback();
+    const result = callback();
     setCurCleaner(null);
+    return result;
 }
 
 // 收集dom元素依赖的watch，在元素remove时主动释放掉所有watch
 export function createCleaner () {
-    
-    let cleanMap: Map<any, ()=>void> = new Map();
+
+    let set = new WeakSet();
+    let cleanMap: any[] = [];
 
     const cleaner: ICleaner = {
+        map () {return cleanMap;},
         clean () {
             cleanMap.forEach(clean => {
                 clean();
             });
-            // ! 使用for of 部分打包工具会转译成 普通for语句 导致元素没有被遍历到，没有释放内存
-            // const keys = cleanMap.keys();
-            // for (const key of keys) {
-            //     // @ts-ignore
-            //     cleanMap.get(key)();
-            // }
-            cleanMap.clear();
             // @ts-ignore
             cleanMap = null;
+            // @ts-ignore
+            set = null;
         },
-        collect (key: any, clean: any) {
+        collect (key: any, clean: any, force = false) {
             if (!cleanMap) {
                 console.warn('cleanMap is null');
                 return;
             }
-            if (cleanMap.has(key)) return;
-            cleanMap.set(key, clean);
+            cleanMap.push(clean);
         }
     };
 

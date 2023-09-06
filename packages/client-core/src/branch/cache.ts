@@ -21,7 +21,7 @@ function transformElementToCache (element: any): (IElement|ITextNode)[]|null {
 
 function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElement|null {
     if (!cache) return null;
-    if (cache.length === 1) return cache[0];
+    // if (cache.length === 1) return cache[0];
     const d = Renderer.createDocumentFragment();
     for (const item of cache) {
         // @ts-ignore
@@ -34,7 +34,9 @@ export class BranchCache {
     cacheMap = new WeakMap<IReturnCall, any[]|null>();
 
     // 当前的缓存数组
-    curCache: any[]|null = [];
+    curCache: any[] = [];
+
+    tasks: any[] = [];
 
     get (call: IReturnCall) {
         const el = this.cacheMap.get(call);
@@ -43,12 +45,18 @@ export class BranchCache {
             if (typeof result === 'string') {
                 result = Renderer.createTextNode(result);
             }
-            this.curCache = transformElementToCache(result);
+            this.curCache = transformElementToCache(result) || [];
             this.cacheMap.set(call, this.curCache);
             return result;
         } else {
-            this.curCache = el;
-            return transformCacheToElement(el);
+            this.curCache = el || [];
+            const doc = transformCacheToElement(el);
+            if (this.tasks.length) {
+                this.tasks.forEach(task => {task(doc);});
+                this.tasks = [];
+            }
+            return doc;
+
         }
     }
 
@@ -88,5 +96,9 @@ export class BranchCache {
             }
         }
         this.curCache.splice(index1 + 1, index2 - index1 - 1, ...nodes);
+    }
+
+    addTask (task: (parent: any) => void) {
+        this.tasks.push(task);
     }
 }

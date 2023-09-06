@@ -6,6 +6,7 @@
  */
 import { Renderer } from '../element/renderer';
 import { IReturnCall } from '../type';
+import { getParent, insertBefore } from '../utils';
 import { BranchCache } from './cache';
 
 const BranchTree = (() => {
@@ -25,6 +26,9 @@ const BranchTree = (() => {
             stack.pop();
             if (stack.length === 0) { // 当所有branch弹出 initializing 完成
                 initialized = true;
+                currentBranch = null;
+            } else {
+                currentBranch = stack[stack.length - 1];
             }
         },
 
@@ -33,9 +37,13 @@ const BranchTree = (() => {
             // ! 访问某个分支之后 将该分支作为stack起点 作为还未加载节点的父分支
             stack = [ branch ];
             currentBranch = branch;
+        },
+        current () {
+            return currentBranch;
         }
     };
 })();
+
 // let id = 0;
 export class BranchBlock {
     start = Renderer.createEmptyMountNode();
@@ -57,9 +65,9 @@ export class BranchBlock {
 
     constructor () {
         this.cache = new BranchCache();
-        this.start.__branch = this; // todo 删除到这个地方的时候需要缓存一下
+        // this.start.__branch = this; // todo 删除到这个地方的时候需要缓存一下
         BranchTree.next(this);
-        if (!window.Root) window.Root = this;
+        // if (!window.Root) window.Root = this;
     }
 
     private wrapAnchor (el: any) {
@@ -166,4 +174,61 @@ export class BranchBlock {
         }
         return true;
     }
+
+    // ! 解决 for 与 if 组合使用时的问题
+
+
+}
+
+export function createDomCacheManager () {
+    const branch = BranchTree.current();
+
+    return {
+        insertBefore (node: any, child:any, defParent: any) {
+            // 如果没有父元素则 append到初始的frag上
+            const parent = getParent(child, defParent);
+            if (!branch) {
+                parent.insertBefore(node, child);
+                return;
+            }
+
+            const cache = branch.cache;
+            if (child.parentElement === parent) {
+                insertBefore(cache.curCache, node, child);
+                parent.insertBefore(node, child);
+            } else {
+                cache.addTask((parent) => {
+                    // @ts-ignore
+                    insertBefore(cache.curCache, node, child);
+                    try {
+                        parent.insertBefore(node, child);
+                    } catch (e) {
+                        debugger;
+                    }
+                });
+            }
+        },
+        removeElement (node: any) {
+            if (!branch) {
+                Renderer.removeElement(node);
+                return;
+            }
+            const cache = branch.cache;
+            if (node.parentElement) {
+                Renderer.removeElement(node);
+                const index = cache.curCache.indexOf(node);
+                cache.curCache.splice(index, 1);
+            } else {
+                cache.addTask(() => {
+                    Renderer.removeElement(node);
+                    const index = cache.curCache.indexOf(node);
+                    cache.curCache.splice(index, 1);
+                });
+            }
+        },
+
+        addTask (fn: any) {
+            branch?.cache.addTask(fn);
+        },
+    };
 }

@@ -3,10 +3,10 @@
  * @Date: 2023-07-17 07:55:32
  * @Description: Coding something
  */
-import type {Statement} from '@babel/types';
-import type {NodePath} from '@babel/traverse';
-import type {Scope} from '../scope';
- 
+import type { Statement } from '@babel/types';
+import type { NodePath } from '@babel/traverse';
+import type { Scope } from '../scope';
+
 export abstract class ControlScope<NodeType> {
     replaceEnd: (node: Statement[])=>void;
     parent: ControlScope<NodeType>|null = null; ;
@@ -64,29 +64,7 @@ export abstract class ControlScope<NodeType> {
             // @ts-ignore
             this.newNode = null;
         }
-        
-        // this.path.replaceWith(this.newNode);
 
-        // if (!this.top) {
-        //     const t = getT();
-        //     const returnStatement = t.returnStatement(t.identifier(Names.TempResult));
-        //     const returnNode = () => this.returned ? returnStatement : t.ifStatement(
-        //         t.identifier(Names.TempResult),
-        //         returnStatement,
-        //         null
-        //     );
-        //     if (this.replaceEnd) {
-        //         // ! if end 时候需要对返回值重新评估 当有return的时候 不需要if判断
-        //         const origin = this.replaceEnd.bind(this);
-        //         this.replaceEnd = (node: any) => {
-        //             origin(node); // ! 必须在前面先初始化 returned
-        //             this.path.insertAfter(returnNode());
-        //         };
-        //         // this.path.insertAfter(returnNode());
-        //     } else {
-        //         this.path.insertAfter(returnNode());
-        //     }
-        // }
         return this.parent;
     }
 }

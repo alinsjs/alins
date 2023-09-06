@@ -6,10 +6,11 @@ import { parseCommentMulti, parseVarDeclCommentReactive } from './comment';
 import { parseInnerComponent } from './component/component';
 import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
-    createEmptyString, createExtendCalleeWrap, createImportAlins, createUnfInit,
-    extendCallee, getObjectPropValue, getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
+    createEmptyString, createExtendCalleeWrap, createUnfInit,
+    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
 } from './parse-utils';
 import { isJsxExtendCall, isJsxExtendDef, isOriginJSXElement } from './is';
+import { ImportManager } from './controller/import-manager';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
@@ -20,24 +21,16 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 const body = path.node.body;
                 for (let i = 0; i < body.length; i++) {
                     if (body[i]?.type !== 'ImportDeclaration') {
-                        if (!useImport) {
-                            ImportScope.regist(() => {
-                                body.splice(i, 0, createImportAlins(useImport));
-                            });
-                        }
+                        body.splice(i, 0, ImportManager.init(useImport, () => {
+                            body.splice(i, 1);
+                        }));
                         break;
                     }
-                }
-
-                if (useImport) {
-                    ImportScope.regist(() => {
-                        body.unshift(createImportAlins());
-                    });
                 }
             },
             exit () {
                 exitContext();
-                ImportScope.trigger();
+                ImportManager.exitModule();
             }
         },
         ImportDeclaration: (path) => {
@@ -161,6 +154,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 if (!ctx.enter(path)) return;
                 // todo init = null 时 设置为 void 0;
                 // if (path.node.id.name === 'c') debugger;
+                if (path.node.id.type === 'ObjectPattern') return;
                 ctx.collectVar(path);
             },
             exit () {

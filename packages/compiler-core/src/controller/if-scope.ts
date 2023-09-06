@@ -1,6 +1,7 @@
 import type { Identifier, IfStatement, Statement } from '@babel/types';
-import { getT, markMNR, Names, traverseIfStatement } from '../parse-utils';
+import { getT, markMNR, traverseIfStatement } from '../parse-utils';
 import { ControlScope } from './control-scope';
+import { AlinsVar, ImportManager } from './import-manager';
 import { createScopeStack } from './scope-stack';
 
 /*
@@ -26,10 +27,10 @@ export class IfScope extends ControlScope<IfStatement> {
         const end = map.end;
 
         const setAnchor = (
-            object: any, id: Identifier, args: any[],
+            object: any, id: Identifier|null, args: any[],
         ) => {
             const bodyFn = args[args.length - 1];
-            if (id.name !== 'end') {
+            if (!id || id.name !== 'end') {
                 args[args.length - 1] = markMNR(bodyFn, () => {
                     this.markScopeReturnJsx();
                 });
@@ -40,13 +41,13 @@ export class IfScope extends ControlScope<IfStatement> {
             }
             // @ts-ignore
             anchor = t.callExpression(
-                t.memberExpression(object, id),
+                id ? t.memberExpression(object, id) : object,
                 args
             );
             bodyFn._call = anchor;
         };
 
-        setAnchor(t.identifier(Names.CtxFn), map.if.id, [ map.if.test, map.if.fn ]);
+        setAnchor(ImportManager.use(AlinsVar.If), null, [ map.if.test, map.if.fn ]);
 
         for (const item of map.elif) {
             setAnchor(anchor, item.id, [ item.test, item.fn ]);
@@ -74,11 +75,7 @@ export class IfScope extends ControlScope<IfStatement> {
         if (!this.top) {
             // @ts-ignore
             anchor = t.returnStatement(anchor);
-            // anchor = createVarDeclaration('var',
-            //     [ createVarDeclarator(Names.TempResult, anchor) ]
-            // );
         }
-        // this.returned = map.returned;
         this.newNode = anchor;
     }
 

@@ -3,12 +3,13 @@
  * @Date: 2023-07-14 23:19:18
  * @Description: Coding something
  */
-import type {NodePath} from '@babel/traverse';
-import {createMemberExp, getT, Names, parseFirstMemberObject, parseJsxAttrShort, createWrapAttr, replaceJsxDomCreator, skipNode, createUnfInit} from '../parse-utils';
-import type {JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment} from '@babel/types';
-import type {Module} from '../context';
-import {isFuncExpression, isJSXComponent} from '../is';
-import {isEventAttr} from '../is';
+import type { NodePath } from '@babel/traverse';
+import { createMemberExp, getT, parseFirstMemberObject, parseJsxAttrShort, createWrapAttr, replaceJsxDomCreator, skipNode, createUnfInit, createCtxCall } from '../parse-utils';
+import type { JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment } from '@babel/types';
+import type { Module } from '../context';
+import { isFuncExpression, isJSXComponent } from '../is';
+import { isEventAttr } from '../is';
+import { AlinsVar } from './import-manager';
 
 // ! 此处是因为 jsx 被转译之后无法根据原始path replace
 /*
@@ -19,7 +20,7 @@ b = 2; // ! 导致此处变更不能修改之前的结构
 JsxScope 是先从最里层遍历的
     */
 
-const ExcludeDecoMap = {class: 1, style: 1};
+const ExcludeDecoMap = { class: 1, style: 1 };
 
 const ModelTag = {
     input: 1, select: 1, textarea: 1,
@@ -113,7 +114,7 @@ export class JsxScope {
                     variable.path.parent.kind = 'let';
                 }
                 v.expression = t.arrowFunctionExpression(
-                    [t.identifier('_$ref')],
+                    [ t.identifier('_$ref') ],
                     skipNode(t.assignmentExpression('=', exp, t.identifier('_$ref')))
                 );
             }
@@ -153,7 +154,7 @@ export class JsxScope {
         let deco = '';
 
         let isEvent = false;
-        
+
         // ! 处理事件包裹
         const checkEventAttr = () => {
             if (!isFuncExpression(expression) && isEventAttr(name)) {
@@ -213,13 +214,10 @@ export class JsxScope {
                     } else if (expression.type === 'MemberExpression') {
                         const object = parseFirstMemberObject(expression);
                         this.module.markVarChange(object.name);
-                        const computedExp = t.callExpression(
-                            createMemberExp(Names.CtxFn, Names.ComputedFullFn),
-                            [
-                                t.arrowFunctionExpression([], expression),
-                                t.arrowFunctionExpression([t.identifier('v')], t.assignmentExpression('=', expression, t.identifier('v'))),
-                            ]
-                        );
+                        const computedExp = createCtxCall(AlinsVar.ComputedShort, [
+                            t.arrowFunctionExpression([], expression),
+                            t.arrowFunctionExpression([ t.identifier('v') ], t.assignmentExpression('=', expression, t.identifier('v'))),
+                        ]);
                         if (newExpression === expression) {
                             newExpression = computedExp;
                         } else {

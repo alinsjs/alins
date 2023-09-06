@@ -22,46 +22,7 @@ import type {
 import type { IBabelType } from './types';
 import { BlockReturnType, isBlockBreak, isBlockReturned, isEventEmptyDeco } from './is';
 import type { Module } from './context';
-
-export const ImportScope = (() => {
-    let fn: any = null;
-    let count = 0;
-    return {
-        regist (_fn: any) {
-            fn = _fn;
-        },
-        use () {
-            count ++;
-        },
-        unuse () {
-            count --;
-        },
-        trigger () {
-            if (count > 0)fn?.();
-            fn = null;
-            count = 0;
-        },
-    };
-})();
-
-export const Names = {
-    AliasPrefix: '_$',
-    _CtxFn: '_$$',
-    get CtxFn () {
-        ImportScope.use();
-        return this._CtxFn;
-    },
-    ReactFn: 'r',
-    ComputedFn: 'c',
-    ComputedFullFn: 'cc',
-    WatchFn: 'w',
-    CreateElementFn: 'ce',
-    Value: 'v',
-    TempResult: '_$R',
-    ExtendFn: 'e',
-    ExtendCompFn: 'es',
-};
-
+import { AlinsStr, AlinsVar, ImportManager } from './controller/import-manager';
 
 export let t: IBabelType;
 
@@ -127,23 +88,19 @@ export function createMemberExp (id: string, prop: string) {
     );
 }
 
-export function createElementMember () {
-    return createMemberExp(Names.CtxFn, Names.CreateElementFn);
-}
-
 export function replaceJsxDomCreator (path: NodePath<CallExpression>) {
-    return createCtxCall(Names.CreateElementFn, path.node.arguments);
+    return createCtxCall(AlinsVar.Create, path.node.arguments);
 }
 
 // ! 暂时先全部用v包裹 后续优化
 export function createReadValue (idName: string) {
-    const node = createMemberExp(idName, Names.Value);
+    const node = createMemberExp(idName, AlinsStr.Value);
     // @ts-ignore
     node._skip = true;
     return node;
 }
 
-export function createFullComputed (get: any, set: any) {
+function createFullComputed (get: any, set: any) {
     return t.objectExpression([
         t.objectProperty(t.identifier('get'), get),
         t.objectProperty(t.identifier('set'), set),
@@ -152,7 +109,7 @@ export function createFullComputed (get: any, set: any) {
 
 export function createComputed (node: VariableDeclarator) {
     const get = t.arrowFunctionExpression([], node.init as any);
-    let target: any; ;
+    let target: any;
     // @ts-ignore
     if (node._computedSet) {
         // @ts-ignore
@@ -167,12 +124,12 @@ export function createComputed (node: VariableDeclarator) {
 }
 
 function createComputeCall (fn?: any) {
-    return createCtxCall(Names.ComputedFn, [ fn ]);
+    return createCtxCall(AlinsVar.Computed, [ fn ]);
 }
 
-export function createCtxCall (name: string, args: any[]) {
+export function createCtxCall (name: AlinsVar, args: any[]) {
     return t.callExpression(
-        createMemberExp(Names.CtxFn, name),
+        ImportManager.use(name),
         args
     );
 }
@@ -192,7 +149,7 @@ export function createJsxCompute (node: Expression|JSXExpressionContainer, isCom
     );
 
     if (exp.type === 'UpdateExpression') {
-        call = createCtxCall('mu', [ call ]);
+        call = createCtxCall(AlinsVar.MarkUpdate, [ call ]);
     }
 
     // 标注当前是否在JSX组件中，组件中需要被转成 _$$.c()
@@ -225,7 +182,7 @@ export function createReact (node: VariableDeclarator) {
     }
     return skipNode(t.variableDeclarator(
         node.id,
-        createCtxCall(Names.ReactFn, args),
+        createCtxCall(AlinsVar.React, args),
     ));
 }
 
@@ -303,9 +260,9 @@ export function createUnfInit () {
 
 export function createExportAliasInit (alias: string, name: string) {
     // _$.w(()=> x.v, (v)=>x=v, false).v;
-    const v = Names.Value;
+    const v = AlinsStr.Value;
     return t.memberExpression(
-        createCtxCall(Names.WatchFn, [
+        createCtxCall(AlinsVar.Watch, [
             t.arrowFunctionExpression([], createMemberExp(alias, v)),
             t.arrowFunctionExpression([], t.assignmentExpression('=', t.identifier(name), t.identifier(v))),
             t.booleanLiteral(false),
@@ -444,10 +401,10 @@ export function traverseSwitchStatement (node: SwitchStatement) {
         endFunc,
         isReturnJsx,
         node: t.callExpression(
-            t.memberExpression(t.callExpression(
-                createMemberExp(Names.CtxFn, 'sw'),
-                [ discr, cases ]
-            ), t.identifier('end')),
+            t.memberExpression(
+                createCtxCall(AlinsVar.Switch, [ discr, cases ]),
+                t.identifier('end')
+            ),
             [ endFunc ]
         )
     };
@@ -480,24 +437,11 @@ export function markMNR (fn: any, returnJsxCall?: ()=>void) {
     if (!returnType) {
         fn._mnrMarked = true;
         // ! 标注是否有返回值
-        return createCtxCall('mnr', [ fn ]);
+        return createCtxCall(AlinsVar.MNR, [ fn ]);
     } else if (returnType === BlockReturnType.Jsx) {
         returnJsxCall?.();
     }
     return fn;
-}
-
-export function createImportAlins (useImport = true) {
-    return useImport ?
-        t.importDeclaration([
-            t.importSpecifier(t.identifier('_$$'), t.identifier('_$$'))
-        ], t.stringLiteral('alins')) :
-        t.variableDeclaration('const', [
-            t.variableDeclarator(t.identifier('_$$'), t.memberExpression(
-                t.memberExpression(t.identifier('window'), t.identifier('Alins')),
-                t.identifier('_$$'),
-            ))
-        ]);
 }
 
 export function parseComputedSet (path: NodePath<VariableDeclaration>) {
@@ -528,7 +472,7 @@ export function parseComputedSet (path: NodePath<VariableDeclaration>) {
 }
 
 export function extendCallee (isComp: boolean) {
-    return createMemberExp(Names.CtxFn, isComp ? Names.ExtendCompFn : Names.ExtendFn);
+    return ImportManager.use(isComp ? AlinsVar.ExtendComp : AlinsVar.Extend);
 }
 
 export function createExtendCalleeWrap (arg: any, isComp: boolean) {
@@ -617,7 +561,7 @@ export function createWrapAttr (name: string, value: any, wrap = false, handleRe
 export function getObjectPropValue (node: ObjectProperty, mock = false) {
     const value = node.value;
     if (value.type === 'AssignmentPattern') {
-        if (mock) value.right = createCtxCall('mf', [ value.right ]);
+        if (mock) value.right = createCtxCall(AlinsVar.MockRef, [ value.right ]);
         return value.left;
     }
     return value;

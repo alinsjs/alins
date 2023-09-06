@@ -38,8 +38,8 @@ class SwitchBlock {
     }
 
     private run (value: any) {
-        console.log('switch debug:run', value);
-        let macthed: boolean = false;
+        // console.log('switch debug:run', value);
+        let matched: boolean = false;
         let el: any = null;
         const n = this.caseList.length;
         for (let i = 0; i < n; i++) {
@@ -51,15 +51,13 @@ class SwitchBlock {
                 caseValue === value ||
                 caseValue === null
             ) { // 命中或走default
-                console.log('macthed');
-                macthed = true;
-                debugger;
+                // console.log('matched');
+                matched = true;
                 el = this.branch.replace(i);
                 break;
             }
         }
-        if (!macthed) {
-            debugger;
+        if (!matched) {
             el = this.branch.replace(n);
         }
         return el;

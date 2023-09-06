@@ -1,4 +1,4 @@
-import {Renderer} from './element/renderer';
+import { Renderer } from './element/renderer';
 
 /*
  * @Author: chenzhongsheng
@@ -23,7 +23,7 @@ export function insertBefore (array: any[], node: any, child: any) {
     if (Renderer.isFragment(node)) {
         node = Array.from(node.childNodes);
     } else {
-        node = [node];
+        node = [ node ];
     }
     if (index === 0) {
         // @ts-ignore

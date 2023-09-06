@@ -4,10 +4,7 @@
  * @Description: Coding something
  */
 
-import { ContextTool } from './context';
-export const _$$ = ContextTool;
-
-export { ContextTool } from './context';
+export * from './context';
 
 export type { IAttributes } from './element/jsx.d';
 

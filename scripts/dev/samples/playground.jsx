@@ -1,25 +1,33 @@
-function Main () {
 
+const data = use();
 
-    let a = 0;
-
-    a++;
-    window.a = a;
-
-
-    switch (a) {
-        case 1: console.log(1);
-        case 2: {
-            console.log(2);
-        };
-        case 3: {
-            return <span>3</span>;
-        };
-        case 4: {
-            return <span>4</span>;
-        }
-    }
-    return <span>x</span>;
+function use () {
+    const $d = { list: [
+        { name: '1', age: 10 },
+        { name: '2', age: 11 },
+        { name: '3', age: 12 },
+        { name: '4', age: 13 },
+        { name: '5', age: 14 },
+        { name: '6', age: 15 },
+    ] };
+    return $d;
 }
 
-<Main $$App></Main>;
+const $bool = false;
+
+// todo if 和 for 冲突问题
+
+<div id='d1' $$App>
+    <If data={data.list.length === 0}>
+        <div id='d2'>Console is empty.</div>
+    </If>
+    <Else>
+        <For data={data.list}>
+            <div a={$bool} b={!$bool} id='d3'>{$item.name}-{$item.age}</div>
+        </For>
+    </Else>
+
+    {/* <For data={data.list}>
+        <div a={$bool} b={$bool} id='d3'>{$item}</div>
+    </For> */}
+</div>;
