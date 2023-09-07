@@ -21,6 +21,7 @@ export function getCurCleaner () {
 
 export function useCurCleaner<T> (cleaner: ICleaner|null, callback: ()=>T) {
     setCurCleaner(cleaner);
+    // console.warn('useCurCleaner');
     const result = callback();
     setCurCleaner(null);
     return result;

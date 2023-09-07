@@ -5,7 +5,7 @@
  */
 
 import { empty, IProxyData, trig, util } from 'alins-utils';
-import { createProxy } from './proxy';
+import { createProxy, isProxy } from './proxy';
 
 export enum OprateType {
     Replace = 0, // Replace index a => b
@@ -27,8 +27,7 @@ function proxyItem (data: IProxyData<any[]>, args: any[], index: number) {
 
     if (data[util].shallow) return args;
     return args.map((item, i) => {
-        if (item && typeof item === 'object') {
-            // debugger;
+        if (item && typeof item === 'object' && !isProxy(item)) {
             return createProxy(item, {
                 commonLns: data[util].commonLns,
                 path: data[util].path,
@@ -200,11 +199,11 @@ export function replaceWholeArray (origin: any[], v: any[]) {
 
         // window.ccc.forEach(f => f());
         // window.ccc = null;
-        origin[util].proxy.splice(min);
+        origin.splice(min);
     } else {
         const data = v.slice(min);
         // triggerOprationEvent(origin, OprateType.Push, min, data, vn - on);
-        origin[util].proxy.push(...data);
+        origin.push(...data);
     }
 
     return true;

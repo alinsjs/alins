@@ -98,7 +98,6 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     addEvent(el as IElement, k, v);
                     continue;
                 }
-
                 switch (k) {
                     case '$created': break;
                     case '$appended': (el as IElement).__$appended = $appended; break;
@@ -125,6 +124,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         ) {
                             break;
                         } else {
+                            // console.warn('reactiveBindingEnable', k, v);
                             reactiveBindingEnable(v, (v) => {
                                 if (typeof v === 'object') {
                                     v = (!!v.enable) ? v.value : null;

@@ -3,10 +3,10 @@
  * @Date: 2023-07-21 22:37:05
  * @Description: Coding something
  */
-import {isProxy} from 'alins-reactive';
-import {reactiveBindingEnable} from './dom-util';
-import {IBaseAttributes} from './jsx';
- 
+import { isProxy } from 'alins-reactive';
+import { reactiveBindingEnable } from './dom-util';
+import { IBaseAttributes } from './jsx';
+
 export function parseAttributes (
     dom: HTMLElement,
     value: IBaseAttributes | string | (()=>string)

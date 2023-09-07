@@ -1,5 +1,4 @@
 
-
 /*
  * @Author: chenzhongsheng
  * @Date: 2023-08-10 16:07:29
@@ -29,7 +28,7 @@ function select (id) {
 }
 
 function run () {
-    rows = buildData(1);
+    rows = buildData();
     selected = -1;
 }
 
@@ -218,7 +217,7 @@ function buildData (count = 1000) {
         'mouse',
         'keyboard'
     ];
-    const data = [];
+    const data = []; // @static
     for (let i = 0; i < count; i++)
         data.push({
             id: _ID++,

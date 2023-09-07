@@ -143,11 +143,13 @@ export function createProxy<T extends IJson> (data: T, {
     key?: string;
     commonLns?: Set<IProxyListener>
 } = {}): IProxyData<T> {
-    if (!isArrayOrJson(data)) return data as any;
-    // @ts-ignore
-    if (!data[type]) data[type] = AlinsType.Proxy;
+
+    if (!isArrayOrJson(data) || isProxy(data)) return data as any;
 
     if (!shallow) deepReactive(data, path);
+
+    // @ts-ignore
+    if (!data[type]) data[type] = AlinsType.Proxy;
 
     // @ts-ignore
     data[util] = { commonLns, lns, shallow, data };
@@ -162,7 +164,7 @@ export function createProxy<T extends IJson> (data: T, {
     const proxy = new Proxy(data, {
         // ! 闭包
         get (target: IJson, property, receiver) {
-            console.log('Proxy get', property, target[property]);
+            // if (property === 'label') console.warn('proxy get', property);
             const isFunc = typeof target[property] === 'function';
             if (isArray && isFunc) {
                 // debugger;
@@ -172,10 +174,7 @@ export function createProxy<T extends IJson> (data: T, {
                 // ! 收集依赖
                 if (currentFn) {
                     if (!depReactive) depReactive = true;
-                    if (property === 'label') {
-                        console.trace();
-                    }
-                    console.log('------ ', property, '=', target[property]);
+                    // console.warn('COLLECT------ ', property, '=', target[property]);
                     addLns(lns, property, currentFn);
                     // ! 当在依赖搜集时 返回缓存的值
                     return Reflect.get(target, property, receiver);
@@ -296,7 +295,6 @@ export function addLns (lns, property, listener, force = false) {
         const cleaner = getCurCleaner();
         if (cleaner) {
             if (property === 'v') {
-                debugger;
                 cleaner.collect(listener, () => {
                     set.delete(listener);
                     listener = null;

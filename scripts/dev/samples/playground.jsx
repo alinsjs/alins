@@ -4,11 +4,6 @@ const data = use();
 function use () {
     const $d = { list: [
         { name: '1', age: 10 },
-        { name: '2', age: 11 },
-        { name: '3', age: 12 },
-        { name: '4', age: 13 },
-        { name: '5', age: 14 },
-        { name: '6', age: 15 },
     ] };
     return $d;
 }

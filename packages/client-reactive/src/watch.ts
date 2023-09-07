@@ -39,6 +39,7 @@ export function watch<T> (
     cb: IProxyListener<T>,
     deep = true,
 ): IProxyData<T>|IRefData<T>|{v:T} {
+    // console.warn('watch', target);
     if (typeof target === 'function') {
         let before: any = empty;
         before = observe(target, (v, nv, path, p, remove) => {
