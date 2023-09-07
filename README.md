@@ -1,8 +1,3 @@
-<!--
- * @Author: tackchen
- * @Date: 2022-10-23 21:15:35
- * @Description: Coding something
--->
 
 <p align="center">
     <img src='https://shiyix.cn/images/alins.png' width='100px'/>
@@ -24,7 +19,7 @@
     <a href="https://www.jsdelivr.com/package/npm/alins" target="_black">
         <img src="https://data.jsdelivr.com/v1/package/npm/alins/badge" alt="jsdelivr" />
     </a>
-    <img src="https://visitor-badge.glitch.me/badge?page_id=alinsjs_alins" alt="vistor" />
+    <img src="https://shiyix.cn/api2/util/badge/stat?c=Visitors-Alins" alt="visitors">
 </p>
 
 <p align="center">
@@ -40,164 +35,107 @@
     <a href="https://www.github.com/alinsjs/alins"><img src="https://img.shields.io/librariesio/dependent-repos/npm/alins.svg" alt="Dependent"></a>
 </p>
 
-### 🚀 [Alins](https://github.com/alinsjs/alins): `Al`l-`in`-j`s` web ui Framework，No jsx/template/vdom/css/html
+## 🚀 [Alins](https://github.com/alinsjs/alins): The most pure and elegant WebUI framework
 
-<!-- ### 🚀 [Alins](https://github.com/alinsjs/alins): - The most concise and elegant web UI framework -->
+**[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Documentation](https://alinsjs.github.io/docs) | [Playground](https://alinsjs.github.io/playground/) | [Update Log](https://github.com/alinsjs/alins/blob/master/scripts/helper/version.md) | [Feedback Errors/Defects](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [Message Board](https://theajack.github.io/message-board/?app=alins)**
 
-**[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Docs](https://alinsjs.github.io/docs) | [VersionLog](https://github.com/alinsjs/alins/blob/master/helper/version.md) | [FeedBacl](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [MessageBoard](https://theajack.github.io/message-board/?app=alins)**
+## 0 Introduction
 
-## 0 Quick Start
+### 0.1 Preface
 
-### 0.1 npm
+Alins is an extremely pure, simple, and elegant web UI framework. It adheres to the development philosophy of 0-API and Less is More, aiming to help developers escape the dilemma of complex API calls in UI frameworks and provide the most intuitive, pure, and close-to-vanillajs development approach.
+
+You only need to understand the syntax rules of JSX (similar to HTML) to develop Alins web applications without any obstacles. Below is a basic counter example that you can [experience online in the playground](https://alinsjs.github.io/playground/):
+
+```jsx
+let count = 1;
+<button onclick={count++} $mount='#App'>
+     count is {count}
+</button>;
+```
+
+### 0.2 Features
+
+1. [x] 0-API, Less is More, closest to native JavaScript development.
+2. [x] Powerful reactivity, supports reactive updates for properties, styles, text, HTML, and other elements.
+3. [x] High performance (superior to Vue3 and React).
+4. [x] Does not use virtual DOM (vdom), directly updates UI at a granular level.
+5. [x] Extremely small runtime and bundle size (better than Vue3 and React).
+6. [x] Supports two-way data binding, component development, and follows a unidirectional data flow.
+7. [x] Built-in data sharing solution, easily manages shared data among components.
+8. [x] Rich ecosystem support, compatible with plugins such as Vite, Rollup, Webpack, and esbuild. It can also customize third-party tools based on the underlying compilation module.
+9. [x] Supports if and switch logic, as well as If, Switch, For, and other logical components.
+10. [x] Supports custom renderers for cross-platform development.
+11. [x] Uses JSX and TSX to describe UI, with built-in TypeScript compilation support.
+12. [x] Developed using TypeScript, with highly friendly type support.
+
+### 0.3 TODO
+
+The following peripheral tools are currently under development, and we also hope that interested developers can participate together:
+
+1. [ ] [alins-router](https://github.com/alinsjs/alins-router): Single-page application routing solution
+2. [ ] [alins-ssr](https://github.com/alinsjs/alins-ssr): Server-side rendering solution
+3. [ ] [alins-ui](https://github.com/alinsjs/alins-ui): Official UI library (consider implementing ant-design or meterial-design)
+3. [ ] [alins-v](https://github.com/alinsjs/alins-v): Official form validation library
+4. [ ] [alins-term](https://github.com/alinsjs/alins-term): Tool for developing command line applications based on custom renderers
+
+## 1 Quick Start
+
+### 1.1 Command line creation
 
 ```
-npm i alins
+npm create alins
 ```
 
-```js
-import {div} from 'alins';
-div('Hello World!').mount();
+After following the steps, execute the following command to install and run it.
+
+```
+cd <project>
+npm i
+npm rundev
 ```
 
-### 0.2 cdn
+You can also directly clone the [template code repository](https://github.com/alinsjs/ebuild-template-alins)
+
+### 1.2 Using the Web Compiler
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/alins"></script>
-<script>
-  Alins.div('Hello World!').mount();
+<script src='https://cdn.jsdelivr.net/npm/alins-compiler-web'></script>
+<script type='text/alins'>
+     let count = 1;
+     <button onclick={count++} $$body>
+         count is {count}
+     </button>;
 </script>
 ```
 
-## 1. Features
+Note:
+1. This approach is not recommended for production environments.
+2. You can use type='text/babel' to enable syntax highlighting provided by the editor.
 
-Alins is an All in js web ui framework, which is highly flexible. You can use js/ts code to combine your dom/css/state into a web application like building blocks. At the same time, Alins is highly responsive to both dom and css
+You can also freely use it in the [playground](https://alinsjs.github.io/playground/), which also utilizes a web compiler.
 
-1. No vdom, the listening data is accurately modified to dom/textNode, and the dom node is reused
-2. Alins-style CSS-in-JS scheme, atomic properties/building block combinations/style response changes
-3. Good componentization support
-4. Support for, if, show, switch, model controller
-5. Support computed and watch
-6. One-way data flow + two-way binding
-7. Good TS support
+## 2 Compare
 
-For more detailed functions, please refer to [Online Documentation](https://shiyix.cn/alins)
+### 2.1 js-framework-benchmark data
 
-## 2. Samples
+### 2.2 Code comparison
 
-### 2.0 Application Based on Alins
-
-[Webos](https://theajack.github.io/webos)
-
-### 2.1. Counter [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/count.js)
-
-```js
-import { button, comp, click, $, mount } from 'alins';
-
-function Count () {
-    const count = $(0);
-    return button(
-        click(() => {count.value++;}),
-        $`Count is ${count}`
-    );
-}
-
-comp(Count).mount();
-```
-
-### 2.2. Components & Model [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/model.js)
-
-```js
-import {
-    button, comp, prop, click, $, input, span,
-} from '../alins';
-
-export function Count () {
-    const count = $(0);
-    return [
-        span('input count'),
-        input.model(count, 'number'),
-        comp(CountProps)(prop({value: count})),
-        button('add', click(() => {count.value++;})),
-    ];
-};
-
-export function CountProps ({props}) {
-    return span($`Count is ${props.value}`);
-}
-
-comp(Count).mount();
-```
-
-## 3. todolist [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/todo-list.js)
-
-```js
-import {comp, button, div, input, click, $} from '../alins';
-import {style} from '../alins-style';
+### 2.3 Comparison of packaged products
 
 
-export function todoList () {
-    const edit = $('');
-    const list = $([]);
-    const addItem = () => {
-        list.push({content: edit.value, done: false});
-        edit.value = '';
-    };
-    const removeItem = (index) => { list.splice(index.value, 1); };
-    const finishItem = (item) => { item.done = !item.done.value; };
+Combine the source code volume, packaged code volume and framework runtime volume, and sort out the table
 
-    const itemStyle = (item) => {
-        return style.textDecoration(() => item.done.value ? 'line-through' : 'none')
-            .color(() => item.done.value ? '#888' : '#222');
-    }
+| metrics | alins | vue3 | react |
+| :----: | :----: | :----: | :----: |
+| Source size | 90byte | 281byte | 302byte |
+| Compiled product size | 140byte | 620byte | 435byte |
+| Runtime Size | 26.6kb | 474kb | 139kb |
 
-    return [
-        input.model(edit),
-        button('submit', click(addItem)),
-        div('.todo-list',
-            div.for(list)((item, index) => [
-                itemStyle(item),
-                $`${() => index.value + 1}:${item.content}`,
-                button('delete', click(removeItem).args(index)),
-                button(
-                    $`${() => item.done.value ? 'undo' : 'done'}`,
-                    click(finishItem).args(item)
-                ),
-            ]),
-        ),
-    ];
-}
-comp(todoList).mount();
-```
+Note: This comparison is only for the current counter example and is for reference only
 
-## 4. css in js [Playground](https://shiyix.cn/jsbox?github=alinsjs.docs.samples/style.js)
+## 3 Documentation
 
-```js
-import {
-    div, $ , button, hover, click, input, cls
-} from 'alins';
-import {css, style} from '../alins-style';
+Please refer to the following online documentation
 
-function Style () {
-    const num = $(30);
-    const active = $(false);
-
-    css('.main')(
-        style({
-            color: '#888',
-            marginLeft: $`${num}px`,
-        }),
-        ['&.active', style.fontSize(num)],
-        ['.child', style.marginTop(num)]
-    ).mount();
-
-    return div(`parent.main`,
-        cls({active}),
-        hover('color: #f44'),
-        input.model(num, 'number'),
-        button('toggle active', click(() => active.value = !active.value)),
-        div('child.child'),
-    );
-}
-
-comp(Style).mount();
-```
+[English](https://alinsjs.github.io/docs/) | [中文](https://alinsjs.github.io/docs-cn/)

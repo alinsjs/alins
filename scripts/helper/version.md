@@ -1,14 +1,31 @@
 <!--
  * @Author: chenzhongsheng
- * @Date: 2022-11-05 12:19:34
+ * @Date: 2023-09-07 14:58:05
  * @Description: Coding something
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-09-04 09:44:25
 -->
 
-# 0.1.0
+### Next Version TODO
 
-feat：
+- [ ] For 类型提示
+- [ ] Async Data 类型标注
+- [ ] alins-router - 官方路由库 （尽可能通用 能够直接使用原生js调用）
+- [ ] alins-ui - 官方ui库
+- [ ] alins-store - 状态库
+- [ ] alins-style style 标签优化 处理 提高css可用性, style 值类型声明 （能够使用reactive库配合着使用原生js使用）
+- [ ] alins-style 支持兼容性扩展
+- [ ] alins-renderer - 利用自定义 renderer 实现跨平台
+- [ ] alins-ssr - 服务端渲染（尽可能通用 能够直接使用原生js调用）
+- [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
+- [ ] For 支持解构
+- [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
+- [ ] For Object 支持
+- [ ] $if $elif $else $case $default 属性支持
+- [ ] source-map 支持
+- [ ] 编译器代码重构 - 分两步编译 第一步进行jsx解析；第二部进行alins reactive； 支持 ssr
+- [ ] 运行时代码重构 - 优化内存空间占用和运行时间
+- [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
+
+## 0.0.18 - 0.0.27
 
 - [x] switch case 完善
 - [x] map 编译器
@@ -56,36 +73,14 @@ feat：
 - [x] 组件属性结构
 - [x] 去除 .r 需要v的包裹
 - [x] 发包脚本
-- [ ] 多层嵌套的if有问题； if switch 待重构
-- [ ] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
-- [ ] 文档 & 在线编译工具
-- [ ] eslint-config-alins 验证
-- [ ] 重构branch、if、switch、ctx逻辑
-- [ ] 清理编译器ctx下相关逻辑
+- [x] 多层嵌套的if有问题； if switch 待重构
+- [x] alins-compiler-web 将babel模改后直接引入 // 现在存在type="text/babel"直接babel被执行了
+- [x] 文档 & 在线编译工具
+- [x] 重构branch、if、switch、ctx逻辑
+- [x] 清理编译器ctx下相关逻辑
+- [x] create-alins 开发
 
-next Version new feature
-
-- [x] create-alins
-- [ ] For 类型提示
-- [ ] Async Data 类型标注
-- [ ] alins-router - 官方路由库 （尽可能通用 能够直接使用原生js调用）
-- [ ] alins-ui - 官方ui库
-- [ ] alins-store - 状态库
-- [ ] alins-style style 标签优化 处理 提高css可用性, style 值类型声明 （能够使用reactive库配合着使用原生js使用）
-- [ ] alins-style 支持兼容性扩展
-- [ ] alins-renderer - 利用自定义 renderer 实现跨平台
-- [ ] alins-ssr - 服务端渲染（尽可能通用 能够直接使用原生js调用）
-- [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
-- [ ] For 支持解构
-- [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
-- [ ] For Object 支持
-- [ ] $if $elif $else $case $default 属性支持
-- [ ] source-map 支持
-- [ ] 编译器代码重构 - 分两步编译 第一步进行jsx解析；第二部进行alins reactive； 支持 ssr
-- [ ] 运行时代码重构 - 优化内存空间占用和运行时间
-- [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
-
-fix
+### fix
 
 - [x] fix map 逻辑
 - [x] fix ctx 嵌套逻辑
@@ -131,50 +126,6 @@ fix
 - [x] fix 注释行号比对的bug 
 - [x] fix switch cacheManager
 
+## 0 - 0.0.18
 
-
-
-
-
-
-<!-- ## TodoList
-
-- [ ] comp.for(Comp)((item, index)=>[prop({...item})]) // ts 报错
-- [ ] comp.for(Comp)((item, index)=>[prop({item})]) // 当item是一个object时不支持
-- [ ] IReactWrap 作为默认 ts 类型
-- [ ] .box-back,.box-close, ['&:hover'] 没有两个都分配到
-- [ ] IReactWrap 类型推倒
-- [ ] right: $`${() => isMin.value ? 0 : 500}`, 不支持
-- [ ] div 方法 参数传 dom元素会报错
-- [x] 修复 comp.for 必须要带参数的bug
-- [x] fix: .show(() => list.length > 0) (webos input-item 中)
-        div.show(Hint.enabled)(
-            style.color('#777').marginTop(5),
-            span.show(() => !!Hint.text.value)(text($`Hint: ${Hint.text}`)),
-            div(
-                span.show(() => Hint.list.length > 0)('options:'),
-                span.for(Hint.list)(item => [
-                    style.marginRight(20),
-                    text(item)
-                ])
-            )
-        ),
-- [x] feat: list = [] 之后内存没有被回收
-- [x] fix: 顺序问题 div(a('web-os'), ' made by ', a('theajack'))
-
-
-- [x] fix: 
-        const result = !!name ? (info.filter(item => item.commandName === name) || []) : info;
-        div.for(result) 会引起报错
-
-
-feat: emment 使用函数或特殊标记控制 默认字符串和数字 使用 text逻辑
-feat: css 动画 规则
-
-feat: for 大列表性能优化 考虑使用memo + shallowProxy
-
-feat: 原子样式 组合样式 扩充
-feat: 状态管理
-feat: 路由
-feat: ui组件
-feat: comment and jsbox 英文版本 -->
+初始版本

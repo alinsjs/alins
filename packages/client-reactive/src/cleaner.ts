@@ -40,8 +40,6 @@ export function createCleaner () {
             });
             // @ts-ignore
             cleanMap = null;
-            // @ts-ignore
-            set = null;
         },
         collect (clean: any) {
             if (!cleanMap) {
