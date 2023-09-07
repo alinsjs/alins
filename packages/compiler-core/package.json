@@ -1,9 +1,9 @@
 {
     "name": "alins-compiler-core",
-    "version": "0.0.25",
+    "version": "0.0.26",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-compiler-core.cjs.min.js",
+    "typings": "dist/alins-compiler-core.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -25,5 +25,5 @@
         "@babel/types": "^7.22.5",
         "@types/babel__traverse": "^7.20.1"
     },
-    "module": "src/index.ts"
+    "module": "dist/alins-compiler-core.esm.min.js"
 }
