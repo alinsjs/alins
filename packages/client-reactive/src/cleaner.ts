@@ -33,7 +33,6 @@ export function createCleaner () {
     let cleanMap: any[] = [];
 
     const cleaner: ICleaner = {
-        // map () {return cleanMap;},
         clean () {
             cleanMap.forEach(clean => {
                 clean();
@@ -42,10 +41,7 @@ export function createCleaner () {
             cleanMap = null;
         },
         collect (clean: any) {
-            if (!cleanMap) {
-                console.warn('cleanMap is null');
-                return;
-            }
+            if (!cleanMap) return;
             cleanMap.push(clean);
         }
     };
