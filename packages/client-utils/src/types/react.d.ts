@@ -4,9 +4,9 @@
  * @Description: Coding something
  */
 
-import {IJson} from './common';
-import {AlinsType} from './enum';
-import {type, util} from './symbol';
+import { IJson } from './common';
+import { AlinsType } from './enum';
+import { type, util } from './symbol';
 
 export type ISimpleValue = string|number|boolean;
 
@@ -31,7 +31,7 @@ export interface IProxyUtils {
   data: any;
 }
 
-interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {
+export interface IProxyBase<T extends AlinsType.Proxy|AlinsType.Ref> {
   // @ts-ignore
   [util]: IProxyUtils;
   // @ts-ignore

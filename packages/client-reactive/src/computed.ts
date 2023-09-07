@@ -4,9 +4,9 @@
  * @Description: Coding something
  */
 
-import {util, IRefData, IOnChange} from 'alins-utils';
-import {observe, createProxy, wrapReactive} from './proxy';
-import {isDepReactive} from './proxy';
+import { util, IRefData, IOnChange } from 'alins-utils';
+import { observe, createProxy, wrapReactive } from './proxy';
+import { isDepReactive } from './proxy';
 
 export interface IComputedObject<T> {
     get(): T;
@@ -29,23 +29,12 @@ export function computed<T> (target:(()=>T)|IComputedObject<T>): IRefData<T>|{v:
     });
 
     if (isDepReactive()) {
-        proxy = createProxy(wrapReactive(v, true), {set, get});
+        proxy = createProxy(wrapReactive(v, true), { set, get });
         return proxy;
     }
-    // // @ts-ignore
-    // fn = null;
     // ! 此处是为了兼容编译时将未知类型的import常量进行表达式计算时进行的统一computed处理的开销
     // 也可以优化 computed静态类型的开销 如 computed(()=>1+1)
-    return {v};
+    return { v };
 
-    // // eslint-disable-next-line prefer-const
-    // proxy = observe(() => {
-    //     return createProxy(wrapReactive(get(), true), {set, get});
-    // }, () => {
-    //     // ! 每次都需要重新get以下 因为可能代码逻辑分支有变化导致出现了没有收集到的依赖
-    //     proxy[util].forceWrite(wrapReactive(get(), true));
-    // });
-    // // console.log(proxy);
-    // return proxy;
 }
 

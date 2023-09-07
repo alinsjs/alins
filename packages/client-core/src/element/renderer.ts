@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 
-import {AlinsType, type} from 'alins-utils';
+import { AlinsType, type } from 'alins-utils';
 
 export type IFragment = DocumentFragment;
 
@@ -30,6 +30,7 @@ export interface IElement {
     insertBefore<T extends ITrueElement>(node: T, child: IElement | null): T;
     remove(): void;
     children: (IElement|ITextNode)[];
+    childNodes: (IElement|ITextNode)[];
     get parentElement(): IElement;
     get parentNode(): IElement;
     get nextSibling(): IElement;

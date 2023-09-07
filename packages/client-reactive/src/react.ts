@@ -9,9 +9,8 @@ import {
     IProxyData,
     isStringTemplateArray,
 } from 'alins-utils';
-import {createProxy, isProxy, wrapReactive} from './proxy';
-import {createBinding, IBindingReaction, IReactBindingResult} from './binding';
-
+import { createProxy, isProxy, wrapReactive } from './proxy';
+import { createBinding, IBindingReaction, IReactBindingResult } from './binding';
 
 // ! 重载顺序不能更改
 // 生成响应数据绑定
@@ -36,5 +35,5 @@ export function reactive<T extends IJson> (data: T, shallow = false): IProxyData
 
     if (isProxy(data.v)) return data as any;
 
-    return createProxy<T>(wrapReactive(data) as T, {shallow});
+    return createProxy<T>(wrapReactive(data) as T, { shallow });
 }

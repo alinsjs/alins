@@ -7,12 +7,12 @@
 import {
     createProxy, isProxy, watchArray,
     IOprationAction, OprateType, registArrayMap,
-    createCleaner, ICleaner, mockRef
+    createCleaner, ICleaner, mockRef, useCurCleaner
 } from 'alins-reactive';
-import {IProxyData, util} from 'alins-utils';
-import {IFragment, IGeneralElement, ITrueElement, Renderer} from './element/renderer';
-import {createDomCacheManager} from './scope/cache';
-import {getParent} from './utils';
+import { IProxyData, util } from 'alins-utils';
+import { createDomCacheManager } from './branch/branch-block';
+import { IFragment, IGeneralElement, ITrueElement, Renderer } from './element/renderer';
+import { getParent } from './utils';
 
 
 /*
@@ -48,8 +48,9 @@ export function map (
     const ScopeEnd = Renderer.createEmptyMountNode();
     const EndMap: ITrueElement[] = [];
     const Cleaners: ICleaner[] = [];
+    // window._Cleaners = Cleaners;
 
-    const cacheManager = createDomCacheManager();
+    const cacheManager = createDomCacheManager(); // todo
 
     let head: ITrueElement;
 
@@ -65,11 +66,11 @@ export function map (
     // window.EndMap = EndMap;
 
     const createScope = (item: any, i: number): IProxyData<any> => {
-        item = createProxy({v: item}, {shallow: true});
-        const scope = {[k]: item};
+        item = createProxy({ v: item }, { shallow: true });
+        const scope = { [k]: item };
 
         if (ik) { // 表示有第二个参数
-            scope[ik] = createProxy({v: i}, {shallow: true});
+            scope[ik] = createProxy({ v: i }, { shallow: true });
         }
         return scope;
     };
@@ -84,9 +85,11 @@ export function map (
         // console.log('cc', item, i);
         const scope = createScope(item, i);
 
-        cleaners.push(createCleaner());
+        const cleaner = createCleaner();
 
-        let child = call(scope[k], scope[ik] || i);
+        cleaners.push(cleaner);
+
+        let child = useCurCleaner(cleaner, () => call(scope[k], scope[ik] || i));
 
         // @ts-ignore
         let end: ITrueElement = child;
@@ -114,10 +117,10 @@ export function map (
         }
         // if(i===0)debugger;
         // console.log(head, i);
-        
+
         scopes.push(scope);
         ends.push(end);
-        
+
         return child;
     };
     for (let i = 0; i < n; i++) {
@@ -126,7 +129,7 @@ export function map (
         container.appendChild(child as any);
     }
     container.appendChild(ScopeEnd as any);
-    watchArray(list, ({index, count, data, type}: IOprationAction) => {
+    watchArray(list, ({ index, count, data, type }: IOprationAction) => {
         switch (type) {
             case OprateType.Push: {
                 // console.warn('OprateType.Push', index, count, data, type);
@@ -137,8 +140,8 @@ export function map (
                     // @ts-ignore
                     doc.appendChild(child);
                 }
-                // 如果没有父元素则 append到初始的frag上 // todo check 这里的逻辑
                 cacheManager.insertBefore(doc, ScopeEnd, container);
+                // getParent(ScopeEnd, container).insertBefore(doc, ScopeEnd);
             };break;
             case OprateType.Replace: {
                 // console.warn('OprateType.Replace', index, count, data, type);
@@ -167,11 +170,12 @@ export function map (
                     const endPos = startPos + count;
                     // @ts-ignore
                     const endDom = EndMap[endPos]?.nextSibling || ScopeEnd;
-    
+
                     const startDom = ((startPos < 0) ? (head || ScopeEnd) : EndMap[startPos]) as Node;
                     while (startDom.nextSibling && startDom !== endDom && startDom.nextSibling !== endDom) {
                         const dom = startDom.nextSibling;
                         cacheManager.removeElement(dom);
+                        // Renderer.removeElement(dom);
                     }
                     if (startPos < 0) {
                         // @ts-ignore
@@ -180,6 +184,7 @@ export function map (
                             head = startDom.nextSibling;
                             // @ts-ignore
                             cacheManager.removeElement(startDom);
+                            // Renderer.removeElement(startDom);
                         } else {
                             head = ScopeEnd;
                         }
@@ -187,10 +192,11 @@ export function map (
                     EndMap.splice(index, count);
                     ScopeItems.splice(index, count);
                     Cleaners.splice(index, count).forEach(cleaner => {
+                        // console.log('clean lns');
                         cleaner.clean();
                     });
                 };
-    
+
                 // items.forEach(item => item[util].release());
                 // console.warn('【watch array remove】', index, count, data);
 
@@ -198,6 +204,7 @@ export function map (
                     removeFunc();
                 } else {
                     cacheManager.addTask(removeFunc);
+                    // removeFunc();
                 }
 
             };break;
@@ -226,6 +233,7 @@ export function map (
                     insertFunc();
                 } else {
                     cacheManager.addTask(insertFunc);
+                    // insertFunc();
                 }
                 // console.warn('【watch array insert】', index, count, data);
             };break;

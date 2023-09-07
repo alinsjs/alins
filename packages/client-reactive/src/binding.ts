@@ -4,9 +4,9 @@
  * @Description: Coding something
  */
 
-import {isRef} from './proxy';
-import {AlinsType, IRefData, ISimpleValue, type} from 'alins-utils';
-import {watch} from './watch';
+import { isRef } from './proxy';
+import { AlinsType, IRefData, ISimpleValue, type } from 'alins-utils';
+import { watch } from './watch';
 
 export const binding = Symbol('b');
 

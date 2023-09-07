@@ -3,8 +3,8 @@
  * @Date: 2023-07-11 16:43:11
  * @Description: Coding something
  */
-import type {NodePath} from '@babel/traverse';
-import type {BlockStatement, CallExpression, FunctionDeclaration, JSXElement, Node, VariableDeclarator} from '@babel/types';
+import type { NodePath } from '@babel/traverse';
+import type { BlockStatement, CallExpression, FunctionDeclaration, JSXElement, Node, VariableDeclarator } from '@babel/types';
 
 // export function isFuncParameter (path: NodePath<Identifier>) {
 
@@ -13,7 +13,7 @@ import type {BlockStatement, CallExpression, FunctionDeclaration, JSXElement, No
 export function isJSXElement (node: Node) {
     return node.type === 'CallExpression' && isJsxCallee(node);
 }
- 
+
 export function isJsxCallee (node: CallExpression) {
     const callee = node.callee;
     if (!callee) return false;
@@ -245,4 +245,18 @@ export function isEventEmptyDeco (name: string, deco: string, value: any) {
 export function isArrayMapCall (node: CallExpression) {
     // @ts-ignore
     return node.callee?.property?.name === 'map';
+}
+
+export function isBlockBreak (elements: any[]) {
+    for (let i = elements.length - 1; i >= 0; i--) {
+        const node = elements[i];
+        if (node.type === 'BreakStatement') {
+            return true;
+        } else if (node.type === 'BlockStatement') {
+            if (isBlockBreak(node.body)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }

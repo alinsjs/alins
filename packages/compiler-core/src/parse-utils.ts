@@ -3,7 +3,7 @@
  * @Date: 2023-06-29 15:18:14
  * @Description: Coding something
  */
-import type {NodePath} from '@babel/traverse';
+import type { NodePath } from '@babel/traverse';
 import type {
     BlockStatement,
     CallExpression,
@@ -19,61 +19,10 @@ import type {
     JSXAttribute,
     ObjectProperty
 } from '@babel/types';
-import type {IBabelType} from './types';
-import {BlockReturnType, isBlockReturned, isEventEmptyDeco} from './is';
-import type {Module} from './context';
-
-export const ImportScope = (() => {
-    let fn: any = null;
-    let count = 0;
-    return {
-        regist (_fn: any) {
-            fn = _fn;
-        },
-        use () {
-            count ++;
-        },
-        unuse () {
-            count --;
-        },
-        trigger () {
-            if (count > 0)fn?.();
-            fn = null;
-            count = 0;
-        },
-    };
-})();
-
-let currentCtx: any = null;
-
-export const Names = {
-    _Ctx: '_$',
-    AliasPrefix: '_$',
-    _CtxFn: '_$$',
-    get CtxFn () {
-        ImportScope.use();
-        return this._CtxFn;
-    },
-    ReactFn: 'r',
-    ComputedFn: 'c',
-    ComputedFullFn: 'cc',
-    WatchFn: 'w',
-    CreateElementFn: 'ce',
-    Value: 'v',
-    TempResult: '_$R',
-    ExtendFn: 'e',
-    ExtendCompFn: 'es',
-    get Ctx () {
-        // 部分使用ctx时候并不是在当前作用域
-        // 比如因为有赋值导致的react和computed
-        const ctx = currentCtx;
-        // console.log('AlinsCtx use', ctx);
-        // if (!ctx) debugger;
-        if (!ctx._used) ctx._used = true;
-        return this._Ctx;
-    },
-};
-
+import type { IBabelType } from './types';
+import { BlockReturnType, isBlockBreak, isBlockReturned, isEventEmptyDeco } from './is';
+import type { Module } from './context';
+import { AlinsStr, AlinsVar, ImportManager } from './controller/import-manager';
 
 export let t: IBabelType;
 
@@ -131,26 +80,6 @@ export function createVarDeclarator (id: string, init: any) {
         init,
     );
 }
-let id = 0;
-export function createAlinsCtx () {
-    // console.log('AlinsCtx 111', top);
-    currentCtx = t.variableDeclaration(
-        'const',
-        [
-            t.variableDeclarator(
-                t.identifier(Names._Ctx),
-                t.callExpression(
-                    t.identifier(Names.CtxFn),
-                    []
-                ),
-            )
-        ]
-    );
-    currentCtx._isCtx = true;
-    currentCtx.id = id++;
-    currentCtx._skip = false;
-    return currentCtx;
-}
 
 export function createMemberExp (id: string, prop: string) {
     return t.memberExpression(
@@ -159,23 +88,19 @@ export function createMemberExp (id: string, prop: string) {
     );
 }
 
-export function createElementMember () {
-    return createMemberExp(Names.CtxFn, Names.CreateElementFn);
-}
-
 export function replaceJsxDomCreator (path: NodePath<CallExpression>) {
-    return createCtxCall(Names.CreateElementFn, path.node.arguments);
+    return createCtxCall(AlinsVar.Create, path.node.arguments);
 }
 
 // ! 暂时先全部用v包裹 后续优化
 export function createReadValue (idName: string) {
-    const node = createMemberExp(idName, Names.Value);
+    const node = createMemberExp(idName, AlinsStr.Value);
     // @ts-ignore
     node._skip = true;
     return node;
 }
 
-export function createFullComputed (get: any, set: any) {
+function createFullComputed (get: any, set: any) {
     return t.objectExpression([
         t.objectProperty(t.identifier('get'), get),
         t.objectProperty(t.identifier('set'), set),
@@ -184,7 +109,7 @@ export function createFullComputed (get: any, set: any) {
 
 export function createComputed (node: VariableDeclarator) {
     const get = t.arrowFunctionExpression([], node.init as any);
-    let target: any; ;
+    let target: any;
     // @ts-ignore
     if (node._computedSet) {
         // @ts-ignore
@@ -199,12 +124,12 @@ export function createComputed (node: VariableDeclarator) {
 }
 
 function createComputeCall (fn?: any) {
-    return createCtxCall(Names.ComputedFn, [fn]);
+    return createCtxCall(AlinsVar.Computed, [ fn ]);
 }
 
-export function createCtxCall (name: string, args: any[]) {
+export function createCtxCall (name: AlinsVar, args: any[]) {
     return t.callExpression(
-        createMemberExp(Names.CtxFn, name),
+        ImportManager.use(name),
         args
     );
 }
@@ -224,7 +149,7 @@ export function createJsxCompute (node: Expression|JSXExpressionContainer, isCom
     );
 
     if (exp.type === 'UpdateExpression') {
-        call = createCtxCall('mu', [call]);
+        call = createCtxCall(AlinsVar.MarkUpdate, [ call ]);
     }
 
     // 标注当前是否在JSX组件中，组件中需要被转成 _$$.c()
@@ -251,20 +176,13 @@ export function createReact (node: VariableDeclarator) {
     // );
     // debugger;
     // console.log('wrap react-------', node.id.name);
-    const args: any[] = [
-        t.objectExpression(
-            [ t.objectProperty(
-                t.identifier(Names.Value),
-                node.init as any
-            ) ]
-        )
-    ];
+    const args: any[] = [ node.init ];
     if (node._isShallow) {
         args.push(t.booleanLiteral(true));
     }
     return skipNode(t.variableDeclarator(
         node.id,
-        createCtxCall(Names.ReactFn, args),
+        createCtxCall(AlinsVar.React, args),
     ));
 }
 
@@ -342,9 +260,9 @@ export function createUnfInit () {
 
 export function createExportAliasInit (alias: string, name: string) {
     // _$.w(()=> x.v, (v)=>x=v, false).v;
-    const v = Names.Value;
+    const v = AlinsStr.Value;
     return t.memberExpression(
-        createCtxCall(Names.WatchFn, [
+        createCtxCall(AlinsVar.Watch, [
             t.arrowFunctionExpression([], createMemberExp(alias, v)),
             t.arrowFunctionExpression([], t.assignmentExpression('=', t.identifier(name), t.identifier(v))),
             t.booleanLiteral(false),
@@ -352,17 +270,6 @@ export function createExportAliasInit (alias: string, name: string) {
         t.identifier(v),
     );
 }
-
-// export function replaceIfStatement () {
-//     return t.callExpression(
-//         createMemberExp(Names.Ctx, 'if'),
-//         [
-//             t.arrowFunctionExpression([], createMemberExp(alias, v)),
-//             t.arrowFunctionExpression([], t.assignmentExpression('=', t.identifier(name), t.identifier(v))),
-//             t.booleanLiteral(false),
-//         ]
-//     );
-// }
 
 function transformToBlock (body: any) {
     // 对于没有{}的语句 进行block包裹
@@ -373,7 +280,7 @@ function transformToBlock (body: any) {
     return body;
 }
 
-export function traverseIfStatement (node: IfStatement, map: any = {elif: []}, i = 0) {
+export function traverseIfStatement (node: IfStatement, map: any = { elif: [] }, i = 0) {
     // @ts-ignore
     node._traversed = true;
 
@@ -435,35 +342,57 @@ export function createSetAsyncArrowFunc (body: BlockStatement) {
 export function traverseSwitchStatement (node: SwitchStatement) {
     const discr = t.arrowFunctionExpression([], node.discriminant);
     let isReturnJsx = false;
+
+
+    let childrenList: any[][] = [];
+    let isLastBreak = true;
+
     const cases = t.arrayExpression(node.cases.map(item => {
-        const {test, consequent: cons} = item;
-        let body: any = [];
+        const { test, consequent: cons } = item;
+        const bodyArr: any = [];
         for (const single of cons) {
             if (single.type === 'BlockStatement') {
-                body.push(...single.body);
+                bodyArr.push(...single.body);
             } else if (single.type === 'EmptyStatement') {
                 continue;
             } else {
-                body.push(single);
+                bodyArr.push(single);
             }
         }
-        body = transformToBlock(body);
+        const body = transformToBlock(bodyArr);
+        const returnType = isBlockReturned(body);
+
         if (!isReturnJsx) {
-            isReturnJsx = (isBlockReturned(body) === BlockReturnType.Jsx);
+            isReturnJsx = (returnType === BlockReturnType.Jsx);
         }
-        let array = t.arrayExpression([
+
+        const isBreak = !!returnType || isBlockBreak(bodyArr);
+        if (!isLastBreak) {
+            childrenList.forEach(item => {item.push(...bodyArr);});
+        }
+        if (!isBreak) {
+            childrenList.push(bodyArr);
+        } else {
+            childrenList = [];
+        }
+        isLastBreak = isBreak;
+
+        const array = t.arrayExpression([
             // ! !test 为 default
             !test ? t.nullLiteral() : test,
             body.length === 0 ? t.nullLiteral() : t.arrowFunctionExpression([], body),
         ]);
-        // @ts-ignore
-        item._setBrk = () => {
+        if (isBreak) {
             array.elements.push(t.booleanLiteral(true));
-            // @ts-ignore
-            item._setBrk = null;
-            // @ts-ignore
-            array = null;
-        };
+        }
+        // // @ts-ignore
+        // item._setBrk = () => {
+
+        //     // @ts-ignore
+        //     item._setBrk = null;
+        //     // @ts-ignore
+        //     array = null;
+        // };
         return array;
     }));
 
@@ -472,10 +401,10 @@ export function traverseSwitchStatement (node: SwitchStatement) {
         endFunc,
         isReturnJsx,
         node: t.callExpression(
-            t.memberExpression(t.callExpression(
-                createMemberExp(Names.Ctx, 'switch'),
-                [ discr, cases ]
-            ), t.identifier('end')),
+            t.memberExpression(
+                createCtxCall(AlinsVar.Switch, [ discr, cases ]),
+                t.identifier('end')
+            ),
             [ endFunc ]
         )
     };
@@ -508,24 +437,11 @@ export function markMNR (fn: any, returnJsxCall?: ()=>void) {
     if (!returnType) {
         fn._mnrMarked = true;
         // ! 标注是否有返回值
-        return createCtxCall('mnr', [fn]);
+        return createCtxCall(AlinsVar.MNR, [ fn ]);
     } else if (returnType === BlockReturnType.Jsx) {
         returnJsxCall?.();
     }
     return fn;
-}
-
-export function createImportAlins (useImport = true) {
-    return useImport ?
-        t.importDeclaration([
-            t.importSpecifier(t.identifier('_$$'), t.identifier('_$$'))
-        ], t.stringLiteral('alins')) :
-        t.variableDeclaration('const', [
-            t.variableDeclarator(t.identifier('_$$'), t.memberExpression(
-                t.memberExpression(t.identifier('window'), t.identifier('Alins')),
-                t.identifier('_$$'),
-            ))
-        ]);
 }
 
 export function parseComputedSet (path: NodePath<VariableDeclaration>) {
@@ -556,13 +472,13 @@ export function parseComputedSet (path: NodePath<VariableDeclaration>) {
 }
 
 export function extendCallee (isComp: boolean) {
-    return createMemberExp(Names.CtxFn, isComp ? Names.ExtendCompFn : Names.ExtendFn);
+    return ImportManager.use(isComp ? AlinsVar.ExtendComp : AlinsVar.Extend);
 }
 
 export function createExtendCalleeWrap (arg: any, isComp: boolean) {
     return t.callExpression(
         extendCallee(isComp),
-        [arg]
+        [ arg ]
     );
 }
 
@@ -588,7 +504,7 @@ export function parseAttributes (attrs: JSXAttribute[], handleReactive?: boolean
 export function parseJsxAttrShort (path: NodePath<JSXAttribute>) {
     const nodeValue = path.node.value;
     if (nodeValue) return false;
-        
+
     const newAttr = createNewJSXAttribute(path.node);
     if (newAttr) {
         path.replaceWith(newAttr);
@@ -645,7 +561,7 @@ export function createWrapAttr (name: string, value: any, wrap = false, handleRe
 export function getObjectPropValue (node: ObjectProperty, mock = false) {
     const value = node.value;
     if (value.type === 'AssignmentPattern') {
-        if (mock) value.right = createCtxCall('mf', [value.right]);
+        if (mock) value.right = createCtxCall(AlinsVar.MockRef, [ value.right ]);
         return value.left;
     }
     return value;

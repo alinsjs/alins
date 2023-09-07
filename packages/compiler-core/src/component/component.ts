@@ -3,10 +3,11 @@
  * @Date: 2023-07-31 20:37:15
  * @Description: Coding something
  */
-import type {NodePath} from '@babel/traverse';
-import type {Identifier, JSXAttribute, JSXElement, JSXOpeningElement, Node} from '@babel/types';
-import {isOriginJSXElement} from '../is';
-import {getT, Names, parseAttributes} from '../parse-utils';
+import type { NodePath } from '@babel/traverse';
+import type { Identifier, JSXAttribute, JSXElement, JSXOpeningElement, Node } from '@babel/types';
+import { AlinsVar, ImportManager } from '../controller/import-manager';
+import { isOriginJSXElement } from '../is';
+import { createCtxCall, getT, parseAttributes } from '../parse-utils';
 
 const CompNames = {
     For: 'For',
@@ -21,9 +22,13 @@ const CompNames = {
     // Frag: 'Frag',
 };
 
-function wrapChildren (children: any[], args: any[]|null = []) {
+function wrapChildren (
+    children: any[],
+    args: any[]|null = [],
+    isBreak = true,
+) {
     const t = getT();
-    let content = children.length === 1 ? children[0] : t.jsxFragment(
+    let content = (children.length === 1 && isBreak) ? children[0] : t.jsxFragment(
         t.jsxOpeningFragment(),
         t.jsxClosingFragment(),
         children
@@ -92,13 +97,23 @@ function parseFor (path: NodePath<JSXElement>) {
     if (!arrId) throw new Error('for:data is required');
 
     const t = getT();
+
+    const children = path.node.children;
+    // ! Case中添加其他分支元素时可能已经被转化了 需要用 expContainer 包裹一下
+    children.forEach((item, i) => {
+        // @ts-ignore
+        if (item.type === 'CallExpression') {
+            children[i] = t.jsxExpressionContainer(item);
+        }
+    });
+
     const newNode = t.callExpression(
         t.memberExpression(
             arrId,
             t.identifier('map'),
         ),
         [
-            wrapChildren(path.node.children, [
+            wrapChildren(children, [
                 t.identifier(itemName),
                 t.identifier(indexName),
             ])
@@ -117,7 +132,7 @@ function parseIf (path: NodePath<JSXElement>) {
         object: any, id: Identifier, args: any[],
     ) => {
         anchor = t.callExpression(
-            t.memberExpression(object, id),
+            id ? t.memberExpression(object, id) : object,
             args
         );
         if (args.length > 0)args[args.length - 1]._call = anchor;
@@ -132,7 +147,7 @@ function parseIf (path: NodePath<JSXElement>) {
 
     const handleNext = (path: NodePath<JSXElement>) => {
         let end = false;
-        let object: any, id: Identifier, args: any[];
+        let object: any, id: Identifier|null, args: any[];
 
         const node = path.node;
 
@@ -142,8 +157,8 @@ function parseIf (path: NodePath<JSXElement>) {
         switch (name) {
             case CompNames.If: {
                 parseComponentAttr(node);
-                object = t.identifier(Names.Ctx);
-                id = t.identifier('if');
+                object = ImportManager.use(AlinsVar.If);
+                id = null;
                 args = [
                     t.arrowFunctionExpression([], getExp(node.openingElement)),
                     wrapChildren(node.children),
@@ -206,6 +221,9 @@ function parseSwitch (path: NodePath<JSXElement>) {
     const array: any = [];
     const t = getT();
 
+    let childrenList: any[][] = [];
+    let isLastBreak = true;
+
     for (const item of node.children) {
         if (isEmptyText(item)) continue;
         if (!isOriginJSXElement(item.type))  {
@@ -220,15 +238,29 @@ function parseSwitch (path: NodePath<JSXElement>) {
         // @ts-ignore
         const name = el.name.name;
         if (name === CompNames.Case || name === CompNames.Default) {
+            // @ts-ignore
+            const brk = el.attributes.find(item => item.name.name === 'break');
+            const isBreak = brk?.value?.expression.value !== false;
+            // @ts-ignore
+            const children = item.children || [];
+
             const exp = getExp(el);
             const elements: any[] = [
                 !exp ? t.nullLiteral() : exp,
-                // @ts-ignore
-                wrapChildren(item.children || []),
+                wrapChildren(children, [], isBreak),
+                t.booleanLiteral(isBreak),
             ];
-            // @ts-ignore
-            const brk = el.attributes.find(item => item.name.name === 'break');
-            elements.push(t.booleanLiteral(brk?.value?.expression.value !== false));
+            if (!isLastBreak) {
+                childrenList.forEach(item => {
+                    item.push(...children);
+                });
+            }
+            if (!isBreak) {
+                childrenList.push(children);
+            } else {
+                childrenList = [];
+            }
+            isLastBreak = isBreak;
             array.push(t.arrayExpression(elements));
             if (name === CompNames.Default) break;
         } else {
@@ -236,14 +268,10 @@ function parseSwitch (path: NodePath<JSXElement>) {
         }
     }
 
-
-    const switchNode = t.callExpression(
-        t.memberExpression(t.identifier(Names.Ctx), t.identifier('switch')),
-        [
-            t.arrowFunctionExpression([], getExp(node.openingElement)),
-            t.arrayExpression(array)
-        ]
-    );
+    const switchNode = createCtxCall(AlinsVar.Switch, [
+        t.arrowFunctionExpression([], getExp(node.openingElement)),
+        t.arrayExpression(array)
+    ]);
 
     path.replaceWith(t.callExpression(
         t.memberExpression(switchNode, t.identifier('end')),
@@ -271,10 +299,7 @@ function parseAsync (path: NodePath<JSXElement>) {
         t.returnStatement(wrapChildren(node.children, null))
     ]);
 
-    path.replaceWith(t.callExpression(
-        t.memberExpression(t.identifier(Names.CtxFn), t.identifier('ce')),
-        [ t.arrowFunctionExpression([], body, true) ]
-    ));
+    path.replaceWith(createCtxCall(AlinsVar.Create, [ t.arrowFunctionExpression([], body, true) ]));
 }
 
 function parseShow (path: NodePath<JSXElement>) {

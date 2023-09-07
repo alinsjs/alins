@@ -4,8 +4,6 @@
  * @Description: Coding something
  */
 
-// import './samples/bench';
-
 import 'packages/compiler-web';
 import samplesList from './samples-list';
 
@@ -21,6 +19,5 @@ const name = searchParams.get('file') || 'increment';
 
 document.write(`<script type="text/alins" src="./samples/${name}"></script>`);
 
-// // import {parseWebAlins} from 'packages/compiler-web';
 
-// // console.log(parseWebAlins(`let `, {ts: false, useImport: false}));
+// import './samples/demo';

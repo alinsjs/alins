@@ -3,11 +3,11 @@
  * @Date: 2023-07-14 17:39:29
  * @Description: Coding something
  */
-import type {Statement, SwitchStatement} from '@babel/types';
-import {getT, traverseSwitchStatement} from '../parse-utils';
+import type { Statement, SwitchStatement } from '@babel/types';
+import { getT, traverseSwitchStatement } from '../parse-utils';
 
-import {ControlScope} from './control-scope';
-import {createScopeStack} from './scope-stack';
+import { ControlScope } from './control-scope';
+import { createScopeStack } from './scope-stack';
 
 export class SwitchScope extends ControlScope<SwitchStatement> {
 
@@ -15,7 +15,7 @@ export class SwitchScope extends ControlScope<SwitchStatement> {
 
     _init () {
         SwitchScope.ScopeStack.newNode(this);
-        const {endFunc, node, isReturnJsx} = traverseSwitchStatement(this.path.node);
+        const { endFunc, node, isReturnJsx } = traverseSwitchStatement(this.path.node);
         if (isReturnJsx) {
             this.markScopeReturnJsx();
         }

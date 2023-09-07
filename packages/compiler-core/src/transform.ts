@@ -1,15 +1,16 @@
 
-import type {NodePath, TraverseOptions} from '@babel/traverse';
-import type {Program} from '@babel/types';
-import type {IBabelType} from './types';
-import {parseCommentMulti, parseVarDeclCommentReactive} from './comment';
-import {parseInnerComponent} from './component/component';
-import {currentModule as ctx, enterContext, exitContext} from './context';
+import type { NodePath, TraverseOptions } from '@babel/traverse';
+import type { Program } from '@babel/types';
+import type { IBabelType } from './types';
+import { parseCommentMulti, parseVarDeclCommentReactive } from './comment';
+import { parseInnerComponent } from './component/component';
+import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
-    createAlinsCtx, createEmptyString, createExtendCalleeWrap, createImportAlins, createUnfInit,
-    extendCallee, getObjectPropValue, getT, ImportScope, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
+    createEmptyString, createExtendCalleeWrap, createUnfInit,
+    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
 } from './parse-utils';
-import {isJsxExtendCall, isJsxExtendDef, isOriginJSXElement} from './is';
+import { isJsxExtendCall, isJsxExtendDef, isOriginJSXElement } from './is';
+import { ImportManager } from './controller/import-manager';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
     initTypes(t);
@@ -20,25 +21,16 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 const body = path.node.body;
                 for (let i = 0; i < body.length; i++) {
                     if (body[i]?.type !== 'ImportDeclaration') {
-                        body.splice(i, 0, createAlinsCtx());
-                        if (!useImport) {
-                            ImportScope.regist(() => {
-                                body.splice(i, 0, createImportAlins(useImport));
-                            });
-                        }
+                        body.splice(i, 0, ImportManager.init(useImport, () => {
+                            body.splice(i, 1);
+                        }));
                         break;
                     }
-                }
-
-                if (useImport) {
-                    ImportScope.regist(() => {
-                        body.unshift(createImportAlins());
-                    });
                 }
             },
             exit () {
                 exitContext();
-                ImportScope.trigger();
+                ImportManager.exitModule();
             }
         },
         ImportDeclaration: (path) => {
@@ -116,13 +108,9 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                     path.skip();
                     return;
                 }
-                
+
                 parseVarDeclCommentReactive(path.node);
 
-                if (path.node._isCtx) { // ! 是否是生成的alins ctx
-                    path.node._isCtx = false;
-                    ctx.ctx = path;
-                }
                 if (!ctx.enter(path)) return;
 
                 // ! computed set 解析
@@ -166,6 +154,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 if (!ctx.enter(path)) return;
                 // todo init = null 时 设置为 void 0;
                 // if (path.node.id.name === 'c') debugger;
+                if (path.node.id.type === 'ObjectPattern') return;
                 ctx.collectVar(path);
             },
             exit () {
@@ -387,16 +376,16 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         BreakStatement (path) {
             // console.log(ctx.curScope);
             if (ctx.curScope.inIf || ctx.curScope.inSwitch) {
-                if (ctx.curScope.inSwitch) {
-                    if (path.parent.type === 'SwitchCase') {
-                        // @ts-ignore
-                        path.parent._setBrk?.();
-                    } else {
-                        const parent = path.findParent(node => node.type === 'SwitchCase');
-                        // @ts-ignore
-                        parent?.node._setBrk?.();
-                    }
-                }
+                // if (ctx.curScope.inSwitch) {
+                //     if (path.parent.type === 'SwitchCase') {
+                //         // @ts-ignore
+                //         path.parent._setBrk?.();
+                //     } else {
+                //         const parent = path.findParent(node => node.type === 'SwitchCase');
+                //         // @ts-ignore
+                //         parent?.node._setBrk?.();
+                //     }
+                // }
                 path.replaceWith(getT().returnStatement());
             }
         }

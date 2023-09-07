@@ -4,8 +4,8 @@
  * @Description: Coding something
  */
 
-import {empty, IProxyData, trig, util} from 'alins-utils';
-import {createProxy} from './proxy';
+import { empty, IProxyData, trig, util } from 'alins-utils';
+import { createProxy, isProxy } from './proxy';
 
 export enum OprateType {
     Replace = 0, // Replace index a => b
@@ -24,11 +24,10 @@ export interface IOprationAction {
 }
 
 function proxyItem (data: IProxyData<any[]>, args: any[], index: number) {
-    
+
     if (data[util].shallow) return args;
     return args.map((item, i) => {
-        if (item && typeof item === 'object') {
-            // debugger;
+        if (item && typeof item === 'object' && !isProxy(item)) {
             return createProxy(item, {
                 commonLns: data[util].commonLns,
                 path: data[util].path,
@@ -43,7 +42,7 @@ function proxyItem (data: IProxyData<any[]>, args: any[], index: number) {
 function triggerOprationEvent (arr: any[], type: OprateType, index:number, data: any[], count: number, fromAssign?:boolean) {
     // const ut = arr[util];
     // @ts-ignore
-    arr[trig]?.forEach((fn: any) => {fn({type, data, index, count, fromAssign});});
+    arr[trig]?.forEach((fn: any) => {fn({ type, data, index, count, fromAssign });});
 }
 
 function wrapArrayCall (target: IProxyData<any[]>, fn:()=>any) {
@@ -56,7 +55,7 @@ function wrapArrayCall (target: IProxyData<any[]>, fn:()=>any) {
 
 const ArrayMap = {
     splice (this: {target: IProxyData<any[]>, origin: any}, start: number, count?: number, ...args: any[]) {
-        const {target, origin} = this;
+        const { target, origin } = this;
         // console.log('splice', start, count);
         if (start >= target.length) {
             start = target.length;
@@ -72,56 +71,47 @@ const ArrayMap = {
             const data = proxyItem(target, args.slice(replaceNum), n);
             triggerOprationEvent(target, OprateType.Insert, n, data, data.length);
             // console.log('Insert', n, args.slice(replaceNum));
-            // result = origin.call(proxy, n, 0, ...data);
         } else {
             const size = count - newCount; // 需要删除的数量
             triggerOprationEvent(target, OprateType.Remove, n, target.slice(n, n + size), size);
             // console.log('Remove', n, count - newCount);
-            // result = origin.call(proxy, n, size);
         }
         for (let i = start; i < n; i++) {
             const data = args[i - start];
             // [new,old]
-            triggerOprationEvent(target, OprateType.Replace, i, [data, target[i]], 1);
-            // // console.log('Replace', i, this[i], args[i - start]);
-            // if (data && typeof data === 'object') {
-            //     target[i][util].replace(args[i - start]);
-            // } else {
-            //     proxy[i] = data;
-            // }
+            triggerOprationEvent(target, OprateType.Replace, i, [ data, target[i] ], 1);
         }
         const items = target[util].scopeItems;
         // @ts-ignore
         const data = items?.slice(start, start + args.length).map(i => i[items.key].v);
-        // const data = args;
         // @ts-ignore
         return wrapArrayCall(target, () => origin.call(target[util].proxy, start, count, ...data));
     },
     push (this: {target: IProxyData<any[]>, origin: any}, ...args: any[]) {
         // console.log('Push', args);
-        const {target, origin} = this;
+        const { target, origin } = this;
         args = proxyItem(target, args, target.length);
         triggerOprationEvent(target, OprateType.Push, target.length, args, args.length);
         return origin.call(target[util].proxy, ...args);
     },
     pop (this: {target: IProxyData<any[]>, origin: any}) {
-        const {target, origin} = this;
+        const { target, origin } = this;
         if (target.length > 0) {
-            triggerOprationEvent(target, OprateType.Remove, target.length - 1, [target[target.length - 1]], 1);
+            triggerOprationEvent(target, OprateType.Remove, target.length - 1, [ target[target.length - 1] ], 1);
         }
         // console.log('Remove', this.length - 1, 1);
         return origin.call(target[util].proxy);
     },
     unshift (this: {target: IProxyData<any[]>, origin: any}, ...args: any[]) {
         // console.log('Insert', );
-        const {target, origin} = this;
+        const { target, origin } = this;
         args = proxyItem(target, args, 0);
         triggerOprationEvent(target, OprateType.Insert, 0, args, args.length);
         return wrapArrayCall(target, () => origin.call(target[util].proxy, ...args));
     },
     shift (this: {target: IProxyData<any[]>, origin: any}) {
         // console.log('Remove', 0, 1);
-        const {target, origin} = this;
+        const { target, origin } = this;
         if (target.length > 0) {
             triggerOprationEvent(target, OprateType.Remove, 0, target[0], 1);
         }
@@ -129,44 +119,19 @@ const ArrayMap = {
     },
     replace (target: any, index: number, ov: any, v: any) {
         // console.warn('replace=======', index, ov, v);
-        triggerOprationEvent(target, OprateType.Replace, index, [v, ov], 1);
+        triggerOprationEvent(target, OprateType.Replace, index, [ v, ov ], 1);
         target[index] = v;
     },
-    // sort (this: {target: IProxyData<any[]>, origin: any}, compareFn?: ((a: any, b: any) => number) | undefined) {
-    //     const {target, origin} = this;
-    //     const originData = [...target];
-    //     const result = origin.call(target, compareFn);
-    //     const n = result.length;
-    //     for (let i = 0; i < n; i++) {
-    //         if (originData[i] !== result[i]) {
-    //             // Sort 作为另外一种类型 移动dom元素 修改索引 既可以
-    //             triggerOprationEvent(target, OprateType.Replace, i, [result[i], originData[i]], 1);
-    //             // console.log('Replace', i, origin[i], result[i]);
-    //         }
-    //     }
-    //     return result;
-    // },
-    // fill (this: {target: IProxyData<any[]>, origin: any}, data: any, start?: number, end?: number) {
-    //     const {target, origin} = this;
-    //     const result = origin.call(target[util].proxy, data, start, end);
-    //     const n = end ?? result.length;
-    //     const endItem = result[n - 1];
-    //     for (let i = start ?? 0; i < n; i++) {
-    //         debugger;
-    //         replaceLNS(result[i], endItem);
-    //     }
-    //     return result;
-    // },
 };
 
 const mapFunc: any = {
     // todo
     // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
     // indexOf (this: any[]) {
-        
+
     // },
     // lastIndexOf () {
-        
+
     // },
     // includes () {
 
@@ -193,7 +158,7 @@ export function arrayFuncProxy (target: any, property: string, receiver: any) {
     // @ts-ignore
     if (ArrayMap[property] && target[trig] && !target[property].hack) {
         // @ts-ignore
-        target[property] = ArrayMap[property].bind({target, origin: target[property]});
+        target[property] = ArrayMap[property].bind({ target, origin: target[property] });
         target[property].hack = true;
         return target[property];
     }
@@ -222,7 +187,7 @@ export function replaceWholeArray (origin: any[], v: any[]) {
 
 
     for (let i = 0; i < min; i++) {
-        triggerOprationEvent(origin, OprateType.Replace, i, [v[i], origin[i]], 1);
+        triggerOprationEvent(origin, OprateType.Replace, i, [ v[i], origin[i] ], 1);
         origin[util].data[i] = v[i];
     }
 
@@ -231,19 +196,16 @@ export function replaceWholeArray (origin: any[], v: any[]) {
     if (on > vn) {
         // @ts-ignore
         triggerOprationEvent(origin, OprateType.Remove, min, null, on - vn);
-        // // for (let i = min; i < origin.length; i++) {
-        // //     const item = origin[i];
-        // //     item.___clear_cache?.();
-        // // }
+
         // window.ccc.forEach(f => f());
         // window.ccc = null;
-        origin[util].proxy.splice(min);
+        origin.splice(min);
     } else {
         const data = v.slice(min);
         // triggerOprationEvent(origin, OprateType.Push, min, data, vn - on);
-        origin[util].proxy.push(...data);
+        origin.push(...data);
     }
-    
+
     return true;
 }
 
@@ -256,7 +218,7 @@ export function replaceWholeArray (origin: any[], v: any[]) {
 //             console.warn('type======', ['replace', 'remove', 'insert', 'push'][type], `index=${index}; count=${count}`, 'data=', data.map(i => JSON.stringify(i)));
 //         });
 //     watch(list, (...args) => console.warn('watch======', args, JSON.stringify(args[0]), JSON.stringify(args[1])));
-    
+
 //     list.splice(1, 2, {a: 0});
 // }
 // window.testSpliceRemove = testSpliceRemove;
@@ -275,7 +237,7 @@ export function replaceWholeArray (origin: any[], v: any[]) {
 //         // result.push()
 //         console.warn('watch======', args, JSON.stringify(args[0]), JSON.stringify(args[1]));
 //     });
-    
+
 //     list.splice(1, 1, {a: 0}, {a: 1});
 // }
 // window.testSpliceInsert = testSpliceInsert;

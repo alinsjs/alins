@@ -3,8 +3,8 @@
  * @Date: 2023-08-31 09:38:52
  * @Description: Coding something
  */
-import {react} from './react';
-import {watch} from './watch';
+import { react } from './react';
+import { watch } from './watch';
 
 type IAction<State extends Record<string, any>> =
     Record<string, (this: IStore<State, any, any>, ...args: any[])=>any>

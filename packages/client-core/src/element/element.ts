@@ -3,21 +3,21 @@
  * @Date: 2023-06-25 22:31:56
  * @Description: Coding something
  */
-import {addEvent, isEventAttr, IEventNames} from './event';
-import {IElement, IFragment, ITrueElement, Renderer} from './renderer';
+import { addEvent, isEventAttr, IEventNames } from './event';
+import { IElement, IFragment, ITrueElement, Renderer } from './renderer';
 import {
     IBindingReactionEnable, reactiveBindingEnable,
     IChildren, reactiveBindingValue,
 } from './dom-util';
-import {AlinsType, IJson, type} from 'alins-utils';
-import {IBindingReaction, IBindingRef, isProxy} from 'alins-reactive';
-import {IAttributes} from './jsx';
-import {parseStyle, parseStyleSuffix} from './style';
-import {parseModel} from './model';
-import {getParent} from '../utils';
-import {parseAttributes} from './attributes';
-import {parseClassName, parseClassSuffix} from './class';
-import {initMountedObserver, initRemovedObserver} from './lifecycle';
+import { AlinsType, IJson, type } from 'alins-utils';
+import { IBindingReaction, IBindingRef, isProxy } from 'alins-reactive';
+import { IAttributes } from './jsx';
+import { parseStyle, parseStyleSuffix } from './style';
+import { parseModel } from './model';
+import { getParent } from '../utils';
+import { parseAttributes } from './attributes';
+import { parseClassName, parseClassSuffix } from './class';
+import { initMountedObserver, initRemovedObserver } from './lifecycle';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -88,6 +88,8 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
             // @ts-ignore
             const $appended = opt.attributes.$appended;
 
+            let $mount: any = opt.attributes.$mount;
+
             opt.attributes.$created?.(el);
 
             for (const k in opt.attributes) {
@@ -96,19 +98,12 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     addEvent(el as IElement, k, v);
                     continue;
                 }
-                
                 switch (k) {
                     case '$created': break;
                     case '$appended': (el as IElement).__$appended = $appended; break;
                     case '$removed': (el as IElement).__$removed = v; break;
                     case '$mounted': (el as IElement).__$mounted = v; break;
-                    case '$mount': {
-                        let dom = v;
-                        if (typeof dom === 'string') dom = document.querySelector(dom);
-                        if (!dom) throw new Error('$mount is not a Element');
-                        dom.appendChild(el);
-                        if ($appended) $appended(el); // todo 此处有可能还没有append到document中
-                    }; break;
+                    case '$mount': break;
                     case '$html': reactiveBindingEnable(v, (v) => {
                         // @ts-ignore
                         el.innerHTML = v || '';
@@ -129,6 +124,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                         ) {
                             break;
                         } else {
+                            // console.warn('reactiveBindingEnable', k, v);
                             reactiveBindingEnable(v, (v) => {
                                 if (typeof v === 'object') {
                                     v = (!!v.enable) ? v.value : null;
@@ -140,9 +136,31 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                     }; break;
                 };
             }
+            if ($mount) {
+
+                if (typeof $mount === 'string') $mount = document.querySelector($mount);
+                if (!$mount) throw new Error('$mount is not a Element');
+                // dom.appendChild(el);
+                appendChild($mount, el);
+                if ($appended) $appended(el); // todo 此处有可能还没有append到document中
+
+            }
+
         }
     }
     return el;
+}
+
+function appendChild (parent: any, item: any) {
+    // @ts-ignore
+    if (item.__$mounted) {
+        initMountedObserver(parent);
+    }
+    // @ts-ignore
+    if (item.__$removed) initRemovedObserver(item);
+    parent.appendChild(item as any);
+    // @ts-ignore
+    item.__$appended?.(item);
 }
 
 
@@ -156,13 +174,7 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
         }
 
         if (Renderer.isElement(item)) {
-            // @ts-ignore
-            if (item.__$mounted) initMountedObserver(parent);
-            // @ts-ignore
-            if (item.__$removed) initRemovedObserver(item);
-            parent.appendChild(item as any);
-            // @ts-ignore
-            item.__$appended?.(item);
+            appendChild(parent, item);
             continue;
         }
 
@@ -171,7 +183,7 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
             // @ts-ignore 是 domOptions
             options = item;
         } else {
-            options = {text: item, isText: true};
+            options = { text: item, isText: true };
         }
 
         const dom = transformOptionsToElement(options);
@@ -202,7 +214,7 @@ export const JSX = {
                 for (const k in attributes) {
                     const v = attributes[k];
                     if (!isProxy(v)) {
-                        attributes[k] = {v, [type]: AlinsType.Ref}; // ! 模拟ref
+                        attributes[k] = { v, [type]: AlinsType.Ref }; // ! 模拟ref
                     }
                     // if(typeof v === 'function')
                 }
@@ -211,13 +223,15 @@ export const JSX = {
             // if (dom.toString() === '[object Promise]') {
             const result = transformAsyncDom(dom) as any;
             if ($mount) {
+                // todo bugfix
                 if (typeof $mount === 'string') $mount = document.querySelector($mount);
-                $mount.appendChild(result);
+                appendChild($mount, result);
+                // $mount.appendChild(result);
             }
             return result;
         }
         // @ts-ignore
-        const result: IJSXDomOptions = {tag, attributes, children, jsx: true};
+        const result: IJSXDomOptions = { tag, attributes, children, jsx: true };
         // console.log('createElement', result);
         return transformOptionsToElement(result);
     }

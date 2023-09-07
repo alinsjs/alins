@@ -4,11 +4,14 @@
  * @Description: Coding something
  */
 
-import {createContext, version} from 'alins';
-import {parseWebAlins} from './parser';
+import {
+    version,
+    _$c, _$cc, _$ce, _$e, _$es, _$if, _$mf, _$mm, _$mnr, _$mu, _$r, _$sw, _$w,
+} from 'alins';
+import { parseWebAlins } from './parser';
 
 function onDOMContentLoaded () {
-    const names = ['alins', 'babel'];
+    const names = [ 'alins', 'babel', 'jsx' ];
     for (const name of names) {
         const scripts = document.querySelectorAll(`script[type="text/${name}"]`);
         // @ts-ignore
@@ -20,7 +23,7 @@ function onDOMContentLoaded () {
 }
 
 async function onSingleScript (script: HTMLScriptElement, web = true, ts = false) {
-    __DEV__ && console.log(`web=${web}; ts=${ts}`);
+    // __DEV__ && console.log(`web=${web}; ts=${ts}`);
     let code = '';
     if (script.innerText.trim() === '') {
         if (script.src) {
@@ -34,7 +37,7 @@ async function onSingleScript (script: HTMLScriptElement, web = true, ts = false
     } else {
         code = script.innerText;
     }
-    const output = parseWebAlins(code, {useImport: !web, ts});
+    const output = parseWebAlins(code, { useImport: !web, ts });
     // console.warn(code);
     // console.warn('============>');
     if (__DEV__) console.warn('Compiler output:', output);
@@ -49,7 +52,7 @@ async function onSingleScript (script: HTMLScriptElement, web = true, ts = false
 
 if (typeof window !== 'undefined') {
     // @ts-ignore
-    window.Alins = {_$$: createContext, version};
+    window.Alins = { _$c, _$cc, _$ce, _$e, _$es, _$mf, _$mm, _$mnr, _$mu, _$r, _$sw, _$w, _$if, version };
     window.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 }
 
