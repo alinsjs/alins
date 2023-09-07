@@ -6,7 +6,7 @@
 
 export interface ICleaner {
     clean(): void;
-    collect(key: any, clean: any, force?: boolean): void;
+    collect(clean: any): void;
 }
 
 let curCleaner: ICleaner|null = null;
@@ -30,11 +30,10 @@ export function useCurCleaner<T> (cleaner: ICleaner|null, callback: ()=>T) {
 // 收集dom元素依赖的watch，在元素remove时主动释放掉所有watch
 export function createCleaner () {
 
-    let set = new WeakSet();
     let cleanMap: any[] = [];
 
     const cleaner: ICleaner = {
-        map () {return cleanMap;},
+        // map () {return cleanMap;},
         clean () {
             cleanMap.forEach(clean => {
                 clean();
@@ -44,7 +43,7 @@ export function createCleaner () {
             // @ts-ignore
             set = null;
         },
-        collect (key: any, clean: any, force = false) {
+        collect (clean: any) {
             if (!cleanMap) {
                 console.warn('cleanMap is null');
                 return;

@@ -177,7 +177,7 @@ if (packageName === 'eslint-config-alins') {
     process.exit(0);
 }
 
-console.log('external', external);
+// console.log('external', external);
 
 const packageInfo = {
     typings: `dist/${packageName}.d.ts`,

@@ -86,9 +86,9 @@ export function createUtils (
     const subscribe = (ln: IProxyListener<any>, deep: boolean = true) => {
         // console.trace('subscribe', Object.keys(lns));
         const ut = data[util];
-        addLns(ut, 'commonLns', ln, true);
+        addLns(ut, 'commonLns', ln);
         for (const k in data) {
-            addLns(ut.lns, k, ln, true);
+            addLns(ut.lns, k, ln);
             // @ts-ignore
             if (deep && isProxy(data[k])) data[k][util].subscribe(ln, deep);
         }
@@ -287,7 +287,7 @@ export function replaceLNS (nv: IProxyData<any>, origin: IProxyData<any>) {
     }
 }
 
-export function addLns (lns, property, listener, force = false) {
+export function addLns (lns, property, listener) {
     let set = lns[property];
     if (!set) set = lns[property] = new Set();
     if (!set.has(listener)) {
@@ -295,10 +295,10 @@ export function addLns (lns, property, listener, force = false) {
         const cleaner = getCurCleaner();
         if (cleaner) {
             if (property === 'v') {
-                cleaner.collect(listener, () => {
+                cleaner.collect(() => {
                     set.delete(listener);
                     listener = null;
-                }, force);
+                });
             }
         }
         set.add(listener);

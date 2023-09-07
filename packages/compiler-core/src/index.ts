@@ -15,7 +15,7 @@ export function randomTsxFileName () {
 
 export type IAlinsParser = (code: string, options?: IParserOptions) => string;
 
-export {createNodeVisitor, createBabelPluginAlins} from './transform';
+export { createNodeVisitor, createBabelPluginAlins } from './transform';
 
 // import type {Node} from '@babel/traverse';
 

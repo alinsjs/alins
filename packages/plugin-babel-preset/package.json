@@ -1,6 +1,6 @@
 {
     "name": "babel-preset-alins",
-    "version": "0.0.24",
+    "version": "0.0.25",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
     "typings": "src/index.ts",
@@ -24,7 +24,7 @@
     "dependencies": {
         "@babel/preset-react": "^7.22.5",
         "@babel/preset-typescript": "^7.22.5",
-        "babel-plugin-alins": "^0.0.24"
+        "babel-plugin-alins": "^0.0.25"
     },
     "module": "src/index.ts"
 }

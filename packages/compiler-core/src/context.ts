@@ -5,7 +5,6 @@
  */
 import type { NodePath } from '@babel/traverse';
 import type { CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator } from '@babel/types';
-import { ImportManager } from './controller/import-manager';
 import { MapScope } from './controller/map';
 import { isComponentFunc, isJsxCallee } from './is';
 import { getObjectPropValue, initCurModule } from './parse-utils';

@@ -333,7 +333,7 @@ export class Scope {
         const node = variable.path.node;
         // @ts-ignore
         if (node._export) {
-            variable.alias = `${AlinsPrefix}${variable.name}`;
+            variable.alias = `${AlinsStr.Prefix}${variable.name}`;
             // @ts-ignore
             node._parentPath.insertBefore(
                 createVarDeclaration(variable.type, [ createVarDeclarator(variable.alias, newNode.init) ])

@@ -6,11 +6,11 @@
 
 import {
     IRefData, IGeneralElement, _if, _switch,
-    ContextTool, createContext,
     IAttributes,
     Renderer,
     reactiveBindingEnable,
-    map
+    map,
+    _$ce
 } from 'alins';
 
 type IValueCond<T> = (()=>T)|IRefData<T>;
@@ -26,8 +26,8 @@ type IDomGenerator = ()=>IGeneralElement|IGeneralElement[];
 
 // });
 
-export {react, watch, computed} from 'alins';
-import {react, watch, computed} from 'alins';
+export { react, watch, computed } from 'alins';
+import { react, watch, computed } from 'alins';
 
 // alins.Dom('div', {
 
@@ -40,7 +40,7 @@ export function Dom (name: string, attributes: IAttributes = {}, children: any[]
         attributes = {};
     }
     // @ts-ignore
-    return ContextTool.ce(name, attributes, children);
+    return _$ce(name, attributes, children);
 }
 // alins.component(fn, {}, [])
 export function Component (
@@ -53,7 +53,7 @@ export function Component (
         attributes = {};
     }
     // @ts-ignore
-    return ContextTool.ce(fn, attributes, children);
+    return _$ce(fn, attributes, children);
 }
 
 
@@ -74,7 +74,7 @@ export function Component (
 
 export function If (condition: IBoolCond, generator: IDomGenerator, ...items: any[][]) {
     // @ts-ignore
-    let result = _if(condition, generator, createContext());
+    let result = _if(condition, generator);
     for (const item of items) {
         if (item.length === 2) result = result.elif(item[0], item[1]);
         else if (item.length === 1) result = result.else(item[0]);
@@ -82,10 +82,10 @@ export function If (condition: IBoolCond, generator: IDomGenerator, ...items: an
     return result.end();
 }
 export function ElseIf (condition: IBoolCond, generator: IDomGenerator) {
-    return [condition, generator];
+    return [ condition, generator ];
 }
 export function Else (generator: IDomGenerator) {
-    return [generator];
+    return [ generator ];
 }
 
 // alins.switch(()=>a,
@@ -96,17 +96,17 @@ export function Else (generator: IDomGenerator) {
 // )
 export function Switch (condition: IValueCond<any>, generator: IDomGenerator) {
     // @ts-ignore
-    return _switch(condition, generator, createContext()).end();
+    return _switch(condition, generator).end();
 }
 
 
 type ICaseItem = [any, IDomGenerator, boolean|undefined];
 
 export function Case (value: any, generator: IDomGenerator, brk?: boolean): ICaseItem {
-    return [value, generator, brk];
+    return [ value, generator, brk ];
 }
 export function Default (generator: IDomGenerator, brk?: boolean): ICaseItem {
-    return [null, generator, brk];
+    return [ null, generator, brk ];
 }
 
 
@@ -118,7 +118,7 @@ export function Async<T=any> (
     generator: (data: T)=>IGeneralElement|IGeneralElement[]
 ) {
     // @ts-ignore
-    return ContextTool.ce(async () => {
+    return _$ce(async () => {
         const data = await promise;
         return generator(data);
     });
