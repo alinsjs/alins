@@ -22,8 +22,8 @@
         "registry": "https://registry.npmjs.org/"
     },
     "dependencies": {
-        "alins": "^0.0.25",
-        "alins-compiler-core": "^0.0.25"
+        "alins": "^0.0.26",
+        "alins-compiler-core": "^0.0.26"
     },
     "unpkg": "dist/alins-compiler-web.iife.min.js",
     "jsdelivr": "dist/alins-compiler-web.iife.min.js",
