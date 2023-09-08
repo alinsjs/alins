@@ -2,8 +2,8 @@
     "name": "esbuild-plugin-alins",
     "version": "0.0.28",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "dist/esbuild-plugin-alins.cjs.min.js",
-    "typings": "dist/esbuild-plugin-alins.d.ts",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -24,5 +24,5 @@
     "dependencies": {
         "alins-compiler-node": "^0.0.28"
     },
-    "module": "dist/esbuild-plugin-alins.esm.min.js"
+    "module": "src/index.ts"
 }
