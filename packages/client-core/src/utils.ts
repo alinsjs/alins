@@ -25,10 +25,11 @@ export function insertBefore (array: any[], node: any, child: any) {
     } else {
         node = [ node ];
     }
+    // console.log('insertBefore', node, index);
     if (index === 0) {
         // @ts-ignore
         array.unshift(...node);
     } else {
-        array.splice(index - 1, 0, ...node);
+        array.splice(index, 0, ...node);
     }
 }

@@ -6,7 +6,9 @@
 
 import {
     version,
-    _$c, _$cc, _$ce, _$e, _$es, _$if, _$mf, _$mm, _$mnr, _$mu, _$r, _$sw, _$w,
+    createStore,
+    _$c, _$cc, _$ce, _$e, _$es, _$if, _$mf, _$mm, _$mnr,
+    _$mu, _$r, _$sw, _$w,
 } from 'alins';
 import { parseWebAlins } from './parser';
 
@@ -52,7 +54,10 @@ async function onSingleScript (script: HTMLScriptElement, web = true, ts = false
 
 if (typeof window !== 'undefined') {
     // @ts-ignore
-    window.Alins = { _$c, _$cc, _$ce, _$e, _$es, _$mf, _$mm, _$mnr, _$mu, _$r, _$sw, _$w, _$if, version };
+    window.Alins = {
+        _$c, _$cc, _$ce, _$e, _$es, _$mf, _$mm, _$mnr,
+        _$mu, _$r, _$sw, _$w, _$if, version, createStore
+    };
     window.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 }
 

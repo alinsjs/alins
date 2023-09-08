@@ -6,6 +6,9 @@
 
 ### Next Version TODO
 
+fix:
+
+- [ ] Branch 内存占用问题
 - [ ] For 类型提示
 - [ ] Async Data 类型标注
 - [ ] alins-router - 官方路由库 （尽可能通用 能够直接使用原生js调用）
@@ -25,8 +28,9 @@
 - [ ] 运行时代码重构 - 优化内存空间占用和运行时间
 - [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
 
-## 0.0.18 - 0.0.27
+## 0.0.18 - 0.0.28
 
+- [x] Branch 元素父子关系
 - [x] switch case 完善
 - [x] map 编译器
 - [x] style 简单处理

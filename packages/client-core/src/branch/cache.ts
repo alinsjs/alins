@@ -95,6 +95,7 @@ export class BranchCache {
                 break;
             }
         }
+        // console.warn('cache splice', index1, index2, nodes);
         this.curCache.splice(index1 + 1, index2 - index1 - 1, ...nodes);
     }
 

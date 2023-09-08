@@ -145,19 +145,7 @@ export class Scope {
         if (isFunc && path.node._variable) {
             this.funcScope = new FuncReactiveScope(this, path);
         }
-        // window.s.push(this);
-        // window.scope ? window.scope.push(this) : window.scope = [ this ];
     }
-
-    // // 解析变量声明 将可能为
-    // parseVarDeclaration (d: VariableDeclaration) {
-    //     const type = d.kind;
-    //     const isConst = type === 'const';
-    //     for (const node in d) {
-
-    //     }
-    // }
-
 
     private curVarNode: IScopeVariable|null = null; // 记录当前变量声明表达式
 
@@ -438,25 +426,13 @@ export class Scope {
         // ! 找到当前标识的变量
         // @ts-ignore
         const variable = this.findVarDeclare(node.name);
-        // console.log('collectIdentifier222', this.module.inMap, path.node.name, variable?.name);
-
         // if (variable?.path.node.name === 'a') debugger;
         if (!variable) {
-            // debugger;
             // return console.warn(`未找到变量声明${node.name}`);
             return;
         }
 
         if (typeof node.start !== 'undefined' && variable.path.node.start === node.start) return;
-        // console.log(variable.path.getNextSibling().toString(), variable.path.toString());
-        // console.log('collectIdentifier', variable.name, variable.isComputed, node.name);
-        // // todo 这里map会无线循环函数参数
-        // debugger;
-
-        // if (variable.name === 'a') {
-        //     debugger;
-        // }
-        // debugger;
         // console.log('FOR_DEBUG collectIdentifier', variable.path.toString(), this.currentJSXExpression);
         if (this.currentJSXExpression) {
             this.processJSXNode(variable);
@@ -464,7 +440,6 @@ export class Scope {
             this.processComputedNode(variable);
         }
         this.funcScope?.collectIdentifier(variable);
-        // if (variable.name === 'fn2') debugger;
         // console.log('---variable.isReactive', variable.isReactive, variable.name, path.toString());
         if (variable.isReactive) { //
             this._replaceReadValuePath(path, variable);

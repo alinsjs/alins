@@ -50,7 +50,7 @@
 
 Alins是一款极致纯粹、简洁、优雅的Web UI框架。秉持0-API、Less is More 的开发理念，旨在帮助开发者摆脱UI框架繁杂的API调用困境，以最直观、最纯粹、最贴近vanillajs的开发方式。
 
-您只需要了解jsx的书写规则（类似html的语法）便可以没有任何阻碍的开发 alins web应用，下面是一个最基本的计数器示例，你可以[在演练场中在线体验](https://alinsjs.github.io/playground/)：
+您只需要了解jsx的书写规则（类似html的语法）便可以没有任何阻碍的开发 alins web应用，下面是一个最基本的计数器示例，你可以[在演练场中在线体验](https://alinsjs.github.io/playground/#4)：
 
 ```jsx
 let count = 1;
@@ -83,6 +83,7 @@ let count = 1;
 3. [ ] [alins-ui](https://github.com/alinsjs/alins-ui)：官方UI库 （考虑实现ant-design或者meterial-design）
 3. [ ] [alins-v](https://github.com/alinsjs/alins-v)：官方表单验证库
 4. [ ] [alins-term](https://github.com/alinsjs/alins-term)：基于自定义渲染器开发命令行应用程序的工具
+5. [ ] [alins-canvas](https://github.com/alinsjs/alins-canvas): 基于自定义渲染器开发使用canvas渲染ui的应用程序的工具
 
 ## 1 快速开始
 
@@ -118,16 +119,23 @@ npm run dev
 1. 该方式不建议在生产环境使用
 2. 可以使用 type='text/babel'，这样可以获得编辑器自带的语法高亮
 
-您也可以在 [演练场](https://alinsjs.github.io/playground/) 中自由使用，演练场也是使用Web编译器
-
+您也可以在 [演练场](https://alinsjs.github.io/playground/#48) 中自由使用，演练场也是使用Web编译器
 
 ## 2 比较
 
-### 2.1 js-framework-benchmark 数据
+### 2.1 [js-framework-benchmark](https://github.com/krausest/js-framework-benchmark) 数据
+
+![](https://shiyix.cn/images/alins/performance.jpg)
+
+注：分数越低表示性能越好
 
 ### 2.2 代码对比
 
-### 2.3 打包产物对比
+![](https://shiyix.cn/images/alins/code.jpg)
+
+### 2.3 编译产物对比
+
+![](https://shiyix.cn/images/alins/output.jpg)
 
 
 综合源码体积、打包代码体积和框架运行时体积，整理出表格

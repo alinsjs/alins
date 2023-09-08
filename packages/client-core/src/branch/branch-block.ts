@@ -32,11 +32,15 @@ const BranchTree = (() => {
             }
         },
 
-        visit (branch: BranchBlock) {
-            if (!initialized || currentBranch === branch) return;
+        visit (branch: BranchBlock, call: any) {
+            if (!initialized || currentBranch === branch) return call();
             // ! 访问某个分支之后 将该分支作为stack起点 作为还未加载节点的父分支
             stack = [ branch ];
             currentBranch = branch;
+            const result = call();
+            stack = [];
+            currentBranch = null;
+            return result;
         },
         current () {
             return currentBranch;
@@ -81,12 +85,13 @@ export class BranchBlock {
     }
 
     add (call: IReturnCall) {
+        // console.warn('add', this.end);
         this.branchCalls.push(call);
     }
 
     getCache (call: IReturnCall) {
-        BranchTree.visit(this);
-        return this.cache.get(call);
+        // console.warn('getCache', this.end);
+        return BranchTree.visit(this, () => this.cache.get(call));
     }
 
     private initAnchor (dom: any) {
@@ -103,6 +108,7 @@ export class BranchBlock {
     }
 
     replace (i: number) {
+        // console.warn('replace i', this.end);
         if (i === this.activeIndex) return;
         const call = this.branchCalls[i];
         this.activeIndex = i;
@@ -174,10 +180,6 @@ export class BranchBlock {
         }
         return true;
     }
-
-    // ! 解决 for 与 if 组合使用时的问题
-
-
 }
 
 export function createDomCacheManager () {
@@ -203,7 +205,8 @@ export function createDomCacheManager () {
                     try {
                         parent.insertBefore(node, child);
                     } catch (e) {
-                        debugger;
+                        // debugger;
+                        console.warn(e);
                     }
                 });
             }

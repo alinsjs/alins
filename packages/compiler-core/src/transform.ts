@@ -153,7 +153,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 // console.log('VariableDeclaration:', path.toString());
                 if (!ctx.enter(path)) return;
                 // todo init = null 时 设置为 void 0;
-                // if (path.node.id.name === 'c') debugger;
                 if (path.node.id.type === 'ObjectPattern') return;
                 ctx.collectVar(path);
             },

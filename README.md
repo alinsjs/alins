@@ -45,7 +45,7 @@
 
 Alins is an extremely pure, simple, and elegant web UI framework. It adheres to the development philosophy of 0-API and Less is More, aiming to help developers escape the dilemma of complex API calls in UI frameworks and provide the most intuitive, pure, and close-to-vanillajs development approach.
 
-You only need to understand the syntax rules of JSX (similar to HTML) to develop Alins web applications without any obstacles. Below is a basic counter example that you can [experience online in the playground](https://alinsjs.github.io/playground/):
+You only need to understand the syntax rules of JSX (similar to HTML) to develop Alins web applications without any obstacles. Below is a basic counter example that you can [experience online in the playground](https://alinsjs.github.io/playground/#4):
 
 ```jsx
 let count = 1;
@@ -78,6 +78,7 @@ The following peripheral tools are currently under development, and we also hope
 3. [ ] [alins-ui](https://github.com/alinsjs/alins-ui): Official UI library (consider implementing ant-design or meterial-design)
 3. [ ] [alins-v](https://github.com/alinsjs/alins-v): Official form validation library
 4. [ ] [alins-term](https://github.com/alinsjs/alins-term): Tool for developing command line applications based on custom renderers
+5. [ ] [alins-canvas](https://github.com/alinsjs/alins-canvas): Tool for developing applications with canvas based on custom renderers
 
 ## 1 Quick Start
 
@@ -113,18 +114,25 @@ Note:
 1. This approach is not recommended for production environments.
 2. You can use type='text/babel' to enable syntax highlighting provided by the editor.
 
-You can also freely use it in the [playground](https://alinsjs.github.io/playground/), which also utilizes a web compiler.
+You can also freely use it in the [playground](https://alinsjs.github.io/playground/#48), which also utilizes a web compiler.
 
 ## 2 Compare
 
-### 2.1 js-framework-benchmark data
+### 2.1 [js-framework-benchmark](https://github.com/krausest/js-framework-benchmark) data
+
+![](https://shiyix.cn/images/alins/performance.jpg)
+
+Note: The lower the score, the better the performance.
 
 ### 2.2 Code comparison
 
-### 2.3 Comparison of packaged products
+![](https://shiyix.cn/images/alins/code.jpg)
 
+### 2.3 Comparing the Compilation Products. 
 
-Combine the source code volume, packaged code volume and framework runtime volume, and sort out the table
+![](https://shiyix.cn/images/alins/output.jpg)
+
+Organizing a table to comprehensively compare the source code volume, packed code volume, and framework runtime volume of various products.
 
 | metrics | alins | vue3 | react |
 | :----: | :----: | :----: | :----: |
