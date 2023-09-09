@@ -358,8 +358,11 @@ export class Scope {
     }
 
     // 变量被赋值了 转化变量以及其依赖项
-    markVariableReactive (name: string, force = false) {
+    markVariableReactive (name: string, force = false, fromBind = true) {
         const variable = this.findVarDeclare(name);
+        if (variable && fromBind) {
+            variable.isStatic = false;
+        }
         if (!variable || variable.isStatic || variable.isFunc) {
             return; // console.warn(`markVariableReactive:未找到变量声明${name}`);
         }

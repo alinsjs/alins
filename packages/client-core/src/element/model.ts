@@ -3,8 +3,8 @@
  * @Date: 2023-07-21 22:37:05
  * @Description: Coding something
  */
-import type {IRefData, ISimpleValue} from 'alins-utils';
-import {isProxy, watch} from 'alins-reactive';
+import type { IRefData, ISimpleValue } from 'alins-utils';
+import { isProxy, watch } from 'alins-reactive';
 
 const ModelTag = {
     INPUT: 1, SELECT: 1, TEXTAREA: 1,

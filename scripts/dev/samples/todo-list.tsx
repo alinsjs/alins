@@ -6,8 +6,9 @@
 
 // #todolist
 function List () {
-    const list = ['todo1'];
-    const value = '';
+    const list = [ 'todo1' ];
+    // eslint-disable-next-line prefer-const
+    let value = ''; // @
     return <div>
         <div>
             <input type="text" value={value}/>
@@ -21,7 +22,7 @@ function List () {
     </div>;
 }
 
-function Item ({item, index}, children) {
+function Item ({ item, index }, children) {
     let done = false;
     return <div style={{
         textDecoration: done ? 'line-through' : 'none',

@@ -110,15 +110,8 @@ export class Module {
         this.curScope.collectVar(this.curDeclarationType, path);
     }
     // ! 值有改变 改变所有依赖; 这个变量可能在祖先域内定义；所以要溯源
-    markVarChange (name: string) {
-        // console.log('marVariableChange', name);
-
-        // const variable = scope.findVarDeclare(name);
-
-        // if (!variable) return;
-        this.curScope.markVariableReactive(name);
-        // if()
-
+    markVarChange (name: string, fromBind = false) {
+        this.curScope.markVariableReactive(name, false, fromBind);
     }
 
     enterIdentifier (path: NodePath<Identifier>) {

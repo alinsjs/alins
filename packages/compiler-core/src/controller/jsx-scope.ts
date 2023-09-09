@@ -211,10 +211,10 @@ export class JsxScope {
             if (name === 'value' || (this.curTag === 'input' && name === 'checked')) {
                 if (expression) {
                     if (expression.type === 'Identifier') {
-                        this.module.markVarChange(expression.name);
+                        this.module.markVarChange(expression.name, true);
                     } else if (expression.type === 'MemberExpression') {
                         const object = parseFirstMemberObject(expression);
-                        this.module.markVarChange(object.name);
+                        this.module.markVarChange(object.name, true);
                         const computedExp = createCtxCall(AlinsVar.ComputedShort, [
                             t.arrowFunctionExpression([], expression),
                             t.arrowFunctionExpression([ t.identifier('v') ], t.assignmentExpression('=', expression, t.identifier('v'))),
