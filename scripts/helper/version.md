@@ -33,7 +33,7 @@ fix:
 - [x] 增加 js表达式作为事件是 $e 参数
 - [x] 修复 for of for in 中错误的初始值的问题
 - [x] 新增 watch: 语法糖
-- [ ] 新增 defineRenderer
+- [x] 新增 defineRenderer
 
 ## 0.0.18 - 0.0.28
 

@@ -4,18 +4,13 @@
  * @Description: Coding something
  */
 
-import { Renderer } from './renderer';
-
-// todo MutationObserver跨平台
-export function initMountedObserver (parent: any) {
-
-    if (!Renderer.MutationObserver) return;
+export function initWebMountedObserver (parent: any) {
 
     if (typeof parent.__$count === 'undefined') parent.__$count = 1;
     else parent.__$count ++;
     if (parent.__$m_observer) return;
 
-    parent.__$m_observer = new Renderer.MutationObserver(entries => {
+    parent.__$m_observer = new window.MutationObserver(entries => {
         entries.forEach(item => {
             if (item.type === 'childList') {
                 item.addedNodes.forEach(node => {
@@ -29,7 +24,7 @@ export function initMountedObserver (parent: any) {
                         if (typeof fn === 'function') {
                             // @ts-ignore
                             node.__$removed = fn;
-                            initRemovedObserver(node);
+                            initWebRemovedObserver(node);
                         }
                         parent.__$count --;
                         if (parent.__$count === 0) {
@@ -65,8 +60,7 @@ function onNodeRemove (node: any) {
     return false;
 }
 
-export function initRemovedObserver (el: any) {
-    if (!Renderer.MutationObserver) return;
+export function initWebRemovedObserver (el: any) {
 
     el.setAttribute('__rm__', '');
 
@@ -77,7 +71,7 @@ export function initRemovedObserver (el: any) {
 
     removeCount = 1;
 
-    removeObserver = new Renderer.MutationObserver(entries => {
+    removeObserver = new window.MutationObserver(entries => {
         entries.forEach(item => {
             if (item.type === 'childList') {
                 item.removedNodes.forEach(node => {
@@ -92,11 +86,12 @@ export function initRemovedObserver (el: any) {
             }
         });
     });
-    removeObserver.observe(Renderer.body, {
+    removeObserver!.observe(window.document.body, {
         'childList': true,
         'subtree': true,
     });
 }
+
 
 // export function appended (el: Node, call: ((el: Node)=>void)) {
 //     (el as any).__$appended = call;

@@ -33,7 +33,7 @@ export function map (
     // todo list 需要reactive
     if (!jsx) return list.map(call);
     // list.map
-    const container = Renderer.createDocumentFragment();
+    const container = Renderer.createFragment();
     const isReactive = isProxy(list);
     const n = list.length;
     if (!isReactive) {
@@ -133,7 +133,7 @@ export function map (
         switch (type) {
             case OprateType.Push: {
                 // console.warn('OprateType.Push', index, count, data, type);
-                const doc = Renderer.createDocumentFragment();
+                const doc = Renderer.createFragment();
                 const length = list.length;
                 for (let i = 0; i < data.length; i++) {
                     const child = createChild(data[i], length + i);
@@ -214,7 +214,7 @@ export function map (
                 const ends: any[] = [];
                 const scopes: any[] = [];
                 const cleaners: any[] = [];
-                const doc = Renderer.createDocumentFragment();
+                const doc = Renderer.createFragment();
                 const originHead = head;
                 data.forEach((item, i) => {
                     const child = createChild(item, index + i, scopes, ends, cleaners);

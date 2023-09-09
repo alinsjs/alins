@@ -22,7 +22,7 @@ function transformElementToCache (element: any): (IElement|ITextNode)[]|null {
 function transformCacheToElement (cache: (IElement|ITextNode)[]|null): ITrueElement|null {
     if (!cache) return null;
     // if (cache.length === 1) return cache[0];
-    const d = Renderer.createDocumentFragment();
+    const d = Renderer.createFragment();
     for (const item of cache) {
         // @ts-ignore
         d.appendChild(item);

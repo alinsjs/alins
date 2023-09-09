@@ -8,7 +8,6 @@ import { IAttributes } from 'packages/core/src/element/jsx';
 // tslint:disable-next-line:export-just-namespace
 // export = Alins;
 
-
 declare namespace Alins {
     // prevent：阻止默认事件（常用）；
     // stop：阻止事件冒泡（常用）；
@@ -700,16 +699,18 @@ declare namespace Alins {
         $show?: boolean|(()=>boolean);
     }
 
+    type ILifeListener<T=void> = (dom: HTMLElement)=>T;
+
     interface IAttributes extends IBaseAttributes, IControlAttributes {
         $attributes?: {
             [prop in keyof IBaseAttributes]?: IAttributes[prop];
         } & {
             [prop: string]: any;
         };
-        $created?: (dom: HTMLElement)=>void;
-        $appended?: (dom: HTMLElement)=>void;
-        $mounted?: (dom: HTMLElement)=>void|((el: HTMLElement)=>any);
-        $removed?: (dom: HTMLElement)=>void;
+        $created?: ILifeListener;
+        $appended?: ILifeListener;
+        $mounted?: ILifeListener<void|ILifeListener>;
+        $removed?: ILifeListener;
         $html?: any;
         $ref?: any;
         'value:string'?: any;
@@ -717,6 +718,44 @@ declare namespace Alins {
         'value:boolean'?: any;
         [prop: string]: any;
     }
+    interface ITextNode {
+        get textContent(): string;
+        set textContent(value: string);
+    }
+    interface IFragment {
+        appendChild(child: ITrueElement): void;
+        insertBefore<T extends ITrueElement>(node: T, child: IElement | null): T;
+        children: (IElement|ITextNode)[];
+        childNodes: (IElement|ITextNode)[];
+    }
+    interface IElement extends IFragment {
+        // target stopPropagation preventDefault
+        addEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
+        removeEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
+        setAttribute(name: string, value: string): void;
+        removeAttribute(name: string): void;
+        getAttribute(name: string): string;
+        classList: {
+            add(name: string): void;
+            remove(name: string): void;
+        }
+        remove(): void;
+        get parentElement(): IElement;
+        get parentNode(): IElement;
+        get nextSibling(): IElement;
+        get className(): string;
+        set className(value: string);
+        get innerHTML(): string;
+        set innerHTML(value: string);
+        get innerText(): string;
+        set innerText(value: string);
+        __$appended?: any;
+        __$removed?: any;
+        __$mounted?: any;
+    }
+    type ITrueElement = IElement | ITextNode | IFragment;
+    // 广义元素
+    type IGeneralElement = ITrueElement | null;
 }
 
 // declare const For = () => {};

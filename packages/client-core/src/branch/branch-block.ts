@@ -75,7 +75,7 @@ export class BranchBlock {
     }
 
     private wrapAnchor (el: any) {
-        const d = Renderer.createDocumentFragment();
+        const d = Renderer.createFragment();
         // @ts-ignore
         d.appendChild(this.start);
         if (el) d.appendChild(el);

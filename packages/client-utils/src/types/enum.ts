@@ -4,13 +4,7 @@
  * @Description: Coding something
  */
 export enum AlinsType {
-  // 不从0开始
-  ElementBuilder = 1,
-  Element,
-  TextNode,
-  Proxy,
+  Proxy = 1,
   Ref,
   BindResult,
-  If,
-  Switch,
 }

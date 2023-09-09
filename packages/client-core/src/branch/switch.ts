@@ -87,7 +87,7 @@ class SwitchBlock {
         const el = this.run(init.v);
         if (Renderer.isElement(el)) return el;
         // @ts-ignore
-        return Renderer.createDocumentFragment();
+        return Renderer.createFragment();
     }
 }
 

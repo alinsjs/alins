@@ -4,98 +4,74 @@
  * @Description: Coding something
  */
 
-import { AlinsType, type } from 'alins-utils';
+import type { Alins } from './jsx';
+import { initWebMountedObserver, initWebRemovedObserver } from './lifecycle';
 
-export type IFragment = DocumentFragment;
+export type IElement = Alins.IElement;
+export type ITextNode = Alins.ITextNode;
+export type IFragment = Alins.IFragment;
+export type ITrueElement = Alins.ITrueElement;
+export type IGeneralElement = Alins.IGeneralElement;
 
-// eslint-disable-next-line no-undef
-export type ITrueElement = JSX.Element | IElement | ITextNode | IFragment;
-// 广义元素
-export type IGeneralElement = ITrueElement | null;
-
-export interface IElement {
-    // @ts-ignore
-    [type]?: AlinsType.Element;
-    appendChild(child: ITrueElement): void;
-    // target stopPropagation preventDefault
-    addEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
-    removeEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
-    setAttribute(name: string, value: string): void;
-    removeAttribute(name: string): void;
-    getAttribute(name: string): string;
-    classList: {
-        add(name: string): void;
-        remove(name: string): void;
-    }
-    insertBefore<T extends ITrueElement>(node: T, child: IElement | null): T;
-    remove(): void;
-    children: (IElement|ITextNode)[];
-    childNodes: (IElement|ITextNode)[];
-    get parentElement(): IElement;
-    get parentNode(): IElement;
-    get nextSibling(): IElement;
-    get className(): string;
-    set className(value: string);
-    get innerHTML(): string;
-    set innerHTML(value: string);
-    get innerText(): string;
-    set innerText(value: string);
-    __$appended: any;
-    __$removed: any;
-    __$mounted: any;
+export interface IRenderer {
+    querySelector (selector: string): IElement|null,
+    createElement (tag?: string): IElement,
+    createTextNode (text: string): ITextNode,
+    createEmptyMountNode (): IElement,
+    createFragment (): IFragment,
+    isFragment (el: any): boolean,
+    isElement (el: any): boolean,
+    removeElement (el: any): void,
+    onMounted? (parent: IElement, node: IElement, mounted: Alins.ILifeListener<void|Alins.ILifeListener>): void;
+    onRemoved? (parent: IElement, node: IElement, removed: Alins.ILifeListener): void;
 }
-export interface ITextNode {
-    // @ts-ignore
-    [type]?: AlinsType.TextNode;
-    get textContent(): string;
-    set textContent(value: string);
+
+export let Renderer: IRenderer;
+
+export function defineRenderer (renderer: IRenderer) {
+    Renderer = renderer;
 }
-// let id = 0;
-export const Renderer = {
-    MutationObserver: MutationObserver,
-    body: document.body,
-    querySelector (selector: string) {
-        return document.querySelector(selector);
-    },
-    createElement (tag: string): IElement {
-        const el = document.createElement(tag);
-        // @ts-ignore
-        el[type] = AlinsType.Element;
-        return el as any as IElement;
-    },
-    createTextNode (text: string) {
-        const el = document.createTextNode(text);
-        // @ts-ignore
-        el[type] = AlinsType.TextNode;
-        return el as ITextNode;
-    },
-    createEmptyMountNode (): IElement {
-        return document.createComment('') as any;
-        // return document.createComment('' + (id++)) as any;
-    },
-    createDocumentFragment (): IFragment {
-        return document.createDocumentFragment();
-    },
-    isFragment (el: any): boolean {
-        return el instanceof DocumentFragment;
-    },
-    isOriginElement (el: any) {
-        return el instanceof Node;
-    },
-    isElement (el: any) {
-        return this.isFragment(el) || this.isOriginElement(el);
-    },
-    removeElement (el: any) {
-        el.remove();
-    }
-};
+
+if (typeof window !== 'undefined' && typeof window.document !== 'undefined') {
+    defineRenderer({
+        querySelector (selector: string) {
+            return document.querySelector(selector) as any as IElement;
+        },
+        createElement (tag: string): IElement {
+            return document.createElement(tag) as any as IElement;
+        },
+        createTextNode (text: string) {
+            return document.createTextNode(text) as ITextNode;
+        },
+        createEmptyMountNode (): IElement {
+            return document.createComment('') as any;
+            // return document.createComment('' + (id++)) as any;
+        },
+        createFragment (): IFragment {
+            return document.createDocumentFragment() as any as IFragment;
+        },
+        isFragment (el: any): boolean {
+            return el instanceof DocumentFragment;
+        },
+        isElement (el: any) {
+            return this.isFragment(el) || el instanceof Node;
+        },
+        removeElement (el: any) {
+            el.remove();
+        },
+        onMounted (parent: any) {
+            debugger;
+            initWebMountedObserver(parent);
+        },
+        onRemoved (parent: any, node: any) {
+            debugger;
+            initWebRemovedObserver(node);
+        },
+    });
+}
 
 export function getFirstElement (element?: IGeneralElement) {
     if (!element) return null;
     // @ts-ignore
     return (Renderer.isFragment(element) ? (element.firstChild) : element);
-}
-
-export function defineRenderer () {
-
 }

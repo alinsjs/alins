@@ -106,7 +106,7 @@ class IfBlock implements IIfReturn {
             return this.returnEle;
         }
         // 创建一个空节点用来作为锚点
-        return Renderer.createDocumentFragment();
+        return Renderer.createFragment();
     }
 }
 

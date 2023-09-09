@@ -7,28 +7,9 @@
 import {
     isProxy, isRef, watch, IBindingReaction
 } from 'alins-reactive';
-import {AlinsType, IJson, IProxyListener, IRefData, type} from 'alins-utils';
-import {IElement, ITextNode} from './renderer';
+import { IJson, IProxyListener, IRefData } from 'alins-utils';
 
-export interface IElementBuilder {
-    // @ts-ignore
-    [type]: AlinsType.ElementBuilder;
-    dom: ()=>IElement;
-    mount(parent: IElementLike): void;
-    appendChild(parent: IElementLike): void;
-}
-
-export type IElementLike = ITextNode|IElement;
-
-export type IChildren = {value:any}|IBindingReaction|null;
-
-export function isElementLike (el: any) {
-    return [
-        AlinsType.TextNode,
-        AlinsType.Element,
-        AlinsType.ElementBuilder
-    ].includes(el[type]);
-}
+export type IChildren = {v:any}|IBindingReaction|null;
 
 interface IBindingReactionEnableObj {
   value: IBindingReaction,

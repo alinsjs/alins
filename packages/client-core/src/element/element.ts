@@ -17,7 +17,6 @@ import { parseModel } from './model';
 import { getParent } from '../utils';
 import { parseAttributes } from './attributes';
 import { parseClassName, parseClassSuffix } from './class';
-import { initMountedObserver, initRemovedObserver } from './lifecycle';
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -64,7 +63,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         }
     } else {
         const isDom = !!opt.tag;
-        el = isDom ? Renderer.createElement(opt.tag as string) : Renderer.createDocumentFragment();
+        el = isDom ? Renderer.createElement(opt.tag as string) : Renderer.createFragment();
         // if (opt.html) {
         //     // @ts-ignore
         //     reactiveBindingValue(opt.html, (v) => {el.innerHTML = v;});
@@ -85,9 +84,6 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         // }
         if (isDom && opt.attributes) {
 
-            // @ts-ignore
-            const $appended = opt.attributes.$appended;
-
             let $mount: any = opt.attributes.$mount;
 
             opt.attributes.$created?.(el);
@@ -100,7 +96,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                 }
                 switch (k) {
                     case '$created': break;
-                    case '$appended': (el as IElement).__$appended = $appended; break;
+                    case '$appended': (el as IElement).__$appended = v; break;
                     case '$removed': (el as IElement).__$removed = v; break;
                     case '$mounted': (el as IElement).__$mounted = v; break;
                     case '$mount': break;
@@ -137,13 +133,9 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                 };
             }
             if ($mount) {
-
                 if (typeof $mount === 'string') $mount = Renderer.querySelector($mount);
                 if (!$mount) throw new Error('$mount is not a Element');
-                // dom.appendChild(el);
                 appendChild($mount, el);
-                if ($appended) $appended(el); // todo 此处有可能还没有append到document中
-
             }
 
         }
@@ -154,10 +146,12 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
 function appendChild (parent: any, item: any) {
     // @ts-ignore
     if (item.__$mounted) {
-        initMountedObserver(parent);
+        Renderer.onMounted?.(parent, item, item.__$mounted);
     }
     // @ts-ignore
-    if (item.__$removed) initRemovedObserver(item);
+    if (item.__$removed) {
+        Renderer.onRemoved?.(parent, item, item.__$mounted);
+    }
     parent.appendChild(item as any);
     // @ts-ignore
     item.__$appended?.(item);
@@ -246,7 +240,7 @@ export function transformAsyncDom (
         // ! returned 表示 async 有返回值
         if (returned === false) return void 0;
         // ! 此处是为了应对 元素没有立即append到dom上的情况
-        const frag = Renderer.createDocumentFragment();
+        const frag = Renderer.createFragment();
         const node = Renderer.createEmptyMountNode();
         frag.appendChild(node as any);
         dom.then((realDom: any) => {

@@ -1,29 +1,38 @@
-let a = 1;
-const $a = { a: 1 };
-// a++;
-const b = a + 1;
 
-const c = {
-    a: a + 2
-};
 
-watch: $a, (newValue, oldValue) => {
-    console.log('a changed:', newValue, oldValue);
-};
-watch: $a.a, (newValue, oldValue) => {
-    console.log('a changed:', newValue, oldValue);
-};
-watch: a + 1, (newValue, oldValue) => {
-    console.log('a + 1 changed:', newValue, oldValue);
-};
-watch: () => a * 2, (newValue, oldValue) => {
-    console.log('a * 2 changed:', newValue, oldValue);
-};
-watch: b, (newValue, oldValue) => {
-    console.log('b changed:', newValue, oldValue);
-};
-watch: c, (newValue, oldValue, prop) => {
-    console.log('c changed:', newValue, oldValue, prop);
-};
+/*
+ * @Author: chenzhongsheng
+ * @Date: 2023-08-03 00:18:07
+ * @Description: Coding something
+ */
 
-<button $$App onclick={a++}>Modify A</button>;
+// #todolist
+function List () {
+    const list = [ 'todo1' ];
+    const value = '';
+    return <div>
+        <div>
+            <input type="text" value={value}/>
+            <button onclick={() => { list.push(value); }}>add</button>
+        </div>
+        <For data={list}>
+            <Item item={$item} index={$index}>
+                <button onclick={() => {list.splice($index, 1);}}>delete</button>
+            </Item>
+        </For>
+    </div>;
+}
+
+function Item ({ item, index }, children) {
+    let done = false;
+    return <div style={{
+        textDecoration: done ? 'line-through' : 'none',
+        color: done ? '#888' : 'inherit',
+    }}>
+        <span>{index + 1}: {item}</span>
+        <button onclick={() => { done = !done; }}>done</button>
+        {children}
+    </div>;
+}
+
+<List $mount={document.body}/>;

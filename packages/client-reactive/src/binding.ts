@@ -5,7 +5,7 @@
  */
 
 import { isRef } from './proxy';
-import { AlinsType, IRefData, ISimpleValue, type } from 'alins-utils';
+import { IRefData, ISimpleValue } from 'alins-utils';
 import { watch } from './watch';
 
 export const binding = Symbol('b');
@@ -39,7 +39,7 @@ export function createBinding (
     if (reactions.length === 0) {
         return template[0];
     }
-    const fn = (onchange: IBindingChange) => {
+    return ((onchange: IBindingChange) => {
         // console.warn('debug:', reactions);
         const funcs = reactions.map((reaction: IRefData<any>|(()=>any)) => {
             return typeof reaction === 'function' ? () => reaction() : () => reaction.v;
@@ -55,12 +55,5 @@ export function createBinding (
         }, (nv: string, ov: string) => {
             onchange(nv, ov);
         }, false) as IRefData).v;
-    };
-    // @ts-ignore
-    fn[type] = AlinsType.BindResult;
-    return fn as IReactBindingResult;
-}
-
-export function isBindingResult (fn: any) {
-    return fn?.[type] === AlinsType.BindResult;
+    }) as IReactBindingResult;
 }
