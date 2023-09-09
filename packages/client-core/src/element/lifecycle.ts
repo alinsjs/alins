@@ -4,14 +4,18 @@
  * @Description: Coding something
  */
 
+import { Renderer } from './renderer';
+
 // todo MutationObserver跨平台
 export function initMountedObserver (parent: any) {
+
+    if (!Renderer.MutationObserver) return;
 
     if (typeof parent.__$count === 'undefined') parent.__$count = 1;
     else parent.__$count ++;
     if (parent.__$m_observer) return;
 
-    parent.__$m_observer = new MutationObserver(entries => {
+    parent.__$m_observer = new Renderer.MutationObserver(entries => {
         entries.forEach(item => {
             if (item.type === 'childList') {
                 item.addedNodes.forEach(node => {
@@ -62,6 +66,8 @@ function onNodeRemove (node: any) {
 }
 
 export function initRemovedObserver (el: any) {
+    if (!Renderer.MutationObserver) return;
+
     el.setAttribute('__rm__', '');
 
     if (removeObserver) {
@@ -71,7 +77,7 @@ export function initRemovedObserver (el: any) {
 
     removeCount = 1;
 
-    removeObserver = new MutationObserver(entries => {
+    removeObserver = new Renderer.MutationObserver(entries => {
         entries.forEach(item => {
             if (item.type === 'childList') {
                 item.removedNodes.forEach(node => {
@@ -86,7 +92,7 @@ export function initRemovedObserver (el: any) {
             }
         });
     });
-    removeObserver.observe(document.body, {
+    removeObserver.observe(Renderer.body, {
         'childList': true,
         'subtree': true,
     });

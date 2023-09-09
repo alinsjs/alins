@@ -4,12 +4,12 @@
  * @Description: Coding something
  */
 import type { NodePath } from '@babel/traverse';
-import { createMemberExp, getT, parseFirstMemberObject, parseJsxAttrShort, createWrapAttr, replaceJsxDomCreator, skipNode, createUnfInit, createCtxCall } from '../parse-utils';
+import { getT, parseFirstMemberObject, parseJsxAttrShort, createWrapAttr, replaceJsxDomCreator, skipNode, createUnfInit, createCtxCall } from '../parse-utils';
 import type { JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment } from '@babel/types';
 import type { Module } from '../context';
 import { isFuncExpression, isJSXComponent } from '../is';
 import { isEventAttr } from '../is';
-import { AlinsVar } from './import-manager';
+import { AlinsStr, AlinsVar } from './import-manager';
 
 // ! 此处是因为 jsx 被转译之后无法根据原始path replace
 /*
@@ -167,11 +167,12 @@ export class JsxScope {
                     expression.type !== 'MemberExpression'
                 ) {
                     if (!expression._handled) {
-                        newExpression = t.arrowFunctionExpression([], newExpression);
+                        newExpression = t.arrowFunctionExpression([ t.identifier(AlinsStr.Event) ], newExpression);
                         newExpression._handled = true;
                     }
                 } else {
                     // 事件类型不需要jsx转译处理了
+                    // @ts-ignore
                     nodeValue._handled = newExpression._handled = true;
                 }
             }

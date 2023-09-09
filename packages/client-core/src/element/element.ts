@@ -138,7 +138,7 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
             }
             if ($mount) {
 
-                if (typeof $mount === 'string') $mount = document.querySelector($mount);
+                if (typeof $mount === 'string') $mount = Renderer.querySelector($mount);
                 if (!$mount) throw new Error('$mount is not a Element');
                 // dom.appendChild(el);
                 appendChild($mount, el);
@@ -162,7 +162,6 @@ function appendChild (parent: any, item: any) {
     // @ts-ignore
     item.__$appended?.(item);
 }
-
 
 export function appendChildren (parent: IElement|IFragment, children: (IChildren|IJSXDomOptions)[]) {
     for (const item of children) {
@@ -224,7 +223,7 @@ export const JSX = {
             const result = transformAsyncDom(dom) as any;
             if ($mount) {
                 // todo bugfix
-                if (typeof $mount === 'string') $mount = document.querySelector($mount);
+                if (typeof $mount === 'string') $mount = Renderer.querySelector($mount);
                 appendChild($mount, result);
                 // $mount.appendChild(result);
             }

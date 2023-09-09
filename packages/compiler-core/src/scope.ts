@@ -200,7 +200,7 @@ export class Scope {
 
         if (!isStatic) {
             // @ts-ignore
-            const type = path.node.init.type;
+            const type = path.node.init?.type || '';
             if (type.startsWith('JSX')) variable.isJSX = true;
             this.curVarNode = variable;
         }
@@ -479,7 +479,7 @@ export class Scope {
             }
         } else {
             // @ts-ignore
-            if (!path.node._isReplace) {
+            if (!path.node._isReplace && !path.node._handled) {
                 path.replaceWith(createReadValue(variable.alias || variable.name));
             }
         }

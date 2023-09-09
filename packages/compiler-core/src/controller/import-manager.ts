@@ -10,6 +10,7 @@ export const AlinsStr = {
     Prefix: '_$',
     Value: 'v',
     Temp: '_$R',
+    Event: '$e'
 };
 
 export enum AlinsVar {

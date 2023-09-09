@@ -7,7 +7,7 @@ import { parseInnerComponent } from './component/component';
 import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
     createEmptyString, createExtendCalleeWrap, createUnfInit,
-    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject,
+    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, transformWatchLabel,
 } from './parse-utils';
 import { isJsxExtendCall, isJsxExtendDef, isOriginJSXElement } from './is';
 import { ImportManager } from './controller/import-manager';
@@ -123,6 +123,12 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             }
         },
         LabeledStatement: {
+            enter (path) {
+                if (path.node.label.name === 'watch') {
+                    const result = transformWatchLabel(path.node);
+                    if (result) path.replaceWith(result);
+                }
+            },
             exit (path) {
                 if (path.node._shouldRemoved) { // ! 移除需要删除的label
                     path.remove();
@@ -140,10 +146,10 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         VariableDeclarator: {
             enter (path) {
-                if (!path.node.init) {
+                if (!path.node.init && !path.parentPath.parent.type.startsWith('For')) {
                     path.node.init = createUnfInit();
                 }
-                if (path.node.init.type === 'Identifier') {
+                if (path.node.init?.type === 'Identifier') {
                     path.node.init._isReplace = true;
                     // path.node.id._isReplace = true;
                 }

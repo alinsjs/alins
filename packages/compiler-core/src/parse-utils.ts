@@ -17,7 +17,8 @@ import type {
     VariableDeclarator,
     Node,
     JSXAttribute,
-    ObjectProperty
+    ObjectProperty,
+    LabeledStatement
 } from '@babel/types';
 import type { IBabelType } from './types';
 import { BlockReturnType, isBlockBreak, isBlockReturned, isEventEmptyDeco } from './is';
@@ -565,4 +566,21 @@ export function getObjectPropValue (node: ObjectProperty, mock = false) {
         return value.left;
     }
     return value;
+}
+
+export function transformWatchLabel (node: LabeledStatement) {
+    // @ts-ignore
+    const args = node.body?.expression?.expressions;
+    if (args) {
+        const target = args[0];
+        if (
+            target.type !== 'Identifier' &&
+            target.type !== 'ArrowFunctionExpression'
+        ) {
+            args[0] = t.arrowFunctionExpression([], target);
+        }
+        args[0]._handled = true;
+        return createCtxCall(AlinsVar.Watch, args);
+    }
+    return null;
 }

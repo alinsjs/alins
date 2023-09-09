@@ -26,7 +26,7 @@ declare namespace Alins {
     //     v: (e: Event)=>any;
     //     __deco: TEventDecorator;
     // }
-    
+
     interface IEventAttributes {
         onclick?: IEventObject;
         onmousedown?: IEventObject;
@@ -841,6 +841,7 @@ declare global {
     let $item: any;
     let $index: number;
     let $data: any;
+    let $e: Event;
 }
 
 export type IAttributes = Alins.IAttributes;

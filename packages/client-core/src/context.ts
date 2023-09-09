@@ -22,7 +22,7 @@ export function _$mnr (fn: any) {
 
 export function _$r (v: any, shallow?: boolean) {
     if (typeof shallow !== 'boolean') {
-        shallow = typeof v.v === 'object' && isProxy(v.v);
+        shallow = typeof v?.v === 'object' && isProxy(v.v);
     }
     return reactive({ v }, shallow);
 }

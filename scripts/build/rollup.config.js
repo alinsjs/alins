@@ -74,8 +74,8 @@ function parseBuildConfig () {
         },
         'compiler-web': {
             packageName: 'alins-compiler-web',
-            type: 'web',
-            // format: 'iife',
+            // type: 'web',
+            format: 'iife',
             umdName: 'AlinsWeb',
         },
         'plugin-babel': {

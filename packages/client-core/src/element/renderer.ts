@@ -52,6 +52,11 @@ export interface ITextNode {
 }
 // let id = 0;
 export const Renderer = {
+    MutationObserver: MutationObserver,
+    body: document.body,
+    querySelector (selector: string) {
+        return document.querySelector(selector);
+    },
     createElement (tag: string): IElement {
         const el = document.createElement(tag);
         // @ts-ignore
@@ -89,4 +94,8 @@ export function getFirstElement (element?: IGeneralElement) {
     if (!element) return null;
     // @ts-ignore
     return (Renderer.isFragment(element) ? (element.firstChild) : element);
+}
+
+export function defineRenderer () {
+
 }
