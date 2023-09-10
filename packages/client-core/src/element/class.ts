@@ -3,14 +3,15 @@
  * @Date: 2023-07-21 22:37:05
  * @Description: Coding something
  */
-import {isProxy} from 'alins-reactive';
-import {reactiveBindingEnable} from './dom-util';
+import { isProxy } from 'alins-reactive';
+import { reactiveBindingEnable } from './dom-util';
+import type { IElement } from './renderer';
 
 export function parseClassName (
-    dom: HTMLElement,
+    dom: IElement,
     value: {[prop in string]?: boolean} | string | (()=>string)
 ): boolean {
-    
+
     if (value === null || typeof value === 'undefined') return false;
     if (typeof value === 'function' || isProxy(value)) {
         // @ts-ignore
@@ -49,7 +50,7 @@ export function parseClassName (
     return true;
 }
 
-export function parseClassSuffix (el: HTMLElement, key: string, value: boolean|(()=>boolean)): boolean {
+export function parseClassSuffix (el: IElement, key: string, value: boolean|(()=>boolean)): boolean {
     if (!key.startsWith('class$')) return false;
     const name = key.substring('class$'.length);
     reactiveBindingEnable(value, (v) => {

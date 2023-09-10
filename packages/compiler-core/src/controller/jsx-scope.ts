@@ -7,7 +7,7 @@ import type { NodePath } from '@babel/traverse';
 import { getT, parseFirstMemberObject, parseJsxAttrShort, createWrapAttr, replaceJsxDomCreator, skipNode, createUnfInit, createCtxCall } from '../parse-utils';
 import type { JSXAttribute, JSXElement, JSXExpressionContainer, JSXFragment } from '@babel/types';
 import type { Module } from '../context';
-import { isFuncExpression, isJSXComponent } from '../is';
+import { isFuncExpression, isJSXComponent, isMemberExp } from '../is';
 import { isEventAttr } from '../is';
 import { AlinsStr, AlinsVar } from './import-manager';
 
@@ -164,7 +164,7 @@ export class JsxScope {
                 if (
                     !this._pureReg.test(deco) &&
                     expression.type !== 'Identifier' &&
-                    expression.type !== 'MemberExpression'
+                    !isMemberExp(expression)
                 ) {
                     if (!expression._handled) {
                         newExpression = t.arrowFunctionExpression([ t.identifier(AlinsStr.Event) ], newExpression);
@@ -212,7 +212,7 @@ export class JsxScope {
                 if (expression) {
                     if (expression.type === 'Identifier') {
                         this.module.markVarChange(expression.name, true);
-                    } else if (expression.type === 'MemberExpression') {
+                    } else if (isMemberExp(expression)) {
                         const object = parseFirstMemberObject(expression);
                         this.module.markVarChange(object.name, true);
                         const computedExp = createCtxCall(AlinsVar.ComputedShort, [

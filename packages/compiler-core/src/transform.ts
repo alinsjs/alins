@@ -1,6 +1,6 @@
 
 import type { NodePath, TraverseOptions } from '@babel/traverse';
-import type { Program } from '@babel/types';
+import type { MemberExpression, Program } from '@babel/types';
 import type { IBabelType } from './types';
 import { parseCommentMulti, parseVarDeclCommentReactive } from './comment';
 import { parseInnerComponent } from './component/component';
@@ -9,7 +9,7 @@ import {
     createEmptyString, createExtendCalleeWrap, createUnfInit,
     extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, transformWatchLabel,
 } from './parse-utils';
-import { isJsxExtendCall, isJsxExtendDef, isOriginJSXElement } from './is';
+import { isJsxExtendCall, isJsxExtendDef, isMemberExp, isOriginJSXElement } from './is';
 import { ImportManager } from './controller/import-manager';
 
 export function createNodeVisitor (t: IBabelType, useImport = true) {
@@ -42,8 +42,17 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         'AwaitExpression|ForAwaitStatement' () {
             ctx.curScope.collectAwait();
         },
+        'ForOfStatement|ForInStatement': {
+            enter (path) {
+                ctx.checkStaticScope(path as any);
+            },
+            exit (path) {
+                ctx.checkExitStaticScope(path.node);
+            }
+        },
         'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression': {
             enter (path) {
+                ctx.checkStaticScope(path as any);
                 if (isJsxExtendDef(path.node)) {
                     return path.remove();
                 }
@@ -77,6 +86,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 ctx.enterScope(path, true);
             },
             exit (path) {
+                ctx.checkExitStaticScope(path.node);
                 // @ts-ignore
                 if (path.node._mapScope) {
                 // @ts-ignore
@@ -88,6 +98,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         BlockStatement: {
             enter (path) {
+                ctx.checkStaticScope(path as any);
                 if (!ctx.enter(path)) return;
                 // @ts-ignore
                 if (!path.parent._scopeEntry) { // ! 父元素不是一个scope（不是函数）
@@ -95,6 +106,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 }
             },
             exit (path) {
+                ctx.checkExitStaticScope(path.node);
                 // @ts-ignore
                 if (!path.parent._scopeEntry) {
                     ctx.exitScope();
@@ -103,6 +115,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         VariableDeclaration: {
             enter (path) {
+                ctx.checkStaticScope(path);
                 if (!ctx) {
                     console.warn('Skip VariableDeclaration because ctx end');
                     path.skip();
@@ -119,30 +132,39 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 ctx.enterVariableDeclaration(path.node);
             },
             exit (path) {
+                ctx.checkExitStaticScope(path.node);
                 ctx.exitJsxComponent(path);
             }
         },
         LabeledStatement: {
             enter (path) {
+                ctx.checkStaticScope(path);
                 if (path.node.label.name === 'watch') {
                     const result = transformWatchLabel(path.node);
                     if (result) path.replaceWith(result);
                 }
             },
             exit (path) {
+                ctx.checkExitStaticScope(path.node);
                 if (path.node._shouldRemoved) { // ! 移除需要删除的label
                     path.remove();
                 }
             }
         },
-        ForStatement (path) {
-            const update = path.node.update;
+        ForStatement: {
+            enter (path) {
+                ctx.checkStaticScope(path);
+                const update = path.node.update;
 
-            if (!update) return;
+                if (!update) return;
 
-            // if(update.type === 'ExpressionS')
+                // if(update.type === 'ExpressionS')
 
-            update._isForUpdate = true;
+                update._isForUpdate = true;
+            },
+            exit (path) {
+                ctx.checkExitStaticScope(path.node);
+            }
         },
         VariableDeclarator: {
             enter (path) {
@@ -194,7 +216,6 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             }
         },
         MemberExpression (path) {
-            // console.log('MemberExpression', path.toString(), path.node._skip);
             const pnode = path.node;
             if (!ctx.enter(path)) return;
 
@@ -234,8 +255,8 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             if (!ctx.enter(path)) return;
             if (path.node._isForUpdate) return;
             const arg = path.node.argument;
-            if (arg.type === 'MemberExpression') {
-                const id = parseFirstMemberObject(arg);
+            if (isMemberExp(arg)) {
+                const id = parseFirstMemberObject(arg as any);
                 ctx.markVarChange(id.name);
             } else if (arg.type === 'Identifier') {
                 ctx.markVarChange(arg.name);
@@ -318,7 +339,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 }
                 if (!ctx.enter(path)) return;
                 const callee = path.node.callee;
-                if (callee.type === 'MemberExpression') {
+                if (isMemberExp(callee)) {
                     // @ts-ignore
                     const prop = callee.property.name;
                     // path.node._mapScope = true;
@@ -327,7 +348,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                         ctx.enterMapScope(path);
                     } else if (ModArrayFunc[prop]) {
                         // 数组修改方法
-                        const id = parseFirstMemberObject(callee);
+                        const id = parseFirstMemberObject(callee as MemberExpression);
                         ctx.markVarChange(id.name);
                     }
                 }
@@ -360,22 +381,26 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         IfStatement: {
             enter (path) {
+                ctx.checkStaticScope(path);
                 // console.log('Expression', path.toString());
                 if (!ctx.enter(path)) return;
                 ctx.curScope.enterIfScope(path);
             },
             exit (path) {
                 ctx.curScope.exitIfScope(path);
+                ctx.checkExitStaticScope(path.node);
             }
         },
         SwitchStatement: {
             enter (path) {
+                ctx.checkStaticScope(path);
                 // console.log('Expression', path.toString());
                 if (!ctx.enter(path)) return;
                 ctx.curScope.enterSwitchScope(path);
             },
             exit (path) {
                 ctx.curScope.exitSwitchScope(path);
+                ctx.checkExitStaticScope(path.node);
             }
         },
         BreakStatement (path) {

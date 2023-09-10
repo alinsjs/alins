@@ -213,17 +213,17 @@ export function createDomCacheManager () {
         },
         removeElement (node: any) {
             if (!branch) {
-                Renderer.removeElement(node);
+                node.remove();
                 return;
             }
             const cache = branch.cache;
             if (node.parentElement) {
-                Renderer.removeElement(node);
+                node.remove();
                 const index = cache.curCache.indexOf(node);
                 cache.curCache.splice(index, 1);
             } else {
                 cache.addTask(() => {
-                    Renderer.removeElement(node);
+                    node.remove();
                     const index = cache.curCache.indexOf(node);
                     cache.curCache.splice(index, 1);
                 });

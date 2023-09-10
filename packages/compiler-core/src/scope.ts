@@ -359,6 +359,7 @@ export class Scope {
 
     // 变量被赋值了 转化变量以及其依赖项
     markVariableReactive (name: string, force = false, fromBind = true) {
+        if (this.module.isInStaticScope) return;
         const variable = this.findVarDeclare(name);
         if (variable && fromBind) {
             variable.isStatic = false;

@@ -3,13 +3,14 @@
  * @Date: 2023-07-21 22:37:05
  * @Description: Coding something
  */
-import {isProxy} from 'alins-reactive';
-import {reactiveBindingEnable} from './dom-util';
-import {IStyle} from './jsx';
+import { isProxy } from 'alins-reactive';
+import { reactiveBindingEnable } from './dom-util';
+import type { IStyle } from './jsx';
+import type { IElement } from './renderer';
 
-export const OnlyNumberMap = {'zIndex': 1, 'opacity': 1, 'flex': 1, 'flexGrow': 1, 'flexShrink': 1};
+export const OnlyNumberMap = { 'zIndex': 1, 'opacity': 1, 'flex': 1, 'flexGrow': 1, 'flexShrink': 1 };
 
-function setStyle (dom: HTMLElement, prop: string, v: any, remove?: boolean) {
+function setStyle (dom: IElement, prop: string, v: any, remove?: boolean) {
     if (typeof v === 'number' && !OnlyNumberMap[prop]) {
         v = `${v}px`;
     }
@@ -17,7 +18,7 @@ function setStyle (dom: HTMLElement, prop: string, v: any, remove?: boolean) {
 }
 
 export function parseStyle (
-    dom: HTMLElement,
+    dom: IElement,
     value: IStyle | string | (()=>string)
 ): boolean {
     if (value === null || typeof value === 'undefined') return false;
@@ -61,7 +62,7 @@ export function parseStyle (
     return true;
 }
 
-export function parseStyleSuffix (el: HTMLElement, key: string, value: any|(()=>any)): boolean {
+export function parseStyleSuffix (el: IElement, key: string, value: any|(()=>any)): boolean {
     if (!key.startsWith('style$')) return false;
     const name = key.substring('style$'.length);
     reactiveBindingEnable(value, (v) => {

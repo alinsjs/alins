@@ -13,6 +13,7 @@ export { _switch } from './branch/switch';
 export { map } from './for';
 
 export * from './element/renderer';
+export * from './element/custom-renderer';
 
 export * from 'alins-reactive';
 

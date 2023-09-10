@@ -32,7 +32,7 @@ export function isObjectAssignDeclarator (node:VariableDeclarator) {
     if (node.init?.type !== 'CallExpression') return false;
     const callee = node.init.callee;
     // @ts-ignore
-    return callee.type === 'MemberExpression' && callee.object?.name === 'Object' && callee.property?.name === 'assign';
+    return isMemberExp(callee) && callee.object?.name === 'Object' && callee.property?.name === 'assign';
 }
 
 export enum BlockReturnType {
@@ -97,9 +97,10 @@ export function isNeedComputed (node: VariableDeclarator) {
     if (!node.init) return false;
     const type = node.init.type;
     if (type === 'Identifier') return false;
-    else if (type === 'MemberExpression') {
+    else if (isMemberExp(node.init)) {
+        // @ts-ignore
         let o = node.init.object;
-        while (o.type === 'MemberExpression') {
+        while (isMemberExp(o)) {
             o = o.object;
         }
         if (o.type === 'Identifier') return false;
@@ -259,4 +260,8 @@ export function isBlockBreak (elements: any[]) {
         }
     }
     return false;
+}
+
+export function isMemberExp (node: Node) {
+    return node.type === 'MemberExpression' || node.type === 'OptionalMemberExpression';
 }

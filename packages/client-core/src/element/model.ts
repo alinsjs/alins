@@ -5,13 +5,14 @@
  */
 import type { IRefData, ISimpleValue } from 'alins-utils';
 import { isProxy, watch } from 'alins-reactive';
+import type { IElement } from './renderer';
 
 const ModelTag = {
     INPUT: 1, SELECT: 1, TEXTAREA: 1,
 };
 
 export function parseModel (
-    dom: HTMLElement,
+    dom: IElement,
     value: ISimpleValue | (()=>ISimpleValue) | IRefData<ISimpleValue>,
     k: string,
 ): boolean {

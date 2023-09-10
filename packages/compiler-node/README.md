@@ -139,6 +139,9 @@ Organizing a table to comprehensively compare the source code volume, packed cod
 | Source size | 90byte | 281byte | 302byte |
 | Compiled product size | 140byte | 620byte | 435byte |
 | Runtime Size | 26.6kb | 474kb | 139kb |
+| Startup Metrics   |   1.24    | 2.74 | 1.52 |
+| Runtime Performance   |   1.36    | 1.45 | 1.54 |
+| Memory Usage   |   2.77    | 3.30 | 3.28 |
 
 Note: This comparison is only for the current counter example and is for reference only
 

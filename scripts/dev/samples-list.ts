@@ -1,1 +1,1 @@
-export default ["bench.jsx","data.js","demo.js","if-sample.tsx","increment.tsx","list.tsx","playground.jsx","rfc.html","style-reactive.jsx","todo-list.tsx","vjsx.tsx"];
+export default ["bench.jsx","canvas-renderer.jsx","data.js","define-renderer.jsx","define-renderer.tsx","demo.js","if-sample.tsx","increment.tsx","list.tsx","playground.jsx","rfc.html","style-reactive.jsx","todo-list.tsx","use-renderer.jsx","vjsx.tsx"];

@@ -5,8 +5,9 @@
  */
 import type { NodePath } from '@babel/traverse';
 import type { CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator } from '@babel/types';
+import { parseCommentSingle, RegMap } from './comment';
 import { MapScope } from './controller/map';
-import { isComponentFunc, isJsxCallee } from './is';
+import { isComponentFunc, isJsxCallee, isMemberExp } from './is';
 import { getObjectPropValue, initCurModule } from './parse-utils';
 import { Scope } from './scope';
 import { INodeTypeMap } from './types';
@@ -39,9 +40,46 @@ export class Module {
     curScope: Scope = null as any;
     curDeclarationType: VariableDeclaration['kind'] = 'var';
     id = 0;
+
+
+    isInStaticScope = false;
     constructor (path: NodePath<Program>) {
         this.id = moduleId++;
         this.enterScope(path);
+    }
+    checkStaticScope (path: NodePath<Node>) {
+        if (this.isInStaticScope) return;
+        const node = path.node;
+
+        const comment = parseCommentSingle(node, RegMap.StaticScope);
+        const markStatic = () => {
+            this.isInStaticScope = true;
+            // @ts-ignore
+            node._isStaticScope = true;
+        };
+        if (comment) {
+            markStatic();
+            return;
+        }
+        if (node.type === 'FunctionDeclaration') {
+            if (node.id?.name[0] === '_') markStatic();
+        } else if (
+            node.type === 'ArrowFunctionExpression' ||
+            node.type === 'FunctionExpression'
+        ) {
+            if (
+                path.parent.type === 'VariableDeclarator' &&
+                // @ts-ignore
+                path.parent.id?.name[0] === '_'
+            ) {
+                markStatic();
+            }
+        }
+    }
+    checkExitStaticScope (node: any) {
+        if (this.isInStaticScope && node._isStaticScope) {
+            this.isInStaticScope = false;
+        }
     }
     exitModule () {
 
@@ -125,7 +163,7 @@ export class Module {
             !!NoNeedCollectIdentifierMap[ptype] ||
             (ptype === 'ObjectProperty' && parent.key === node) ||
             // @ts-ignore 非首个member identify 非计算属性
-            (ptype === 'MemberExpression' && !parent.computed && !node._firstMember)
+            (isMemberExp(parent) && !parent.computed && !node._firstMember)
         ) {
             return;
         }

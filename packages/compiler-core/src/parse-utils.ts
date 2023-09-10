@@ -21,7 +21,7 @@ import type {
     LabeledStatement
 } from '@babel/types';
 import type { IBabelType } from './types';
-import { BlockReturnType, isBlockBreak, isBlockReturned, isEventEmptyDeco } from './is';
+import { BlockReturnType, isBlockBreak, isBlockReturned, isEventEmptyDeco, isMemberExp } from './is';
 import type { Module } from './context';
 import { AlinsStr, AlinsVar, ImportManager } from './controller/import-manager';
 
@@ -235,7 +235,7 @@ export function parseFirstMemberObject (m: MemberExpression|Identifier, second?:
     let node = m;
     let last: any = null;
     // debugger;
-    while (node.type === 'MemberExpression') {
+    while (isMemberExp(node)) {
         if (second) {
             last = node;
         }

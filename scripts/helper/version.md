@@ -27,13 +27,15 @@ fix:
 - [ ] 编译器代码重构 - 分两步编译 第一步进行jsx解析；第二部进行alins reactive； 支持 ssr
 - [ ] 运行时代码重构 - 优化内存空间占用和运行时间
 - [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
+- [ ] 完善测试
 
 ## 0.0.29
 
 - [x] 增加 js表达式作为事件是 $e 参数
 - [x] 修复 for of for in 中错误的初始值的问题
 - [x] 新增 watch: 语法糖
-- [x] 新增 defineRenderer
+- [x] 新增 defineRenderer, useRenderer
+- [x] 新增静态函数，跳过对函数内元素做处理 _ 前缀和 @static-scope 标记
 
 ## 0.0.18 - 0.0.28
 

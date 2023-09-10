@@ -7,7 +7,7 @@
 import type { Alins } from './jsx';
 import { initWebMountedObserver, initWebRemovedObserver } from './lifecycle';
 
-export type IElement = Alins.IElement;
+export type IElement<T extends Alins.IElement = Alins.IElement> = Alins.IElement<T>;
 export type ITextNode = Alins.ITextNode;
 export type IFragment = Alins.IFragment;
 export type ITrueElement = Alins.ITrueElement;
@@ -21,7 +21,6 @@ export interface IRenderer {
     createFragment (): IFragment,
     isFragment (el: any): boolean,
     isElement (el: any): boolean,
-    removeElement (el: any): void,
     onMounted? (parent: IElement, node: IElement, mounted: Alins.ILifeListener<void|Alins.ILifeListener>): void;
     onRemoved? (parent: IElement, node: IElement, removed: Alins.ILifeListener): void;
 }
@@ -30,6 +29,7 @@ export let Renderer: IRenderer;
 
 export function defineRenderer (renderer: IRenderer) {
     Renderer = renderer;
+    return renderer;
 }
 
 if (typeof window !== 'undefined' && typeof window.document !== 'undefined') {
@@ -56,15 +56,10 @@ if (typeof window !== 'undefined' && typeof window.document !== 'undefined') {
         isElement (el: any) {
             return this.isFragment(el) || el instanceof Node;
         },
-        removeElement (el: any) {
-            el.remove();
-        },
         onMounted (parent: any) {
-            debugger;
             initWebMountedObserver(parent);
         },
         onRemoved (parent: any, node: any) {
-            debugger;
             initWebRemovedObserver(node);
         },
     });

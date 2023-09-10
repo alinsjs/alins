@@ -27,6 +27,8 @@ const {
 
 let isWebPackage = false;
 
+const isDev = true;
+
 function parseBuildConfig () {
 
     const dirName = process.env.DIR_NAME;
@@ -36,12 +38,15 @@ function parseBuildConfig () {
 
     // ! 会将第一个format作为main
     const BuildMap = {
-        'client-core': {
+        'client-core': isDev ? {
+            packageName: 'alins',
+            umdName: 'Alins',
+            format: 'esm',
+            external: false,
+        } : {
             packageName: 'alins',
             type: 'web',
             umdName: 'Alins',
-            // format: 'esm',
-            // external: false,
         },
         'client-reactive': {
             packageName: 'alins-reactive',
@@ -72,10 +77,14 @@ function parseBuildConfig () {
             type: 'node',
             // format: 'esm cjs',
         },
-        'compiler-web': {
+        'compiler-web': isDev ? {
             packageName: 'alins-compiler-web',
-            // type: 'web',
-            format: 'iife',
+            format: 'esm',
+            umdName: 'AlinsWeb',
+            external: false,
+        } : {
+            packageName: 'alins-compiler-web',
+            type: 'web',
             umdName: 'AlinsWeb',
         },
         'plugin-babel': {
@@ -92,11 +101,13 @@ function parseBuildConfig () {
             type: 'node',
             // format: 'esm cjs',
         },
-        'plugin-vite': {
+        'plugin-vite': isDev ? {
+            packageName: 'vite-plugin-alins',
+            format: 'esm',
+            external: false,
+        } : {
             packageName: 'vite-plugin-alins',
             type: 'node',
-            // format: 'esm',
-            // external: false,
         },
         'plugin-webpack': {
             packageName: 'alins-loader',

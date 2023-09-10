@@ -8,7 +8,7 @@ import { IAttributes } from 'packages/core/src/element/jsx';
 // tslint:disable-next-line:export-just-namespace
 // export = Alins;
 
-declare namespace Alins {
+export declare namespace Alins {
     // prevent：阻止默认事件（常用）；
     // stop：阻止事件冒泡（常用）；
     // once：事件只触发一次（常用）；
@@ -695,11 +695,11 @@ declare namespace Alins {
     }
 
     interface IControlAttributes {
-        $mount?: HTMLElement|Node|DocumentFragment|string;
+        $mount?: ITrueElement|string;
         $show?: boolean|(()=>boolean);
     }
 
-    type ILifeListener<T=void> = (dom: HTMLElement)=>T;
+    type ILifeListener<T=void> = (dom: IElement)=>T;
 
     interface IAttributes extends IBaseAttributes, IControlAttributes {
         $attributes?: {
@@ -722,14 +722,16 @@ declare namespace Alins {
         get textContent(): string;
         set textContent(value: string);
     }
-    interface IFragment {
-        appendChild(child: ITrueElement): void;
-        insertBefore<T extends ITrueElement>(node: T, child: IElement | null): T;
-        children: (IElement|ITextNode)[];
-        childNodes: (IElement|ITextNode)[];
+    interface IFragment<T extends IElement|ITextNode = IElement|ITextNode> {
+        appendChild(child: T|IFragment<T>): void;
+        insertBefore(node: T, child: T | null): T;
+        children: T[];
+        childNodes: T[];
     }
-    interface IElement extends IFragment {
+    interface IElement<T extends IElement = any> extends IFragment<T> {
         // target stopPropagation preventDefault
+        tagName: string;
+        style: Record<string, any>;
         addEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
         removeEventListener(eventName: string, listener: (e: Event)=>void, useCapture?: boolean): void;
         setAttribute(name: string, value: string): void;
@@ -740,18 +742,16 @@ declare namespace Alins {
             remove(name: string): void;
         }
         remove(): void;
-        get parentElement(): IElement;
-        get parentNode(): IElement;
-        get nextSibling(): IElement;
-        get className(): string;
-        set className(value: string);
-        get innerHTML(): string;
-        set innerHTML(value: string);
-        get innerText(): string;
-        set innerText(value: string);
+        get parentElement(): T|null;
+        get parentNode(): T|null;
+        get nextSibling(): T|null;
+        className: string;
+        innerHTML: string;
+        innerText: string;
         __$appended?: any;
         __$removed?: any;
         __$mounted?: any;
+        [prop: string]: any;
     }
     type ITrueElement = IElement | ITextNode | IFragment;
     // 广义元素
@@ -767,9 +767,7 @@ declare global {
         React: any;
     }
     namespace JSX {
-        interface PElement extends Promise<HTMLElement>, HTMLElement{}
-        // tslint:disable-next-line:no-empty-interface
-        interface Element extends PElement {
+        interface Element extends Promise<Alins.IElement>, Alins.IElement {
         }
         // interface ElementClass {
         //     render():void;

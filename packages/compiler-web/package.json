@@ -3,7 +3,7 @@
     "version": "0.0.28",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
-    "typings": "dist/alins-compiler-web.d.ts",
+    "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -25,7 +25,5 @@
         "alins": "^0.0.28",
         "alins-compiler-core": "^0.0.28"
     },
-    "unpkg": "dist/alins-compiler-web.iife.min.js",
-    "jsdelivr": "dist/alins-compiler-web.iife.min.js",
     "module": "src/index.ts"
 }

@@ -6,9 +6,10 @@
 import { isProxy } from 'alins-reactive';
 import { reactiveBindingEnable } from './dom-util';
 import { IBaseAttributes } from './jsx';
+import type { IElement } from './renderer';
 
 export function parseAttributes (
-    dom: HTMLElement,
+    dom: IElement,
     value: IBaseAttributes | string | (()=>string)
 ): boolean {
     if (value === null || typeof value === 'undefined') return false;

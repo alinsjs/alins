@@ -8,7 +8,7 @@ import {
     version,
     createStore,
     _$c, _$cc, _$ce, _$e, _$es, _$if, _$mf, _$mm, _$mnr,
-    _$mu, _$r, _$sw, _$w,
+    _$mu, _$r, _$sw, _$w, defineRenderer, useRenderer
 } from 'alins';
 import { parseWebAlins } from './parser';
 
@@ -56,7 +56,9 @@ if (typeof window !== 'undefined') {
     // @ts-ignore
     window.Alins = {
         _$c, _$cc, _$ce, _$e, _$es, _$mf, _$mm, _$mnr,
-        _$mu, _$r, _$sw, _$w, _$if, version, createStore
+        _$mu, _$r, _$sw, _$w, _$if, version, createStore,
+        useRenderer,
+        defineRenderer,
     };
     window.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 }

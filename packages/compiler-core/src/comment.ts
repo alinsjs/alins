@@ -10,43 +10,58 @@
 3. // @static 标注数据不为响应式
 */
 
-import type {Node, VariableDeclaration, VariableDeclarator} from '@babel/types';
+import type { Node, VariableDeclaration, VariableDeclarator } from '@babel/types';
 
 function parseComment (node: Node) {
     const comments: string[] = [];
     const nodeLine = node.loc?.start.line || 0;
     const before = node.leadingComments?.[node.leadingComments.length - 1];
+    const commentEls: any[] = [];
     if (before && before.loc?.start.line === nodeLine - 1) {
         comments.push(before.value);
+        commentEls.push(before);
     }
     const after = node.trailingComments?.[0];
 
     if (after && after.loc?.start.line === nodeLine) {
+        commentEls.push(before);
         comments.push(after.value);
     }
-    return comments.join('\n');
+    return { comment: comments.join('\n'), clear (reg: RegExp) {
+        const replace = (node: any) => {
+            if (node)node.value = node.value.replace(reg, (str: string) => str.replace('@', '$$'));
+        };
+        replace(before);
+        replace(after);
+    } };
 }
 
-const RegMap = {
+export const RegMap = {
     React: /@reactive(\((.*?)\))?/i,
     Static: /@static(\((.*?)\))?/i,
     Shallow: /@shallow/i,
+    StaticScope: /@static\-scope/i,
 };
 
 export function parseCommentMulti (node: Node, reg = RegMap.React) {
-    const comment = parseComment(node);
+    const { comment, clear } = parseComment(node);
     if (!comment) return '';
+
+    if (reg === RegMap.Static && RegMap.StaticScope.test(comment)) return '';
 
     const result = comment.match(reg);
     if (!result) return '';
+    clear(reg);
     if (!result[2]) return '*';
     return result[2].split(',').map(s => s.trim());
 }
 
 export function parseCommentSingle (node: Node, reg = RegMap.Shallow) {
-    const comment = parseComment(node);
+    const { comment, clear } = parseComment(node);
     if (!comment) return false;
-    return reg.test(comment);
+    if (!reg.test(comment)) return false;
+    clear(reg);
+    return true;
 }
 
 export function parseVarDeclCommentReactive (node: VariableDeclaration) {

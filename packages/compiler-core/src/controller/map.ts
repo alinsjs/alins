@@ -7,7 +7,7 @@
 
 import type { CallExpression } from '@babel/types';
 import type { Module } from '../context';
-import { isOriginJSXElement } from '../is';
+import { isMemberExp, isOriginJSXElement } from '../is';
 import { createCtxCall, getT, parseFirstMemberObject } from '../parse-utils';
 import { ControlScope } from './control-scope';
 import { AlinsVar } from './import-manager';
@@ -86,7 +86,7 @@ export class MapScope extends ControlScope<CallExpression> {
         if (object) {
             if (object.type === 'Identifier') {
                 this.dataName = object.name || '';
-            } else if (object.type === 'MemberExpression') {
+            } else if (isMemberExp(object)) {
                 this.dataName = parseFirstMemberObject(object).name || '';
             }
         }

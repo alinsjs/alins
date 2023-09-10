@@ -175,7 +175,6 @@ export function map (
                     while (startDom.nextSibling && startDom !== endDom && startDom.nextSibling !== endDom) {
                         const dom = startDom.nextSibling;
                         cacheManager.removeElement(dom);
-                        // Renderer.removeElement(dom);
                     }
                     if (startPos < 0) {
                         // @ts-ignore
@@ -184,7 +183,6 @@ export function map (
                             head = startDom.nextSibling;
                             // @ts-ignore
                             cacheManager.removeElement(startDom);
-                            // Renderer.removeElement(startDom);
                         } else {
                             head = ScopeEnd;
                         }
