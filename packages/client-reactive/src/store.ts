@@ -27,6 +27,7 @@ export type IStore<
 } & {
     $watch<T extends keyof State>(T: (keyof State), listener: (nv: State[T], ov: State[T])=>void): void;
     $watch<T extends keyof Getter>(T: (keyof Getter), listener: (nv: Getter[T], ov: Getter[T])=>void): void;
+    $watch<T = any>(v: string, listener: (nv: T, old: T)=>void): void;
     $watch<T>(T: (()=>T), listener: (nv: T, ov: T)=>void): void;
 }
 
@@ -88,11 +89,28 @@ export function createStore<
                 if (typeof v === 'string') {
                     const prop = v;
                     // @ts-ignore
-                    v = () => store[prop];
+                    v = () => getLinkAttr(store, prop);
                 }
                 return watch(v, listener);
             };
         }
         return store;
     };
+}
+
+function getLinkAttr (data: any, attr: string) {
+    let cur = '';
+    for (let i = 0; i < attr.length; i++) {
+        const s = attr[i];
+        if (s === '.' || s === '[' || s === ']') {
+            if (cur) {
+                data = data[cur];
+                cur = '';
+            }
+        } else {
+            cur += s;
+        }
+    }
+    if (cur) data = data[cur];
+    return data;
 }

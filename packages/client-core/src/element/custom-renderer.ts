@@ -87,7 +87,7 @@ export class CustomElement implements IElement {
     get innerHTML () {return this.innerText;}
     children: CustomElement[] = [];
     get childNodes () {
-        return this.childNodes;
+        return this.children;
     }
     appendChild (child: CustomElement) {
         if (child.type === ElementType.Frag) {

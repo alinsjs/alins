@@ -145,7 +145,9 @@ export function createProxy<T extends IJson> (data: T, {
     commonLns?: Set<IProxyListener>
 } = {}): IProxyData<T> {
 
-    if (!isArrayOrJson(data) || isProxy(data, true)) return data as any;
+    if (!isArrayOrJson(data) || isProxy(data, true)) {
+        return data as any;
+    }
 
     if (!shallow) deepReactive(data, path);
 
