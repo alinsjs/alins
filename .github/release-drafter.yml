@@ -3,7 +3,7 @@ tag-template: 'v$RESOLVED_VERSION'
 template: |
   # What's Changed
 
-  ### [Version Log](todo: add version log)
+  ### [Version Log](https://github.com/alinsjs/alins/blob/master/scripts/helper/version.md)
 
   **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
 

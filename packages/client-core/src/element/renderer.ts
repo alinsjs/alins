@@ -70,3 +70,17 @@ export function getFirstElement (element?: IGeneralElement) {
     // @ts-ignore
     return (Renderer.isFragment(element) ? (element.firstChild) : element);
 }
+
+export function appendChild (parent: any, item: any) {
+    // @ts-ignore
+    if (item.__$mounted) {
+        Renderer.onMounted?.(parent, item, item.__$mounted);
+    }
+    // @ts-ignore
+    if (item.__$removed) {
+        Renderer.onRemoved?.(parent, item, item.__$mounted);
+    }
+    parent.appendChild(item as any);
+    // @ts-ignore
+    item.__$appended?.(item);
+}

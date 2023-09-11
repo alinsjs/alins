@@ -4,7 +4,7 @@
  * @Date: 2023-09-04 22:12:56
  * @Description: Coding something
  */
-import { Renderer } from '../element/renderer';
+import { appendChild, Renderer } from '../element/renderer';
 import { IReturnCall } from '../type';
 import { getParent, insertBefore } from '../utils';
 import { BranchCache } from './cache';
@@ -78,7 +78,7 @@ export class BranchBlock {
         const d = Renderer.createFragment();
         // @ts-ignore
         d.appendChild(this.start);
-        if (el) d.appendChild(el);
+        if (el) appendChild(d, el);
         // @ts-ignore
         d.appendChild(this.end);
         return d;
@@ -95,7 +95,6 @@ export class BranchBlock {
     }
 
     private initAnchor (dom: any) {
-
         if (Renderer.isFragment(dom)) {
             // @ts-ignore
             dom.appendChild(this.end);

@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 import { addEvent, isEventAttr, IEventNames } from './event';
-import { IElement, IFragment, ITrueElement, Renderer } from './renderer';
+import { IElement, IFragment, ITrueElement, Renderer, appendChild } from './renderer';
 import {
     IBindingReactionEnable, reactiveBindingEnable,
     IChildren, reactiveBindingValue,
@@ -141,20 +141,6 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
         }
     }
     return el;
-}
-
-function appendChild (parent: any, item: any) {
-    // @ts-ignore
-    if (item.__$mounted) {
-        Renderer.onMounted?.(parent, item, item.__$mounted);
-    }
-    // @ts-ignore
-    if (item.__$removed) {
-        Renderer.onRemoved?.(parent, item, item.__$mounted);
-    }
-    parent.appendChild(item as any);
-    // @ts-ignore
-    item.__$appended?.(item);
 }
 
 export function appendChildren (parent: IElement|IFragment, children: (IChildren|IJSXDomOptions)[]) {

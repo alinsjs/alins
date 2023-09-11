@@ -37,6 +37,7 @@ fix:
 - [x] 新增 defineRenderer, useRenderer
 - [x] 新增静态函数，跳过对函数内元素做处理 _ 前缀和 @static-scope 标记
 - [x] store watch 支持属性链 a.b
+- [x] fix 生命周期在branch-block中的bug
 
 ## 0.0.18 - 0.0.28
 
