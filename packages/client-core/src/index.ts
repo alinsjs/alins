@@ -6,7 +6,7 @@
 
 export * from './context';
 
-export type { IAttributes } from './element/jsx.d';
+export * from './element/alins.d';
 
 export { _if } from './branch/if';
 export { _switch } from './branch/switch';

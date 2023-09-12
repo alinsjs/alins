@@ -4,8 +4,8 @@
  * @Description: Coding something
  */
 
-import { IElement, ITextNode, ITrueElement, Renderer } from '../element/renderer';
-import { IReturnCall } from '../type';
+import type { IElement, ITextNode, ITrueElement, IReturnCall } from '../element/alins.d';
+import { Renderer } from '../element/renderer';
 
 function transformElementToCache (element: any): (IElement|ITextNode)[]|null {
     if (!element) return null;

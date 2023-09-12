@@ -5,7 +5,7 @@
  */
 import { isProxy } from 'alins-reactive';
 import { reactiveBindingEnable } from './dom-util';
-import type { IElement } from './renderer';
+import type { IElement } from './alins.d';
 
 export function parseClassName (
     dom: IElement,

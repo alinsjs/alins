@@ -4,8 +4,7 @@
  * @Description: Coding something
  */
 
-import {IElement, IFragment} from './renderer';
-import {IEventObject, IEventAttributes, IEventObjectDeco} from './jsx';
+import { IElement, IFragment, IEventObject, IEventAttributes, IEventObjectDeco } from './alins';
 
 export type IEventNames = keyof IEventAttributes;
 

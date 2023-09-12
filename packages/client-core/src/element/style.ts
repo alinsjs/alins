@@ -5,8 +5,7 @@
  */
 import { isProxy } from 'alins-reactive';
 import { reactiveBindingEnable } from './dom-util';
-import type { IStyle } from './jsx';
-import type { IElement } from './renderer';
+import type { IElement, IStyle } from './alins.d';
 
 export const OnlyNumberMap = { 'zIndex': 1, 'opacity': 1, 'flex': 1, 'flexGrow': 1, 'flexShrink': 1 };
 

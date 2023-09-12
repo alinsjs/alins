@@ -5,8 +5,7 @@
  */
 import { isProxy } from 'alins-reactive';
 import { reactiveBindingEnable } from './dom-util';
-import { IBaseAttributes } from './jsx';
-import type { IElement } from './renderer';
+import type { IElement, IBaseAttributes } from './alins.d';
 
 export function parseAttributes (
     dom: IElement,

@@ -4,14 +4,14 @@
  * @Description: Coding something
  */
 import { addEvent, isEventAttr, IEventNames } from './event';
-import { IElement, IFragment, ITrueElement, Renderer, appendChild } from './renderer';
+import type { IElement, IFragment, ITrueElement, IAttributes } from './alins.d';
+import { Renderer, appendChild } from './renderer';
 import {
     IBindingReactionEnable, reactiveBindingEnable,
     IChildren, reactiveBindingValue,
 } from './dom-util';
 import { AlinsType, IJson, type } from 'alins-utils';
 import { IBindingReaction, IBindingRef, isProxy } from 'alins-reactive';
-import { IAttributes } from './jsx';
 import { parseStyle, parseStyleSuffix } from './style';
 import { parseModel } from './model';
 import { getParent } from '../utils';

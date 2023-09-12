@@ -4,10 +4,8 @@
  * @Description: Coding something
  */
 import { IWatchRefTarget, watch } from 'alins-reactive';
-import {
-    IReturnCall
-} from '../type';
-import { IGeneralElement, Renderer } from '../element/renderer';
+import { IGeneralElement, IReturnCall } from '../element/alins.d';
+import { Renderer } from '../element/renderer';
 import { empty } from 'alins-utils';
 import { BranchBlock } from './branch-block';
 

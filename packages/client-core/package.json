@@ -1,6 +1,6 @@
 {
     "name": "alins",
-    "version": "0.0.28",
+    "version": "0.0.29",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
     "typings": "src/index.ts",
@@ -19,11 +19,13 @@
     "license": "MIT",
     "type": "module",
     "dependencies": {
-        "alins-reactive": "^0.0.28",
-        "alins-utils": "^0.0.28"
+        "alins-reactive": "^0.0.29",
+        "alins-utils": "^0.0.29"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
-    "module": "src/index.ts"
+    "module": "src/index.ts",
+    "unpkg": "dist/alins.iife.min.js",
+    "jsdelivr": "dist/alins.iife.min.js"
 }

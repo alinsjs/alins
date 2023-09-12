@@ -119,7 +119,7 @@ npm run dev
 1. 该方式不建议在生产环境使用
 2. 可以使用 type='text/babel'，这样可以获得编辑器自带的语法高亮
 
-您也可以在 [演练场](https://alinsjs.github.io/playground/#48) 中自由使用，演练场也是使用Web编译器
+您也可以在 [演练场](https://alinsjs.github.io/playground/#free) 中自由使用，演练场也是使用Web编译器
 
 ## 2 比较
 

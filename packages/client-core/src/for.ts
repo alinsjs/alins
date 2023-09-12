@@ -11,7 +11,8 @@ import {
 } from 'alins-reactive';
 import { IProxyData, util } from 'alins-utils';
 import { createDomCacheManager } from './branch/branch-block';
-import { IFragment, IGeneralElement, ITrueElement, Renderer } from './element/renderer';
+import { IFragment, IGeneralElement, ITrueElement } from './element/alins.d';
+import { Renderer } from './element/renderer';
 import { getParent } from './utils';
 
 

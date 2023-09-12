@@ -4,14 +4,8 @@
  * @Description: Coding something
  */
 
-import type { Alins } from './jsx';
+import type { IElement, ITextNode, IFragment, ILifeListener, IGeneralElement } from './alins.d';
 import { initWebMountedObserver, initWebRemovedObserver } from './lifecycle';
-
-export type IElement<T extends Alins.IElement = Alins.IElement> = Alins.IElement<T>;
-export type ITextNode = Alins.ITextNode;
-export type IFragment = Alins.IFragment;
-export type ITrueElement = Alins.ITrueElement;
-export type IGeneralElement = Alins.IGeneralElement;
 
 export interface IRenderer {
     querySelector (selector: string): IElement|null,
@@ -21,8 +15,8 @@ export interface IRenderer {
     createFragment (): IFragment,
     isFragment (el: any): boolean,
     isElement (el: any): boolean,
-    onMounted? (parent: IElement, node: IElement, mounted: Alins.ILifeListener<void|Alins.ILifeListener>): void;
-    onRemoved? (parent: IElement, node: IElement, removed: Alins.ILifeListener): void;
+    onMounted? (parent: IElement, node: IElement, mounted: ILifeListener<void|ILifeListener>): void;
+    onRemoved? (parent: IElement, node: IElement, removed: ILifeListener): void;
 }
 
 export let Renderer: IRenderer;

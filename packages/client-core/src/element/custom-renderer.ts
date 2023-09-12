@@ -1,5 +1,5 @@
-import { Alins } from './jsx';
-import { defineRenderer, IElement } from './renderer';
+import type { ILifeListener, IElement } from './alins.d';
+import { defineRenderer } from './renderer';
 
 enum ElementType {
     Element,
@@ -34,8 +34,8 @@ function onElementMounted (node: CustomElement, parent: CustomElement) {
 
 export class CustomElement implements IElement {
     static Root: CustomElement|null = null;
-    _onMounted?: Alins.ILifeListener<void|Alins.ILifeListener>;
-    _onRemoved?: Alins.ILifeListener;
+    _onMounted?: ILifeListener<void|ILifeListener>;
+    _onRemoved?: ILifeListener;
     type = ElementType.Element;
     style: Record<string, any> = {}; // mock
     tagName = '';

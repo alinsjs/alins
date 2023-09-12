@@ -16,7 +16,6 @@ export function forFunc () {
     bool = true;
 
     // todo if 和 for 冲突问题
-
     return <div id='d1' $$App>
         <If data={data.list.length === 0}>
             {/* <If data={bool}> */}

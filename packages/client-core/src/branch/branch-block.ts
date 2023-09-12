@@ -5,7 +5,7 @@
  * @Description: Coding something
  */
 import { appendChild, Renderer } from '../element/renderer';
-import { IReturnCall } from '../type';
+import { IReturnCall } from '../element/alins.d';
 import { getParent, insertBefore } from '../utils';
 import { BranchCache } from './cache';
 

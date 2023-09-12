@@ -5,7 +5,7 @@
  */
 import type { IRefData, ISimpleValue } from 'alins-utils';
 import { isProxy, watch } from 'alins-reactive';
-import type { IElement } from './renderer';
+import type { IElement } from './alins.d';
 
 const ModelTag = {
     INPUT: 1, SELECT: 1, TEXTAREA: 1,

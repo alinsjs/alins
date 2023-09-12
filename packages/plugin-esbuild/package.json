@@ -1,6 +1,6 @@
 {
     "name": "esbuild-plugin-alins",
-    "version": "0.0.28",
+    "version": "0.0.29",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
     "typings": "src/index.ts",
@@ -22,7 +22,7 @@
         "registry": "https://registry.npmjs.org/"
     },
     "dependencies": {
-        "alins-compiler-node": "^0.0.28"
+        "alins-compiler-node": "^0.0.29"
     },
     "module": "src/index.ts"
 }

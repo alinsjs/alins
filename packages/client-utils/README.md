@@ -114,7 +114,7 @@ Note:
 1. This approach is not recommended for production environments.
 2. You can use type='text/babel' to enable syntax highlighting provided by the editor.
 
-You can also freely use it in the [playground](https://alinsjs.github.io/playground/#48), which also utilizes a web compiler.
+You can also freely use it in the [playground](https://alinsjs.github.io/playground/#free), which also utilizes a web compiler.
 
 ## 2 Compare
 

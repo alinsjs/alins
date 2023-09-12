@@ -6,9 +6,9 @@
 
 import { IWatchRefTarget, watch } from 'alins-reactive';
 import { ISimpleValue } from 'alins-utils';
-import { IGeneralElement, Renderer } from '../element/renderer';
-import { IReturnCall } from '../type';
+import { Renderer } from '../element/renderer';
 import { BranchBlock } from './branch-block';
+import { IGeneralElement, IReturnCall } from '../element/alins.d';
 
 // export const _break = Symbol('b');
 // export const _default = Symbol('d');
