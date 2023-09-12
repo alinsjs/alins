@@ -125,17 +125,17 @@ npm run dev
 
 ### 2.1 [js-framework-benchmark](https://github.com/krausest/js-framework-benchmark) 数据
 
-![](https://cdn.jsdelivr.net/gh/alinsjs/alins/scripts/helper/docs/performance.jpg)
+![](https://shiyix.cn/images/alins/performance.jpg)
 
 注：分数越低表示性能越好
 
 ### 2.2 代码对比
 
-![](https://cdn.jsdelivr.net/gh/alinsjs/alins/scripts/helper/docs/code.jpg)
+![](https://shiyix.cn/images/alins/code.jpg)
 
 ### 2.3 编译产物对比
 
-![](https://cdn.jsdelivr.net/gh/alinsjs/alins/scripts/helper/docs/output.jpg)
+![](https://shiyix.cn/images/alins/output.jpg)
 
 
 综合源码体积、打包代码体积和框架运行时体积，整理出表格
