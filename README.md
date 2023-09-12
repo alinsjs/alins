@@ -120,17 +120,17 @@ You can also freely use it in the [playground](https://alinsjs.github.io/playgro
 
 ### 2.1 [js-framework-benchmark](https://github.com/krausest/js-framework-benchmark) data
 
-![](https://shiyix.cn/images/alins/performance.jpg)
+![](https://cdn.jsdelivr.net/gh/alinsjs/alins/scripts/helper/docs/performance.jpg)
 
 Note: The lower the score, the better the performance.
 
 ### 2.2 Code comparison
 
-![](https://shiyix.cn/images/alins/code.jpg)
+![](https://cdn.jsdelivr.net/gh/alinsjs/alins/scripts/helper/docs/code.jpg)
 
 ### 2.3 Comparing the Compilation Products. 
 
-![](https://shiyix.cn/images/alins/output.jpg)
+![](https://cdn.jsdelivr.net/gh/alinsjs/alins/scripts/helper/docs/output.jpg)
 
 Organizing a table to comprehensively compare the source code volume, packed code volume, and framework runtime volume of various products.
 
