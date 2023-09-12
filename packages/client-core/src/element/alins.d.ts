@@ -737,6 +737,7 @@ export interface IElement<T extends IElement = any> extends IFragment<T> {
     get nextSibling(): T|null;
     className: string;
     innerHTML: string;
+    outerHTML: string;
     innerText: string;
     __$appended?: any;
     __$removed?: any;

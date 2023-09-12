@@ -85,6 +85,7 @@ export class CustomElement implements IElement {
         }
     }
     get innerHTML () {return this.innerText;}
+    get outerHTML () {return this.innerText;}
     children: CustomElement[] = [];
     get childNodes () {
         return this.children;
