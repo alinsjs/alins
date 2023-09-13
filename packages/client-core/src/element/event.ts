@@ -4,6 +4,7 @@
  * @Description: Coding something
  */
 
+import { isProxy } from 'alins-reactive';
 import { IElement, IFragment, IEventObject, IEventAttributes, IEventObjectDeco } from './alins';
 
 export type IEventNames = keyof IEventAttributes;
@@ -25,6 +26,9 @@ export function addEvent (dom: IElement, name: string, event: IEventObjectDeco) 
     name = name.substring(2);
     if (typeof event === 'function') {
         dom.addEventListener(name, event);
+    } else if (isProxy(event)) {
+        // @ts-ignore
+        dom.addEventListener(name, event.v);
     } else {
         // @ts-ignore
         if (event.__deco) {

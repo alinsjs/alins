@@ -135,6 +135,7 @@ export function createProxy<T extends IJson> (data: T, {
     get,
     path = [],
     key = '',
+    isProp = false,
 }: {
     lns?: IProxyListenerMap;
     shallow?: boolean;
@@ -142,7 +143,8 @@ export function createProxy<T extends IJson> (data: T, {
     set?: IOnChange<any>|null;
     path?: string[];
     key?: string;
-    commonLns?: Set<IProxyListener>
+    commonLns?: Set<IProxyListener>;
+    isProp?: boolean;
 } = {}): IProxyData<T> {
 
     if (!isArrayOrJson(data) || isProxy(data, true)) {
@@ -221,7 +223,7 @@ export function createProxy<T extends IJson> (data: T, {
                     origin =  target[property];
                 }
                 if (v === origin && !target[util]?._map) return true;
-                if (set === null) { console.warn('Computed 不可设置'); return true;}
+                if (set === null) { console.warn(`${isProp ? 'props' : 'Computed'} 不可设置`); return true;}
                 if (property === 'v' && set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
                 if (v && typeof v === 'object' && !shallow) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
                     if (!isProxy(v)) {

@@ -9,11 +9,19 @@ import type { IElement, IStyle } from './alins.d';
 
 export const OnlyNumberMap = { 'zIndex': 1, 'opacity': 1, 'flex': 1, 'flexGrow': 1, 'flexShrink': 1 };
 
-function setStyle (dom: IElement, prop: string, v: any, remove?: boolean) {
+const SS = '_$single_style';
+
+function setStyle (dom: IElement, prop: string, v: any, remove?: boolean, single = false) {
     if (typeof v === 'number' && !OnlyNumberMap[prop]) {
         v = `${v}px`;
     }
-    dom.style[prop] = !!remove ? '' : v;
+    v = !!remove ? '' : v;
+    dom.style[prop] = v;
+
+    if (single) {
+        if (!dom[SS]) dom[SS] = {};
+        dom[SS][prop] = v;
+    }
 }
 
 export function parseStyle (
@@ -29,6 +37,10 @@ export function parseStyle (
                 if (isFunc) {
                 // if (!prop || prop === 'v') {
                     dom.setAttribute('style', v);
+                    const ss = dom[SS];
+                    if (ss) {
+                        for (const k in ss) dom.style[k] = ss[k];
+                    }
                 } else {
                     setStyle(dom, prop, v, remove);
                 }
@@ -65,7 +77,7 @@ export function parseStyleSuffix (el: IElement, key: string, value: any|(()=>any
     if (!key.startsWith('style$')) return false;
     const name = key.substring('style$'.length);
     reactiveBindingEnable(value, (v) => {
-        setStyle(el, name, v, v === null);
+        setStyle(el, name, v, v === null, true);
     });
     return true;
 }

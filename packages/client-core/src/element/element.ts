@@ -11,7 +11,7 @@ import {
     IChildren, reactiveBindingValue,
 } from './dom-util';
 import { AlinsType, IJson, type } from 'alins-utils';
-import { IBindingReaction, IBindingRef, isProxy } from 'alins-reactive';
+import { computed, IBindingReaction, IBindingRef, isProxy } from 'alins-reactive';
 import { parseStyle, parseStyleSuffix } from './style';
 import { parseModel } from './model';
 import { getParent } from '../utils';
@@ -149,7 +149,7 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
 
         if (Array.isArray(item)) {
             appendChildren(parent, item);
-            return;
+            continue;
         }
 
         if (Renderer.isElement(item)) {
@@ -194,8 +194,9 @@ export const JSX = {
                     const v = attributes[k];
                     if (!isProxy(v)) {
                         attributes[k] = { v, [type]: AlinsType.Ref }; // ! 模拟ref
+                    } else {
+                        attributes[k] = computed(() => v.v, true);
                     }
-                    // if(typeof v === 'function')
                 }
             }
             const dom = tag(attributes || {}, children);

@@ -26,6 +26,12 @@
 - [ ] 运行时代码重构 - 优化内存空间占用和运行时间
 - [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
 - [ ] 完善测试
+
+## 0.0.30
+
+- [x] className 去重
+- [x] fix: 单文件class和单文件style的优先级问题
+- [x] fix: Array as children
 - [x] 增加 outerHTML属性
 
 ## 0.0.29
