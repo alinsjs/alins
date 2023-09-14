@@ -177,6 +177,7 @@ export function createProxy<T extends IJson> (data: T, {
             }
             if (typeof property !== 'symbol' && !isFunc) {
                 // ! 收集依赖
+                debugger;
                 if (currentFn) {
                     if (!depReactive) depReactive = true;
                     // console.warn('COLLECT------ ', property, '=', target[property]);

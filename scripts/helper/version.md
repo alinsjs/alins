@@ -29,6 +29,8 @@
 
 ## 0.0.30
 
+- [ ] fix const age1 = age ++;
+- [x] 组件支持生命周期函数
 - [x] className 去重
 - [x] fix: 单文件class和单文件style的优先级问题
 - [x] fix: Array as children

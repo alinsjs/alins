@@ -19,11 +19,12 @@ declare global {
     }
     namespace JSX {
         interface Element extends Promise<IElement>, IElement {
+            (props: {a:number}): IElement;
         }
         // interface ElementClass {
         //     render():void;
         // }
-        // interface ElementAttributesProperty { props: {}; }
+        interface ElementAttributesProperty { props: {a:number}; }
         // interface ElementChildrenAttribute { children: {}; }
 
         // // We can't recurse forever because `type` can't be self-referential;
@@ -37,7 +38,7 @@ declare global {
         // // // tslint:disable-next-line:no-empty-interface
         // interface IntrinsicAttributes { href?: string }
         // // // tslint:disable-next-line:no-empty-interface
-        // interface IntrinsicClassAttributes { href?: string }
+        interface IntrinsicClassAttributes { href?: string }
 
         interface IntrinsicElements {
 

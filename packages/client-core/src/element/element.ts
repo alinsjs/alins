@@ -10,13 +10,29 @@ import {
     IBindingReactionEnable, reactiveBindingEnable,
     IChildren, reactiveBindingValue,
 } from './dom-util';
-import { AlinsType, IJson, type } from 'alins-utils';
-import { computed, IBindingReaction, IBindingRef, isProxy } from 'alins-reactive';
+import { IJson } from 'alins-utils';
+import { IBindingReaction, IBindingRef } from 'alins-reactive';
 import { parseStyle, parseStyleSuffix } from './style';
 import { parseModel } from './model';
-import { getParent } from '../utils';
 import { parseAttributes } from './attributes';
 import { parseClassName, parseClassSuffix } from './class';
+import { renderComponent, IJSXComp } from './component';
+
+export const JSX = {
+    createElement (
+        tag: string | IJSXComp,
+        attributes: IAttributes|null = null,
+        ...children: any[]
+    ): ITrueElement {
+        if (typeof tag === 'function') {
+            return renderComponent(tag, attributes, children);
+        }
+        // @ts-ignore
+        const result: IJSXDomOptions = { tag, attributes, children, jsx: true };
+        // console.log('createElement', result);
+        return transformOptionsToElement(result);
+    }
+};
 
 export type IAttributeNames = keyof IAttributes;
 
@@ -47,7 +63,6 @@ export interface IJSXDomOptions {
     })
 //   $life?: any; // todo
 }
-
 
 export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
     let el: ITrueElement;
@@ -143,6 +158,11 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
     return el;
 }
 
+
+export function isJSXElement (item: any) {
+    return typeof item === 'object' && item.jsx === true;
+}
+
 export function appendChildren (parent: IElement|IFragment, children: (IChildren|IJSXDomOptions)[]) {
     for (const item of children) {
         if (typeof item === 'undefined' || item === null) continue;
@@ -170,80 +190,4 @@ export function appendChildren (parent: IElement|IFragment, children: (IChildren
         parent.appendChild(dom);
 
     }
-}
-
-export function isJSXElement (item: any) {
-    return typeof item === 'object' && item.jsx === true;
-}
-
-export const JSX = {
-    createElement (
-        tag: string | ((
-            attributes: IAttributes|null, children: ITrueElement[]
-        )=>ITrueElement|Promise<ITrueElement>),
-        attributes: IAttributes|null = null,
-        ...children: any[]
-    ): ITrueElement {
-        if (typeof tag === 'function') {
-            let $mount: any = null;
-            if (attributes) {
-                $mount = attributes.$mount;
-                delete attributes.$mount;
-                // console.log('createComponent', result);
-                for (const k in attributes) {
-                    const v = attributes[k];
-                    if (!isProxy(v)) {
-                        attributes[k] = { v, [type]: AlinsType.Ref }; // ! 模拟ref
-                    } else {
-                        attributes[k] = computed(() => v.v, true);
-                    }
-                }
-            }
-            const dom = tag(attributes || {}, children);
-            // if (dom.toString() === '[object Promise]') {
-            const result = transformAsyncDom(dom) as any;
-            if ($mount) {
-                // todo bugfix
-                if (typeof $mount === 'string') $mount = Renderer.querySelector($mount);
-                appendChild($mount, result);
-                // $mount.appendChild(result);
-            }
-            return result;
-        }
-        // @ts-ignore
-        const result: IJSXDomOptions = { tag, attributes, children, jsx: true };
-        // console.log('createElement', result);
-        return transformOptionsToElement(result);
-    }
-};
-
-export function transformAsyncDom (
-    dom: ITrueElement|Promise<ITrueElement>|null|void,
-    returned = true,
-    onRealDom?: (trueDom: any)=>void,
-) {
-    if (!dom) return dom;
-    if (dom instanceof Promise) {
-        // ! returned 表示 async 有返回值
-        if (returned === false) return void 0;
-        // ! 此处是为了应对 元素没有立即append到dom上的情况
-        const frag = Renderer.createFragment();
-        const node = Renderer.createEmptyMountNode();
-        frag.appendChild(node as any);
-        dom.then((realDom: any) => {
-            if (!Renderer.isElement(realDom)) return;
-            const parent = getParent(node, frag);
-            // ! 此处当async node被隐藏时 async执行完毕 此处会报错
-            try {
-                parent.insertBefore(realDom, node);
-            } catch (e) {
-                console.log('node 已被隐藏');
-            } finally {
-                onRealDom?.(realDom);
-                node.remove();
-            }
-        });
-        return frag;
-    }
-    return dom;
 }

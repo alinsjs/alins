@@ -61,8 +61,8 @@ function onNodeRemove (node: any) {
 }
 
 export function initWebRemovedObserver (el: any) {
-
-    el.setAttribute('__rm__', '');
+    const rm = '__rm';
+    el.setAttribute(rm, '');
 
     if (removeObserver) {
         removeCount ++;
@@ -78,7 +78,7 @@ export function initWebRemovedObserver (el: any) {
                     if (node.nodeType !== 1) return;
                     onNodeRemove(node);
                     // @ts-ignore
-                    const els = node.querySelectorAll('[__rm__]');
+                    const els = node.querySelectorAll(`[${rm}]`);
                     els.forEach(item => {
                         onNodeRemove(item);
                     });

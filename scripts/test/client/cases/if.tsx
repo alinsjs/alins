@@ -3,18 +3,18 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-07-30 11:13:26
+ * @LastEditTime: 2023-09-13 22:03:06
  */
-import {JSX as React} from 'packages/core/src/element/element';
-import {createContext} from 'packages/core/src/context';
-import {createTestBase} from '../test-util';
+import { JSX as React } from 'packages/core/src/element/element';
+import { createContext } from 'packages/core/src/context';
+import { createTestBase } from '../test-util';
 
 // const w = window as any;
 // w.React = React;
 // const addEnv = (data: any) => {Object.assign(w, data);};
 
 const if3Base = () => {
-    const {list, ctx, data, container, collect, str} = createTestBase();
+    const { list, ctx, data, container, collect, str } = createTestBase();
     /*
         const dom = <div>
             {
@@ -59,7 +59,7 @@ const if3Base = () => {
     </div>;
     container.appendChild(dom);
 
-    return {container, data, list, collect, str};
+    return { container, data, list, collect, str };
 };
 
 export default [
@@ -106,7 +106,7 @@ export default [
             collect();
             return result;
         },
-        expect: ['1s2', 'else', 'else', '1s22']
+        expect: [ '1s2', 'else', 'else', '1s22' ]
     },
     {
         name: '基础if-else2',
@@ -154,7 +154,7 @@ export default [
             collect();
             return result;
         },
-        expect: ['1s2', 'b2', 'b2', '1s22'],
+        expect: [ '1s2', 'b2', 'b2', '1s22' ],
     },
     {
         name: '基础if-else-2',
@@ -166,7 +166,7 @@ export default [
             const collect = () => result.push(container.innerText);
             const append = dom => container.appendChild(dom);
             // const Child = () => <div>child</div>;
-            
+
             const ctx = createContext();
             const str = ctx.$('1');
             const str2 = ctx.$('1');
@@ -214,13 +214,13 @@ export default [
             collect();
             return result;
         },
-        expect: ['011', 'else', 'else', '022', 'else', 'else', '011']
+        expect: [ '011', 'else', 'else', '022', 'else', 'else', '011' ]
     },
     {
         name: '三层嵌套if-1',
         disabled: false,
         test () {
-            const {data, collect, list} = if3Base();
+            const { data, collect, list } = if3Base();
             collect();
             data.a = 2;
             collect();
@@ -234,13 +234,13 @@ export default [
             collect();
             return list;
         },
-        expect: ['a1', 'b1', 'c1', 'b1', 'b1', 'c2']
+        expect: [ 'a1', 'b1', 'c1', 'b1', 'b1', 'c2' ]
     },
     {
         name: '三层嵌套if-2',
         disabled: false,
         test () {
-            const {data, collect, list} = if3Base();
+            const { data, collect, list } = if3Base();
             collect();
             data.a = 2;
             collect();
@@ -256,8 +256,13 @@ export default [
             // window.data = data;
             return list;
         },
-        expect: ['a1', 'b1', 'c1', 'c2', 'a1', 'c2']
+        expect: [ 'a1', 'b1', 'c1', 'c2', 'a1', 'c2' ]
     },
 
 
 ];
+
+
+// function Aa () {
+//     return <></>;
+// }
