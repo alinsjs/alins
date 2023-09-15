@@ -551,6 +551,7 @@ export class Scope {
     // if Scope
     ifScope: IfScope|null = null;
     enterIfScope (path: NodePath<IfStatement>) {
+        if (this.module.isInStaticScope) return;
         // @ts-ignore
         if (path.node._traversed) return;
         const newScope = new IfScope(path, this);
@@ -578,6 +579,7 @@ export class Scope {
         Scope.ifScopeDeep ++;
     }
     exitIfScope (path: NodePath<IfStatement>) {
+        if (this.module.isInStaticScope) return;
         if (!this.ifScope) return;
         // @ts-ignore
         if (path.node._traversed && path !== this.ifScope.path) return;
@@ -594,6 +596,7 @@ export class Scope {
     // switch scope
     switchScope: SwitchScope|null = null;
     enterSwitchScope (path: NodePath<SwitchStatement>) {
+        if (this.module.isInStaticScope) return;
         // debugger;
         const newScope = new SwitchScope(path, this);
         if (this.switchScope) {
@@ -619,6 +622,7 @@ export class Scope {
         Scope.switchScopeDeep ++;
     }
     exitSwitchScope (path: NodePath<SwitchStatement>) {
+        if (this.module.isInStaticScope) return;
         if (!this.switchScope) return;
         if (path !== this.switchScope.path) return;
         this.switchScope = this.switchScope.exit();

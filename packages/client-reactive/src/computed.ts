@@ -22,12 +22,26 @@ export function computed<T> (target:(()=>T)|IComputedObject<T>, isProp = false):
 
     let proxy: IRefData<T>;
 
+    let computing = false;
+    let cache: any = null;
     const v = observe(get, () => {
-        debugger;
         // console.log('warn observe', JSON.stringify(proxy));
         // ! 每次都需要重新get一下 因为可能代码逻辑分支有变化导致出现了没有收集到的依赖
-        proxy?.[util].forceWrite(wrapReactive(get(), true));
+        if (!computing) {
+            computing = true;
+            cache = proxy?.[util].forceWrite(get(), 'v');
+            computing = false;
+        } else {
+            proxy?.[util].forceWrite(cache, 'v');
+        }
+        /**
+! BAD CASE
+let age = 0;
+const age1 = age++;
+<button onclick={age++} $$App>Add {age} {age1}</button>;
+         */
     });
+    cache = v;
 
     if (isDepReactive()) {
         proxy = createProxy(wrapReactive(v, true), { set, get, isProp });

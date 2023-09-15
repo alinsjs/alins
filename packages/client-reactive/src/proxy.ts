@@ -77,12 +77,17 @@ export function createUtils (
             triggerChange(k, data[k], data[k]);
         }
     };
-    const forceWrite = (v: any) => {
-        for (const k in v) {
-            // @ts-ignore
-            triggerChange(k, v[k], data[k]);
+    const forceWrite = (v: any, k?: string) => {
+        if (k) {
+            triggerChange(k, v, data[k]);
+            return v;
+        } else {
+            for (const k in v) {
+                // @ts-ignore
+                triggerChange(k, v[k], data[k]);
+            }
+            Object.assign(data, v);
         }
-        Object.assign(data, v);
     };
     const subscribe = (ln: IProxyListener<any>, deep: boolean = true) => {
         // console.trace('subscribe', Object.keys(lns));

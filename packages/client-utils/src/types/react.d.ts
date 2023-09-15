@@ -18,7 +18,7 @@ export interface IProxyUtils {
   lns: IProxyListenerMap;
   commonLns?: Set<IOnChange>;
   triggerChange: (property: string, nv: any, old?: any, remove?: boolean, isNew?: boolean) => void;
-  forceWrite: (v: any) => void;
+  forceWrite: (v: any, k?: string) => void;
   subscribe: (ln: IProxyListener<any>, deep?: boolean) => void;
   isArray: boolean;
   shallow: boolean;

@@ -252,6 +252,8 @@ export function isBlockBreak (elements: any[]) {
     for (let i = elements.length - 1; i >= 0; i--) {
         const node = elements[i];
         if (node.type === 'BreakStatement') {
+            // ! break 换成 return;
+            node.type = 'ReturnStatement';
             return true;
         } else if (node.type === 'BlockStatement') {
             if (isBlockBreak(node.body)) {

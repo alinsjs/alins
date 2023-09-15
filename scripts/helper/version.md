@@ -29,7 +29,9 @@
 
 ## 0.0.30
 
-- [ ] fix const age1 = age ++;
+- [ ] $static、$reactive label支持
+- [x] if、switch、map语句支持 @static-scope 注释
+- [x] fix const age1 = age ++; fix了报错，但是逻辑上不应如此使用
 - [x] 组件支持生命周期函数
 - [x] className 去重
 - [x] fix: 单文件class和单文件style的优先级问题

@@ -205,7 +205,7 @@ export class Module {
     // MapScope
     mapScope: MapScope|null = null;
     enterMapScope (path: NodePath<CallExpression>) {
-        // debugger;
+        if (this.isInStaticScope) return;
         const newScope = new MapScope(path, this.curScope);
         newScope.module = this;
         if (this.mapScope) {
@@ -216,7 +216,7 @@ export class Module {
     }
     private _lastReturnJsx = false;
     exitMapScope (scope: MapScope) {
-        // debugger;
+        if (this.isInStaticScope) return;
         if (!this.mapScope) return;
 
         if (

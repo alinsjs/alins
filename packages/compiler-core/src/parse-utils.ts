@@ -386,14 +386,6 @@ export function traverseSwitchStatement (node: SwitchStatement) {
         if (isBreak) {
             array.elements.push(t.booleanLiteral(true));
         }
-        // // @ts-ignore
-        // item._setBrk = () => {
-
-        //     // @ts-ignore
-        //     item._setBrk = null;
-        //     // @ts-ignore
-        //     array = null;
-        // };
         return array;
     }));
 
