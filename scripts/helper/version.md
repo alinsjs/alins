@@ -11,10 +11,8 @@
 - [ ] Async Data 类型标注
 - [ ] alins-router - 官方路由库 （尽可能通用 能够直接使用原生js调用）
 - [ ] alins-ui - 官方ui库
-- [ ] alins-store - 状态库
 - [ ] alins-style style 标签优化 处理 提高css可用性, style 值类型声明 （能够使用reactive库配合着使用原生js使用）
 - [ ] alins-style 支持兼容性扩展
-- [ ] alins-renderer - 利用自定义 renderer 实现跨平台
 - [ ] alins-ssr - 服务端渲染（尽可能通用 能够直接使用原生js调用）
 - [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
 - [ ] For 支持解构
@@ -26,10 +24,12 @@
 - [ ] 运行时代码重构 - 优化内存空间占用和运行时间
 - [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
 - [ ] 完善测试
+- [ ] @disable-compile、$disable_compile
+- [ ] $static、$reactive label支持
+- [ ] computed 重构；dirty 标记。优化 const b = a++;
 
 ## 0.0.30
 
-- [ ] $static、$reactive label支持
 - [x] if、switch、map语句支持 @static-scope 注释
 - [x] fix const age1 = age ++; fix了报错，但是逻辑上不应如此使用
 - [x] 组件支持生命周期函数

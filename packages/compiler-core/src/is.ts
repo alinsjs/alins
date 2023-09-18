@@ -248,15 +248,15 @@ export function isArrayMapCall (node: CallExpression) {
     return node.callee?.property?.name === 'map';
 }
 
-export function isBlockBreak (elements: any[]) {
+export function isBlockBreak (elements: any[], onBreakNode: (node: any)=>void) {
     for (let i = elements.length - 1; i >= 0; i--) {
         const node = elements[i];
         if (node.type === 'BreakStatement') {
             // ! break 换成 return;
-            node.type = 'ReturnStatement';
+            onBreakNode(node);
             return true;
         } else if (node.type === 'BlockStatement') {
-            if (isBlockBreak(node.body)) {
+            if (isBlockBreak(node.body, onBreakNode)) {
                 return true;
             }
         }

@@ -1,27 +1,39 @@
+/*
+ * @Author: chenzhongsheng
+ * @Date: 2023-09-15 11:58:01
+ * @Description: Coding something
+ */
 
-// function Main () {
-//     let count = 0;
-//     const add = () => {count++;};
-//     return <Switch data={count}>
-//         <Case data={1} break={false}>
-//             <button onclick={add}>Count is 1</button>
-//         </Case>
-//         <Case data={2}>
-//             <button onclick={add}>Count is 1 or 2:{count}</button>
-//         </Case>
-//         <Default>
-//             <button onclick={add}>Other Count:{count}</button>
-//         </Default>
-//     </Switch>;
-// }
-// <Main $$App/>;
-
-
-function a () {
-    static: count = 0;
-    const add = () => {count++;};
-    // @static-scope
-    $static: switch (count) {
-        case 2: return <button onclick:add>Count is 1 or 2:{count}</button>;
-    }
+// @static-scope
+function foo () {
+    let name = '';
+    name ++;
 }
+// @static-scope
+if (true) {
+    let name = '';
+    name ++;
+}
+// @static-scope
+switch (1) {
+    case 1: {
+        let name = '';
+        name ++;
+    }; break;
+}
+// @static-scope
+for (let i = 0; i < 1; i++) {
+    let name = '';
+    name ++;
+}
+// @static-scope
+{
+    let name = '';
+    name ++;
+};
+// @static-scope
+test: () => {
+    let name = '';
+    name ++;
+};
+<div $$App>Click output to view the compilation product</div>;

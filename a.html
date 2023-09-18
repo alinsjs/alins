@@ -1,0 +1,29 @@
+<!--
+ * @Author: chenzhongsheng
+ * @Date: 2023-09-18 08:38:50
+ * @Description: Coding something
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <script src='https://cdn.jsdelivr.net/npm/alins-standalone'></script> -->
+    <script src='./packages/client-standalone/dist/alins-standalone.iife.min.js'></script>
+    <script> 
+        const {react, computed, Dom} = window.Alins
+        let count = react(1);
+        let countAdd1 = computed(()=>count.v+1);
+        Dom('button', {
+            $mount: document.body,
+            onclick: ()=>count.v++,
+        }, [
+            react`count is ${count}; countAdd1 is ${countAdd1}`
+            // 'count is ', count, ';'
+        ]);
+    </script>
+</body>
+</html>

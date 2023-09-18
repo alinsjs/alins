@@ -19,12 +19,12 @@ function onDOMContentLoaded () {
         // @ts-ignore
         for (const item of scripts) {
             // @ts-ignore
-            onSingleScript(item, !item.hasAttribute('node'), item.hasAttribute('ts'));
+            onSingleScript(item, item.hasAttribute('import'), item.hasAttribute('ts'));
         }
     }
 }
 
-async function onSingleScript (script: HTMLScriptElement, web = true, ts = false) {
+async function onSingleScript (script: HTMLScriptElement, useImport = false, ts = false) {
     // __DEV__ && console.log(`web=${web}; ts=${ts}`);
     let code = '';
     if (script.innerText.trim() === '') {
@@ -39,7 +39,7 @@ async function onSingleScript (script: HTMLScriptElement, web = true, ts = false
     } else {
         code = script.innerText;
     }
-    const output = parseWebAlins(code, { useImport: !web, ts });
+    const output = parseWebAlins(code, { useImport, ts });
     // console.warn(code);
     // console.warn('============>');
     if (__DEV__) console.warn('Compiler output:', output);

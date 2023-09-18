@@ -27,7 +27,7 @@ const {
 
 let isWebPackage = false;
 
-const isDev = false;
+const isDev = true;
 
 // npx lerna version v0.0.29 --no-git-tag-version --force-publish --yes
 // npm run build
@@ -44,7 +44,7 @@ function parseBuildConfig () {
         'client-core': isDev ? {
             packageName: 'alins',
             umdName: 'Alins',
-            format: 'esm',
+            format: 'iife',
             external: false,
         } : {
             packageName: 'alins',
@@ -82,7 +82,7 @@ function parseBuildConfig () {
         },
         'compiler-web': isDev ? {
             packageName: 'alins-compiler-web',
-            format: 'esm',
+            format: 'iife',
             umdName: 'AlinsWeb',
             external: false,
         } : {

@@ -344,6 +344,7 @@ export function traverseSwitchStatement (node: SwitchStatement) {
     const discr = t.arrowFunctionExpression([], node.discriminant);
     let isReturnJsx = false;
 
+    const breakList: any = [];
 
     let childrenList: any[][] = [];
     let isLastBreak = true;
@@ -367,7 +368,7 @@ export function traverseSwitchStatement (node: SwitchStatement) {
             isReturnJsx = (returnType === BlockReturnType.Jsx);
         }
 
-        const isBreak = !!returnType || isBlockBreak(bodyArr);
+        const isBreak = !!returnType || isBlockBreak(bodyArr, node => {breakList.push(node);});
         if (!isLastBreak) {
             childrenList.forEach(item => {item.push(...bodyArr);});
         }
@@ -390,6 +391,11 @@ export function traverseSwitchStatement (node: SwitchStatement) {
     }));
 
     const endFunc = createSetAsyncArrowFunc(t.blockStatement([]));
+
+    if (isReturnJsx) {
+        breakList.forEach(node => {node.type = 'ReturnStatement';});
+    }
+
     return {
         endFunc,
         isReturnJsx,

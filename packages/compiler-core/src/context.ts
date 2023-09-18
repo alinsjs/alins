@@ -51,7 +51,7 @@ export class Module {
         if (this.isInStaticScope) return;
         const node = path.node;
 
-        const comment = parseCommentSingle(node, RegMap.StaticScope);
+        const comment = parseCommentSingle(node, RegMap.StaticScope, true);
         const markStatic = () => {
             this.isInStaticScope = true;
             // @ts-ignore

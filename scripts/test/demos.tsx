@@ -393,3 +393,13 @@ export function LifeCycle () {
         <><div $mounted={() => console.log('23232')}></div></>
     </div>;
 }
+
+export function dirtyComputed () {
+    let a = 1; // @reactive
+    const b = a++;
+
+    <div $$App>
+        <div>a={a} b={b}</div>
+        <button onclick={a++}>add</button>
+    </div>;
+}

@@ -12,7 +12,7 @@
 
 import type { Node, VariableDeclaration, VariableDeclarator } from '@babel/types';
 
-function parseComment (node: Node) {
+function parseComment (node: Node, onlyHead = false) {
     const comments: string[] = [];
     const nodeLine = node.loc?.start.line || 0;
     const before = node.leadingComments?.[node.leadingComments.length - 1];
@@ -23,7 +23,7 @@ function parseComment (node: Node) {
     }
     const after = node.trailingComments?.[0];
 
-    if (after && after.loc?.start.line === nodeLine) {
+    if (!onlyHead && after && after.loc?.start.line === nodeLine) {
         commentEls.push(before);
         comments.push(after.value);
     }
@@ -32,7 +32,7 @@ function parseComment (node: Node) {
             if (node)node.value = node.value.replace(reg, (str: string) => str.replace('@', '$$'));
         };
         replace(before);
-        replace(after);
+        if (!onlyHead) replace(after);
     } };
 }
 
@@ -56,8 +56,8 @@ export function parseCommentMulti (node: Node, reg = RegMap.React) {
     return result[2].split(',').map(s => s.trim());
 }
 
-export function parseCommentSingle (node: Node, reg = RegMap.Shallow) {
-    const { comment, clear } = parseComment(node);
+export function parseCommentSingle (node: Node, reg = RegMap.Shallow, onlyHead?: boolean) {
+    const { comment, clear } = parseComment(node, onlyHead);
     if (!comment) return false;
     if (!reg.test(comment)) return false;
     clear(reg);

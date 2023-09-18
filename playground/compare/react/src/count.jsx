@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
 function Main () {
-    const [count, setCount] = useState(1);
+    const [ count, setCount ] = useState(1);
     function increase () {
         setCount(count + 1);
     }

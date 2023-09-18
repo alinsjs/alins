@@ -29,6 +29,10 @@ type IDomGenerator = ()=>IGeneralElement|IGeneralElement[];
 export { react, watch, computed } from 'alins';
 import { react, watch, computed } from 'alins';
 
+export function ref<T> (v: T) {
+    return react({ v });
+}
+
 // alins.Dom('div', {
 
 // }, [
@@ -164,6 +168,7 @@ export function Show (condition: IBoolCond, generator: IDomGenerator) {
 }
 
 export const alins = {
+    ref,
     react,
     watch,
     computed,

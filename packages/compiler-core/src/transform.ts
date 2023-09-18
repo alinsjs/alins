@@ -405,7 +405,11 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         BreakStatement (path) {
             // console.log(ctx.curScope);
-            if (ctx.curScope.inIf || ctx.curScope.inSwitch) {
+            const scope = ctx.curScope;
+            if (
+                (scope.inIf && scope.ifScope?.isReturnJsx) ||
+                (scope.inSwitch && scope.switchScope?.isReturnJsx)
+            ) {
                 // if (ctx.curScope.inSwitch) {
                 //     if (path.parent.type === 'SwitchCase') {
                 //         // @ts-ignore
@@ -420,7 +424,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
             }
         }
     } as TraverseOptions<Node>;
-}
+};
 
 export function createBabelPluginAlins () {
     return (data: any, args?: {useImport?: boolean}) => { // {import: boolean}

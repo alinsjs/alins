@@ -174,6 +174,7 @@ export function createProxy<T extends IJson> (data: T, {
     const proxy = new Proxy(data, {
         // ! 闭包
         get (target: IJson, property, receiver) {
+            // console.log('debug: Get property', property);
             // if (property === 'label') console.warn('proxy get', property);
             const isFunc = typeof target[property] === 'function';
             if (isArray && isFunc) {
@@ -182,7 +183,6 @@ export function createProxy<T extends IJson> (data: T, {
             }
             if (typeof property !== 'symbol' && !isFunc) {
                 // ! 收集依赖
-                debugger;
                 if (currentFn) {
                     if (!depReactive) depReactive = true;
                     // console.warn('COLLECT------ ', property, '=', target[property]);
@@ -199,7 +199,7 @@ export function createProxy<T extends IJson> (data: T, {
         },
         // ! 闭包
         set (target: IJson, property, v, receiver) {
-            // console.log('Set property', property, v);
+            // console.log('debug: Set property', property, v);
             const originSet = () => {
                 const value = Reflect.set(target, property, v, receiver);
                 if (isArray && property !== 'length' && lns.length?.size) {

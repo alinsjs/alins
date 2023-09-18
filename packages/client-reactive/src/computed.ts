@@ -44,7 +44,8 @@ const age1 = age++;
     cache = v;
 
     if (isDepReactive()) {
-        proxy = createProxy(wrapReactive(v, true), { set, get, isProp });
+        // todo check return cache
+        proxy = createProxy(wrapReactive(v, true), { set, get: () => cache, isProp });
         return proxy;
     }
     // ! 此处是为了兼容编译时将未知类型的import常量进行表达式计算时进行的统一computed处理的开销

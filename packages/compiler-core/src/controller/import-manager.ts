@@ -38,7 +38,7 @@ export const ImportManager = (() => {
 
     let addUse: (name: AlinsVar)=>void = () => {};
 
-    let clear: any;
+    let clear: any = () => {};
 
     return {
         exitModule () {
