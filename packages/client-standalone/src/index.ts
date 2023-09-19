@@ -10,7 +10,7 @@ import {
     Renderer,
     reactiveBindingEnable,
     map,
-    _$ce
+    _$ce,
 } from 'alins';
 
 type IValueCond<T> = (()=>T)|IRefData<T>;
@@ -29,7 +29,8 @@ type IDomGenerator = ()=>IGeneralElement|IGeneralElement[];
 export { react, watch, computed } from 'alins';
 import { react, watch, computed } from 'alins';
 
-export function ref<T> (v: T) {
+export function ref<T> (v: T): IRefData<T> {
+    // @ts-ignore
     return react({ v });
 }
 

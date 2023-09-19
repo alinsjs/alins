@@ -8,10 +8,9 @@ import type { IElement, IFragment, ITrueElement, IAttributes } from './alins.d';
 import { Renderer, appendChild } from './renderer';
 import {
     IBindingReactionEnable, reactiveBindingEnable,
-    IChildren, reactiveBindingValue,
+    IChildren, reactiveBindingValue, IBindingReaction, IBindingRef
 } from './dom-util';
 import { IJson } from 'alins-utils';
-import { IBindingReaction, IBindingRef } from 'alins-reactive';
 import { parseStyle, parseStyleSuffix } from './style';
 import { parseModel } from './model';
 import { parseAttributes } from './attributes';

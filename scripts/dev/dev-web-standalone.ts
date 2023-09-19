@@ -4,11 +4,13 @@
  * @Description: Coding something
  */
 
-import {alins} from 'packages/client-standalone';
+import { react, computed, Dom } from 'packages/client-standalone';
 
-const count = alins.react(1);
-
-alins.Dom('button', {
+const count = react(1);
+const countAdd1 = computed(() => count.v + 1);
+Dom('button', {
     $mount: document.body,
-    onclick () {count.v++;}
-}, [count]);
+    onclick: () => count.v++,
+}, [
+    react`count is ${count}; countAdd1 is ${countAdd1}`
+]);

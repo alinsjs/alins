@@ -5,9 +5,13 @@
  */
 
 import {
-    isProxy, isRef, watch, IBindingReaction
+    isProxy, isRef, watch
 } from 'alins-reactive';
-import { IJson, IProxyListener, IRefData } from 'alins-utils';
+import { IJson, IProxyListener, IRefData, ISimpleValue } from 'alins-utils';
+
+export type IBindingReaction<T = any> = IRefData<T>|(()=>T)|ISimpleValue;
+
+export type IBindingRef<T=any> = IRefData<T>|(()=>T)|T;
 
 export type IChildren = {v:any}|IBindingReaction|null;
 

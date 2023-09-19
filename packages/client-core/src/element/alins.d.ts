@@ -685,7 +685,7 @@ export interface IBaseAttributes extends IEventAttributes {
 }
 
 export interface IControlAttributes {
-    $mount?: ITrueElement|string;
+    $mount?: ITrueElement|string|HTMLElement;
     $show?: boolean|(()=>boolean);
 }
 

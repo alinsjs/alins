@@ -1,6 +1,6 @@
 {
     "name": "alins-compiler-web",
-    "version": "0.0.29",
+    "version": "0.0.30",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
     "typings": "src/index.ts",
@@ -22,8 +22,8 @@
         "registry": "https://registry.npmjs.org/"
     },
     "dependencies": {
-        "alins": "^0.0.29",
-        "alins-compiler-core": "^0.0.29"
+        "alins": "^0.0.30",
+        "alins-compiler-core": "^0.0.30"
     },
     "module": "src/index.ts",
     "unpkg": "dist/alins-compiler-web.iife.min.js",

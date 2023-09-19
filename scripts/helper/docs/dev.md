@@ -53,6 +53,6 @@ yarn workspaces info
 
 npm run buildmulti
 
-npx lerna version 0.0.20-beta.8 --no-git-tag-version --force-publish --yes
+npx lerna version 0.0.30 --no-git-tag-version --force-publish --yes
 
 npx lerna add xx --scope=xxx
