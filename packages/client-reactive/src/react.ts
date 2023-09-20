@@ -7,7 +7,6 @@
 import {
     IJson,
     IProxyData,
-    isStringTemplateArray,
 } from 'alins-utils';
 import { createProxy, isProxy, wrapReactive } from './proxy';
 
@@ -36,6 +35,10 @@ export function react<T extends IJson> (
 export function reactive<T extends IJson> (data: T, shallow = false): IProxyData<T> {
 
     if (isProxy(data.v)) return data as any;
-
+    // @ts-ignore
     return createProxy<T>(wrapReactive(data) as T, { shallow });
+}
+
+function isStringTemplateArray (data: any) {
+    return data instanceof Array && (data as any).raw instanceof Array;
 }
