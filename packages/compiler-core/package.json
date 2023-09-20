@@ -17,7 +17,6 @@
         "web-ui-framework"
     ],
     "license": "MIT",
-    "type": "commonjs",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },

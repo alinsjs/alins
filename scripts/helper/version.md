@@ -28,6 +28,12 @@
 - [ ] $static、$reactive label支持
 - [ ] computed 重构；dirty 标记。优化 const b = a++;
 
+## 0.0.31
+
+- [x] 去除type module
+- [x] fix alins jsx declare
+- [x] 删除未使用的工具函数
+
 ## 0.0.30
 
 - [x] fix alins-standalone

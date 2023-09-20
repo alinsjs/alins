@@ -29,7 +29,7 @@ let isWebPackage = false;
 
 const isDev = false;
 
-// npx lerna version v0.0.29 --no-git-tag-version --force-publish --yes
+// npx lerna version 0.0.29 --no-git-tag-version --force-publish --yes
 // npm run build
 
 function parseBuildConfig () {

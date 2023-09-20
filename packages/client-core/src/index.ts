@@ -17,6 +17,8 @@ export * from './element/custom-renderer';
 
 export * from 'alins-reactive';
 
+export * from './element/jsx.d';
+
 export const version = __VERSION__;
 
 export { reactiveBindingEnable } from './element/dom-util';
