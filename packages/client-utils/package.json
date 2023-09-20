@@ -1,9 +1,9 @@
 {
     "name": "alins-utils",
-    "version": "0.0.30",
+    "version": "0.0.31",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-utils.umd.min.js",
+    "typings": "dist/alins-utils.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -22,5 +22,6 @@
     },
     "unpkg": "dist/alins-utils.iife.min.js",
     "jsdelivr": "dist/alins-utils.iife.min.js",
-    "module": "src/index.ts"
+    "module": "dist/alins-utils.esm.min.js",
+    "type": "module"
 }
