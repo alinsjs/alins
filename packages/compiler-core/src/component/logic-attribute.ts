@@ -1,7 +1,7 @@
 import type { NodePath } from '@babel/traverse';
 import type { JSXAttribute, JSXElement } from '@babel/types';
 import { findAttributes, getT } from '../parse-utils';
-import { isMountAttr } from '../is';
+import { isEmptyText, isMountAttr } from '../is';
 
 /*
  * @Author: chenzhongsheng
@@ -55,7 +55,7 @@ function transformIfAttr (
 
     for (;;) {
         next = next.getNextSibling();
-        if (!next.node || (next.type === 'JSXText' && !!next.node.value.trim())) {
+        if (!next.node || (isEmptyText(next.node))) {
             break;
         }
         if (next.type === 'JSXElement') {
@@ -116,6 +116,11 @@ export function transformSwitchChildren (
     for (let i = 0; i < children.length; i++) {
         const child = children[i];
 
+        if (child.type === 'JSXText') {
+            if (isEmptyText(child)) continue;
+            throw new Error('switch 中只能包含jsxElement');
+        }
+
         const attrs = child.openingElement?.attributes;
 
         if (!attrs) continue;
@@ -149,7 +154,7 @@ export function transformSwitchChildren (
                         child
                     );
                     children[i] = newNode;
-                    return children;
+                    if (!isCase) return children;
                 }
             }
         }

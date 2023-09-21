@@ -99,7 +99,11 @@ function parseBuildConfig () {
             packageName: 'eslint-config-alins',
             format: 'cjs',
         },
-        'plugin-babel-preset': {
+        'plugin-babel-preset': isDev ? {
+            packageName: 'babel-preset-alins',
+            format: 'cjs',
+            external: false,
+        } : {
             packageName: 'babel-preset-alins',
             type: 'node',
             // format: 'esm cjs',

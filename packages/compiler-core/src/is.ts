@@ -271,3 +271,7 @@ export function isMemberExp (node: Node) {
 export function isMountAttr (name: string) {
     return name === '$mount' || name.startsWith('$$');
 }
+
+export function isEmptyText (node: Node) {
+    return node?.type === 'JSXText' && node.value.trim() === '';
+}

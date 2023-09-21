@@ -4,9 +4,9 @@
  * @Description: Coding something
  */
 import type { NodePath } from '@babel/traverse';
-import type { Identifier, JSXAttribute, JSXElement, JSXOpeningElement, Node } from '@babel/types';
+import type { Identifier, JSXAttribute, JSXElement, JSXOpeningElement } from '@babel/types';
 import { AlinsVar, ImportManager } from '../controller/import-manager';
-import { isOriginJSXElement } from '../is';
+import { isEmptyText, isOriginJSXElement } from '../is';
 import { createCtxCall, findAttributes, getT, parseAttributes } from '../parse-utils';
 import { transformSwitchChildren } from './logic-attribute';
 
@@ -41,9 +41,6 @@ function wrapChildren (
     return t.arrowFunctionExpression(args, content);
 }
 
-function isEmptyText (node: Node) {
-    return node?.type === 'JSXText' && node.value.trim() === '';
-}
 
 function createNext (path: NodePath<any>) {
     let index = 0;
