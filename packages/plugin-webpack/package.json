@@ -1,9 +1,9 @@
 {
     "name": "alins-loader",
-    "version": "0.0.33",
+    "version": "0.0.34",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/alins-loader.cjs.min.js",
+    "typings": "dist/alins-loader.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -22,7 +22,7 @@
         "registry": "https://registry.npmjs.org/"
     },
     "dependencies": {
-        "alins-compiler-node": "^0.0.33"
+        "alins-compiler-node": "^0.0.34"
     },
-    "module": "src/index.ts"
+    "module": "dist/alins-loader.esm.min.js"
 }
