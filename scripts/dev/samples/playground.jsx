@@ -1,10 +1,22 @@
-function Main () {
-    let count = 0;
-    const add = () => {count++;};
-    return <div $switch={count}>
-        <button $case={1} $break={false} onclick={add}>Count is 1</button>
-        <button $case={2} onclick={add}>Count is 1 or 2:{count}</button>
-        <button $default onclick={add}>Other Count:{count}</button>
-    </div>;
+let count = 1;
+const countAdd2 = count + 2;
+const countAdd3 = countAdd2 + 1;
+function countMultiply2 () {
+    return count * 2;
 }
-<Main $$App/>;
+<div $$App>
+    <button onclick={count++}>
+         click:{count}
+    </button>
+    <div>count + 2 = {countAdd2}</div>
+    <div>count + 3 = {countAdd3}</div>
+    <div>count + 4 = {countAdd3 + 1}</div>
+    <div>count * 2 = {countMultiply2}</div>
+    <div>count * 2 = {countMultiply2()}</div>
+    <div>count * 4 = {countMultiply2() * 2}</div>
+</div>;
+
+
+// let age = 0;
+// const age1 = age++;
+// <button onclick={age++} $$App>Add {age} {age1}</button>;
