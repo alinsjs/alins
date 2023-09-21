@@ -1,6 +1,6 @@
 {
     "name": "alins-compiler-core",
-    "version": "0.0.31",
+    "version": "0.0.32",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
     "main": "src/index.ts",
     "typings": "src/index.ts",
