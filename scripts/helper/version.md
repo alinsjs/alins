@@ -25,6 +25,10 @@
 - [ ] Async Data 类型标注
 - [ ] computed 重构；dirty 标记。优化 const b = a++; 逻辑
 
+## 0.0.33
+
+- [x] fix nodejs 环境下使用
+
 ## 0.0.32
 
 - [x] 支持 commonjs 导入 alins

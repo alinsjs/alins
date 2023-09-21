@@ -25,6 +25,5 @@
     "dependencies": {
         "alins": "^0.0.31"
     },
-    "module": "src/index.ts",
-    "type": "module"
+    "module": "src/index.ts"
 }

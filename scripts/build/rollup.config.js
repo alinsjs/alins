@@ -199,7 +199,6 @@ if (packageName === 'eslint-config-alins') {
 
 const packageInfo = {
     typings: `dist/${packageName}.d.ts`,
-    type: 'module',
     'publishConfig': {
         'registry': 'https://registry.npmjs.org/',
     },
