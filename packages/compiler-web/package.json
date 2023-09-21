@@ -2,8 +2,8 @@
     "name": "alins-compiler-web",
     "version": "0.0.34",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "dist/alins-compiler-web.umd.min.js",
-    "typings": "dist/alins-compiler-web.d.ts",
+    "main": "src/index.ts",
+    "typings": "src/index.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -24,7 +24,7 @@
         "alins": "^0.0.34",
         "alins-compiler-core": "^0.0.34"
     },
-    "module": "dist/alins-compiler-web.esm.min.js",
+    "module": "src/index.ts",
     "unpkg": "dist/alins-compiler-web.iife.min.js",
     "jsdelivr": "dist/alins-compiler-web.iife.min.js"
 }
