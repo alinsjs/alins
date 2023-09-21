@@ -1,10 +1,13 @@
+import { IImportType } from './controller/import-manager';
+
+export type { IImportType } from './controller/import-manager';
 /*
  * @Author: chenzhongsheng
  * @Date: 2023-07-11 14:11:47
  * @Description: Coding something
  */
 export interface IParserOptions {
-    useImport?: boolean;
+    importType?: IImportType;
     ts?: boolean;
     filename?: string;
 }

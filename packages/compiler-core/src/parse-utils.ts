@@ -18,7 +18,8 @@ import type {
     Node,
     JSXAttribute,
     ObjectProperty,
-    LabeledStatement
+    LabeledStatement,
+    JSXElement
 } from '@babel/types';
 import type { IBabelType } from './types';
 import { BlockReturnType, isBlockBreak, isBlockReturned, isEventEmptyDeco, isMemberExp } from './is';
@@ -581,4 +582,38 @@ export function transformWatchLabel (node: LabeledStatement) {
         return createCtxCall(AlinsVar.Watch, args);
     }
     return null;
+}
+
+export function transformDataLabel (node: LabeledStatement, isStatic = true) {
+
+    // @ts-ignore
+    const exp = node.body?.expression;
+
+    if (exp.type !== 'AssignmentExpression' && exp.operator === '=') return null;
+
+    const varNode = t.variableDeclarator(
+        exp.left, exp.right
+    );
+
+    varNode[isStatic ? '_isComStatic' : '_isComReact'] = true;
+
+    return createVarDeclaration('let', [ varNode ]);
+}
+
+export function findAttributes (node: JSXElement, name: string|((attrName: string)=>boolean)): JSXAttribute|null {
+    const attrs = node.openingElement?.attributes;
+
+    if (!attrs) return null;
+    // @ts-ignore
+    return attrs.find(attr => {
+        if (
+            attr.type === 'JSXAttribute' &&
+            attr.name.type === 'JSXIdentifier'
+        ) {
+            const attrName = attr.name.name;
+            return (typeof name === 'function') ? name(attrName) : attrName === name;
+        }
+        return false;
+
+    });
 }

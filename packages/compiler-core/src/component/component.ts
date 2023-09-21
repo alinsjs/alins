@@ -7,7 +7,8 @@ import type { NodePath } from '@babel/traverse';
 import type { Identifier, JSXAttribute, JSXElement, JSXOpeningElement, Node } from '@babel/types';
 import { AlinsVar, ImportManager } from '../controller/import-manager';
 import { isOriginJSXElement } from '../is';
-import { createCtxCall, getT, parseAttributes } from '../parse-utils';
+import { createCtxCall, findAttributes, getT, parseAttributes } from '../parse-utils';
+import { transformSwitchChildren } from './logic-attribute';
 
 const CompNames = {
     For: 'For',
@@ -181,8 +182,23 @@ function parseIf (path: NodePath<JSXElement>) {
                 end = true;
             };break;
             default: {
-                removed = false;
-                end = true;
+                const res = findAttributes(node, name => name === '$elseif' || name === '$else');
+                if (res) {
+                    object = anchor;
+                    const attrs = node.openingElement.attributes;
+                    attrs.splice(attrs.indexOf(res), 1);
+                    const isElse = res.name.name === '$else';
+                    id = t.identifier(isElse ? 'else' : 'elif');
+                    args = [ wrapChildren([ node ]) ];
+                    if (!isElse) {
+                        // @ts-ignore
+                        args.unshift(t.arrowFunctionExpression([], res.value.expression));
+                    }
+                    end = isElse;
+                } else {
+                    removed = false;
+                    end = true;
+                }
             };break;
         }
         if (removed) {
@@ -214,8 +230,8 @@ function parseIf (path: NodePath<JSXElement>) {
 }
 
 function parseSwitch (path: NodePath<JSXElement>) {
-
     const node = path.node;
+    node.children = transformSwitchChildren(node.children);
     parseComponentAttr(node);
 
     const array: any = [];

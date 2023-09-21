@@ -4,9 +4,9 @@
  * @Description: Coding something
  */
 export default function (babel: any, {
-    useImport, ts, jsx
+    importType, ts, jsx
 }: {
-    useImport?: boolean;
+    importType?: 'cjs' | 'esm' | 'iife';
     ts?: boolean;
     jsx?: boolean
 }) {
@@ -18,9 +18,9 @@ export default function (babel: any, {
         presets.push(require('@babel/preset-react'));
     }
     return {
-        plugins: [[
-            require('babel-plugin-alins'), {useImport}
-        ]],
+        plugins: [ [
+            require('babel-plugin-alins'), { importType }
+        ] ],
         presets,
     };
 }

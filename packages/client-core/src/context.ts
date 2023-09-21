@@ -45,3 +45,7 @@ export const _$mf = mockRef;
 export const _$mm = mockMap;
 export const _$if = _if;
 export const _$sw = _switch;
+
+export function _$f (props: any, children: any[]) {
+    return _$ce('', props, ...children);
+}

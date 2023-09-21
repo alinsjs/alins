@@ -403,3 +403,83 @@ export function dirtyComputed () {
         <button onclick={a++}>add</button>
     </div>;
 }
+
+<div $$App>
+    <div $if={a === 1}>1</div>
+    <div $elseif={a === 2}>2</div>
+    <div $else>2</div>
+</div>;
+
+static_scope: {
+    let name = '';
+    name ++;
+    const list = [];
+    list.push(1);
+};
+static_scope: if (count) {
+    let name = '';
+    name ++;
+    const list = [];
+    list.push(1);
+};
+
+_: a = 1;
+
+$: b = 2;
+
+
+/*
+ * @Author: chenzhongsheng
+ * @Date: 2023-09-19 09:16:54
+ * @Description: Coding something
+ */
+
+let a = 1;
+a++;
+
+<div $$App>
+    <Switch data={a}>
+        <Case data={1}>111</Case>
+        <div $case={2}>222</div>
+    </Switch>
+
+    <div>------</div>
+
+
+    <div $switch={a}>
+        <Case data={1}>111</Case>
+        <div $case={2}>222</div>
+    </div>
+</div>;
+
+
+const list = [ 1 ];
+
+list.push(2, 3);
+
+
+<div $$App>
+    <div $for={list} $item='aa'>{aa}</div>
+</div>;
+
+
+const list = [ 1 ];
+
+list.push(2, 3);
+
+
+<div $$App>
+    <div $for={list} $item='aa'>{aa}</div>
+</div>;
+
+
+let a = -1;
+a++;
+
+<div $$App>
+    <If data={a === 0}>0</If>
+    <div $elseif={a === 1}>1</div>
+    <ElseIf data={a === 2}>2</ElseIf>
+    <div $elseif={a === 3}>3</div>
+    <Else>4</Else>
+</div>;

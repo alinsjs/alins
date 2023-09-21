@@ -10,12 +10,12 @@ import { createBabelPluginAlins, IParserOptions, randomTsxFileName } from 'alins
 Babel.registerPlugin('alins', createBabelPluginAlins());
 
 export function parseWebAlins (code: string, {
-    ts, useImport, filename
-}: IParserOptions = { useImport: false }): string {
+    ts, importType, filename
+}: IParserOptions = { importType: 'iife' }): string {
     const options = {
         sourceMaps: false,
         presets: [ 'react' ],
-        plugins: [ [ 'alins', { useImport } ] ],
+        plugins: [ [ 'alins', { importType } ] ],
     };
     if (ts) {
         options.presets.push('typescript');

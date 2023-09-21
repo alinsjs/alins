@@ -5,12 +5,13 @@
  */
 import type { NodePath } from '@babel/traverse';
 import type { CallExpression, Expression, FunctionDeclaration, Identifier, JSXExpressionContainer, Node, Program, VariableDeclaration, VariableDeclarator } from '@babel/types';
-import { parseCommentSingle, RegMap } from './comment';
+
 import { MapScope } from './controller/map';
 import { isComponentFunc, isJsxCallee, isMemberExp } from './is';
 import { getObjectPropValue, initCurModule } from './parse-utils';
 import { Scope } from './scope';
 import { INodeTypeMap } from './types';
+import { StaticScope } from './controller/static-scope';
 
 export let currentModule: Module = null as any;
 
@@ -41,45 +42,12 @@ export class Module {
     curDeclarationType: VariableDeclaration['kind'] = 'var';
     id = 0;
 
+    staticScope: StaticScope;
 
-    isInStaticScope = false;
     constructor (path: NodePath<Program>) {
         this.id = moduleId++;
+        this.staticScope = new StaticScope();
         this.enterScope(path);
-    }
-    checkStaticScope (path: NodePath<Node>) {
-        if (this.isInStaticScope) return;
-        const node = path.node;
-
-        const comment = parseCommentSingle(node, RegMap.StaticScope, true);
-        const markStatic = () => {
-            this.isInStaticScope = true;
-            // @ts-ignore
-            node._isStaticScope = true;
-        };
-        if (comment) {
-            markStatic();
-            return;
-        }
-        if (node.type === 'FunctionDeclaration') {
-            if (node.id?.name[0] === '_') markStatic();
-        } else if (
-            node.type === 'ArrowFunctionExpression' ||
-            node.type === 'FunctionExpression'
-        ) {
-            if (
-                path.parent.type === 'VariableDeclarator' &&
-                // @ts-ignore
-                path.parent.id?.name[0] === '_'
-            ) {
-                markStatic();
-            }
-        }
-    }
-    checkExitStaticScope (node: any) {
-        if (this.isInStaticScope && node._isStaticScope) {
-            this.isInStaticScope = false;
-        }
     }
     exitModule () {
 
@@ -129,13 +97,6 @@ export class Module {
             this.curScope.enterJsxScope(path);
             return true;
         }
-        // if (isSkippedNewNode(path)) { // ! 新增加点跳过遍历
-        //     // console.warn(`ENTER Skip: ${path.node.type}-${path.toString()}`, path.node.object);
-        //     path.skip();
-        //     return false;
-        // }
-
-        // console.warn(`ENTER: ${path.node.type}-${path.toString()}`, path.node.object);
         return true;
     }
     enterVariableDeclaration (node: VariableDeclaration) {
@@ -205,7 +166,6 @@ export class Module {
     // MapScope
     mapScope: MapScope|null = null;
     enterMapScope (path: NodePath<CallExpression>) {
-        if (this.isInStaticScope) return;
         const newScope = new MapScope(path, this.curScope);
         newScope.module = this;
         if (this.mapScope) {
@@ -216,7 +176,6 @@ export class Module {
     }
     private _lastReturnJsx = false;
     exitMapScope (scope: MapScope) {
-        if (this.isInStaticScope) return;
         if (!this.mapScope) return;
 
         if (
@@ -273,6 +232,12 @@ export class Module {
     }
     get inJsxComp () {
         return this.jsxFlagStackDeep > 0;
+    }
+    checkScope (path: NodePath<Node>) {
+        this.staticScope.check(path);
+    }
+    checkExitScope (node: any) {
+        this.staticScope.exit(node);
     }
 }
 

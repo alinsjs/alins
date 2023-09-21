@@ -7,12 +7,14 @@ import { parseInnerComponent } from './component/component';
 import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
     createEmptyString, createExtendCalleeWrap, createUnfInit,
-    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, transformWatchLabel,
+    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, transformDataLabel, transformWatchLabel,
 } from './parse-utils';
 import { isJsxExtendCall, isJsxExtendDef, isMemberExp, isOriginJSXElement } from './is';
-import { ImportManager } from './controller/import-manager';
+import { ImportManager, IImportType } from './controller/import-manager';
+import { checkLogicAttribute } from './component/logic-attribute';
 
-export function createNodeVisitor (t: IBabelType, useImport = true) {
+
+export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm') {
     initTypes(t);
     return {
         Program: {
@@ -21,7 +23,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 const body = path.node.body;
                 for (let i = 0; i < body.length; i++) {
                     if (body[i]?.type !== 'ImportDeclaration') {
-                        body.splice(i, 0, ImportManager.init(useImport, () => {
+                        body.splice(i, 0, ImportManager.init(importType, () => {
                             body.splice(i, 1);
                         }));
                         break;
@@ -44,15 +46,15 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         'ForOfStatement|ForInStatement': {
             enter (path) {
-                ctx.checkStaticScope(path as any);
+                ctx.checkScope(path as any);
             },
             exit (path) {
-                ctx.checkExitStaticScope(path.node);
+                ctx.checkExitScope(path.node);
             }
         },
         'FunctionDeclaration|FunctionExpression|ArrowFunctionExpression': {
             enter (path) {
-                ctx.checkStaticScope(path as any);
+                ctx.checkScope(path as any);
                 if (isJsxExtendDef(path.node)) {
                     return path.remove();
                 }
@@ -86,7 +88,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 ctx.enterScope(path, true);
             },
             exit (path) {
-                ctx.checkExitStaticScope(path.node);
+                ctx.checkExitScope(path.node);
                 // @ts-ignore
                 if (path.node._mapScope) {
                 // @ts-ignore
@@ -98,7 +100,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         BlockStatement: {
             enter (path) {
-                ctx.checkStaticScope(path as any);
+                ctx.checkScope(path as any);
                 if (!ctx.enter(path)) return;
                 // @ts-ignore
                 if (!path.parent._scopeEntry) { // ! 父元素不是一个scope（不是函数）
@@ -106,7 +108,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 }
             },
             exit (path) {
-                ctx.checkExitStaticScope(path.node);
+                ctx.checkExitScope(path.node);
                 // @ts-ignore
                 if (!path.parent._scopeEntry) {
                     ctx.exitScope();
@@ -115,7 +117,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         VariableDeclaration: {
             enter (path) {
-                ctx.checkStaticScope(path);
+                ctx.checkScope(path);
                 if (!ctx) {
                     console.warn('Skip VariableDeclaration because ctx end');
                     path.skip();
@@ -132,20 +134,34 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 ctx.enterVariableDeclaration(path.node);
             },
             exit (path) {
-                ctx.checkExitStaticScope(path.node);
+                ctx.staticScope.exit(path.node);
                 ctx.exitJsxComponent(path);
             }
         },
         LabeledStatement: {
             enter (path) {
-                ctx.checkStaticScope(path);
-                if (path.node.label.name === 'watch') {
-                    const result = transformWatchLabel(path.node);
-                    if (result) path.replaceWith(result);
+                ctx.checkScope(path);
+                const name = path.node.label.name;
+                let result: any = null;
+                switch (name) {
+                    case 'watch': {
+                        result = transformWatchLabel(path.node);
+                    }; break;
+                    case '_': {
+                        result = transformDataLabel(path.node);
+                    }; break;
+                    case '$': {
+                        result = transformDataLabel(path.node, false);
+                    }; break;
+                    case 'static_scope': {
+                        result = path.node.body;
+                        result._isStaticScope = true;
+                    }; break;
                 }
+                if (result) path.replaceWith(result);
             },
             exit (path) {
-                ctx.checkExitStaticScope(path.node);
+                ctx.checkExitScope(path.node);
                 if (path.node._shouldRemoved) { // ! 移除需要删除的label
                     path.remove();
                 }
@@ -153,7 +169,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         ForStatement: {
             enter (path) {
-                ctx.checkStaticScope(path);
+                ctx.checkScope(path);
                 const update = path.node.update;
 
                 if (!update) return;
@@ -163,7 +179,7 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
                 update._isForUpdate = true;
             },
             exit (path) {
-                ctx.checkExitStaticScope(path.node);
+                ctx.checkExitScope(path.node);
             }
         },
         VariableDeclarator: {
@@ -291,11 +307,19 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         JSXElement: {
             enter (path) {
+                const node = path.node;
+                // @ts-ignore
+                if (node.openingElement.name?.name === 'Frag') {
+                    // @ts-ignore
+                    node.openingElement.name.name = node.closingElement.name.name = '';
+                }
+                // console.log(path.toString());
+                if (checkLogicAttribute(path)) return;
                 // console.log('SCOPE_DEBUG_JSX JSXElement', path.toString());
                 // @ts-ignore
                 if (parseInnerComponent(path)) {
                     // @ts-ignore
-                    path.node._innerComp = true;
+                    node._innerComp = true;
                     return;
                 }
                 ctx.curScope.jsxScope.enterJsxElement(path);
@@ -381,26 +405,26 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
         },
         IfStatement: {
             enter (path) {
-                ctx.checkStaticScope(path);
+                ctx.checkScope(path);
                 // console.log('Expression', path.toString());
                 if (!ctx.enter(path)) return;
                 ctx.curScope.enterIfScope(path);
             },
             exit (path) {
                 ctx.curScope.exitIfScope(path);
-                ctx.checkExitStaticScope(path.node);
+                ctx.checkExitScope(path.node);
             }
         },
         SwitchStatement: {
             enter (path) {
-                ctx.checkStaticScope(path);
+                ctx.checkScope(path);
                 // console.log('Expression', path.toString());
                 if (!ctx.enter(path)) return;
                 ctx.curScope.enterSwitchScope(path);
             },
             exit (path) {
                 ctx.curScope.exitSwitchScope(path);
-                ctx.checkExitStaticScope(path.node);
+                ctx.checkExitScope(path.node);
             }
         },
         BreakStatement (path) {
@@ -427,10 +451,10 @@ export function createNodeVisitor (t: IBabelType, useImport = true) {
 };
 
 export function createBabelPluginAlins () {
-    return (data: any, args?: {useImport?: boolean}) => { // {import: boolean}
+    return (data: any, args?: {importType?: IImportType}) => {
         return {
             name: 'babel-plugin-alins',
-            visitor: createNodeVisitor(data.types, args?.useImport)
+            visitor: createNodeVisitor(data.types, args?.importType)
         };
     };
 }

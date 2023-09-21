@@ -706,6 +706,17 @@ export interface IAttributes extends IBaseAttributes, IControlAttributes {
     'value:string'?: any;
     'value:number'?: any;
     'value:boolean'?: any;
+
+    $if?: any;
+    $elseif?: any;
+    $else?: any;
+    $case?: any;
+    $default?: any;
+    $break?: boolean;
+    $item?: string;
+    $index?: number;
+    $name?: string;
+
     [prop: string]: any;
 }
 export interface ITextNode {
