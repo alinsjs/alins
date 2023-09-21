@@ -267,3 +267,7 @@ export function isBlockBreak (elements: any[], onBreakNode: (node: any)=>void) {
 export function isMemberExp (node: Node) {
     return node.type === 'MemberExpression' || node.type === 'OptionalMemberExpression';
 }
+
+export function isMountAttr (name: string) {
+    return name === '$mount' || name.startsWith('$$');
+}

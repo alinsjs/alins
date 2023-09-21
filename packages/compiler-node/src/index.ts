@@ -3,21 +3,21 @@
  * @Date:
  * @Description: Coding something
  */
-import {transform} from '@babel/core';
-import {createBabelPluginAlins, IParserOptions, randomTsxFileName} from 'alins-compiler-core';
+import { transform } from '@babel/core';
+import { createBabelPluginAlins, IParserOptions, randomTsxFileName } from 'alins-compiler-core';
 import react from '@babel/preset-react';
 import typescript from '@babel/preset-react';
 
-export {IParserOptions} from 'alins-compiler-core';
+export { IParserOptions } from 'alins-compiler-core';
 
 export function parseAlins (code: string, {
-    ts, useImport, filename
+    ts, importType, filename
 }: IParserOptions = {}): string {
 
     const options = {
         sourceMaps: false,
-        presets: [react],
-        plugins: [ [createBabelPluginAlins(), {useImport}] ],
+        presets: [ react ],
+        plugins: [ [ createBabelPluginAlins(), { importType } ] ],
     };
 
     if (ts) {

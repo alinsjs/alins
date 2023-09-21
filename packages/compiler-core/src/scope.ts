@@ -216,7 +216,8 @@ export class Scope {
             if (name[0] === '$' && name[1] === '$') {
                 node._isShallow = true;
             }
-            this.markVariableReactive(name);
+            // 强制开启响应式数据
+            this.markVariableReactive(name, true);
         }
     }
 
@@ -359,7 +360,7 @@ export class Scope {
 
     // 变量被赋值了 转化变量以及其依赖项
     markVariableReactive (name: string, force = false, fromBind = true) {
-        if (this.module.isInStaticScope) return;
+        if (this.module.staticScope.enable && !force) return;
         const variable = this.findVarDeclare(name);
         if (variable && fromBind) {
             variable.isStatic = false;
@@ -551,7 +552,7 @@ export class Scope {
     // if Scope
     ifScope: IfScope|null = null;
     enterIfScope (path: NodePath<IfStatement>) {
-        if (this.module.isInStaticScope) return;
+        if (this.module.staticScope.enable) return;
         // @ts-ignore
         if (path.node._traversed) return;
         const newScope = new IfScope(path, this);
@@ -579,7 +580,7 @@ export class Scope {
         Scope.ifScopeDeep ++;
     }
     exitIfScope (path: NodePath<IfStatement>) {
-        if (this.module.isInStaticScope) return;
+        if (this.module.staticScope.enable) return;
         if (!this.ifScope) return;
         // @ts-ignore
         if (path.node._traversed && path !== this.ifScope.path) return;
@@ -596,7 +597,7 @@ export class Scope {
     // switch scope
     switchScope: SwitchScope|null = null;
     enterSwitchScope (path: NodePath<SwitchStatement>) {
-        if (this.module.isInStaticScope) return;
+        if (this.module.staticScope.enable) return;
         // debugger;
         const newScope = new SwitchScope(path, this);
         if (this.switchScope) {
@@ -622,7 +623,7 @@ export class Scope {
         Scope.switchScopeDeep ++;
     }
     exitSwitchScope (path: NodePath<SwitchStatement>) {
-        if (this.module.isInStaticScope) return;
+        if (this.module.staticScope.enable) return;
         if (!this.switchScope) return;
         if (path !== this.switchScope.path) return;
         this.switchScope = this.switchScope.exit();

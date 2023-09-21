@@ -11,6 +11,7 @@ import {
     _$mu, _$r, _$sw, _$w, defineRenderer, useRenderer
 } from 'alins';
 import { parseWebAlins } from './parser';
+import { IImportType } from 'alins-compiler-core';
 
 function onDOMContentLoaded () {
     const names = [ 'alins', 'babel', 'jsx' ];
@@ -19,12 +20,12 @@ function onDOMContentLoaded () {
         // @ts-ignore
         for (const item of scripts) {
             // @ts-ignore
-            onSingleScript(item, item.hasAttribute('import'), item.hasAttribute('ts'));
+            onSingleScript(item, item.getAttribute('import') || 'iife', item.hasAttribute('ts'));
         }
     }
 }
 
-async function onSingleScript (script: HTMLScriptElement, useImport = false, ts = false) {
+async function onSingleScript (script: HTMLScriptElement, importType: IImportType = 'iife', ts = false) {
     // __DEV__ && console.log(`web=${web}; ts=${ts}`);
     let code = '';
     if (script.innerText.trim() === '') {
@@ -39,7 +40,7 @@ async function onSingleScript (script: HTMLScriptElement, useImport = false, ts 
     } else {
         code = script.innerText;
     }
-    const output = parseWebAlins(code, { useImport, ts });
+    const output = parseWebAlins(code, { importType, ts });
     // console.warn(code);
     // console.warn('============>');
     if (__DEV__) console.warn('Compiler output:', output);

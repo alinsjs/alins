@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-09-15 09:43:59
+ * @LastEditTime: 2023-09-20 12:21:51
  */
 import { JSX as React } from 'packages/core/src/element/element';
 import { createContext } from 'packages/core/src/context';
@@ -261,6 +261,3 @@ export default [
 
 
 ];
-
-
-$static: count = 1;

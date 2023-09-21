@@ -35,9 +35,6 @@ export const JSX = {
 
 export type IAttributeNames = keyof IAttributes;
 
-// type IClassReaction = {
-//     [a in string]: a extends '$value' ? IBindingReaction : IBindingRef<boolean>;
-// }
 type IClassReaction = {
     $value?: IBindingReaction
 } & IJson<IBindingRef<boolean>|IBindingReaction>
@@ -71,17 +68,13 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
             // @ts-ignore
             reactiveBindingValue(opt.text, (v) => {
                 // console.warn('reactiveBinding trigger', el, el.textContent, v);
-            // @ts-ignore
+                // @ts-ignore
                 el.textContent = v;
             });
         }
     } else {
         const isDom = !!opt.tag;
         el = isDom ? Renderer.createElement(opt.tag as string) : Renderer.createFragment();
-        // if (opt.html) {
-        //     // @ts-ignore
-        //     reactiveBindingValue(opt.html, (v) => {el.innerHTML = v;});
-        // } else
         if (opt.children && opt.children.length > 0) {
             if (opt.attributes?.$html) {
                 console.warn('$html 属性的元素的子元素将失效');
@@ -91,60 +84,68 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
             }
         }
 
-        // // 生命周期
-        // if (opt.$life) {
-        //     // todo
-        //     delete opt.$life;
-        // }
-        if (isDom && opt.attributes) {
+        const target = isDom ? el : el.children[0];
+        // @ts-ignore
+        const lifeNode = isDom ? el : el.firstChild;
 
-            let $mount: any = opt.attributes.$mount;
+        const attrs = opt.attributes;
+        if (attrs) {
 
-            opt.attributes.$created?.(el);
+            let $mount: any = attrs.$mount;
 
-            for (const k in opt.attributes) {
-                const v = opt.attributes[k];
-                if (isEventAttr(el as IElement, k, v)) {
-                    addEvent(el as IElement, k, v);
-                    continue;
+            if (lifeNode) {
+                attrs.$created?.(lifeNode);
+                // [ '$appended', '$mounted', '$removed' ].forEach(k => {
+                //     if (attrs[k]) lifeNode[`__${key}`] = attrs[k];
+                // });
+                if (attrs.$appended) lifeNode.__$appended = attrs.$appended;
+                if (attrs.$removed) lifeNode.__$removed = attrs.$removed;
+                if (attrs.$mounted) lifeNode.__$mounted = attrs.$mounted;
+            }
+
+            if (target) {
+                for (const k in opt.attributes) {
+                    const v = opt.attributes[k];
+                    if (isEventAttr(target, k, v)) {
+                        addEvent(target, k, v);
+                        continue;
+                    }
+                    switch (k) {
+                        case '$created':
+                        case '$appended':
+                        case '$removed':
+                        case '$mounted':
+                        case '$mount': break;
+                        case '$html': reactiveBindingEnable(v, (v) => {
+                            target.innerHTML = v || '';
+                        }); break;
+                        case '$ref': v(target); break;
+                        case '$attributes': parseAttributes(target, v); break;
+                        case '$show': reactiveBindingEnable(v, (v) => {
+                            target.style.display = v ? '' : 'none';
+                        }); break;
+                        case 'class': parseClassName(target, v); break;
+                        default: {
+                            if (
+                                (k === 'style' && parseStyle(target, v)) ||
+                                parseModel(target, v, k) ||
+                                parseClassSuffix(target, k, v) ||
+                                parseStyleSuffix(target, k, v)
+                            ) {
+                                break;
+                            } else {
+                                // console.warn('reactiveBindingEnable', k, v);
+                                reactiveBindingEnable(v, (v) => {
+                                    if (typeof v === 'object') {
+                                        v = (!!v.enable) ? v.value : null;
+                                    }
+                                    // @ts-ignore
+                                    v === null ? target.removeAttribute(k) : target.setAttribute(k, v);
+                                });
+                            }
+                        }; break;
+                    };
                 }
-                switch (k) {
-                    case '$created': break;
-                    case '$appended': (el as IElement).__$appended = v; break;
-                    case '$removed': (el as IElement).__$removed = v; break;
-                    case '$mounted': (el as IElement).__$mounted = v; break;
-                    case '$mount': break;
-                    case '$html': reactiveBindingEnable(v, (v) => {
-                        // @ts-ignore
-                        el.innerHTML = v || '';
-                    }); break;
-                    case '$ref': v(el); break;
-                    case '$attributes': parseAttributes(el as any, v); break;
-                    case '$show': reactiveBindingEnable(v, (v) => {
-                        // @ts-ignore
-                        el.style.display = v ? '' : 'none';
-                    }); break;
-                    case 'class': parseClassName(el as any, v); break;
-                    default: {
-                        if (
-                            (k === 'style' && parseStyle(el as any, v)) ||
-                            parseModel(el as any, v, k) ||
-                            parseClassSuffix(el as any, k, v) ||
-                            parseStyleSuffix(el as any, k, v)
-                        ) {
-                            break;
-                        } else {
-                            // console.warn('reactiveBindingEnable', k, v);
-                            reactiveBindingEnable(v, (v) => {
-                                if (typeof v === 'object') {
-                                    v = (!!v.enable) ? v.value : null;
-                                }
-                                // @ts-ignore
-                                v === null ? el.removeAttribute(k) : el.setAttribute(k, v);
-                            });
-                        }
-                    }; break;
-                };
             }
             if ($mount) {
                 if (typeof $mount === 'string') $mount = Renderer.querySelector($mount);

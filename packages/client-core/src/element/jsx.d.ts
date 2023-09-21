@@ -5,7 +5,7 @@ import { IAttributes } from 'packages/core/src/element/jsx';
  * @Description: Coding something
  */
 
-import type { IAttributes, IElement, IControlAttributes } from './alins.d';
+import type { IAttributes, IElement } from './alins.d';
 
 // tslint:disable-next-line:export-just-namespace
 
@@ -125,7 +125,7 @@ declare global {
     const Default: JSXInnerComp<{break?: boolean|null}>;
     const Async: JSXInnerComp<{data?: Promise<any>, name?: string}>;
     const Show: JSXInnerComp<{data?: boolean}>;
-    const Frag: (attrs: IControlAttributes) => JSX.Element;
+    const Frag: (attrs: IAttributes) => JSX.Element;
 
     let $item: any;
     let $index: number;
