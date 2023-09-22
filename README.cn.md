@@ -59,6 +59,17 @@ let count = 1;
 </button>;
 ```
 
+这个例子只是简写，你也可以使用标准的js语法
+
+```jsx
+let count = 1;
+document.getElementById('App').appencChild(
+  <button onclick={(e) =>{ count++ }}>
+    count is {count} 
+  </button>
+);
+```
+
 ### 0.2 特性
 
 1. [x] 0-API、Less is More，最贴近原生js开发

@@ -45,13 +45,24 @@
 
 Alins is an extremely pure, simple, and elegant web UI framework. It adheres to the development philosophy of 0-API and Less is More, aiming to help developers escape the dilemma of complex API calls in UI frameworks and provide the most intuitive, pure, and close-to-vanillajs development approach.
 
-You only need to understand the syntax rules of JSX (similar to HTML) to develop Alins web applications without any obstacles. Below is a basic counter example that you can [experience online in the playground](https://alinsjs.github.io/playground/#4):
+You only need to understand the syntax rules of JSX (similar to HTML) to develop Alins web applications without any obstacles. Below is a basic Counter Program that you can [experience online in the playground](https://alinsjs.github.io/playground/#4):
 
 ```jsx
 let count = 1;
 <button onclick={count++} $mount='#App'>
      count is {count}
 </button>;
+```
+
+This example is just a shorthand, you can also use standard js syntax:
+
+```jsx
+let count = 1;
+document.getElementById('App').appencChild(
+  <button onclick={(e) =>{ count++ }}>
+    count is {count} 
+  </button>
+);
 ```
 
 ### 0.2 Features
