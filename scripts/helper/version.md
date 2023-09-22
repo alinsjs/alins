@@ -13,7 +13,6 @@
 - [ ] alins-ssr - 服务端渲染（尽可能通用 能够直接使用原生js调用）
 - [ ] 增加 变量声明和函数参数的 @reactive，增加 @static 注释
 - [ ] For 支持解构
-- [ ] 新增 Frag 组件，定位是用于可以挂载属性的 <></>
 - [ ] For Object 支持
 - [ ] source-map 支持
 - [ ] 编译器代码重构 - 分两步编译 第一步进行jsx解析；第二部进行alins reactive； 支持 ssr
@@ -24,6 +23,12 @@
 - [ ] For 类型提示
 - [ ] Async Data 类型标注
 - [ ] computed 重构；dirty 标记。优化 const b = a++; 逻辑
+
+## 0.0.35
+
+- [ ] computed 处理无返回值的逻辑
+- [ ] alins-standalone 优化Api，使其更易用
+- [ ] data = {name: '', age: n + 1} 响应式支持
 
 ## 0.0.33 - 0.0.34
 

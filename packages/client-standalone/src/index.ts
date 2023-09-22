@@ -26,12 +26,16 @@ type IDomGenerator = ()=>IGeneralElement|IGeneralElement[];
 
 // });
 
-export { react, watch, computed } from 'alins';
-import { react, watch, computed } from 'alins';
+export { ref, reactive, watch, computed } from 'alins';
+import { ref, reactive, watch, computed } from 'alins';
 
-export function ref<T> (v: T): IRefData<T> {
-    // @ts-ignore
-    return react({ v });
+export function join (
+    ts: TemplateStringsArray, ...reactions: any[]
+): any[] {
+    const result: any[] = [];
+    for (let i = 0; i < reactions.length; i++)
+        result.push(ts[i], reactions[i]);
+    return result;
 }
 
 // alins.Dom('div', {
@@ -39,26 +43,53 @@ export function ref<T> (v: T): IRefData<T> {
 // }, [
 
 // ]);
-export function Dom (name: string, attributes: IAttributes = {}, children: any[] = []) {
-    if (Array.isArray(attributes)) {
-        children = attributes;
-        attributes = {};
-    }
-    // @ts-ignore
-    return _$ce(name, attributes, children);
+
+const MainDomNames = [
+    'a', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'button', 'canvas', 'code', 'pre', 'table', 'th', 'td', 'tr', 'video', 'audio',
+    'ol', 'select', 'option', 'p', 'i', 'iframe', 'img', 'input', 'label', 'ul', 'li', 'span', 'textarea', 'form', 'br', 'tbody',
+
+    'abbr', 'article', 'aside', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'caption', 'cite', 'del', 'details', 'dialog',
+    'em', 'embed', 'figure', 'footer', 'header', 'hr', 'menu', 'nav', 'noscript',
+    'object', 'progress', 'section', 'slot', 'small', 'strong', 'sub', 'summary', 'sup', 'template',
+    'title', 'var',
+] as const;
+
+interface IDom {
+    (name: string, attributes?: IAttributes, children?: (any[])): ReturnType<typeof _$ce>;
+    [tagName in typeof MainDomNames]: (attributes?: IAttributes, children?: (any[])) => ReturnType<typeof _$ce>;
 }
+
+export function Dom (name: string, attributes: IAttributes = {}, children?: (any[])) {
+    return createEl(name, attributes, children);
+}
+
+
 // alins.component(fn, {}, [])
+type IComponentFn = (attributes: IAttributes, children: any[])=>IGeneralElement|IGeneralElement[];
+
 export function Component (
-    fn: (attributes: IAttributes, children: any[])=>IGeneralElement|IGeneralElement[],
-    attributes: IAttributes = {},
-    children: any[] = []
+    fn: IComponentFn,
+    attributes: IAttributes|(any[]) = {},
+    children?: (any[])|any,
 ) {
-    if (Array.isArray(attributes)) {
-        children = attributes;
-        attributes = {};
+    return createEl(fn, attributes, children);
+}
+
+function createEl (
+    tag: IComponentFn|string,
+    attributes: IAttributes|(any[]) = {},
+    children?: (any[])|any,
+) {
+    if (typeof children === 'undefined') {
+        if (Array.isArray(attributes)) {
+            children = attributes;
+            attributes = {};
+        } else {
+            children = [];
+        }
     }
     // @ts-ignore
-    return _$ce(fn, attributes, children);
+    return _$ce(tag, attributes, children);
 }
 
 
@@ -170,7 +201,7 @@ export function Show (condition: IBoolCond, generator: IDomGenerator) {
 
 export const alins = {
     ref,
-    react,
+    reactive,
     watch,
     computed,
     If,

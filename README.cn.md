@@ -68,6 +68,12 @@ document.getElementById('App').appencChild(
     count is {count} 
   </button>
 );
+function Counter(){
+    let count = 1;
+    return <button onclick={count++}>
+        count:{count}
+    </button>;
+}
 ```
 
 ### 0.2 特性

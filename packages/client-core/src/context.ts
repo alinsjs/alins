@@ -5,7 +5,7 @@
  */
 
 import { _if } from './branch/if';
-import { assignCompData, assignData, computed, isProxy, mockRef, reactive, watch } from 'alins-reactive';
+import { assignCompData, assignData, computed, mockRef, ref, watch } from 'alins-reactive';
 import { _switch } from './branch/switch';
 import './for';
 import { JSX } from './element/element';
@@ -20,12 +20,7 @@ export function _$mnr (fn: any) {
     return fn;
 }
 
-export function _$r (v: any, shallow?: boolean) {
-    if (typeof shallow !== 'boolean') {
-        shallow = typeof v?.v === 'object' && isProxy(v.v);
-    }
-    return reactive({ v }, shallow);
-}
+export const _$r = ref;
 export const _$c = computed;
 export const _$w = watch;
 

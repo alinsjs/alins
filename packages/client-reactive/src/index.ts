@@ -4,7 +4,7 @@
  * @Description: Coding something
  */
 export * from './proxy';
-export * from './react';
+export * from './reactive';
 export * from './computed';
 export * from './watch';
 export * from 'alins-utils';

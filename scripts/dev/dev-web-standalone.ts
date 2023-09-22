@@ -4,13 +4,12 @@
  * @Description: Coding something
  */
 
-import { react, computed, Dom } from 'packages/client-standalone';
+import { ref, computed, Dom, join } from 'packages/client-standalone';
+// const { react, computed, Dom } = window.Alins;
 
-const count = react(1);
+const count = ref(1);
 const countAdd1 = computed(() => count.v + 1);
-Dom('button', {
+Dom.button({
     $mount: document.body,
     onclick: () => count.v++,
-}, [
-    react`count is ${count}; countAdd1 is ${countAdd1}`
-]);
+}, join`count is ${count}; countAdd1 is ${countAdd1}`);

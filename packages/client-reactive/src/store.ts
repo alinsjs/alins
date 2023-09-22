@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 09:38:52
  * @Description: Coding something
  */
-import { react } from './react';
+import { createProxy } from './proxy';
 import { watch } from './watch';
 
 type IAction<State extends Record<string, any>> =
@@ -66,7 +66,7 @@ export function createStore<
         let store: Store = storeMap[id!] as Store;
         if (!store) {
             // @ts-ignore
-            store = react(state());
+            store = createProxy(state());
             if (actions) {
                 for (const k in actions) {
                     // @ts-ignore
