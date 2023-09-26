@@ -506,3 +506,31 @@ function Attribute () {
     <Component/>
     <Attribute/>
 </div>;
+
+
+function Component () {
+    const list = [
+        { name: 'Bob', age: 10 },
+        { name: 'Alice', age: 11 },
+        { name: 'Eric', age: 12 },
+        { name: 'Tom', age: 13 }
+    ];
+    const age = 10;
+    return <>
+        <button onclick={() => {
+            const data1 = list[1];
+            list[1] = list[2];
+            list[2] = data1;
+        }}>Switch 1 and 2</button>
+        <For data:list>
+            <If data={$item.name.startsWith('A')}>
+                <div>{$index + 1}: name={$item.name}; age={$item.age};</div>
+            </If>
+            <Else>
+                <div>{$index + 1}:22 name={$item.name}; age={$item.age};</div>
+            </Else>
+        </For>
+    </>;
+    // You can specify the name of the $item and $index through the name attribute: item='person' index='i'
+}
+<Component $$App/>;

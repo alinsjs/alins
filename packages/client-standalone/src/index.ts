@@ -4,19 +4,31 @@
  * @Description: Coding something
  */
 
-import {
-    IRefData, IGeneralElement, _if, _switch,
+import type {
+    IRefData,
     IAttributes,
+    IElement,
+} from 'alins';
+
+import {
+    ref, reactive, watch, computed,
+    _if, _switch,
     Renderer,
     reactiveBindingEnable,
     map,
     _$ce,
+    isProxy,
+    mount,
 } from 'alins';
+
+export { ref, reactive, watch, computed, mount } from 'alins';
 
 type IValueCond<T> = (()=>T)|IRefData<T>;
 type IBoolCond = IValueCond<boolean>;
 
-type IDomGenerator = ()=>IGeneralElement|IGeneralElement[];
+type IElements = IElement|IElement[];
+
+type IDomGenerator = ()=>IElements;
 
 // let a = alins.react(1)
 
@@ -25,9 +37,6 @@ type IDomGenerator = ()=>IGeneralElement|IGeneralElement[];
 // alins.computed(()=>{
 
 // });
-
-export { ref, reactive, watch, computed } from 'alins';
-import { ref, reactive, watch, computed } from 'alins';
 
 export function join (
     ts: TemplateStringsArray, ...reactions: any[]
@@ -44,7 +53,7 @@ export function join (
 
 // ]);
 
-const MainDomNames = [
+const DomNames = [
     'a', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'button', 'canvas', 'code', 'pre', 'table', 'th', 'td', 'tr', 'video', 'audio',
     'ol', 'select', 'option', 'p', 'i', 'iframe', 'img', 'input', 'label', 'ul', 'li', 'span', 'textarea', 'form', 'br', 'tbody',
 
@@ -54,18 +63,47 @@ const MainDomNames = [
     'title', 'var',
 ] as const;
 
+export type TDomName = typeof DomNames[number];
+
 interface IDom {
-    (name: string, attributes?: IAttributes, children?: (any[])): ReturnType<typeof _$ce>;
-    [tagName in typeof MainDomNames]: (attributes?: IAttributes, children?: (any[])) => ReturnType<typeof _$ce>;
+    (name: TDomName, attributes?: IAttributes, children?: (any[])): IElements;
+    (name: string, attributes?: IAttributes, children?: (any[])): IElements;
 }
 
-export function Dom (name: string, attributes: IAttributes = {}, children?: (any[])) {
-    return createEl(name, attributes, children);
+type IDoms = {
+    [tagName in TDomName]: (attributes?: IAttributes, children?: (any[])) => IElements;
 }
 
+/*
+Dom.div({attr: 1}, [
+    Dom.div('111')
+])
+Dom.div({attr: 1}, 111)
+Dom.div(111)
+Dom('div', 111)
+*/
 
-// alins.component(fn, {}, [])
-type IComponentFn = (attributes: IAttributes, children: any[])=>IGeneralElement|IGeneralElement[];
+// @ts-ignore
+export const Dom: IDom & IDoms = (() => {
+    const builder = (
+        name: string,
+        attributes: IAttributes = {},
+        children?: (any[])
+    ) => createEl(name, attributes, children);
+    DomNames.forEach(name => {
+        builder[name] = (attributes: any, children: any) => createEl(name, attributes, children);
+    });
+    return builder;
+})();
+
+
+/*
+ Component(Hello, {}, [Dom.div('11')])
+ Component(Hello, [Dom.div('11')])
+ Component(Hello, {})
+ Component(Hello)
+*/
+type IComponentFn = (attributes: IAttributes, children: any[])=>IElements;
 
 export function Component (
     fn: IComponentFn,
@@ -79,10 +117,13 @@ function createEl (
     tag: IComponentFn|string,
     attributes: IAttributes|(any[]) = {},
     children?: (any[])|any,
-) {
+): IElements {
     if (typeof children === 'undefined') {
         if (Array.isArray(attributes)) {
             children = attributes;
+            attributes = {};
+        } else if (typeof attributes !== 'object' || isProxy(attributes)) {
+            children = [ attributes ];
             attributes = {};
         } else {
             children = [];
@@ -93,20 +134,12 @@ function createEl (
 }
 
 
-// alins.div({}, [
-//     alins.span(),
-// ]);
-
-
-// alins.if(
-//     ()=>{}, ()=>{},
-//     alins.elseif(()=>{}, ()=>{
-
-//     }),
-//     alins.else(()=>{
-
-//     }),
-// );
+/**
+If(()=>a.v === 1, ()=>Dom.div(1)
+    ElseIf(()=>a.v === 2, ()=>Dom.div(2))
+    Else(()=>Dom.div('else'))
+)
+ */
 
 export function If (condition: IBoolCond, generator: IDomGenerator, ...items: any[][]) {
     // @ts-ignore
@@ -124,34 +157,37 @@ export function Else (generator: IDomGenerator) {
     return [ generator ];
 }
 
-// alins.switch(()=>a,
-//     alins.case(1, ()=>{}, true),
-//     alins.case(1, ()=>{}, true),
-//     alins.case(1, ()=>{}, true),
-//     alins.default(1, ()=>{}, true),
-// )
-export function Switch (condition: IValueCond<any>, generator: IDomGenerator) {
+/**
+Switch(a,
+    Case(1, ()=>Dom.div('a is 1')),
+    Case(2, ()=>Dom.div('a is 2')),
+    Default(()=>Dom.div('default')
+)
+ */
+// ! standalone 不支持break逻辑，break是在编译时处理的
+type ICaseItem = [any, IDomGenerator];
+
+export function Switch (condition: IValueCond<any>, ...cases: ICaseItem[]) {
     // @ts-ignore
-    return _switch(condition, generator).end();
+    return _switch(condition, cases).end();
 }
 
-
-type ICaseItem = [any, IDomGenerator, boolean|undefined];
-
-export function Case (value: any, generator: IDomGenerator, brk?: boolean): ICaseItem {
-    return [ value, generator, brk ];
+export function Case (value: any, generator: IDomGenerator): ICaseItem {
+    return [ value, generator ];
 }
-export function Default (generator: IDomGenerator, brk?: boolean): ICaseItem {
-    return [ null, generator, brk ];
+export function Default (generator: IDomGenerator): ICaseItem {
+    return [ null, generator ];
 }
 
+/*
+Async(fetchData(), data=>{
+    return Dom.div('111')
+})
+*/
 
-// alins.async(a(), data=>{
-
-// });
 export function Async<T=any> (
     promise: Promise<T>,
-    generator: (data: T)=>IGeneralElement|IGeneralElement[]
+    generator: (data: T)=>IElements,
 ) {
     // @ts-ignore
     return _$ce(async () => {
@@ -160,22 +196,23 @@ export function Async<T=any> (
     });
 }
 
-// alins.for(data, (item, index)=>{
-
-// })
+/*
+For(list, (item, index)=>{
+    return Dom.div('11');
+});
+*/
 export function For<T=any> (
     data: T[],
-    generator: (item: T, index: number)=>IGeneralElement|IGeneralElement[]
+    generator: (item: T, index: number)=>IElements,
 ) {
     // @ts-ignore
     return map(data, generator, true, 'item', 'index');
 }
 
-// alins.show(aa, ()=>{
-
-// })
-export function Show (condition: IBoolCond, generator: IDomGenerator) {
-    const element = generator();
+/*
+Show(()=>a.v, Dom.div('111'))
+*/
+export function Show (condition: IBoolCond, element: IElements) {
     const calls: ((v: boolean)=>void)[] = [];
     const handleSingle = (el: any) => {
         if (!el) return;
@@ -200,6 +237,7 @@ export function Show (condition: IBoolCond, generator: IDomGenerator) {
 }
 
 export const alins = {
+    mount,
     ref,
     reactive,
     watch,

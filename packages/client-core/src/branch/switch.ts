@@ -15,8 +15,10 @@ import { IGeneralElement, IReturnCall } from '../element/alins.d';
 
 export type ISwitchTarget = IWatchRefTarget<ISimpleValue>;
 
-export type ISwitchCase = [any, (()=>any)|null, boolean];
-// value, call, break,
+export type ISwitchCase = [any, (()=>any)|null];
+// value, call // ! , break,
+
+// ! break 在编译时处理了 运行时无需break参数
 
 export type ISwitchCaseList = ISwitchCase[];
 

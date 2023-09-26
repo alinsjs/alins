@@ -3,11 +3,12 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-09-20 12:21:51
+ * @LastEditTime: 2023-09-24 09:48:27
  */
 import { JSX as React } from 'packages/core/src/element/element';
 import { createContext } from 'packages/core/src/context';
 import { createTestBase } from '../test-util';
+import { mount } from 'packages/client-core/src';
 
 // const w = window as any;
 // w.React = React;

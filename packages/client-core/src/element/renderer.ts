@@ -65,8 +65,8 @@ export function getFirstElement (element?: IGeneralElement) {
     return (Renderer.isFragment(element) ? (element.firstChild) : element);
 }
 
-export function appendChild (parent: any, item: any, node?: any) {
-    const lifeNode = getFirstElement(item);
+export function appendChild (parent: any, node: any, child?: any) {
+    const lifeNode = getFirstElement(node);
     // @ts-ignore
     if (lifeNode.__$mounted) {
         Renderer.onMounted?.(parent, lifeNode, lifeNode.__$mounted);
@@ -75,11 +75,19 @@ export function appendChild (parent: any, item: any, node?: any) {
     if (lifeNode.__$removed) {
         Renderer.onRemoved?.(parent, lifeNode, lifeNode.__$mounted);
     }
-    if (node) {
-        parent.insertBefore(item, node);
+    if (child) {
+        parent.insertBefore(node, child);
     } else {
-        parent.appendChild(item as any);
+        parent.appendChild(node as any);
     }
     // @ts-ignore
     lifeNode.__$appended?.(lifeNode);
+}
+
+export function mount (node: IElement, parent: IElement|string|Node = 'body') {
+    if (typeof parent === 'string') {
+        // @ts-ignore
+        parent = Renderer.querySelector(parent);
+    }
+    appendChild(parent, node);
 }

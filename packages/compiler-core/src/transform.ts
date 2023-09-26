@@ -7,7 +7,7 @@ import { parseInnerComponent } from './component/component';
 import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
     createEmptyString, createExtendCalleeWrap, createUnfInit,
-    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, transformDataLabel, transformWatchLabel,
+    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, transformDataLabel, transformMountLabel, transformWatchLabel,
 } from './parse-utils';
 import { isJsxExtendCall, isJsxExtendDef, isMemberExp, isOriginJSXElement } from './is';
 import { ImportManager, IImportType } from './controller/import-manager';
@@ -134,7 +134,7 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
                 ctx.enterVariableDeclaration(path.node);
             },
             exit (path) {
-                ctx.staticScope.exit(path.node);
+                ctx.checkExitScope(path.node);
                 ctx.exitJsxComponent(path);
             }
         },
@@ -156,6 +156,9 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
                     case 'static_scope': {
                         result = path.node.body;
                         result._isStaticScope = true;
+                    }; break;
+                    case 'mount': {
+                        result = transformMountLabel(path.node);
                     }; break;
                 }
                 if (result) path.replaceWith(result);

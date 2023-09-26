@@ -9,15 +9,16 @@ import { IElement, IFragment, IEventObject, IEventAttributes, IEventObjectDeco }
 
 export type IEventNames = keyof IEventAttributes;
 
-export function isEventAttr (dom: IElement|IFragment, name: string, event: IEventObject) {
+export function isEventAttr (dom: IElement|IFragment, name: string, e: IEventObject) {
     if (!name.startsWith('on')) return false;
     if (dom[name] !== null && typeof dom[name] !== 'function') return false;
     // @ts-ignore
     if (
-        typeof event !== 'function' &&
-        typeof event?.listener !== 'function' &&
+        typeof e !== 'function' &&
+        typeof e?.listener !== 'function' &&
         // @ts-ignore
-        typeof event?.__deco !== 'string'
+        typeof e?.__deco !== 'string' &&
+        typeof e?.v !== 'function'
     ) return false;
     return true;
 }

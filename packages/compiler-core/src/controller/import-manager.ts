@@ -29,6 +29,7 @@ export enum AlinsVar {
     MockMap = 'mm',
     If = 'if',
     Switch = 'sw',
+    Mount = 'mt',
 }
 
 // react | computed | watch | ComputedFull |

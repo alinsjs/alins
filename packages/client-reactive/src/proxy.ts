@@ -218,7 +218,6 @@ export function createProxy<T extends IJson> (data: T, {
                 }
                 return value;
             };
-
             if (typeof property !== 'symbol' && typeof target[property] !== 'function') {
                 // console.log('debug:Proxy.set', target, property, v);
                 let origin: any = null;

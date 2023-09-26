@@ -8,7 +8,7 @@ import {
     version,
     createStore,
     _$c, _$cc, _$ce, _$e, _$es, _$if, _$mf, _$mm, _$mnr,
-    _$mu, _$r, _$sw, _$w, defineRenderer, useRenderer
+    _$mu, _$r, _$sw, _$w, defineRenderer, useRenderer, _$mt
 } from 'alins';
 import { parseWebAlins } from './parser';
 import { IImportType } from 'alins-compiler-core';
@@ -56,7 +56,7 @@ async function onSingleScript (script: HTMLScriptElement, importType: IImportTyp
 if (typeof window !== 'undefined') {
     // @ts-ignore
     window.Alins = {
-        _$c, _$cc, _$ce, _$e, _$es, _$mf, _$mm, _$mnr,
+        _$c, _$cc, _$ce, _$e, _$es, _$mf, _$mm, _$mnr, _$mt,
         _$mu, _$r, _$sw, _$w, _$if, version, createStore,
         useRenderer,
         defineRenderer,

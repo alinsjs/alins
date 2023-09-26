@@ -385,9 +385,6 @@ export function traverseSwitchStatement (node: SwitchStatement) {
             !test ? t.nullLiteral() : test,
             body.length === 0 ? t.nullLiteral() : t.arrowFunctionExpression([], body),
         ]);
-        if (isBreak) {
-            array.elements.push(t.booleanLiteral(true));
-        }
         return array;
     }));
 
@@ -616,4 +613,12 @@ export function findAttributes (node: JSXElement, name: string|((attrName: strin
         return false;
 
     });
+}
+
+export function transformMountLabel (node: LabeledStatement) {
+    // @ts-ignore
+    const exp = node.body?.expression;
+    if (!exp) return null;
+    const args = exp.expressions || [ exp ];
+    return createCtxCall(AlinsVar.Mount, args);
 }

@@ -10,8 +10,11 @@ import { _switch } from './branch/switch';
 import './for';
 import { JSX } from './element/element';
 import { mockMap } from './for';
+import { mount } from './element/renderer';
 
 export const _$ce = JSX.createElement;
+
+export const _$mt = mount;
 
 // ! 处理 async 代码没有返回值
 // markNotReturned

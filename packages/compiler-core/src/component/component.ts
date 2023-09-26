@@ -260,8 +260,7 @@ function parseSwitch (path: NodePath<JSXElement>) {
             const exp = getExp(el);
             const elements: any[] = [
                 !exp ? t.nullLiteral() : exp,
-                wrapChildren(children, [], isBreak),
-                t.booleanLiteral(isBreak),
+                wrapChildren(children, [], isBreak)
             ];
             if (!isLastBreak) {
                 childrenList.forEach(item => {

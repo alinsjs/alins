@@ -4,7 +4,7 @@
  * @Description: Coding something
 -->
 
-### Next Version TODO
+### Plan
 
 - [ ] alins-router - 官方路由库 （尽可能通用 能够直接使用原生js调用）
 - [ ] alins-ui - 官方ui库
@@ -17,18 +17,20 @@
 - [ ] source-map 支持
 - [ ] 编译器代码重构 - 分两步编译 第一步进行jsx解析；第二部进行alins reactive； 支持 ssr
 - [ ] 运行时代码重构 - 优化内存空间占用和运行时间
-- [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
 - [ ] 完善测试
 - [ ] Branch 内存占用问题
 - [ ] For 类型提示
 - [ ] Async Data 类型标注
+- [ ] alins-vsc
+
+## 0.0.35 Doing
+
+- [x] alins-standalone 优化Api，使其更易用
+- [x] fix 组件参数中 传递方法的bug
+- [ ] 模版语法支持 html 文件作为模版语言
 - [ ] computed 重构；dirty 标记。优化 const b = a++; 逻辑
-
-## 0.0.35
-
-- [ ] computed 处理无返回值的逻辑
-- [ ] alins-standalone 优化Api，使其更易用
-- [ ] data = {name: '', age: n + 1} 响应式支持
+- [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
+- [ ] 大列表排序时移动dom元素优化性能
 
 ## 0.0.33 - 0.0.34
 
