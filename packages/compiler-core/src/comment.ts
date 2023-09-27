@@ -10,7 +10,7 @@
 3. // @static 标注数据不为响应式
 */
 
-import type { Node, VariableDeclaration, VariableDeclarator } from '@babel/types';
+import type { IfStatement, Node, SwitchStatement, VariableDeclaration, VariableDeclarator } from '@babel/types';
 
 function parseComment (node: Node, onlyHead = false) {
     const comments: string[] = [];
@@ -41,6 +41,7 @@ export const RegMap = {
     Static: /@static(\((.*?)\))?/i,
     Shallow: /@shallow/i,
     StaticScope: /@static\-scope/i,
+    Reactive: /@reactive/i,
 };
 
 export function parseCommentMulti (node: Node, reg = RegMap.React) {
@@ -62,6 +63,13 @@ export function parseCommentSingle (node: Node, reg = RegMap.Shallow, onlyHead?:
     if (!reg.test(comment)) return false;
     clear(reg);
     return true;
+}
+
+export function parseReactiveScope (node: IfStatement|SwitchStatement) {
+    const boolean = parseCommentSingle(node, RegMap.Reactive);
+    if (boolean) {
+        node._isComReact = true;
+    }
 }
 
 export function parseVarDeclCommentReactive (node: VariableDeclaration) {

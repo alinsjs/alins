@@ -363,7 +363,9 @@ export function traverseSwitchStatement (node: SwitchStatement) {
             }
         }
         const body = transformToBlock(bodyArr);
-        const returnType = isBlockReturned(body);
+        const returnType = isBlockReturned(body, () => {
+            isReturnJsx = true;
+        });
 
         if (!isReturnJsx) {
             isReturnJsx = (returnType === BlockReturnType.Jsx);
@@ -383,7 +385,7 @@ export function traverseSwitchStatement (node: SwitchStatement) {
         const array = t.arrayExpression([
             // ! !test 为 default
             !test ? t.nullLiteral() : test,
-            body.length === 0 ? t.nullLiteral() : t.arrowFunctionExpression([], body),
+            body.length === 0 ? t.nullLiteral() : markMNR(t.arrowFunctionExpression([], body)),
         ]);
         return array;
     }));
@@ -430,7 +432,7 @@ export function createEmptyString () {
 export function markMNR (fn: any, returnJsxCall?: ()=>void) {
     if (fn._mnrMarked) return fn;
 
-    const returnType = isBlockReturned(fn.body);
+    const returnType = isBlockReturned(fn.body, returnJsxCall);
     if (!returnType) {
         fn._mnrMarked = true;
         // ! 标注是否有返回值
@@ -586,7 +588,14 @@ export function transformDataLabel (node: LabeledStatement, isStatic = true) {
     // @ts-ignore
     const exp = node.body?.expression;
 
-    if (exp.type !== 'AssignmentExpression' && exp.operator === '=') return null;
+    if (!exp || (exp.type !== 'AssignmentExpression' && exp.operator === '=')) {
+        // ! 处理其他支持 $: 的逻辑
+        if (node.body.type === 'SwitchStatement' || node.body.type === 'IfStatement') {
+            node.body._isComReact = true;
+            return node.body;
+        }
+        return null;
+    };
 
     const varNode = t.variableDeclarator(
         exp.left, exp.right

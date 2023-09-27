@@ -5,7 +5,7 @@
  * @Description: Coding something
  */
 import { appendChild, Renderer } from '../element/renderer';
-import { IReturnCall } from '../element/alins.d';
+import { IElement, IReturnCall } from '../element/alins.d';
 import { getParent, insertBefore } from '../utils';
 import { BranchCache } from './cache';
 
@@ -89,9 +89,9 @@ export class BranchBlock {
         this.branchCalls.push(call);
     }
 
-    getCache (call: IReturnCall) {
+    getCache (call: IReturnCall, force?: boolean) {
         // console.warn('getCache', this.end);
-        return BranchTree.visit(this, () => this.cache.get(call));
+        return BranchTree.visit(this, () => this.cache.get(call, force));
     }
 
     private initAnchor (dom: any) {
@@ -106,12 +106,13 @@ export class BranchBlock {
         }
     }
 
-    replace (i: number) {
+    replace (i: number, force?: boolean) {
         // console.warn('replace i', this.end);
         if (i === this.activeIndex) return;
         const call = this.branchCalls[i];
         this.activeIndex = i;
-        const result = this.getCache(call);
+        const result = this.getCache(call, force);
+        // console.log('replace result', call, result);
 
         if (!this.initilized) {
             this.initilized = true;
@@ -120,6 +121,11 @@ export class BranchBlock {
             this.refresh(result);
             return result;
         }
+    }
+
+    replaceDom (dom: IElement) {
+        this.clear();
+        this.end.parentNode.insertBefore(dom, this.end);
     }
 
     refresh (result: any) {

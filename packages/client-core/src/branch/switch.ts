@@ -6,7 +6,6 @@
 
 import { IWatchRefTarget, watch } from 'alins-reactive';
 import { ISimpleValue } from 'alins-utils';
-import { Renderer } from '../element/renderer';
 import { BranchBlock } from './branch-block';
 import { IGeneralElement, IReturnCall } from '../element/alins.d';
 
@@ -46,7 +45,7 @@ class SwitchBlock {
         const n = this.caseList.length;
         for (let i = 0; i < n; i++) {
             const item = this.caseList[i];
-            const caseValue = item[0];
+            const [ caseValue, call ] = item;
             // 没有value表示为default
             if (
                 (Array.isArray(caseValue) && caseValue.includes(value)) ||
@@ -55,7 +54,12 @@ class SwitchBlock {
             ) { // 命中或走default
                 // console.log('matched');
                 matched = true;
-                el = this.branch.replace(i);
+                const returned = this.branch.returned(call as any);
+                el = this.branch.replace(i, !returned);
+                if (!returned) {
+                    // @ts-ignore
+                    this.branch.replaceDom(this.endCall());
+                }
                 break;
             }
         }
@@ -86,10 +90,7 @@ class SwitchBlock {
             this.run(value);
         });
         initSwitchBranches();
-        const el = this.run(init.v);
-        if (Renderer.isElement(el)) return el;
-        // @ts-ignore
-        return Renderer.createFragment();
+        return this.run(init.v);
     }
 }
 

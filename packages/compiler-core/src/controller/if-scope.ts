@@ -19,7 +19,7 @@ export class IfScope extends ControlScope<IfStatement> {
         IfScope.ScopeStack.newNode(this);
         const node = this.path.node;
         const map = traverseIfStatement(node);
-
+        debugger;
         const t = getT();
 
         let anchor = null;

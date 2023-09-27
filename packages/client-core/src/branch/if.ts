@@ -5,7 +5,7 @@
  */
 import { IWatchRefTarget, watch } from 'alins-reactive';
 import { IGeneralElement, IReturnCall } from '../element/alins.d';
-import { Renderer } from '../element/renderer';
+// import { Renderer } from '../element/renderer';
 import { empty } from 'alins-utils';
 import { BranchBlock } from './branch-block';
 
@@ -28,16 +28,21 @@ class IfBlock implements IIfReturn {
 
     constructor (ref: IIfTarget, call: IReturnCall) {
         this.branch = new BranchBlock();
-        this.acceptIf(ref, call, true);
+        this.acceptIf(ref, call);
     }
 
-    private switchNode (i: number) {
+    private switchNode (i: number, force?: boolean) {
         if (this.activeIndex === i) return true;
         this.activeIndex = i;
-        this.branch.replace(i);
+        const returned = this.branch.returned(i);
+        if (typeof force === 'undefined') {
+            // ! 针对 if 分支不返回值的情况处理，强制执行force逻辑
+            force = !returned;
+        }
+        this.branch.replace(i, force);
         // console.warn('switch node', i);
         // ! 编译时注入的returned
-        return this.branch.returned(i);
+        return returned;
     }
 
     private onDataChange (bs: boolean[]) {
@@ -46,9 +51,11 @@ class IfBlock implements IIfReturn {
         for (let i = 0; i < n; i++) {
             if (bs[i]) {
                 let returned = this.switchNode(i);
+                console.log('onDataChange', i, returned);
                 // ! 没有返回值并且不是最后一个 执行end逻辑
                 if (!returned && i !== n - 1) {
-                    returned = this.switchNode(n - 1);
+                    returned = this.switchNode(n - 1, true);
+                    console.log('onDataChange switchend', i, returned);
                 }
                 return returned;
             }
@@ -60,6 +67,7 @@ class IfBlock implements IIfReturn {
     private returnEle: any = empty;
     private matched = false;
     private refs: IIfTarget[] = [];
+    private returnTrueEl = false;
 
     private acceptIf (ref: IIfTarget, call: IReturnCall, isEnd = false) {
         const currentIndex = this.index;
@@ -75,9 +83,10 @@ class IfBlock implements IIfReturn {
                 this.matched = true;
                 if (!isEnd) this.activeIndex = currentIndex;
                 const dom = this.branch.replace(id);
-                if (this.returnEle === empty && this.branch.returned(call)) {
-                    this.returnEle = dom;
+                if (this.branch.returned(call)) {
+                    this.returnTrueEl = true;
                 }
+                this.returnEle = dom;
             }
         }
     }
@@ -93,18 +102,21 @@ class IfBlock implements IIfReturn {
     }
     // ! if判断会引起finally执行与否
     end (call = () => {}) {
-        this.acceptIf(() => true, call, false);
+        this.acceptIf(() => true, call, true);
         // console.warn('if end', refs);
         watch<boolean[]>(() => (
             this.refs.map(item => typeof item === 'function' ? item() : item.v)
         ), this.onDataChange.bind(this), false);
         this.branch.quit();
-        if (this.returnEle !== empty) {
-            // ! 首次不需要branch
-            return this.returnEle;
+        // ! 首次不需要branch
+        const returnEl = this.returnEle;
+        if (!this.returnTrueEl) {
+            // @ts-ignore
+            this.branch.replaceDom(call());
         }
-        // 创建一个空节点用来作为锚点
-        return Renderer.createFragment();
+        // @ts-ignore
+        this.returnEle = this.returnTrueEl = this.acceptIf = this.matched = null;
+        return returnEl;
     }
 }
 

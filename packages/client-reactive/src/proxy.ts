@@ -232,10 +232,10 @@ export function createProxy<T extends IJson> (data: T, {
                 if (property === 'v' && set) { set(v, origin, `${path.join('.')}.${property as string}`, property); return true; }
                 if (v && typeof v === 'object' && !shallow) { // ! 非shallow时 赋值需要createProxy并且将listener透传下去
                     if (!isProxy(v)) {
-                        if (origin) origin[util].removed = true;
+                        if (origin?.[util]) origin[util].removed = true;
                         v = createProxy(v, {
                             commonLns: target[util].commonLns,
-                            lns: origin?.[util].lns,
+                            lns: origin?.[util]?.lns,
                             shallow,
                             path,
                             key: property as string,

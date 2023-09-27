@@ -38,9 +38,9 @@ export class BranchCache {
 
     tasks: any[] = [];
 
-    get (call: IReturnCall) {
+    get (call: IReturnCall, force = false) {
         const el = this.cacheMap.get(call);
-        if (typeof el === 'undefined') {
+        if (typeof el === 'undefined' || force) {
             let result = call();
             if (typeof result === 'string') {
                 result = Renderer.createTextNode(result);

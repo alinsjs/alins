@@ -534,3 +534,47 @@ function Component () {
     // You can specify the name of the $item and $index through the name attribute: item='person' index='i'
 }
 <Component $$App/>;
+
+
+function ifBlockPlus () {
+    function Main () {
+        let count = 0;
+        const add = () => {count++;};
+        const b = <button onclick={add}> Inc </button>;
+
+        let d1;
+
+        if (count % 3 == 0) {
+            console.log('1111');
+            d1 = <div id="it">Div1 Now count {count}</div>;
+        } else if (count % 3 == 1) {
+            d1 = <div id="it">Div2 Now count {count}</div>;
+        } else {
+            d1 = <div id="it">Div3 Now count {count}</div>;
+        }
+        console.log(d1);
+        d1.appendChild(b);
+        return d1;
+    }
+    <Main $$App/>;
+}
+
+function switchBlockPlus () {
+    function Main () {
+        let count = 0;
+        const add = () => {count++;};
+        const b = <button onclick={add}> Inc </button>;
+
+        let d1;
+
+        switch (count % 3) {
+            case 0: (() => {d1 = <div id="it">Div1 Now count {count}</div>;})(); break;
+            case 1: (() => {d1 = <div id="it">Div2 Now count {count}</div>;})(); break;
+            default: (() => {d1 = <div id="it">Div3 Now count {count}</div>;})(); break;
+        }
+        // console.log(d1);
+        d1.appendChild(b);
+        return d1;
+    }
+    <Main $$App/>;
+}

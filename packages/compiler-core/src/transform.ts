@@ -2,7 +2,7 @@
 import type { NodePath, TraverseOptions } from '@babel/traverse';
 import type { MemberExpression, Program } from '@babel/types';
 import type { IBabelType } from './types';
-import { parseCommentMulti, parseVarDeclCommentReactive } from './comment';
+import { parseCommentMulti, parseReactiveScope, parseVarDeclCommentReactive } from './comment';
 import { parseInnerComponent } from './component/component';
 import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
@@ -408,6 +408,7 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
         },
         IfStatement: {
             enter (path) {
+                parseReactiveScope(path.node);
                 ctx.checkScope(path);
                 // console.log('Expression', path.toString());
                 if (!ctx.enter(path)) return;
@@ -420,6 +421,7 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
         },
         SwitchStatement: {
             enter (path) {
+                parseReactiveScope(path.node);
                 ctx.checkScope(path);
                 // console.log('Expression', path.toString());
                 if (!ctx.enter(path)) return;
@@ -434,19 +436,11 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
             // console.log(ctx.curScope);
             const scope = ctx.curScope;
             if (
+                path.node._isReturnBreak ||
                 (scope.inIf && scope.ifScope?.isReturnJsx) ||
                 (scope.inSwitch && scope.switchScope?.isReturnJsx)
             ) {
-                // if (ctx.curScope.inSwitch) {
-                //     if (path.parent.type === 'SwitchCase') {
-                //         // @ts-ignore
-                //         path.parent._setBrk?.();
-                //     } else {
-                //         const parent = path.findParent(node => node.type === 'SwitchCase');
-                //         // @ts-ignore
-                //         parent?.node._setBrk?.();
-                //     }
-                // }
+                path.node._isReturnBreak = true;
                 path.replaceWith(getT().returnStatement());
             }
         }

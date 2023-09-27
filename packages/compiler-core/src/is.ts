@@ -41,8 +41,15 @@ export enum BlockReturnType {
     Jsx = 2,
 }
 
-export function isBlockReturned (block: BlockStatement|any): BlockReturnType {
+function isAssignJsx (node: Node) {
+    // @ts-ignore
+    return isOriginJSXElement(node.expression?.right?.type);
+}
+
+export function isBlockReturned (block: BlockStatement|any, assignJsx?: ()=>void): BlockReturnType {
     if (block.type !== 'BlockStatement') {
+        debugger;
+        if (assignJsx && isAssignJsx(block)) assignJsx();
         return (isOriginJSXElement(block.type)) ? BlockReturnType.Jsx : BlockReturnType.Common;
     }
     const list = block.body;
@@ -50,9 +57,11 @@ export function isBlockReturned (block: BlockStatement|any): BlockReturnType {
         if (list[i].type === 'ReturnStatement') {
             // @ts-ignore
             return (isOriginJSXElement(list[i]?.argument?.type)) ? BlockReturnType.Jsx : BlockReturnType.Common;
+        } else {
+            if (assignJsx && isAssignJsx(list[i])) assignJsx();
         }
     }
-    return 0;
+    return BlockReturnType.None;
 }
 
 export function isComponentFunc (node: FunctionDeclaration|VariableDeclarator) {

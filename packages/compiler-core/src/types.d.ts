@@ -27,6 +27,7 @@ declare module '@babel/types' {
         _isReactive?: boolean; // 是否标记为响应数据
         _fnArg?: boolean; // 是否是函数参数
         _isStaticScope?: boolean; // 是否是static作用域
+        _isReturnBreak?: boolean; // 标记需要将break转换成return
     }
 
     interface AnyTypeAnnotation extends CommonNode {}

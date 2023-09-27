@@ -16,6 +16,7 @@ export abstract class ControlScope<NodeType> {
 
     isReturnJsx = false;
     markScopeReturnJsx () {
+        if (this.isReturnJsx) return;
         this.isReturnJsx = true;
         this.parent?.markScopeReturnJsx();
     }
@@ -34,6 +35,10 @@ export abstract class ControlScope<NodeType> {
         this.path = path;
         this.parentScope = scope;
         this.top = scope.isTopScope;
+        // @ts-ignore
+        if (path.node._isComReact) {
+            this.markScopeReturnJsx();
+        }
         this._init();
     }
     abstract _init (): void;
