@@ -11,6 +11,7 @@ import './for';
 import { JSX } from './element/element';
 import { mockMap } from './for';
 import { mount } from './element/renderer';
+import { appended, created, mounted, removed } from './element/lifecycle';
 
 export const _$ce = JSX.createElement;
 
@@ -47,3 +48,8 @@ export const _$sw = _switch;
 export function _$f (props: any, children: any[]) {
     return _$ce('', props, ...children);
 }
+
+export const _$cd = created;
+export const _$ad = appended;
+export const _$md = mounted;
+export const _$rd = removed;

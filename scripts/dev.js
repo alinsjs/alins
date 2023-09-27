@@ -5,7 +5,7 @@ import default from './test/cases/async';
  * @Description: Coding something
  */
 const esbuild = require('esbuild');
-const {resolveRootPath} = require('./helper/utils');
+const { resolveRootPath } = require('./helper/utils');
 const fs = require('fs');
 
 const mode = process.argv[2] || 'dev_web';

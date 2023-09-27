@@ -46,7 +46,41 @@
 
 ## 0 简介
 
-### 0.1 前言
+### 0.0 为什么是Alins
+
+我猜你也不喜欢 `ref()`、 `reactive()` `.value` OR `useState()` `setState()`.
+
+这些就是 vue3 的 Composition API 和 React Hooks，以及其他一些复杂的 API 和概念，例如 `defineProps`, `defineEmits`, `useEffect`, `useContext` 等等
+
+```js
+// vue3
+import {ref} from 'vue';
+const count = ref(1);
+count.value ++;
+```
+
+```js
+// react
+import {useState} from 'react';
+const [count, setCount] = useState(1);
+setCount(++count);
+```
+
+如果你确实不喜欢这些，那么你应该会喜欢 `Alins`
+
+```js
+// Alins
+let count = 1;
+count ++;
+```
+
+而 Alins 不止于此，Alins 是最接近原生 js 的 UI 框架。相较于vue3 和 React，Alins有如下特点和优势
+
+1. 无vdom、可以做到最最细粒度更新dom，性能极佳。（js-framework-bench跑分优于vue3和react）
+2. 秉持 0-API的开发理念，无任何响应式api和hooks之类的东西，同时又支持完全响应式数据、单项数据流、双向绑定。代码及其简洁，最贴近js。
+3. 组件仅仅运行一次，无任何副作用。组件仅仅作为UI逻辑的组织形式，而非一个运行时需要重复渲染的模块。
+
+### 0.1 什么是Alins
 
 Alins是一款极致纯粹、简洁、优雅的Web UI框架。秉持0-API、Less is More 的开发理念，旨在帮助开发者摆脱UI框架繁杂的API调用困境，以最直观、最纯粹、最贴近vanillajs的开发方式。
 

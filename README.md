@@ -41,7 +41,41 @@
 
 ## 0 Introduction
 
-### 0.1 Preface
+### 0.0 Why Alins
+
+I Guess You Don't Like `ref()`、 `reactive()` `.value` OR `useState()` `setState()` either.
+
+These are vue3's Composition API and React hooks, as well as some other complex APIs and concepts, such as `defineProps`, `defineEmits`, `useEffect`, `useContext`, etc. 
+
+```js
+// vue3
+import {ref} from 'vue';
+const count = ref(1);
+count.value ++;
+```
+
+```js
+// react
+import {useState} from 'react';
+const [count, setCount] = useState(1);
+setCount(++count);
+```
+
+If you really don't like these, then you should like `Alins`. Compared to vue3 and React, Alins has the following features and advantages
+
+```js
+// Alins
+let count = 1;
+count ++;
+```
+
+And Alins is more than that. Alins is the UI framework closest to native js.
+
+1. NO vdom, the DOM can be updated at the most fine-grained level, with excellent performance. (js-framework-benchmark running score is better than vue3 and react)
+2. Adhering to the 0-API development concept, there is no such thing as responsive api OR hooks. At the same time, it supports fully responsive data, single data flow, and two-way binding. The code is extremely concise, closest to js.
+3. The component only runs once and has no side effects. Components are only used as an organizational form of UI logic, not as a module that needs to be rendered repeatedly during runtime.
+
+### 0.1 What is Alins
 
 Alins is an extremely pure, simple, and elegant web UI framework. It adheres to the development philosophy of 0-API and Less is More, aiming to help developers escape the dilemma of complex API calls in UI frameworks and provide the most intuitive, pure, and close-to-vanillajs development approach.
 

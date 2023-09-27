@@ -30,6 +30,11 @@ export enum AlinsVar {
     If = 'if',
     Switch = 'sw',
     Mount = 'mt',
+    // 小写是为了与标签名保持一致
+    appended = 'ad',
+    mounted = 'md',
+    created = 'cd',
+    removed = 'rd',
 }
 
 // react | computed | watch | ComputedFull |

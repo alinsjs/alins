@@ -4,6 +4,8 @@
  * @Description: Coding something
  */
 
+import type { IElement } from './alins.d';
+
 export function initWebMountedObserver (parent: any) {
 
     if (typeof parent.__$count === 'undefined') parent.__$count = 1;
@@ -92,15 +94,51 @@ export function initWebRemovedObserver (el: any) {
     });
 }
 
+export const CompLife = (() => {
+    const map = {};
+    let id = 0;
+    let currentId = 0;
+    return {
+        enter () {
+            currentId = id++;
+            return currentId;
+        },
+        add (name: string, callback: any) {
+            if (!map[currentId]) {
+                map[currentId] = { [name]: [ callback ] };
+            } else if (!map[currentId][name]) {
+                map[currentId][name] = [ callback ];
+            } else {
+                map[currentId][name].push(callback);
+            }
+        },
+        fill (lifes: any, id: number, node: any) {
+            const fnLifes = map[id];
+            if (!fnLifes) return;
+            delete map[id];
+            for (const k in fnLifes) {
+                const v = fnLifes[k];
+                const key = `$${k}`;
+                const origin = lifes[key];
+                lifes[key] = k === 'mounted' ? () => {
+                    let list: any = [];
+                    const addRM = (r: any) => {if (typeof r === 'function') list.push(r);};
+                    addRM(origin?.(node));
+                    v.forEach((fn: Function) => {addRM(fn(node));});
+                    if (list.length > 0) return () => {list.forEach((fn: Function) => fn(node)); list = null;};
+                } : () => {
+                    origin?.(node);
+                    v.forEach((fn: Function) => {fn(node);});
+                };
+            }
+        }
+    };
+})();
 
-// export function appended (el: Node, call: ((el: Node)=>void)) {
-//     (el as any).__$appended = call;
-// }
-// export function mounted (el: Node, call: ((el: Node)=>void)) {
-//     (el as any).__$mounted = call;
-// }
-// export function removed (el: Node, call: ((el: Node)=>void)) {
-//     (el as any).__$removed = call;
-//     initRemovedObserver(el);
-// }
+const LifeCreator = <T=void>(name: string) =>
+    (v: (dom: IElement)=>T) => { CompLife.add(name, v); };
 
+export const created = LifeCreator('created');
+export const appended = LifeCreator('appended');
+export const mounted = LifeCreator<void|((dom: IElement)=>void)>('mounted');
+export const removed = LifeCreator('removed');

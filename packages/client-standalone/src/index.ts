@@ -12,6 +12,7 @@ import type {
 
 import {
     ref, reactive, watch, computed,
+    created, appended, mounted, removed,
     _if, _switch,
     Renderer,
     reactiveBindingEnable,
@@ -21,7 +22,10 @@ import {
     mount,
 } from 'alins';
 
-export { ref, reactive, watch, computed, mount } from 'alins';
+export {
+    ref, reactive, watch, computed, mount,
+    created, appended, mounted, removed
+} from 'alins';
 
 type IValueCond<T> = (()=>T)|IRefData<T>;
 type IBoolCond = IValueCond<boolean>;
@@ -253,4 +257,5 @@ export const alins = {
     Show,
     Dom,
     Component,
+    created, appended, mounted, removed,
 };

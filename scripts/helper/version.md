@@ -22,17 +22,17 @@
 - [ ] For 类型提示
 - [ ] Async Data 类型标注
 - [ ] alins-vsc
+- [ ] 大列表排序时移动dom元素优化性能
+- [ ] 模版语法支持 html 文件作为模版语言
+- [ ] computed 重构；dirty 标记。优化 const b = a++; 逻辑
 
 ## 0.0.35 Doing
 
 - [x] alins-standalone 优化Api，使其更易用
 - [x] fix 组件参数中 传递方法的bug
-- [x] if、switch block 优化，现在支持jsx复制语法
+- [x] if、switch block 优化，现在支持jsx赋值语法
 - [x] if、switch block 支持使用 @reactive 或者 $: 标记强制启用响应式逻辑
-- [ ] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
-- [ ] 大列表排序时移动dom元素优化性能
-- [ ] 模版语法支持 html 文件作为模版语言
-- [ ] computed 重构；dirty 标记。优化 const b = a++; 逻辑
+- [x] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
 
 ## 0.0.33 - 0.0.34
 

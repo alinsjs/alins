@@ -9,26 +9,29 @@ import { computed, isProxy } from 'alins-reactive';
 import { getParent } from '../utils';
 import { IAttributes, ITrueElement } from './alins.d';
 import { appendChild, getFirstElement, Renderer } from './renderer';
+import { CompLife } from './lifecycle';
 
 export type IJSXComp = ((
     attributes: IAttributes|null, children: ITrueElement[]
 ) => ITrueElement|Promise<ITrueElement>)
 
-export function renderComponent (comp: IJSXComp, attrs: IAttributes|null, children: any[]) {
-    let $mount: any = null,
-        $created: any = null,
-        $appended: any = null,
-        $mounted: any = null,
-        $removed: any = null;
+export function renderComponent (
+    comp: IJSXComp,
+    attrs: IAttributes|null,
+    children: any[],
+) {
+    const id = CompLife.enter();
+    const lifes: any = {};
+    let $mount: any = null;
     if (attrs) {
         for (const k in attrs) {
             const v = attrs[k];
             switch (k) {
                 case '$mount': $mount = v; delete attrs[k]; break;
-                case '$created': $created = v; delete attrs[k]; break;
-                case '$appended': $appended = v; delete attrs[k]; break;
-                case '$mounted': $mounted = v; delete attrs[k]; break;
-                case '$removed': $removed = v; delete attrs[k]; break;
+                case '$created':
+                case '$appended':
+                case '$mounted':
+                case '$removed': lifes[k] = v; delete attrs[k]; break;
                 default: {
                     if (!isProxy(v)) {
                         attrs[k] = { v, [type]: AlinsType.Ref }; // ! 模拟ref
@@ -40,12 +43,15 @@ export function renderComponent (comp: IJSXComp, attrs: IAttributes|null, childr
         }
     }
     const dom = comp(attrs || {}, children);
+
+    CompLife.fill(lifes, id, dom);
+
     const result = transformAsyncDom(dom, (realDom) => {
         const node = getFirstElement(realDom);
-        $created?.(node);
-        if ($appended) node.__$appended = $appended;
-        if ($mounted) node.__$mounted = $mounted;
-        if ($removed) node.__$removed = $removed;
+        for (const k in lifes) {
+            const fn = lifes[k];
+            k === '$created' ? fn(node) : (node[`__${k}`] = fn);
+        }
     }) as any;
 
     if ($mount) {

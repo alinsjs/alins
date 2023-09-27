@@ -7,7 +7,7 @@ import { parseInnerComponent } from './component/component';
 import { currentModule as ctx, enterContext, exitContext } from './context';
 import {
     createEmptyString, createExtendCalleeWrap, createUnfInit,
-    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, transformDataLabel, transformMountLabel, transformWatchLabel,
+    extendCallee, getObjectPropValue, getT, initTypes, ModArrayFunc, parseComputedSet, parseFirstMemberObject, transformDataLabel, transformLifeLabel, transformMountLabel, transformWatchLabel,
 } from './parse-utils';
 import { isJsxExtendCall, isJsxExtendDef, isMemberExp, isOriginJSXElement } from './is';
 import { ImportManager, IImportType } from './controller/import-manager';
@@ -159,6 +159,12 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
                     }; break;
                     case 'mount': {
                         result = transformMountLabel(path.node);
+                    }; break;
+                    case 'mounted':
+                    case 'created':
+                    case 'appended':
+                    case 'removed': {
+                        result = transformLifeLabel(name, path.node);
                     }; break;
                 }
                 if (result) path.replaceWith(result);

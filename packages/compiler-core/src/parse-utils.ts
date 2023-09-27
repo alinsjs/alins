@@ -631,3 +631,10 @@ export function transformMountLabel (node: LabeledStatement) {
     const args = exp.expressions || [ exp ];
     return createCtxCall(AlinsVar.Mount, args);
 }
+
+export function transformLifeLabel (name: string, node: LabeledStatement) {
+    // @ts-ignore
+    const exp = node.body?.expression;
+    if (!exp) return null;
+    return createCtxCall(AlinsVar[name], [ exp ]);
+}

@@ -19,6 +19,8 @@ export * from 'alins-reactive';
 
 export * from './element/jsx.d';
 
+export { appended, created, mounted, removed } from './element/lifecycle';
+
 export const version = __VERSION__;
 
 export { reactiveBindingEnable } from './element/dom-util';

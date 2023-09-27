@@ -82,6 +82,7 @@ export function appendChild (parent: any, node: any, child?: any) {
     }
     // @ts-ignore
     lifeNode.__$appended?.(lifeNode);
+    lifeNode.__$appended = null;
 }
 
 export function mount (node: IElement, parent: IElement|string|Node = 'body') {

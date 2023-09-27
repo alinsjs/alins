@@ -27,7 +27,7 @@ const {
 
 let isWebPackage = false;
 
-const isDev = true;
+const isDev = false;
 
 // npx lerna version 0.0.29 --no-git-tag-version --force-publish --yes
 // npm run build
