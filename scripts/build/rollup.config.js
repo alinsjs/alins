@@ -27,7 +27,9 @@ const {
 
 let isWebPackage = false;
 
-const isDev = false;
+const isDev = process.env.ENV === 'dev';
+
+console.log('isDev = ', isDev);
 
 // npx lerna version 0.0.29 --no-git-tag-version --force-publish --yes
 // npm run build
@@ -63,7 +65,12 @@ function parseBuildConfig () {
             umdName: 'AlinsUtil',
             // format: 'esm umd',
         },
-        'client-standalone': {
+        'client-standalone': isDev ? {
+            packageName: 'alins-standalone',
+            format: 'iife',
+            umdName: 'Alins',
+            external: false,
+        } : {
             packageName: 'alins-standalone',
             type: 'web',
             // format: 'esm umd iife',

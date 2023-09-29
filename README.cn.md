@@ -160,7 +160,7 @@ npm run dev
 <script src='https://cdn.jsdelivr.net/npm/alins-compiler-web'></script>
 <script type='text/alins'> 
     let count = 1;
-    <button onclick={count++} $$body>
+    <button onclick={count++} $mount='body'>
         count is {count}
     </button>;
 </script>

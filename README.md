@@ -61,7 +61,7 @@ const [count, setCount] = useState(1);
 setCount(++count);
 ```
 
-If you really don't like these, then you should like `Alins`. Compared to vue3 and React, Alins has the following features and advantages
+If you really don't like these, then you should like `Alins`. 
 
 ```js
 // Alins
@@ -69,7 +69,7 @@ let count = 1;
 count ++;
 ```
 
-And Alins is more than that. Alins is the UI framework closest to native js.
+And Alins is more than that. Alins is the UI framework closest to native js.Compared to vue3 and React, Alins has the following features and advantages
 
 1. NO vdom, the DOM can be updated at the most fine-grained level, with excellent performance. (js-framework-benchmark running score is better than vue3 and react)
 2. Adhering to the 0-API development concept, there is no such thing as responsive api OR hooks. At the same time, it supports fully responsive data, single data flow, and two-way binding. The code is extremely concise, closest to js.
@@ -149,7 +149,7 @@ You can also directly clone the [template code repository](https://github.com/al
 <script src='https://cdn.jsdelivr.net/npm/alins-compiler-web'></script>
 <script type='text/alins'>
      let count = 1;
-     <button onclick={count++} $$body>
+     <button onclick={count++} $mount='body'>
          count is {count}
      </button>;
 </script>

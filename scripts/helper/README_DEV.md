@@ -37,7 +37,7 @@ const a = 1; // @shallow  // shallow 类型的动态变量
 <div style:color={color}></div> => <div style={`color:${coloe}`}></div>
 <div onclick={a++}></div> => <div onclick={()=>a++}></div>
 <div onclick:pure={a()}></div> => <div onclick={a()}></div>
-<div $$body></div> => <div $mount={document.body}></div>
+<div $mount='body'></div> => <div $mount={document.body}></div>
 <div $$App></div> => <div $mount='#App'></div>
 
 ```

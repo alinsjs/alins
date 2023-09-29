@@ -17,7 +17,7 @@ function resolvePackagePath (str) {
 }
 
 function extractSinglePackageInfo (dir) {
-    const {name, version, dependencies} = require(resolvePackagePath(`${dir}/package.json`));
+    const { name, version, dependencies } = require(resolvePackagePath(`${dir}/package.json`));
     return {
         name,
         version,
@@ -71,14 +71,16 @@ function initSinglePackageInfo (dir, isDev = false) {
         // package.unpkg = `dist/${packageName}.min.js`;
         // package.jsdelivr = `dist/${packageName}.min.js`;
     }
-    ['description', 'author', 'repository', 'license'].forEach(name => {
+    [ 'description', 'author', 'repository', 'license' ].forEach(name => {
         package[name] = rootPkg[name];
     });
     // package.publishConfig = {
     //     registry: 'https://registry.npmjs.org/',
     // };
     writeJsonIntoFile(package, packagePath);
-    fs.copyFileSync(resolveRootPath('README.md'), resolvePackagePath(`${dir}/README.md`));
+    if ([ 'client-core', 'client-utils' ].includes(dir)) {
+        fs.copyFileSync(resolveRootPath('README.md'), resolvePackagePath(`${dir}/README.md`));
+    }
     fs.copyFileSync(resolveRootPath('LICENSE'), resolvePackagePath(`${dir}/LICENSE`));
     fs.copyFileSync(resolveRootPath('scripts/helper/.npmignore'), resolvePackagePath(`${dir}/.npmignore`));
 
@@ -100,7 +102,7 @@ async function exec (cmd) {
     return new Promise(resolve => {
         childProcess.exec(cmd, function (error, stdout, stderr) {
             if (error) {
-                resolve({success: false, stdout, stderr});
+                resolve({ success: false, stdout, stderr });
             } else {
                 resolve({
                     success: true,

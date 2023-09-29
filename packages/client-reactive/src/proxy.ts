@@ -41,6 +41,8 @@ export function isProxy (data: any, checkUtil = false): boolean {
     return t === AlinsType.Proxy || t === AlinsType.Ref;
 }
 
+export const isReactive = isProxy;
+
 export function mockRef (data: any) {
     return { v: data, [type]: AlinsType.Ref };
 }

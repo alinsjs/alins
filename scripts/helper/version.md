@@ -26,13 +26,16 @@
 - [ ] 模版语法支持 html 文件作为模版语言
 - [ ] computed 重构；dirty 标记。优化 const b = a++; 逻辑
 
-## 0.0.35 Doing
+## 0.0.35
 
 - [x] alins-standalone 优化Api，使其更易用
 - [x] fix 组件参数中 传递方法的bug
 - [x] if、switch block 优化，现在支持jsx赋值语法
 - [x] if、switch block 支持使用 @reactive 或者 $: 标记强制启用响应式逻辑
+- [x] 支持 $$: shallow:
 - [x] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
+- [x] 去除 $$body 简写
+- [x] fix 单属性类名 bug
 
 ## 0.0.33 - 0.0.34
 

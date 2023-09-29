@@ -5,9 +5,10 @@
  */
 
 const execa = require('execa');
-const {resolveRootPath} = require('./utils');
+const { resolveRootPath } = require('./utils');
 
 const dirName = process.argv[2];
+const env = process.argv[3] || 'prod';
 
 async function build () {
     await execa(
@@ -18,9 +19,10 @@ async function build () {
             '--environment',
             [
                 `DIR_NAME:${dirName}`,
+                `ENV:${env}`
             ],
         ],
-        {stdio: 'inherit'},
+        { stdio: 'inherit' },
     );
 }
 

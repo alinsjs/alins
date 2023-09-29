@@ -153,6 +153,10 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
                     case '$': {
                         result = transformDataLabel(path.node, false);
                     }; break;
+                    case 'shallow':
+                    case '$$': {
+                        result = transformDataLabel(path.node, false, true);
+                    }; break;
                     case 'static_scope': {
                         result = path.node.body;
                         result._isStaticScope = true;

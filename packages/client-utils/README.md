@@ -41,17 +41,62 @@
 
 ## 0 Introduction
 
-### 0.1 Preface
+### 0.0 Why Alins
+
+I Guess You Don't Like `ref()`、 `reactive()` `.value` OR `useState()` `setState()` either.
+
+These are vue3's Composition API and React hooks, as well as some other complex APIs and concepts, such as `defineProps`, `defineEmits`, `useEffect`, `useContext`, etc. 
+
+```js
+// vue3
+import {ref} from 'vue';
+const count = ref(1);
+count.value ++;
+```
+
+```js
+// react
+import {useState} from 'react';
+const [count, setCount] = useState(1);
+setCount(++count);
+```
+
+If you really don't like these, then you should like `Alins`. 
+
+```js
+// Alins
+let count = 1;
+count ++;
+```
+
+And Alins is more than that. Alins is the UI framework closest to native js.Compared to vue3 and React, Alins has the following features and advantages
+
+1. NO vdom, the DOM can be updated at the most fine-grained level, with excellent performance. (js-framework-benchmark running score is better than vue3 and react)
+2. Adhering to the 0-API development concept, there is no such thing as responsive api OR hooks. At the same time, it supports fully responsive data, single data flow, and two-way binding. The code is extremely concise, closest to js.
+3. The component only runs once and has no side effects. Components are only used as an organizational form of UI logic, not as a module that needs to be rendered repeatedly during runtime.
+
+### 0.1 What is Alins
 
 Alins is an extremely pure, simple, and elegant web UI framework. It adheres to the development philosophy of 0-API and Less is More, aiming to help developers escape the dilemma of complex API calls in UI frameworks and provide the most intuitive, pure, and close-to-vanillajs development approach.
 
-You only need to understand the syntax rules of JSX (similar to HTML) to develop Alins web applications without any obstacles. Below is a basic counter example that you can [experience online in the playground](https://alinsjs.github.io/playground/#4):
+You only need to understand the syntax rules of JSX (similar to HTML) to develop Alins web applications without any obstacles. Below is a basic Counter Program that you can [experience online in the playground](https://alinsjs.github.io/playground/#4):
 
 ```jsx
 let count = 1;
 <button onclick={count++} $mount='#App'>
      count is {count}
 </button>;
+```
+
+This example is just a shorthand, you can also use standard js syntax:
+
+```jsx
+let count = 1;
+document.getElementById('App').appencChild(
+  <button onclick={(e) =>{ count++ }}>
+    count is {count} 
+  </button>
+);
 ```
 
 ### 0.2 Features
@@ -104,7 +149,7 @@ You can also directly clone the [template code repository](https://github.com/al
 <script src='https://cdn.jsdelivr.net/npm/alins-compiler-web'></script>
 <script type='text/alins'>
      let count = 1;
-     <button onclick={count++} $$body>
+     <button onclick={count++} $mount='body'>
          count is {count}
      </button>;
 </script>

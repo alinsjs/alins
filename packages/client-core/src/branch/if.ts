@@ -51,11 +51,11 @@ class IfBlock implements IIfReturn {
         for (let i = 0; i < n; i++) {
             if (bs[i]) {
                 let returned = this.switchNode(i);
-                console.log('onDataChange', i, returned);
+                // console.log('onDataChange', i, returned);
                 // ! 没有返回值并且不是最后一个 执行end逻辑
                 if (!returned && i !== n - 1) {
                     returned = this.switchNode(n - 1, true);
-                    console.log('onDataChange switchend', i, returned);
+                    // console.log('onDataChange switchend', i, returned);
                 }
                 return returned;
             }

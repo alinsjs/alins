@@ -73,25 +73,24 @@ export function parseReactiveScope (node: IfStatement|SwitchStatement) {
 }
 
 export function parseVarDeclCommentReactive (node: VariableDeclaration) {
+
+    const boolean = parseCommentSingle(node);
+    if (boolean) {
+        node.declarations.forEach(dec => {
+            // if(dec.id.name)
+            dec._isShallow = true;
+            dec._isComReact = true;
+        });
+        return;
+    }
     const comment = parseCommentMulti(node);
-    let isStatic = false;
     if (comment) {
         handleDeclarations(comment, node, node => {node._isComReact = true;});
     } else {
-        // 不同同时被指定为 @reactive 和 @static
+        // 不能同时被指定为 @reactive 和 @static
         const comment = parseCommentMulti(node, RegMap.Static);
         if (comment) {
-            isStatic = true;
             handleDeclarations(comment, node, node => {node._isComStatic = true;});
-        }
-    }
-    if (!isStatic) {
-        const boolean = parseCommentSingle(node);
-        if (boolean) {
-            node.declarations.forEach(dec => {
-                // if(dec.id.name)
-                dec._isShallow = true;
-            });
         }
     }
 }

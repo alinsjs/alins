@@ -528,11 +528,7 @@ function createNewJSXAttribute (node: JSXAttribute, handleReactive?: boolean) {
         if (name[0] === '$') {
             if (name[1] === '$') {
                 name = name.substring(2);
-                if (name === 'body') {
-                    return createWrapAttr('$mount', createMemberExp('document', 'body'), true);
-                } else {
-                    return createWrapAttr('$mount', getT().stringLiteral(`#${name}`), true);
-                }
+                return createWrapAttr('$mount', getT().stringLiteral(`#${name}`), true);
             } else {
                 name = name.substring(1);
                 return createWrapAttr(name, name);
@@ -583,7 +579,7 @@ export function transformWatchLabel (node: LabeledStatement) {
     return null;
 }
 
-export function transformDataLabel (node: LabeledStatement, isStatic = true) {
+export function transformDataLabel (node: LabeledStatement, isStatic = true, shallow = false) {
 
     // @ts-ignore
     const exp = node.body?.expression;
@@ -602,6 +598,10 @@ export function transformDataLabel (node: LabeledStatement, isStatic = true) {
     );
 
     varNode[isStatic ? '_isComStatic' : '_isComReact'] = true;
+
+    if (!isStatic && shallow) {
+        varNode._isShallow = true;
+    }
 
     return createVarDeclaration('let', [ varNode ]);
 }
