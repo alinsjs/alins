@@ -24,6 +24,16 @@ export function isDepReactive () {
 export function observe (fn: ()=>any, listener: IProxyListener) {
     // if (__DEBUG__) console.log('Start observe', fn, listener);
     if (!listener) listener = fn;
+    const origin = listener;
+    listener = (...args) => {
+        // ! 动态收集依赖
+        // ! fix computed 遇到 && || 时首次运行可能observe不到后面一个响应式数据的问题
+        currentFn = listener;
+        depReactive = false;
+        const result = origin(...args);
+        currentFn = null;
+        return result;
+    };
     currentFn = listener;
     depReactive = false;
     const v = fn();
@@ -176,6 +186,7 @@ export function createProxy<T extends IJson> (data: T, {
     const proxy = new Proxy(data, {
         // ! 闭包
         get (target: IJson, property, receiver) {
+            // if (property === 'v') console.log('vvvv');
             // console.log('debug: Get property', property);
             // if (property === 'label') console.warn('proxy get', property);
             const isFunc = typeof target[property] === 'function';
@@ -186,6 +197,7 @@ export function createProxy<T extends IJson> (data: T, {
             if (typeof property !== 'symbol' && !isFunc) {
                 // ! 收集依赖
                 if (currentFn) {
+                    // console.log('collect dep');
                     if (!depReactive) depReactive = true;
                     // console.warn('COLLECT------ ', property, '=', target[property]);
                     addLns(lns, property, currentFn);
@@ -300,9 +312,11 @@ export function replaceLNS (nv: IProxyData<any>, origin: IProxyData<any>) {
 }
 
 export function addLns (lns, property, listener) {
+    // console.log('add lns start');
     let set = lns[property];
     if (!set) set = lns[property] = new Set();
     if (!set.has(listener)) {
+        // console.log('add lns true');
         // 移除被删除的dom的引用释放内存
         const cleaner = getCurCleaner();
         if (cleaner) {

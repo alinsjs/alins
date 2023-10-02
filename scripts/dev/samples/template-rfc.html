@@ -3,19 +3,40 @@
  * @Date: 2023-09-25 09:15:54
  * @Description: Coding something
 -->
-<div :onclick="aa">
+<template name="Counter">
+    <div :onclick="aa">
 
-</div>
-<script ts>
-    import {buildData} from './data.js'
-    mounted: ()=>{
-        
-    }
+    </div>
+    <script ts>
+        import {buildData} from './data.js'
+        mounted: ()=>{
+            
+        }
 
-    buildData(1)
-    let a = 1;
-    let b = 2;
-</script>
-<style>
+        buildData(1)
+        let a = 1;
+        let b = 2;
+    </script>
+    <style>
 
-</style>
+    </style>
+</template>
+
+<template name="Main">
+    <div :onclick="aa">
+
+    </div>
+    <script ts>
+        import {buildData} from './data.js'
+        mounted: ()=>{
+            
+        }
+
+        buildData(1)
+        let a = 1;
+        let b = 2;
+    </script>
+    <style>
+
+    </style>
+</template>

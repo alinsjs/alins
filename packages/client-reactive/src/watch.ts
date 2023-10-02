@@ -43,8 +43,10 @@ export function watch<T> (
     if (typeof target === 'function') {
         let before: any = empty;
         before = observe(target, (v, nv, path, p, remove) => {
+            // console.log('observe', v, nv, path);
             // ! 对于 UpdateExpression 直接用v作为新值 如果通过target会循环调用 (Maximum call stack size excee)
             // @ts-ignore
+            // const after = target._update ? v : observe(target, fn);
             const after = target._update ? v : target();
             if (!isValueEqual(before, after)) {
                 // console.log(after, before, path, p, remove);
@@ -54,7 +56,6 @@ export function watch<T> (
                 return after;
             }
         });
-
         return { v: before };
     } else if (!isProxy(target)) {
         // ! 兼容computed(()=>1+1)情况
