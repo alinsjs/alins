@@ -28,20 +28,21 @@ export class StaticScope {
             markStatic();
             return;
         }
-        if (node.type === 'FunctionDeclaration') {
-            if (node.id?.name[0] === '_') markStatic();
-        } else if (
-            node.type === 'ArrowFunctionExpression' ||
-            node.type === 'FunctionExpression'
-        ) {
-            if (
-                path.parent.type === 'VariableDeclarator' &&
-                // @ts-ignore
-                path.parent.id?.name[0] === '_'
-            ) {
-                markStatic();
-            }
-        }
+        // ! 去除变量命名控制静态作用域
+        // if (node.type === 'FunctionDeclaration') {
+        //     if (node.id?.name[0] === '_') markStatic();
+        // } else if (
+        //     node.type === 'ArrowFunctionExpression' ||
+        //     node.type === 'FunctionExpression'
+        // ) {
+        //     if (
+        //         path.parent.type === 'VariableDeclarator' &&
+        //         // @ts-ignore
+        //         path.parent.id?.name[0] === '_'
+        //     ) {
+        //         markStatic();
+        //     }
+        // }
     }
     exit (node: any) {
         if (this.enable && node._isStaticScope) {
