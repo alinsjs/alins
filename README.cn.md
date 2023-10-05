@@ -97,7 +97,7 @@ let count = 1;
 
 ```jsx
 let count = 1;
-document.getElementById('App').appencChild(
+document.getElementById('App').appendChild(
   <button onclick={(e) =>{ count++ }}>
     count is {count} 
   </button>

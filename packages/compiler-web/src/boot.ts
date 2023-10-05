@@ -5,12 +5,13 @@
  */
 
 import {
-    version,
-    createStore,
     _$c, _$cc, _$ce, _$e, _$es, _$if, _$mf, _$mm, _$mnr,
-    _$mu, _$r, _$sw, _$w, defineRenderer, useRenderer, _$mt,
+    _$mu, _$r, _$sw, _$w, _$mt,
     _$ad, _$cd, _$md, _$rd,
+    version, createStore,
+    defineRenderer, useRenderer,
     ref, reactive, computed, watch, observe,
+    mount, mounted, removed, created, appended,
 } from 'alins';
 import { parseWebAlins } from './parser';
 import { IImportType } from 'alins-compiler-core';
@@ -64,6 +65,7 @@ if (typeof window !== 'undefined') {
         useRenderer,
         defineRenderer,
         ref, reactive, computed, watch, observe,
+        mount, mounted, removed, created, appended,
     };
     window.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 }

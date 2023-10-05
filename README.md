@@ -92,7 +92,7 @@ This example is just a shorthand, you can also use standard js syntax:
 
 ```jsx
 let count = 1;
-document.getElementById('App').appencChild(
+document.getElementById('App').appendChild(
   <button onclick={(e) =>{ count++ }}>
     count is {count} 
   </button>

@@ -34,9 +34,15 @@
 - [x] if、switch block 支持使用 @reactive 或者 $: 标记强制启用响应式逻辑
 - [x] 支持 $$: shallow:
 - [x] 生命周期优化，支持组件内使用；+ 语法糖 $remove:el,xxx();
-- [x] 去除 $$body 简写
 - [x] fix 单属性类名 bug
 - [x] fix computed 遇到 && || 时首次运行可能observe不到后面一个响应式数据的问题
+
+去除过度的语法糖
+
+- [x] 去除 $$body 简写
+- [ ] 去除 $$ID = $mount='#ID' 的简写
+- [ ] 去除变量命名控制响应式数据 保留注释和js label
+- [ ] 去除
 
 ## 0.0.33 - 0.0.34
 

@@ -526,13 +526,14 @@ function createNewJSXAttribute (node: JSXAttribute, handleReactive?: boolean) {
     } else {
         let name = key.name;
         if (name[0] === '$') {
-            if (name[1] === '$') {
-                name = name.substring(2);
-                return createWrapAttr('$mount', getT().stringLiteral(`#${name}`), true);
-            } else {
-                name = name.substring(1);
-                return createWrapAttr(name, name);
-            }
+            // ! 去除 $$App 的简写 v0.0.35
+            // if (name[1] === '$') {
+            //     name = name.substring(2);
+            //     return createWrapAttr('$mount', getT().stringLiteral(`#${name}`), true);
+            // } else {
+            name = name.substring(1);
+            return createWrapAttr(name, name);
+            // }
         }
     }
     return null;
