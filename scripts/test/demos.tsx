@@ -606,3 +606,17 @@ function lifeLabel () {
         console.log(11111, dom);
     }}/>;
 }
+
+
+{/* <div $$App
+    style:color={`${(a && !b) ? '#f44': '#4f4'}`}
+>
+    Hello!
+</div> */}
+
+/**
+ * todo 有bug
+a.v = true;
+b.v = true;
+b.v = false
+ */
