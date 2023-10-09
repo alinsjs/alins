@@ -44,6 +44,8 @@
 
 **[English](https://github.com/alinsjs/alins/blob/master/README.md) | [文档](https://alinsjs.github.io/docs-cn) | [演练场](https://alinsjs.github.io/playground/) | [更新日志](https://github.com/alinsjs/alins/blob/master/scripts/helper/version.md) | [反馈错误/缺漏](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [留言板](https://theajack.github.io/message-board/?app=alins)**
 
+**国内高速访问地址: [文档](https://alinsjs.gitee.io/docs-cn) | [演练场](https://alinsjs.gitee.io/playground/)**
+
 ## 0 简介
 
 ### 0.0 为什么是Alins
