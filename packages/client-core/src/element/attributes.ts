@@ -11,6 +11,7 @@ export function parseAttributes (
     dom: IElement,
     value: IBaseAttributes | string | (()=>string)
 ): boolean {
+    const REG = /(.*?)=(.*?)(&|$)/g;
     if (value === null || typeof value === 'undefined') return false;
 
     if (typeof value === 'function' || isProxy(value)) {
@@ -18,13 +19,17 @@ export function parseAttributes (
         reactiveBindingEnable(value, (v: any, ov: any, path, prop, remove) => {
             if (typeof v === 'string') {
                 if (!prop || prop === 'v') {
-                    const r1 = v.matchAll(/(.*?)=(.*?)(&|$)/g);
+                    const r1 = v.matchAll(REG);
                     v = {};
-                    // @ts-ignore
-                    for (const item of r1) v[item[1]] = item[2];
-                    const r2 = ov.matchAll(/(.*?)=(.*?)(&|$)/g);
-                    ov = {};
-                    for (const item of r2) ov[item[1]] = item[2];
+                    let item: any;
+                    while (!(item = r1.next()).done) v[item.value[1]] = item.value[2];
+                    if (ov) {
+                        const r2 = ov.matchAll(REG);
+                        ov = {};
+                        while (!(item = r2.next()).done) ov[item.value[1]] = item.value[2];
+                    } else {
+                        ov = {};
+                    }
                 } else {
                     !!remove ?
                         dom.removeAttribute(prop) :
@@ -33,9 +38,10 @@ export function parseAttributes (
                 }
             }
             for (const k in v) dom.setAttribute(k, v[k]);
-            for (const k in ov)
+            for (const k in ov) {
                 if (typeof v[k] === 'undefined')
                     dom.removeAttribute(k);
+            }
         });
     } else if (typeof value === 'object') {
         for (const k in value) {
@@ -45,6 +51,12 @@ export function parseAttributes (
                     dom.removeAttribute(v) :
                     dom.setAttribute(k, v);
             });
+        }
+    } else if (typeof value === 'string') {
+        const r1 = value.matchAll(REG);
+        let item: any;
+        while (!(item = r1.next()).done) {
+            dom.setAttribute(item.value[1], item.value[2]);
         }
     } else {
         return false;

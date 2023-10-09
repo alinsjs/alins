@@ -50,3 +50,5 @@ export default defineConfig({
    plugins: [alins()],
 })
 ```
+
+Note: Alins will compile files named with `jsx` and `tsx` suffixes by default.

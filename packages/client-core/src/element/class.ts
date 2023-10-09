@@ -21,8 +21,7 @@ function setClass (dom: IElement, name: string, isRemove = false, single = false
 function replaceClass (dom: IElement, v: string) {
     dom.className = Array.from(new Set(v.split(' '))).join(' ');
     const sc = dom[SC];
-    if (sc)
-        for (const k of sc) dom.classList.add(k);
+    if (sc) sc.forEach((k: string) => {dom.classList.add(k);});
 }
 
 export function parseClassName (

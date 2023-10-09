@@ -1,3 +1,8 @@
+<!--
+ * @Author: chenzhongsheng
+ * @Date: 2023-09-22 23:38:20
+ * @Description: Coding something
+-->
 
 <p align="center">
     <img src='https://shiyix.cn/images/alins.png' width='100px'/>
@@ -49,3 +54,5 @@ build({
    plugins: [alins()],
 });
 ```
+
+Note: Alins will compile files named with `jsx` and `tsx` suffixes by default.

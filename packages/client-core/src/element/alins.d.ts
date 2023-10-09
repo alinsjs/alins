@@ -686,7 +686,22 @@ export interface IBaseAttributes extends IEventAttributes {
 
 export interface IControlAttributes {
     $mount?: ITrueElement|string|HTMLElement;
-    $show?: boolean|(()=>boolean);
+    $for?: any[],
+    $item?: string,
+    $index?: string,
+    $if?: boolean|(()=>boolean),
+    $elseif?: boolean|(()=>boolean),
+    $else?: undefined,
+    $switch?: any|(()=>any),
+    $case?: any;
+    $default?: undefined;
+    $async?: Promise<any>;
+    $name?: string;
+    $show?: boolean|(()=>boolean),
+    $created?: ILifeListener;
+    $appended?: ILifeListener;
+    $mounted?: ILifeListener<void|ILifeListener>;
+    $removed?: ILifeListener;
 }
 
 export type ILifeListener<T=void> = (dom: IElement)=>T;
@@ -697,26 +712,11 @@ export interface IAttributes extends IBaseAttributes, IControlAttributes {
     } & {
         [prop: string]: any;
     };
-    $created?: ILifeListener;
-    $appended?: ILifeListener;
-    $mounted?: ILifeListener<void|ILifeListener>;
-    $removed?: ILifeListener;
     $html?: any;
     $ref?: any;
     'value:string'?: any;
     'value:number'?: any;
     'value:boolean'?: any;
-
-    $if?: any;
-    $elseif?: any;
-    $else?: any;
-    $case?: any;
-    $default?: any;
-    $break?: boolean;
-    $item?: string;
-    $index?: number;
-    $name?: string;
-
     [prop: string]: any;
 }
 export interface ITextNode {

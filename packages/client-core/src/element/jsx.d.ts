@@ -5,7 +5,7 @@ import { IAttributes } from 'packages/core/src/element/jsx';
  * @Description: Coding something
  */
 
-import type { IAttributes, IElement } from './alins.d';
+import type { IAttributes, IControlAttributes, IElement } from './alins.d';
 
 // tslint:disable-next-line:export-just-namespace
 
@@ -19,7 +19,6 @@ declare global {
     }
     namespace JSX {
         interface Element extends Promise<IElement>, IElement {
-            (props: {a:number}): IElement;
         }
         // interface ElementClass {
         //     render():void;
@@ -112,6 +111,12 @@ declare global {
             var: IAttributes;
             [prop: string]: IAttributes;
         }
+
+        type Props<T extends Record<string, any> = Record<string, any>> = IControlAttributes & {
+            [prop in keyof T]: T[prop];
+        };
+
+        type Children = JSX.Element[];
     }
 
     type JSXInnerComp<T> = (attrs: T & {[prop: string]:any}) => JSX.Element;

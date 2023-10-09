@@ -26,6 +26,13 @@
 - [ ] 模版语法支持 html 文件作为模版语言
 - [ ] computed 重构；dirty 标记。优化 const b = a++; 逻辑
 
+## 0.0.36
+
+- [x] fix for of 打包导致的问题
+- [x] fix $attributes 属性使用响应式字符串作为值时遇到的响应式问题
+- [x] fix $attributes 属性使用字符串无效的问题
+- [x] 增加 JSX.Props JSX.Children 接口
+
 ## 0.0.35
 
 - [x] alins-standalone 优化Api，使其更易用

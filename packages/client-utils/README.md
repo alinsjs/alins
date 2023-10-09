@@ -39,6 +39,8 @@
 
 **[中文](https://github.com/alinsjs/alins/blob/master/README.cn.md) | [Documentation](https://alinsjs.github.io/docs) | [Playground](https://alinsjs.github.io/playground/) | [Update Log](https://github.com/alinsjs/alins/blob/master/scripts/helper/version.md) | [Feedback Errors/Defects](https://github.com/alinsjs/alins/issues/new) | [Gitee](https://gitee.com/alinsjs/alins) | [Message Board](https://theajack.github.io/message-board/?app=alins)**
 
+**国内高速访问地址: [文档](https://alinsjs.gitee.io/docs-cn) | [演练场](https://alinsjs.gitee.io/playground/)**
+
 ## 0 Introduction
 
 ### 0.0 Why Alins
@@ -138,7 +140,7 @@ After following the steps, execute the following command to install and run it.
 ```
 cd <project>
 npm i
-npm rundev
+npm run dev
 ```
 
 You can also directly clone the [template code repository](https://github.com/alinsjs/ebuild-template-alins)

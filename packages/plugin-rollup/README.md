@@ -51,3 +51,5 @@ export default {
    ]
 }
 ```
+
+Note: Alins will compile files named with `jsx` and `tsx` suffixes by default.
