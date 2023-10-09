@@ -607,16 +607,18 @@ function lifeLabel () {
     }}/>;
 }
 
+function doubleAnd(){
 
-{/* <div $$App
-    style:color={`${(a && !b) ? '#f44': '#4f4'}`}
->
-    Hello!
-</div> */}
+    let a = false; // @reactive
+    let b = false; // @reactive
+    
+    <div $mount='#App'
+        style:color={`${(a && !b) ? '#f44': '#4f4'}`}
+    >
+        Hello!
+    </div> 
 
-/**
- * todo 有bug
-a.v = true;
-b.v = true;
-b.v = false
- */
+    a = true;
+    b = true;
+    // 预期绿色
+}

@@ -4,3 +4,4 @@ scripts/dev/*.js
 **/libs/*.js
 dist
 cdn
+*.min.js

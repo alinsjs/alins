@@ -516,6 +516,10 @@ function createNewJSXAttribute (node: JSXAttribute, handleReactive?: boolean) {
     const key = node.name;
     if (key.type === 'JSXNamespacedName') {
         const name = key.namespace.name;
+        if (name === '$') {
+            // ! $:App => $mount='#App'
+            return createJsxAttr('$mount', t.stringLiteral(`#${key.name.name}`));
+        }
         const deco = key.name.name;
         // ! 处理 onclick:stop
         if (isEventEmptyDeco(name, deco, node.value)) {

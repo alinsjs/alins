@@ -17,28 +17,28 @@ import { getCurCleaner } from './cleaner';
 let currentFn: any = null;
 let depReactive = false; // 当前表达式是否依赖响应数据
 
-export function isDepReactive () {
-    return depReactive;
-}
-
-export function observe (fn: ()=>any, listener: IProxyListener) {
-    // if (__DEBUG__) console.log('Start observe', fn, listener);
-    if (!listener) listener = fn;
-    const origin = listener;
-    listener = (...args) => {
-        // ! 动态收集依赖
-        // ! fix computed 遇到 && || 时首次运行可能observe不到后面一个响应式数据的问题
-        currentFn = listener;
-        depReactive = false;
-        const result = origin(...args);
-        currentFn = null;
-        return result;
-    };
-    currentFn = listener;
+function execDepFn (fn: ()=>any, curFn: IProxyListener) {
+    currentFn = curFn;
     depReactive = false;
     const v = fn();
     currentFn = null;
     return v;
+}
+
+export function isDepReactive () {
+    return depReactive;
+}
+
+export function observe (fn: () => any, listener: IProxyListener) {
+    // if (__DEBUG__) console.log('Start observe', fn, listener);
+    if (!listener) listener = fn;
+    const origin = listener;
+    listener = () => {
+        // ! 动态收集依赖
+        // ! fix computed 遇到 && || 时首次运行可能observe不到后面一个响应式数据的问题
+        return execDepFn(fn, origin);
+    };
+    return execDepFn(fn, listener);
 }
 
 export function isRef (data: any): boolean {

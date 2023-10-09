@@ -1,10 +1,28 @@
+
+// let a = 1; // @reactive
+// let b = false; // @reactive
+
+// <div $mount='#App'
+//     style:color={`${(a > 3 && !b) ? '#f44': '#4f4'}`}
+// >
+//     Hello!
+// </div>
+
+// a ++;
+// a ++;
+// a ++;
+// b = true;
+// // a = true;
+// // b = true;
+// // 预期绿色
+
 let count = 1;
 const countAdd2 = count + 2;
 const countAdd3 = countAdd2 + 1;
 function countMultiply2 () {
     return count * 2;
 }
-<div $mount='#App'>
+<div $:App>
     <button onclick={count++}>
          click:{count}
     </button>
