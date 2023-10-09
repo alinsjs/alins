@@ -140,7 +140,7 @@ After following the steps, execute the following command to install and run it.
 ```
 cd <project>
 npm i
-npm run dev
+npm rundev
 ```
 
 You can also directly clone the [template code repository](https://github.com/alinsjs/ebuild-template-alins)
