@@ -1,9 +1,9 @@
 {
     "name": "vite-plugin-alins",
-    "version": "0.0.35",
+    "version": "0.0.36",
     "description": "All-in-js Web UI Framework, No jsx/template/vdom/css/html",
-    "main": "src/index.ts",
-    "typings": "src/index.ts",
+    "main": "dist/vite-plugin-alins.cjs.min.js",
+    "typings": "dist/vite-plugin-alins.d.ts",
     "repository": "git@github.com:alinsjs/alins.git",
     "author": "tackchen <theajack@qq.com>",
     "scripts": {
@@ -22,7 +22,7 @@
         "registry": "https://registry.npmjs.org/"
     },
     "dependencies": {
-        "alins-compiler-node": "^0.0.35"
+        "alins-compiler-node": "^0.0.36"
     },
-    "module": "src/index.ts"
+    "module": "dist/vite-plugin-alins.esm.min.js"
 }
