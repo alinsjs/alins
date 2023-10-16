@@ -6,12 +6,13 @@
 
 import {
     _$c, _$cc, _$ce, _$e, _$es, _$if, _$mf, _$mm, _$mnr,
-    _$mu, _$r, _$sw, _$w, _$mt,
+    _$mu, _$r, _$sw, _$w, _$mt, _$dc, _$cs, _$cst,
     _$ad, _$cd, _$md, _$rd,
     version, createStore,
     defineRenderer, useRenderer,
     ref, reactive, computed, watch, observe,
     mount, mounted, removed, created, appended,
+    createStateScope, deconstruct
 } from 'alins';
 import { parseWebAlins } from './parser';
 import { IImportType } from 'alins-compiler-core';
@@ -62,10 +63,12 @@ if (typeof window !== 'undefined') {
         _$c, _$cc, _$ce, _$e, _$es, _$mf, _$mm, _$mnr, _$mt,
         _$mu, _$r, _$sw, _$w, _$if, version, createStore,
         _$ad, _$cd, _$md, _$rd,
+        _$dc, _$cs, _$cst,
         useRenderer,
         defineRenderer,
         ref, reactive, computed, watch, observe,
         mount, mounted, removed, created, appended,
+        createStateScope, deconstruct,
     };
     window.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 }

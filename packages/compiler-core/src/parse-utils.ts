@@ -589,7 +589,7 @@ export function transformDataLabel (node: LabeledStatement, isStatic = true, sha
     // @ts-ignore
     const exp = node.body?.expression;
 
-    if (!exp || (exp.type !== 'AssignmentExpression' && exp.operator === '=')) {
+    if (!exp) {
         // ! 处理其他支持 $: 的逻辑
         if (node.body.type === 'SwitchStatement' || node.body.type === 'IfStatement') {
             node.body._isComReact = true;
@@ -597,18 +597,36 @@ export function transformDataLabel (node: LabeledStatement, isStatic = true, sha
         }
         return null;
     };
+    const decls: VariableDeclarator[] = [];
+    const addNode = (node: any) => {
+        const decl = createVarNode(node, isStatic, shallow);
+        if (decl) decls.push(decl);
+    };
+    if (exp.type === 'SequenceExpression') {
+        exp.expressions.forEach((node: any) => {addNode(node);});
+    } else {
+        addNode(exp);
+    }
 
-    const varNode = t.variableDeclarator(
-        exp.left, exp.right
-    );
+    return createVarDeclaration('let', decls);
+}
+
+function createVarNode (exp: any, isStatic: boolean, shallow: boolean) {
+    let varNode: any = null;
+
+    if (exp.type === 'AssignmentExpression') {
+        varNode = t.variableDeclarator(exp.left, exp.right);
+    } else if (exp.type === 'Identifier') {
+        varNode = t.variableDeclarator(exp, createUnfInit());
+    } else {
+        return varNode;
+    }
 
     varNode[isStatic ? '_isComStatic' : '_isComReact'] = true;
-
     if (!isStatic && shallow) {
         varNode._isShallow = true;
     }
-
-    return createVarDeclaration('let', [ varNode ]);
+    return varNode;
 }
 
 export function findAttributes (node: JSXElement, name: string|((attrName: string)=>boolean)): JSXAttribute|null {

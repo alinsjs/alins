@@ -100,7 +100,6 @@ export class Module {
         return true;
     }
     enterVariableDeclaration (node: VariableDeclaration) {
-
         this.curDeclarationType = node.kind;
     }
     collectVar (path: NodePath<VariableDeclarator>) {

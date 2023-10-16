@@ -5,7 +5,7 @@
  */
 
 import { _if } from './branch/if';
-import { assignCompData, assignData, computed, mockRef, ref, watch } from 'alins-reactive';
+import { assignCompData, assignData, computed, mockRef, ref, watch, createStateScope, deconstruct, createStore } from 'alins-reactive';
 import { _switch } from './branch/switch';
 import './for';
 import { JSX } from './element/element';
@@ -13,9 +13,24 @@ import { mockMap } from './for';
 import { mount } from './element/renderer';
 import { appended, created, mounted, removed } from './element/lifecycle';
 
-export const _$ce = JSX.createElement;
-
-export const _$mt = mount;
+export const _$ce = JSX.createElement,
+    _$mt = mount,
+    _$r = ref,
+    _$c = computed,
+    _$w = watch,
+    _$e = assignData,
+    _$es = assignCompData,
+    _$mf = mockRef,
+    _$mm = mockMap,
+    _$if = _if,
+    _$sw = _switch,
+    _$cd = created,
+    _$ad = appended,
+    _$md = mounted,
+    _$rd = removed,
+    _$cs = createStore,
+    _$cst = createStateScope,
+    _$dc = deconstruct;
 
 // ! 处理 async 代码没有返回值
 // markNotReturned
@@ -24,32 +39,16 @@ export function _$mnr (fn: any) {
     return fn;
 }
 
-export const _$r = ref;
-export const _$c = computed;
-export const _$w = watch;
-
 export function _$cc (get: any, set: any) { // 简写，减少编译代码量
     return computed({ get, set });
 }
-
-export const _$e = assignData;
-export const _$es = assignCompData;
 
 // markUpdateExpression: true
 export function _$mu (fn:any) {
     fn._update = true;
     return fn;
 }
-export const _$mf = mockRef;
-export const _$mm = mockMap;
-export const _$if = _if;
-export const _$sw = _switch;
 
 export function _$f (props: any, children: any[]) {
     return _$ce('', props, ...children);
 }
-
-export const _$cd = created;
-export const _$ad = appended;
-export const _$md = mounted;
-export const _$rd = removed;

@@ -3,7 +3,7 @@
  * @Date: 2022-11-14 09:14:23
  * @Description: Coding something
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-10-02 07:08:40
+ * @LastEditTime: 2023-10-15 22:00:02
  */
 import { JSX as React } from 'packages/core/src/element/element';
 import { createContext } from 'packages/core/src/context';
@@ -274,3 +274,30 @@ export default [
 // <div $async={aaa() as AA}>
 
 // </div>;
+
+function useCount () {
+    let count = 0;
+    return $state({
+        count,
+        increase () {
+            count ++;
+        }
+    });
+}
+
+// $store({
+
+// });
+
+useCount();
+
+export function Counter () {
+    const { count, increase } = useCount();
+    return <button onclick={increase}>count is {count} {1 + count}</button>;
+}
+
+
+// $_ref``;
+
+// $_set;
+// const b = a + 1; v => a = v + 1;

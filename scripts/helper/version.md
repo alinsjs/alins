@@ -18,13 +18,22 @@
 - [ ] 编译器代码重构 - 分两步编译 第一步进行jsx解析；第二部进行alins reactive； 支持 ssr
 - [ ] 运行时代码重构 - 优化内存空间占用和运行时间
 - [ ] 完善测试
-- [ ] Branch 内存占用问题
+- [ ] 优化 Branch 内存占用
 - [ ] For 类型提示
 - [ ] Async Data 类型标注
 - [ ] alins-vsc
 - [ ] 大列表排序时移动dom元素优化性能
 - [ ] 模版语法支持 html 文件作为模版语言
 - [ ] computed 重构；dirty 标记。优化 const b = a++; 逻辑
+
+## 0.0.37
+
+- [x] fix 解构 ref 的结果为undefined
+- [ ] 支持非组件中使用状态,支持逻辑抽取 (useCount)
+- [ ] 解构支持 reactive，但是不支持设置
+- [ ] fix dynamic node
+- [ ] fix todo list $show={showDone || !done}
+- [ ] 引入 宏 的概念; 移除注释标注和js label
 
 ## 0.0.36
 

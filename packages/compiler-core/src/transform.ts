@@ -12,6 +12,7 @@ import {
 import { isJsxExtendCall, isJsxExtendDef, isMemberExp, isOriginJSXElement } from './is';
 import { ImportManager, IImportType } from './controller/import-manager';
 import { checkLogicAttribute } from './component/logic-attribute';
+import { parseDeconstruct } from './controller/deconstruct';
 
 
 export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm') {
@@ -19,6 +20,7 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
     return {
         Program: {
             enter (path: NodePath<Program>) {
+                // debugger;
                 enterContext(path);
                 const body = path.node.body;
                 for (let i = 0; i < body.length; i++) {
@@ -140,6 +142,7 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
         },
         LabeledStatement: {
             enter (path) {
+                debugger;
                 ctx.checkScope(path);
                 const name = path.node.label.name;
                 let result: any = null;
@@ -197,11 +200,17 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
         },
         VariableDeclarator: {
             enter (path) {
-                if (!path.node.init && !path.parentPath.parent.type.startsWith('For')) {
+                const { init, id } = path.node;
+                if (!init && !path.parentPath.parent.type.startsWith('For')) {
                     path.node.init = createUnfInit();
                 }
-                if (path.node.init?.type === 'Identifier') {
-                    path.node.init._isReplace = true;
+                const isDeconstruct = id.type === 'ArrayPattern' || id.type === 'ObjectPattern';
+                // ! 对于非结构完整赋值，不需要调用 .v
+                // const {a} = b; => const {a} = b.v
+                if (
+                    init?.type === 'Identifier' && !isDeconstruct
+                ) {
+                    init._isReplace = true;
                     // path.node.id._isReplace = true;
                 }
                 // @ts-ignore
@@ -210,8 +219,13 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
                 // console.log('VariableDeclaration:', path.toString());
                 if (!ctx.enter(path)) return;
                 // todo init = null 时 设置为 void 0;
-                if (path.node.id.type === 'ObjectPattern') return;
-                ctx.collectVar(path);
+                if (isDeconstruct) {
+                    // ! 解构的变量
+                    // ctx.curScope.col;
+                    parseDeconstruct(path);
+                } else {
+                    ctx.collectVar(path);
+                }
             },
             exit () {
                 ctx.curScope.endDeclarator();
@@ -453,7 +467,16 @@ export function createNodeVisitor (t: IBabelType, importType: IImportType = 'esm
                 path.node._isReturnBreak = true;
                 path.replaceWith(getT().returnStatement());
             }
-        }
+        },
+        ObjectProperty (path) {
+            // console.log(path.replaceWithSourceString(`ref(${path.node.toString()})`));
+        },
+        // ObjectPattern (path) {
+        //     parseDeconstruct(path);
+        // },
+        // ArrayPattern (path) {
+        //     parseDeconstruct(path);
+        // }
     } as TraverseOptions<Node>;
 };
 

@@ -42,7 +42,6 @@ export interface IRefData<T=any> extends IProxyBase<AlinsType.Ref> {
   v: T;
 }
 
-
 export type IProxyData<
     T,
     K = T extends object ? (T & IProxyBase<AlinsType.Proxy>) : IRefData<T>

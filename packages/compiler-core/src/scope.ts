@@ -201,6 +201,8 @@ export class Scope {
         const variable = this.createVariable(type, name, path);
         variable.isStatic = isStatic;
 
+        console.log(variable);
+
         if (!isStatic) {
             // @ts-ignore
             const type = path.node.init?.type || '';
@@ -422,6 +424,15 @@ export class Scope {
             variable.dependActions.push(fn);
         }
         return true;
+    }
+
+    // 收集解构的变量
+    collectDeconstructVars (path: NodePath<VariableDeclarator>) {
+        debugger;
+        // todo
+        // 1. 静态作用域过滤
+        // 2. collectVar
+        // 3. collectDependAction
     }
 
     collectIdentifier (path: NodePath<Identifier>) {
@@ -657,5 +668,12 @@ export class Scope {
         // debugger;
         // @ts-ignore
         this.node._setAsync?.(); // ! 设置block元素方法为async
+    }
+    findFuncParent () {
+        let parent: null|Scope = this;
+        while (parent && !parent.isFunc) {
+            parent = parent.parent;
+        }
+        return parent;
     }
 }

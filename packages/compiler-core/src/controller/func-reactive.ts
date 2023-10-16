@@ -10,8 +10,8 @@ const fn = () => a + 1;
 const dom = <div a={fn()}></div>;
  *
  */
-import type {Node, NodePath} from '@babel/traverse';
-import type {Scope, IScopeVariable} from '../scope';
+import type { Node, NodePath } from '@babel/traverse';
+import type { Scope, IScopeVariable } from '../scope';
 
 export class FuncReactiveScope {
 
@@ -34,6 +34,7 @@ export class FuncReactiveScope {
             // debugger;
             console.warn('FuncReactiveScope', e);
         }
+        // console.log(path.toString());
     }
     markReturnJsx () {
         this.returnJsx = true;

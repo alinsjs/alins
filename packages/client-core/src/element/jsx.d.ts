@@ -5,6 +5,7 @@ import { IAttributes } from 'packages/core/src/element/jsx';
  * @Description: Coding something
  */
 
+import type { IProxyListener } from 'alins-utils';
 import type { IAttributes, IControlAttributes, IElement } from './alins.d';
 
 // tslint:disable-next-line:export-just-namespace
@@ -136,4 +137,20 @@ declare global {
     let $index: number;
     let $data: any;
     let $e: Event;
+    // 宏
+    let $ref: <T>(v: T) => T;
+    let $set: <T = any>(v: T) => void;
+    let $shallow: <T>(v: T) => T;
+    let $static: <T>(v: T) => T;
+    let $mount: (v: HTMLElement|DocumentFragment, app: HTMLElement|Node|string)=>void;
+    let $watch: <T=any>(v: any, fn: IProxyListener<T>) => void;
+
+    let $state: <T extends Record<string, any>>(data: T)=>T;
+    let $store: ()=>void;
+
+    type ILifecycleMacro<Return = void> = <T extends HTMLElement = HTMLElement>(v: T) => Return;
+    let $created: ILifecycleMacro;
+    let $appended: ILifecycleMacro;
+    let $mounted: ILifecycleMacro<void|ILifecycleMacro>;
+    let $removed: ILifecycleMacro;
 }
