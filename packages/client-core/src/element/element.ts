@@ -3,19 +3,23 @@
  * @Date: 2023-06-25 22:31:56
  * @Description: Coding something
  */
-import { addEvent, isEventAttr, IEventNames } from './event';
+import type { IEventNames } from './event';
+import { addEvent, isEventAttr } from './event';
 import type { IElement, IFragment, ITrueElement, IAttributes } from './alins.d';
 import { Renderer, appendChild } from './renderer';
-import {
-    IBindingReactionEnable, reactiveBindingEnable,
-    IChildren, reactiveBindingValue, IBindingReaction, IBindingRef
+import type {
+    IBindingReactionEnable,
+    IChildren, IBindingReaction, IBindingRef
 } from './dom-util';
-import { IJson } from 'alins-utils';
+import { reactiveBindingEnable, reactiveBindingValue
+} from './dom-util';
+import type { IJson } from 'alins-utils';
 import { parseStyle, parseStyleSuffix } from './style';
 import { parseModel } from './model';
 import { parseAttributes } from './attributes';
 import { parseClassName, parseClassSuffix } from './class';
-import { renderComponent, IJSXComp } from './component';
+import type { IJSXComp } from './component';
+import { renderComponent } from './component';
 
 export const JSX = {
     createElement (
@@ -134,6 +138,10 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                             ) {
                                 break;
                             } else {
+
+                                if (k.startsWith('on') && typeof v === 'function') {
+                                    break;
+                                }
                                 // console.warn('reactiveBindingEnable', k, v);
                                 reactiveBindingEnable(v, (v) => {
                                     if (typeof v === 'object') {
@@ -143,8 +151,8 @@ export function transformOptionsToElement (opt: IJSXDomOptions): ITrueElement {
                                     v === null ? target.removeAttribute(k) : target.setAttribute(k, v);
                                 });
                             }
-                        }; break;
-                    };
+                        } break;
+                    }
                 }
             }
             if ($mount) {

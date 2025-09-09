@@ -24,8 +24,8 @@ import {
     skipNode
 } from './parse-utils';
 import { SwitchScope } from './controller/switch-scope';
-import { Module } from './context';
-import { INodeTypeMap } from './types';
+import type { Module } from './context';
+import type { INodeTypeMap } from './types';
 import { FuncReactiveScope } from './controller/func-reactive';
 import { AlinsStr } from './controller/import-manager';
 
@@ -189,14 +189,20 @@ export class Scope {
         const name: string = node.id.name;
 
         // ! 去除 $ 变量首字符表示响应式数据 v0.0.35
-        const isReactive = node._isComReact; // || name[0] === '$';
+        // const isReactive = node._isComReact; // || name[0] === '$';
+
+        // ! 恢复 $ 变量首字符表示响应式数据
+        const isReactive = node._isComReact || name[0] === '$';
 
         // _ 开头的变量表示 static $ 开头的变量表示 reactive
 
         // 这种类型不可赋值
 
         // ! 去除 _ 变量首字符表示静态数据 v0.0.35
-        const isStatic = isReactive ? false : (node._isComStatic /* || name[0] === '_' */ || (isStaticNode(node.init as Expression) && type === 'const'));
+        // const isStatic = isReactive ? false : (node._isComStatic /* || name[0] === '_' */ || (isStaticNode(node.init as Expression) && type === 'const'));
+
+        // ! 恢复 _ 变量首字符表示静态数据
+        const isStatic = isReactive ? false : (node._isComStatic || name[0] === '_'  || (isStaticNode(node.init as Expression) && type === 'const'));
 
         const variable = this.createVariable(type, name, path);
         variable.isStatic = isStatic;
